@@ -25,16 +25,16 @@ import com.journeyapps.barcodescanner.BarcodeCallback;
 import com.journeyapps.barcodescanner.BarcodeResult;
 import com.journeyapps.barcodescanner.CaptureManager;
 import com.tokenbrowser.R;
-import com.tokenbrowser.exception.InvalidQrCodePayment;
 import com.tokenbrowser.exception.InvalidQrCode;
+import com.tokenbrowser.exception.InvalidQrCodePayment;
 import com.tokenbrowser.model.local.PermissionResultHolder;
 import com.tokenbrowser.model.local.QrCodePayment;
 import com.tokenbrowser.model.local.ScanResult;
 import com.tokenbrowser.model.local.User;
 import com.tokenbrowser.util.LogUtil;
 import com.tokenbrowser.util.PaymentType;
-import com.tokenbrowser.util.QrCodeType;
 import com.tokenbrowser.util.QrCode;
+import com.tokenbrowser.util.QrCodeType;
 import com.tokenbrowser.util.SoundManager;
 import com.tokenbrowser.view.BaseApplication;
 import com.tokenbrowser.view.activity.ChatActivity;
@@ -43,7 +43,9 @@ import com.tokenbrowser.view.activity.ViewUserActivity;
 import com.tokenbrowser.view.fragment.DialogFragment.PaymentRequestConfirmationDialog;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import rx.Completable;
 import rx.Single;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -74,14 +76,14 @@ public final class ScannerPresenter implements
             initLongLivingObjects();
         }
 
-        init();
+        initShortLivingObjects();
     }
 
     private void initLongLivingObjects() {
         this.subscriptions = new CompositeSubscription();
     }
 
-    private void init() {
+    private void initShortLivingObjects() {
         initCloseButton();
         initScanner();
     }
@@ -94,7 +96,8 @@ public final class ScannerPresenter implements
         if (this.capture == null) {
             this.capture = new CaptureManager(this.activity, this.activity.getBinding().scanner);
         }
-        this.activity.getBinding().scanner.decodeSingle(this.onScanSuccess);
+
+        decodeQrCode();
         this.capture.onResume();
     }
 
@@ -197,11 +200,28 @@ public final class ScannerPresenter implements
     private void handleInvalidQrCode() {
         if (this.activity == null) return;
         SoundManager.getInstance().playSound(SoundManager.SCAN_ERROR);
+        decodeQrCodeDelayed();
+
         Toast.makeText(
                 this.activity,
                 this.activity.getString(R.string.invalid_qr_code),
                 Toast.LENGTH_SHORT
         ).show();
+    }
+
+    private void decodeQrCodeDelayed() {
+        final Subscription sub =
+                Completable
+                .timer(2000, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::decodeQrCode);
+
+        this.subscriptions.add(sub);
+    }
+
+    private void decodeQrCode() {
+        if (this.activity == null) return;
+        this.activity.getBinding().scanner.decodeSingle(this.onScanSuccess);
     }
 
     private void handleWebLogin(final String result) {
