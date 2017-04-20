@@ -58,7 +58,7 @@ public class DepositPresenter implements Presenter<DepositActivity> {
 
     private void handleCopyToClipboardClicked(final View v) {
         final ClipboardManager clipboard = (ClipboardManager) this.activity.getSystemService(Context.CLIPBOARD_SERVICE);
-        final ClipData clip = ClipData.newPlainText(this.activity.getString(R.string.backup_phrase), this.localUser.getTokenId());
+        final ClipData clip = ClipData.newPlainText(this.activity.getString(R.string.payment_address), this.localUser.getPaymentAddress());
         clipboard.setPrimaryClip(clip);
         Toast.makeText(this.activity, this.activity.getString(R.string.copied_to_clipboard), Toast.LENGTH_SHORT).show();
     }
