@@ -19,7 +19,6 @@ package com.tokenbrowser.presenter.chat;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -31,7 +30,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
 import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -113,7 +111,6 @@ public final class ChatPresenter implements
     private SofaAdapters adapters;
     private HDWallet userWallet;
     private CompositeSubscription subscriptions;
-    private Dialog notEnoughFundsDialog;
     private boolean firstViewAttachment = true;
     private int lastVisibleMessagePosition;
     private Pair<PublishSubject<SofaMessage>, PublishSubject<SofaMessage>> chatObservables;
@@ -265,7 +262,7 @@ public final class ChatPresenter implements
         // Hack to scroll to bottom when keyboard rendered
         this.activity.getBinding().messagesList.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
             if (bottom < oldBottom) {
-                activity.getBinding().messagesList.postDelayed(() -> activity.getBinding().messagesList.smoothScrollToPosition(messageAdapter.getItemCount() - 1), 100);
+                activity.getBinding().messagesList.postDelayed(this::smoothScrollToBottom, 100);
             }
         });
 
@@ -616,7 +613,7 @@ public final class ChatPresenter implements
                                          : conversation.getAllMessages();
         if (messages.size() > 0) {
             this.messageAdapter.addMessages(messages);
-            forceScrollToBottom();
+            scrollToBottom();
 
             final SofaMessage lastSofaMessage = messages.get(messages.size() - 1);
             setControlView(lastSofaMessage);
@@ -657,9 +654,9 @@ public final class ChatPresenter implements
         }
 
         if (animate) {
-            this.activity.getBinding().messagesList.smoothScrollToPosition(this.messageAdapter.getItemCount() - 1);
+            smoothScrollToBottom();
         } else {
-            forceScrollToBottom();
+            scrollToBottom();
         }
     }
 
@@ -712,7 +709,13 @@ public final class ChatPresenter implements
         }
     }
 
-    private void forceScrollToBottom() {
+    private void smoothScrollToBottom() {
+        if (this.activity == null) return;
+        this.activity.getBinding().messagesList.smoothScrollToPosition(this.messageAdapter.getItemCount() - 1);
+    }
+
+    private void scrollToBottom() {
+        if (this.activity == null) return;
         this.activity.getBinding().messagesList.scrollToPosition(this.messageAdapter.getItemCount() - 1);
     }
 
@@ -809,28 +812,14 @@ public final class ChatPresenter implements
         this.outgoingMessageQueue.send(sofaMessage);
     }
 
-    private void showNotEnoughFundsDialog() {
-        if (this.activity == null) {
-            return;
-        }
-
-        this.notEnoughFundsDialog = new AlertDialog.Builder(this.activity)
-                .setTitle(R.string.not_enough_funds_title)
-                .setMessage(R.string.not_enough_funds_message)
-                .setPositiveButton(R.string.got_it, (dialog, which) -> {
-                    dialog.dismiss();
-                })
-                .show();
-    }
-
     public void handleActionMenuClicked(final MenuItem item) {
         switch (item.getItemId()) {
             case R.id.rate: {
-                rateUser();
+                rateRemoteUser();
                 break;
             }
             case R.id.view_profile: {
-                viewProfile(this.remoteUser.getTokenId());
+                viewRemoteUserProfile();
                 break;
             }
             default: {
@@ -839,25 +828,35 @@ public final class ChatPresenter implements
         }
     }
 
-    private void viewProfile(final String ownerAddress) {
-        if (this.remoteUser == null) {
-            return;
-        }
+    private void rateRemoteUser() {
+        this.subscriptions.add(
+            getRemoteUser()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::rateUser)
+        );
+    }
 
+    private void rateUser(final User user) {
+        final RateDialog dialog = RateDialog
+                .newInstance(user.getUsername());
+        dialog.setOnRateDialogClickListener(this);
+        dialog.show(this.activity.getSupportFragmentManager(), RateDialog.TAG);
+    }
+
+    private void viewRemoteUserProfile() {
+        this.subscriptions.add(
+                getRemoteUser()
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(remoteUser -> viewProfile(remoteUser.getTokenId()))
+        );
+    }
+
+    private void viewProfile(final String ownerAddress) {
         final Intent intent = new Intent(this.activity, ViewUserActivity.class)
                 .putExtra(ViewUserActivity.EXTRA__USER_ADDRESS, ownerAddress);
         this.activity.startActivity(intent);
-    }
-
-    private void rateUser() {
-        if (this.remoteUser == null) {
-            return;
-        }
-
-        final RateDialog dialog = RateDialog
-                .newInstance(this.remoteUser.getUsername());
-        dialog.setOnRateDialogClickListener(this);
-        dialog.show(this.activity.getSupportFragmentManager(), RateDialog.TAG);
     }
 
     @Override
@@ -886,9 +885,6 @@ public final class ChatPresenter implements
 
     @Override
     public void onViewDetached() {
-        if (this.notEnoughFundsDialog != null) {
-            this.notEnoughFundsDialog.dismiss();
-        }
         this.lastVisibleMessagePosition = this.layoutManager.findLastVisibleItemPosition();
         this.subscriptions.clear();
         this.messageAdapter.clear();
