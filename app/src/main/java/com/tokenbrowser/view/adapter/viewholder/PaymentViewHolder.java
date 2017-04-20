@@ -97,7 +97,7 @@ public final class PaymentViewHolder extends RecyclerView.ViewHolder {
         this.statusMessage.setVisibility(View.VISIBLE);
         this.statusIcon.setVisibility(View.VISIBLE);
 
-        if (this.payment.getStatus() != null && this.payment.getStatus().equals(SofaType.CONFIRMED)) {
+        if (this.payment.getStatus().equals(SofaType.CONFIRMED)) {
             this.statusMessage.setText(R.string.error__transaction_succeeded);
             this.statusIcon.setImageResource(R.drawable.ic_done_with_background);
             return;

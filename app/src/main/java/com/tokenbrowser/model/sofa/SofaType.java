@@ -45,6 +45,7 @@ public class SofaType {
     public static final String WEB_VIEW = "webview:";
     public static final String CONFIRMED = "confirmed";
     public static final String UNCONFIRMED = "unconfirmed";
+    public static final String FAILED = "failed";
 
     /* package */ static final String PAYMENT_ADDRESS = "paymentAddress";
     /* package */ static final String LANGUAGE = "language";

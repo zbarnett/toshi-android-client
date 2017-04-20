@@ -171,7 +171,7 @@ public class TransactionManager {
         try {
             final SofaMessage sofaMessage = pendingTransaction.getSofaMessage();
             final Payment payment = this.adapters.paymentFrom(sofaMessage.getPayload());
-            return payment.getStatus() == null || payment.getStatus().equals(SofaType.UNCONFIRMED);
+            return payment.getStatus().equals(SofaType.UNCONFIRMED);
         } catch (final IOException ex) {
             return false;
         }
