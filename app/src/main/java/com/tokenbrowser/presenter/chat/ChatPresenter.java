@@ -19,7 +19,6 @@ package com.tokenbrowser.presenter.chat;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -31,7 +30,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
 import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -113,7 +111,6 @@ public final class ChatPresenter implements
     private SofaAdapters adapters;
     private HDWallet userWallet;
     private CompositeSubscription subscriptions;
-    private Dialog notEnoughFundsDialog;
     private boolean firstViewAttachment = true;
     private int lastVisibleMessagePosition;
     private Pair<PublishSubject<SofaMessage>, PublishSubject<SofaMessage>> chatObservables;
@@ -815,20 +812,6 @@ public final class ChatPresenter implements
         this.outgoingMessageQueue.send(sofaMessage);
     }
 
-    private void showNotEnoughFundsDialog() {
-        if (this.activity == null) {
-            return;
-        }
-
-        this.notEnoughFundsDialog = new AlertDialog.Builder(this.activity)
-                .setTitle(R.string.not_enough_funds_title)
-                .setMessage(R.string.not_enough_funds_message)
-                .setPositiveButton(R.string.got_it, (dialog, which) -> {
-                    dialog.dismiss();
-                })
-                .show();
-    }
-
     public void handleActionMenuClicked(final MenuItem item) {
         switch (item.getItemId()) {
             case R.id.rate: {
@@ -894,9 +877,6 @@ public final class ChatPresenter implements
 
     @Override
     public void onViewDetached() {
-        if (this.notEnoughFundsDialog != null) {
-            this.notEnoughFundsDialog.dismiss();
-        }
         this.lastVisibleMessagePosition = this.layoutManager.findLastVisibleItemPosition();
         this.subscriptions.clear();
         this.messageAdapter.clear();
