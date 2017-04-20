@@ -18,6 +18,7 @@
 package com.tokenbrowser.model.sofa;
 
 import android.support.annotation.IntDef;
+import android.support.annotation.NonNull;
 
 import com.squareup.moshi.Json;
 import com.tokenbrowser.R;
@@ -92,7 +93,11 @@ public class Payment {
         return this;
     }
 
-    public String getStatus() {
+    // Returns unconfirmed if the state is unknown for whatever reason
+    public @NonNull String getStatus() {
+        if (this.status == null) {
+            return SofaType.UNCONFIRMED;
+        }
         return this.status;
     }
 

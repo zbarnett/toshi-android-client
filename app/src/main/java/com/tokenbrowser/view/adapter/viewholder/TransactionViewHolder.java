@@ -25,6 +25,7 @@ import android.widget.TextView;
 
 import com.tokenbrowser.R;
 import com.tokenbrowser.model.sofa.Payment;
+import com.tokenbrowser.model.sofa.SofaType;
 import com.tokenbrowser.util.EthUtil;
 import com.tokenbrowser.view.BaseApplication;
 
@@ -64,10 +65,10 @@ public class TransactionViewHolder extends RecyclerView.ViewHolder {
 
     private void setDrawable(final Payment payment) {
         switch (payment.getStatus()) {
-            case "confirmed":
+            case SofaType.CONFIRMED:
                 this.status.setImageResource(R.drawable.ic_done_with_background);
                 break;
-            case "failed":
+            case SofaType.FAILED:
                 this.status.setImageResource(R.drawable.ic_clear_with_background);
                 break;
             default:
