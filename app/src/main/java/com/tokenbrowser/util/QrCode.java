@@ -154,4 +154,9 @@ public class QrCode {
                         value
                 );
     }
+
+    public static Single<Bitmap> generatePaymentAddressQrCode(final String paymentAddress) {
+        final String url = String.format("ethereum:%s", paymentAddress);
+        return ImageUtil.generateQrCode(url);
+    }
 }

@@ -19,7 +19,6 @@ package com.tokenbrowser.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Base64;
 
 import com.tokenbrowser.view.BaseApplication;
 
@@ -48,23 +47,6 @@ public class SharedPrefsUtil {
     public static void setHasLoadedApp() {
         final SharedPreferences prefs = BaseApplication.get().getSharedPreferences(FileNames.USER_PREFS, Context.MODE_PRIVATE);
         prefs.edit().putBoolean(HAS_LOADED_APP_FIRST_TIME, true).apply();
-    }
-
-    public static byte[] getQrCode() {
-        final SharedPreferences prefs = BaseApplication.get().getSharedPreferences(FileNames.USER_PREFS, Context.MODE_PRIVATE);
-        final String byteString = prefs.getString(STORED_QR_CODE, null);
-
-        if (byteString == null) {
-            return null;
-        }
-
-        return Base64.decode(byteString, Base64.DEFAULT);
-    }
-
-    public static void saveQrCode(final byte[] array) {
-        final SharedPreferences prefs = BaseApplication.get().getSharedPreferences(FileNames.USER_PREFS, Context.MODE_PRIVATE);
-        final String byteString = Base64.encodeToString(array, Base64.DEFAULT);
-        prefs.edit().putString(STORED_QR_CODE, byteString).apply();
     }
 
     public static void setSignedIn() {
