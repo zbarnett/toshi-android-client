@@ -31,20 +31,34 @@ import com.tokenbrowser.util.SharedPrefsUtil;
 import com.tokenbrowser.view.BaseApplication;
 import com.tokenbrowser.view.activity.DepositActivity;
 
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+import rx.subscriptions.CompositeSubscription;
 
 public class DepositPresenter implements Presenter<DepositActivity> {
 
     private DepositActivity activity;
     private User localUser;
+    private CompositeSubscription subscriptions;
+    private boolean firstTimeAttaching = true;
 
     @Override
     public void onViewAttached(DepositActivity view) {
         this.activity = view;
+
+        if (this.firstTimeAttaching) {
+            this.firstTimeAttaching = false;
+            initLongLivingObjects();
+        }
+
         attachListeners();
         updateView();
         initClickListeners();
+    }
+
+    private void initLongLivingObjects() {
+        this.subscriptions = new CompositeSubscription();
     }
 
     private void initClickListeners() {
@@ -64,13 +78,16 @@ public class DepositPresenter implements Presenter<DepositActivity> {
     }
 
     private void attachListeners() {
-        BaseApplication.get()
+        final Subscription sub =
+                BaseApplication.get()
                 .getTokenManager()
                 .getUserManager()
                 .getCurrentUser()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::handleUserCallback);
+
+        this.subscriptions.add(sub);
     }
 
     private void handleUserCallback(final User user) {
@@ -79,20 +96,20 @@ public class DepositPresenter implements Presenter<DepositActivity> {
     };
 
     private void updateView() {
-        if (this.localUser == null || this.activity == null) {
-            return;
-        }
-
+        if (this.localUser == null || this.activity == null) return;
         this.activity.getBinding().ownerAddress.setText(this.localUser.getPaymentAddress());
         this.activity.getBinding().copyToClipboard.setEnabled(true);
         generateQrCode();
     }
 
     private void generateQrCode() {
-        ImageUtil.generateQrCode(this.localUser.getTokenId())
+        final Subscription sub =
+                ImageUtil.generateQrCode(this.localUser.getTokenId())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::handleQrCodeGenerated);
+
+        this.subscriptions.add(sub);
     }
 
     private void handleQrCodeGenerated(final Bitmap qrBitmap) {
@@ -101,9 +118,7 @@ public class DepositPresenter implements Presenter<DepositActivity> {
     }
 
     private void renderQrCode(final Bitmap qrCodeBitmap) {
-        if (this.activity == null) {
-            return;
-        }
+        if (this.activity == null) return;
         this.activity.getBinding().qrCode.setAlpha(0.0f);
         this.activity.getBinding().qrCode.setImageBitmap(qrCodeBitmap);
         this.activity.getBinding().qrCode.animate().alpha(1f).setDuration(200).start();
@@ -111,9 +126,13 @@ public class DepositPresenter implements Presenter<DepositActivity> {
 
     @Override
     public void onViewDetached() {
+        this.subscriptions.clear();
         this.activity = null;
     }
 
     @Override
-    public void onDestroyed() {}
+    public void onDestroyed() {
+        this.subscriptions = null;
+        this.activity = null;
+    }
 }
