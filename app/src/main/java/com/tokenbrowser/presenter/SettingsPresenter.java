@@ -28,6 +28,7 @@ import com.tokenbrowser.R;
 import com.tokenbrowser.model.local.User;
 import com.tokenbrowser.model.network.Balance;
 import com.tokenbrowser.util.ImageUtil;
+import com.tokenbrowser.util.LogUtil;
 import com.tokenbrowser.util.OnSingleClickListener;
 import com.tokenbrowser.util.SharedPrefsUtil;
 import com.tokenbrowser.view.BaseApplication;
@@ -84,13 +85,18 @@ public final class SettingsPresenter implements
     }
 
     private void fetchUser() {
-        final Subscription sub = BaseApplication.get()
+        final Subscription sub =
+                BaseApplication
+                .get()
                 .getTokenManager()
                 .getUserManager()
                 .getUserObservable()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::handleUserLoaded);
+                .subscribe(
+                        this::handleUserLoaded,
+                        this::handleUserError
+                );
 
         if (!BaseApplication.get()
                 .getTokenManager()
@@ -112,6 +118,9 @@ public final class SettingsPresenter implements
         updateUi();
     }
 
+    private void handleUserError(final Throwable throwable) {
+        LogUtil.exception(getClass(), "Error during fetching user", throwable);
+    }
 
     private void handleNoUser() {
         if (this.fragment == null) {
@@ -168,9 +177,16 @@ public final class SettingsPresenter implements
                 .first()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::showDialog);
+                .subscribe(
+                        this::showDialog,
+                        this::handleDialogError
+                );
 
         this.subscriptions.add(sub);
+    }
+
+    private void handleDialogError(final Throwable throwable) {
+        LogUtil.exception(getClass(), "Error showing dialog", throwable);
     }
 
     private void showDialog(final Balance balance) {
@@ -255,14 +271,18 @@ public final class SettingsPresenter implements
     }
 
     private void attachBalanceSubscriber() {
-        final Subscription sub = BaseApplication
+        final Subscription sub =
+                BaseApplication
                 .get()
                 .getTokenManager()
                 .getBalanceManager()
                 .getBalanceObservable()
                 .observeOn(AndroidSchedulers.mainThread())
                 .filter(balance -> balance != null)
-                .subscribe(this::renderBalance);
+                .subscribe(
+                        this::renderBalance,
+                        this::handleBalanceError
+                );
 
         this.subscriptions.add(sub);
     }
@@ -275,8 +295,24 @@ public final class SettingsPresenter implements
                 balance
                         .getFormattedLocalBalance()
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(localBalance -> this.fragment.getBinding().localCurrencyBalance.setText(localBalance));
+                        .subscribe(
+                                this::handleFormattedLocalBalance,
+                                this::handleFormattedLocalBalanceError
+                        );
+        
         this.subscriptions.add(getLocalBalanceSub);
+    }
+
+    private void handleBalanceError(final Throwable throwable) {
+        LogUtil.exception(getClass(), "Error during fetching balance", throwable);
+    }
+
+    private void handleFormattedLocalBalance(final String localBalance) {
+        this.fragment.getBinding().localCurrencyBalance.setText(localBalance);
+    }
+
+    private void handleFormattedLocalBalanceError(final Throwable throwable) {
+        LogUtil.exception(getClass(), "Error while getting local balance", throwable);
     }
 
     private void initClickListeners() {
