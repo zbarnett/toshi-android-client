@@ -24,12 +24,12 @@ import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 
+import com.tokenbrowser.R;
 import com.tokenbrowser.crypto.signal.model.DecryptedSignalMessage;
 import com.tokenbrowser.model.local.SofaMessage;
 import com.tokenbrowser.model.local.User;
 import com.tokenbrowser.model.sofa.SofaAdapters;
 import com.tokenbrowser.model.sofa.SofaType;
-import com.tokenbrowser.R;
 import com.tokenbrowser.util.LogUtil;
 import com.tokenbrowser.view.BaseApplication;
 import com.tokenbrowser.view.notification.model.ChatNotification;
@@ -69,7 +69,10 @@ public class ChatNotificationManager {
             .getTokenManager()
             .getUserManager()
             .getUserFromAddress(signalMessage.getSource())
-            .subscribe((user) -> handleUserLookup(user, signalMessage));
+            .subscribe(
+                    (user) -> handleUserLookup(user, signalMessage),
+                    ChatNotificationManager::handleUserError
+            );
     }
 
     private static void handleUserLookup(final User user, final DecryptedSignalMessage signalMessage) {
@@ -80,6 +83,10 @@ public class ChatNotificationManager {
             return;
         }
         showChatNotification(user, body);
+    }
+
+    private static void handleUserError(final Throwable throwable) {
+        LogUtil.exception(ChatNotificationManager.class, "Error during fetching user", throwable);
     }
 
     private static String getBodyFromMessage(final DecryptedSignalMessage dsm) {

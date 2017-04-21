@@ -94,7 +94,10 @@ public class UserManager {
         BaseApplication
                 .get()
                 .isConnectedSubject()
-                .subscribe(isConnected -> initUser());
+                .subscribe(
+                        isConnected -> initUser(),
+                        this::handleUserError
+                );
     }
 
     private void initUser() {
@@ -122,7 +125,7 @@ public class UserManager {
     }
 
     private void handleUserError(final Throwable throwable) {
-        LogUtil.e(getClass(), "Unable to register/fetch user: " + throwable.toString());
+        LogUtil.exception(getClass(), "Unable to register/fetch user", throwable);
     }
 
     private void registerNewUserWithTimestamp(final ServerTime serverTime) {
@@ -346,7 +349,7 @@ public class UserManager {
                     .get()
                     .clearCache();
         } catch (IOException e) {
-            LogUtil.e(getClass(), e.getMessage());
+            LogUtil.exception(getClass(), "Error while clearing network cache", e);
         }
     }
 }
