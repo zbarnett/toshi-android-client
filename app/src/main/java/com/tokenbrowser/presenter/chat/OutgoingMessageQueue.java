@@ -135,9 +135,12 @@ queue.clear(); // Cleans up all state, and unsubscribes everything.
     private void attachMessagesReadyForSendingSubscriber() {
         final Subscription subscription =
                 this.messagesReadyForSending
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(Schedulers.io())
-                        .subscribe(this::sendAndSaveMessage);
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe(
+                        this::sendAndSaveMessage,
+                        this::handleSendingMessageError
+                );
 
         this.subscriptions.add(subscription);
     }
@@ -150,14 +153,26 @@ queue.clear(); // Cleans up all state, and unsubscribes everything.
                 .sendAndSaveMessage(this.remoteUser, outgoingSofaMessage);
     }
 
+    private void handleSendingMessageError(final Throwable throwable) {
+        LogUtil.exception(getClass(), "Error during sending message", throwable);
+    }
+
     private void processPreInitMessagesQueue() {
         final Subscription subscription =
                 Observable
-                        .from(this.preInitMessagesQueue)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(Schedulers.io())
-                        .doOnCompleted(this.preInitMessagesQueue::clear)
-                        .subscribe(this.messagesReadyForSending::onNext);
+                .from(this.preInitMessagesQueue)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .doOnCompleted(this.preInitMessagesQueue::clear)
+                .subscribe(
+                        this.messagesReadyForSending::onNext,
+                        this::handleMessageQueueError
+                );
+
         this.subscriptions.add(subscription);
+    }
+
+    private void handleMessageQueueError(final Throwable throwable) {
+        LogUtil.exception(getClass(), "Error during processing message queue", throwable);
     }
 }
