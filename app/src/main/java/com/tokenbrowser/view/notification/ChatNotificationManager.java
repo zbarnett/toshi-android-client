@@ -60,9 +60,7 @@ public class ChatNotificationManager {
     }
 
     public static void showNotification(final DecryptedSignalMessage signalMessage) {
-        if (signalMessage == null) {
-            return;
-        }
+        if (signalMessage == null) return;
 
         BaseApplication
             .get()

@@ -26,6 +26,7 @@ import android.widget.TextView;
 import com.tokenbrowser.model.network.Balance;
 import com.tokenbrowser.R;
 import com.tokenbrowser.util.EthUtil;
+import com.tokenbrowser.util.LogUtil;
 import com.tokenbrowser.util.SoundManager;
 import com.tokenbrowser.view.BaseApplication;
 
@@ -88,7 +89,11 @@ public class BalanceBar extends LinearLayout {
                 .getBalanceManager()
                 .getBalanceObservable()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::handleNewBalance);
+                .subscribe(
+                        this::handleNewBalance,
+                        this::handleBalanceError
+                );
+
         this.subscriptions.add(getBalanceSub);
     }
 
@@ -98,8 +103,16 @@ public class BalanceBar extends LinearLayout {
                 balance
                 .getFormattedLocalBalance()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::setLocalBalance);
+                .subscribe(
+                        this::setLocalBalance,
+                        this::handleBalanceError
+                );
+
         this.subscriptions.add(getLocalBalanceSub);
+    }
+
+    private void handleBalanceError(final Throwable throwable) {
+        LogUtil.exception(getClass(), throwable);
     }
 
     private void setEthBalanceFromBigInteger(final BigInteger weiBalance) {
