@@ -56,7 +56,9 @@ public class LogUtil  {
     @SuppressWarnings("rawtypes")
     public static void exception(final Class callingClass, final Throwable throwable) {
         final String logTag = getLogTag(callingClass);
-        Crashlytics.logException(throwable);
+        if (!BuildConfig.DEBUG) {
+            Crashlytics.logException(throwable);
+        }
         e(logTag, throwable.toString());
     }
 
@@ -64,7 +66,9 @@ public class LogUtil  {
     public static void exception(final Class callingClass, final String additionalInfo, final Throwable throwable) {
         final String logTag = getLogTag(callingClass);
         final Throwable throwableWithInfo = new Throwable(additionalInfo + ": " + throwable.toString());
-        Crashlytics.logException(throwableWithInfo);
+        if (!BuildConfig.DEBUG) {
+            Crashlytics.logException(throwableWithInfo);
+        }
         e(logTag, throwableWithInfo.toString());
     }
 
