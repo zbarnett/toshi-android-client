@@ -92,6 +92,7 @@ public class MainPresenter implements Presenter<MainActivity> {
         menuInflater.setupWithBottomNavigation(navBar);
         navBar.setTitleState(AHBottomNavigation.TitleState.ALWAYS_SHOW);
         navBar.setAccentColor(ContextCompat.getColor(this.activity, R.color.colorPrimary));
+        navBar.setInactiveColor(ContextCompat.getColor(this.activity, R.color.inactiveColor));
         navBar.setOnTabSelectedListener(this.tabListener);
         navBar.setSoundEffectsEnabled(false);
         navBar.setBehaviorTranslationEnabled(false);
