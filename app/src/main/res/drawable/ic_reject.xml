@@ -24,7 +24,7 @@
 
     <path
         android:name="Combined-Shape"
-        android:fillColor="#02BE6E"
+        android:fillColor="@color/colorPrimary"
         android:strokeWidth="1"
         android:pathData="M3.8696,6.17805 L-0.0194851,10.0671 L1.39473,11.4814 L5.28382,7.59227
 L9.1729,11.4814 L10.5871,10.0671 L6.69803,6.17805 L10.5871,2.28897
