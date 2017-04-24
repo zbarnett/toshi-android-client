@@ -27,9 +27,8 @@ import android.widget.Toast;
 import com.crashlytics.android.Crashlytics;
 import com.tokenbrowser.R;
 import com.tokenbrowser.model.local.User;
-import com.tokenbrowser.util.ImageUtil;
 import com.tokenbrowser.util.LogUtil;
-import com.tokenbrowser.util.SharedPrefsUtil;
+import com.tokenbrowser.util.QrCode;
 import com.tokenbrowser.view.BaseApplication;
 import com.tokenbrowser.view.activity.DepositActivity;
 
@@ -114,11 +113,11 @@ public class DepositPresenter implements Presenter<DepositActivity> {
 
     private void generateQrCode() {
         final Subscription sub =
-                ImageUtil.generateQrCode(this.localUser.getTokenId())
+                QrCode.generatePaymentAddressQrCode(this.localUser.getPaymentAddress())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        this::handleQrCodeGenerated,
+                        this::renderQrCode,
                         this::handleQrCodeError);
 
         this.subscriptions.add(sub);
@@ -127,11 +126,6 @@ public class DepositPresenter implements Presenter<DepositActivity> {
     private void handleQrCodeError(final Throwable throwable) {
         Crashlytics.logException(throwable);
         LogUtil.e(getClass(), throwable.toString());
-    }
-
-    private void handleQrCodeGenerated(final Bitmap qrBitmap) {
-        SharedPrefsUtil.saveQrCode(ImageUtil.compressBitmap(qrBitmap));
-        renderQrCode(qrBitmap);
     }
 
     private void renderQrCode(final Bitmap qrCodeBitmap) {
