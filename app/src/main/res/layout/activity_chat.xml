@@ -174,7 +174,7 @@
                 android:background="@android:color/transparent"
                 android:hint="@string/send_message"
                 android:imeOptions="actionSend"
-                android:inputType="text|textAutoCorrect"
+                android:inputType="textCapSentences|textAutoCorrect"
                 android:maxLength="1500"
                 android:maxLines="1" />
 
