@@ -37,7 +37,6 @@ import com.tokenbrowser.manager.network.image.CachedGlideUrl;
 import com.tokenbrowser.manager.network.image.ForceLoadGlideUrl;
 import com.tokenbrowser.view.BaseApplication;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -79,12 +78,16 @@ public class ImageUtil {
     }
 
     private static void renderFromCache(final String url, final ImageView imageView) {
-        Glide
-            .with(imageView.getContext())
-            .load(new CachedGlideUrl(url))
-            .diskCacheStrategy(DiskCacheStrategy.NONE)
-            .skipMemoryCache(true)
-            .into(imageView);
+        try {
+            Glide
+                .with(imageView.getContext())
+                .load(new CachedGlideUrl(url))
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
+                .into(imageView);
+        } catch (final IllegalArgumentException ex) {
+            LogUtil.i(ImageUtil.class, "Tried to render into a now destroyed view.");
+        }
     }
 
     public static void renderFileIntoTarget(final File result, final ImageView imageView) {
@@ -98,12 +101,6 @@ public class ImageUtil {
         } catch (final IllegalArgumentException ex) {
             LogUtil.i(ImageUtil.class, "Tried to render into a now destroyed view.");
         }
-    }
-
-    public static byte[] compressBitmap(final Bitmap bmp){
-        final ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
-        return stream.toByteArray();
     }
 
     public static Single<Bitmap> generateQrCode(final String value) {
