@@ -22,7 +22,7 @@
     android:layout_height="match_parent"
     android:layout_marginRight="@dimen/activity_horizontal_margin">
     
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/app_image"
         android:layout_width="79dp"
         android:layout_height="79dp" />
@@ -39,14 +39,16 @@
         android:id="@+id/app_category"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="5dp"
         android:textSize="14sp"
         android:textColor="@color/textColorSecondary" />
+
+    <android.support.v4.widget.Space
+        android:layout_width="0dp"
+        android:layout_height="6dp" />
 
     <com.tokenbrowser.view.custom.StarRatingView
         android:id="@+id/rating_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"/>
+        android:layout_height="wrap_content" />
 
 </LinearLayout>
