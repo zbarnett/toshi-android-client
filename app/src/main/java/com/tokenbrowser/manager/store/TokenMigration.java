@@ -123,4 +123,14 @@ public class TokenMigration implements RealmMigration {
             oldVersion++;
         }
     }
+
+    @Override
+    public int hashCode() {
+        return TokenMigration.class.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        return object != null && object instanceof TokenMigration;
+    }
 }

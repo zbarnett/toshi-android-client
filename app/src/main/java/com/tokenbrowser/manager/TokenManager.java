@@ -50,6 +50,7 @@ public class TokenManager {
     private ReputationManager reputationManager;
     private ExecutorService singleExecutor;
     private boolean areManagersInitialised = false;
+    private RealmConfiguration realmConfig;
 
     public TokenManager() {
         this.singleExecutor = Executors.newSingleThreadExecutor();
@@ -109,16 +110,18 @@ public class TokenManager {
     }
 
     private void initRealm() {
+        if (this.realmConfig != null) return;
+
         final byte[] key = this.wallet.generateDatabaseEncryptionKey();
         Realm.init(BaseApplication.get());
-        final RealmConfiguration config = new RealmConfiguration
+        this.realmConfig = new RealmConfiguration
                 .Builder()
                 .schemaVersion(8)
                 .migration(new TokenMigration(this.wallet))
                 .name(this.wallet.getOwnerAddress())
                 .encryptionKey(key)
                 .build();
-        Realm.setDefaultConfiguration(config);
+        Realm.setDefaultConfiguration(this.realmConfig);
     }
 
     public final SofaMessageManager getSofaMessageManager() {
@@ -172,6 +175,7 @@ public class TokenManager {
     }
 
     private void closeDatabase() {
+        this.realmConfig = null;
         Realm.removeDefaultConfiguration();
     }
 }
