@@ -115,6 +115,8 @@ public final class ChatPresenter implements
     private boolean firstViewAttachment = true;
     private int lastVisibleMessagePosition;
     private Pair<PublishSubject<SofaMessage>, PublishSubject<SofaMessage>> chatObservables;
+    private Subscription newMessageSubscription;
+    private Subscription updatedMessageSubscription;
     private OutgoingMessageQueue outgoingMessageQueue;
     private PendingTransactionsObservable pendingTransactionsObservable;
     private String captureImageFilename;
@@ -661,8 +663,9 @@ public final class ChatPresenter implements
         }
 
         updateEmptyState();
+        tryClearMessageSubscriptions();
 
-        final Subscription subNewMessage =
+        this.newMessageSubscription =
                 chatObservables.first
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -671,7 +674,7 @@ public final class ChatPresenter implements
                         this::handleError
                 );
 
-        final Subscription subUpdateMessage =
+        this.updatedMessageSubscription =
                 chatObservables.second
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -680,7 +683,17 @@ public final class ChatPresenter implements
                         this::handleError
                 );
 
-        this.subscriptions.addAll(subNewMessage, subUpdateMessage);
+        this.subscriptions.addAll(this.newMessageSubscription, this.updatedMessageSubscription);
+    }
+
+    private void tryClearMessageSubscriptions() {
+        if (this.newMessageSubscription != null) {
+            this.newMessageSubscription.unsubscribe();
+        }
+
+        if (this.updatedMessageSubscription != null) {
+            this.updatedMessageSubscription.unsubscribe();
+        }
     }
 
     private void handleNewMessage(final SofaMessage sofaMessage) {
