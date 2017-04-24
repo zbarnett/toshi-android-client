@@ -76,14 +76,43 @@ public final class UserSearchPresenter
     private void initToolbar() {
         this.activity.getBinding().closeButton.setOnClickListener(this.handleCloseClicked);
 
-        final Subscription sub = RxTextView
+        final Subscription sub =
+                RxTextView
                 .textChangeEvents(this.activity.getBinding().userInput)
                 .debounce(500, TimeUnit.MILLISECONDS)
                 .map(event -> event.text().toString())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::submitQuery);
+                .subscribe(
+                        this::submitQuery,
+                        this::handleSearchError
+                );
 
         this.subscriptions.add(sub);
+    }
+
+    private void submitQuery(final String query) {
+        if (query.length() < 3) {
+            this.adapter.clear();
+            return;
+        }
+
+        final Subscription sub =
+                BaseApplication
+                .get()
+                .getTokenManager()
+                .getUserManager()
+                .searchOnlineUsers(query)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        users -> this.adapter.setUsers(users),
+                        this::handleSearchError
+                );
+
+        this.subscriptions.add(sub);
+    }
+
+    private void handleSearchError(final Throwable throwable) {
+        LogUtil.exception(getClass(), "Error while searching for user", throwable);
     }
 
     private void initRecyclerView() {
@@ -95,25 +124,6 @@ public final class UserSearchPresenter
 
         final DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.VERTICAL);
         recyclerView.addItemDecoration(dividerItemDecoration);
-    }
-
-    private void submitQuery(final String query) {
-        if (query.length() < 3) {
-            this.adapter.clear();
-            return;
-        }
-
-        final Subscription sub = BaseApplication
-                .get()
-                .getTokenManager()
-                .getUserManager()
-                .searchOnlineUsers(query)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        users -> this.adapter.setUsers(users),
-                        e -> LogUtil.e(getClass(), e.toString()));
-
-        this.subscriptions.add(sub);
     }
 
     private final OnSingleClickListener handleCloseClicked = new OnSingleClickListener() {

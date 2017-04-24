@@ -113,7 +113,10 @@ public class RegistrationIntentService extends IntentService {
                 .registerForGcm(token)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
-                .subscribe(this::handleGcmSuccess, this::handleGcmFailure);
+                .subscribe(
+                        this::handleGcmSuccess,
+                        this::handleGcmFailure
+                );
     }
 
     public void handleGcmSuccess(final Void unused) {
@@ -127,12 +130,15 @@ public class RegistrationIntentService extends IntentService {
                 .getTokenManager()
                 .getBalanceManager()
                 .watchForWalletTransactions()
-                .subscribe(this::handleWatchWalletSuccess, this::handleWatchWalletFailure);
+                .subscribe(
+                        this::handleWatchWalletSuccess,
+                        this::handleWatchWalletFailure
+                );
     }
 
     public void handleGcmFailure(final Throwable error) {
         this.sharedPreferences.edit().putBoolean(ETH_SERVICE_SENT_TOKEN_TO_SERVER, false).apply();
-        LogUtil.e(getClass(), "regGcm onError " + error);
+        LogUtil.exception(getClass(), "Error while registering gcm", error);
     }
 
     private void handleWatchWalletSuccess(final Void unused) {
@@ -141,6 +147,6 @@ public class RegistrationIntentService extends IntentService {
 
     private void handleWatchWalletFailure(final Throwable error) {
         sharedPreferences.edit().putBoolean(WATCHING_TRANSACTIONS, false).apply();
-        LogUtil.e(getClass(), "registerAddress onError " + error);
+        LogUtil.exception(getClass(), "Error while watching wallet transactions", error);
     }
 }

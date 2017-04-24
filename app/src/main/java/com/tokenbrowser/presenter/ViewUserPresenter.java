@@ -91,7 +91,10 @@ public final class ViewUserPresenter implements Presenter<ViewUserActivity> {
         final Subscription userSub =
                 getUserById(this.userAddress)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::handleUserLoaded, this::handleUserLoadingFailed);
+                .subscribe(
+                        this::handleUserLoaded,
+                        this::handleUserLoadingFailed
+                );
 
         this.subscriptions.add(userSub);
     }
@@ -109,7 +112,10 @@ public final class ViewUserPresenter implements Presenter<ViewUserActivity> {
         final Subscription reputationSub =
                 getReputationScoreById(this.userAddress)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::handleReputationResponse, this::handleReputationError);
+                .subscribe(
+                        this::handleReputationResponse,
+                        this::handleReputationError
+                );
 
         this.subscriptions.add(reputationSub);
     }
@@ -135,11 +141,11 @@ public final class ViewUserPresenter implements Presenter<ViewUserActivity> {
     }
 
     private void handleReputationError(final Throwable throwable) {
-        LogUtil.e(getClass(), "Error during reputation fetching " + throwable.getMessage());
+        LogUtil.exception(getClass(), "Error during reputation fetching", throwable);
     }
 
     private void handleUserLoadingFailed(final Throwable throwable) {
-        LogUtil.e(getClass(), "Error during fetching user " + throwable.getMessage());
+        LogUtil.exception(getClass(), "Error during fetching user", throwable);
         if (this.activity != null) {
             this.activity.finish();
             Toast.makeText(this.activity, R.string.error_unknown_user, Toast.LENGTH_LONG).show();
@@ -177,8 +183,13 @@ public final class ViewUserPresenter implements Presenter<ViewUserActivity> {
     }
 
     private void updateAddContactState() {
-        final Subscription sub = isAContact(this.scannedUser)
-                .subscribe(this::updateAddContactState);
+        final Subscription sub =
+                isAContact(this.scannedUser)
+                .subscribe(
+                        this::updateAddContactState,
+                        this::handleContactError
+                );
+
         this.subscriptions.add(sub);
     }
 
@@ -200,7 +211,13 @@ public final class ViewUserPresenter implements Presenter<ViewUserActivity> {
     private final OnSingleClickListener handleOnAddContact = new OnSingleClickListener() {
         @Override
         public void onSingleClick(final View v) {
-            final Subscription sub = isAContact(scannedUser).subscribe(this::handleAddContact);
+            final Subscription sub =
+                    isAContact(scannedUser)
+                    .subscribe(
+                            this::handleAddContact,
+                            throwable -> handleContactError(throwable)
+                    );
+
             subscriptions.add(sub);
         }
 
@@ -222,6 +239,10 @@ public final class ViewUserPresenter implements Presenter<ViewUserActivity> {
                 .getUserManager()
                 .isUserAContact(user)
                 .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    private void handleContactError(final Throwable throwable) {
+        LogUtil.exception(getClass(), "Error while checking if user is a contact", throwable);
     }
 
     private void deleteContact(final User user) {

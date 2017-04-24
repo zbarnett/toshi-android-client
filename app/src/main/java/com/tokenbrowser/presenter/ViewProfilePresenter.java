@@ -77,13 +77,21 @@ public final class ViewProfilePresenter implements Presenter<ViewProfileActivity
         final Subscription sub =
                 BaseApplication.get()
                 .isConnectedSubject()
-                .subscribe(this::handleConnectionChanged);
+                .subscribe(
+                        this::handleConnectionChanged,
+                        this::handleConnectionError
+                );
+
         this.subscriptions.add(sub);
     }
 
     private void handleConnectionChanged(final Boolean isConnected) {
         if (this.activity == null) return;
         this.activity.getBinding().editProfileButton.setEnabled(isConnected);
+    }
+
+    private void handleConnectionError(final Throwable throwable) {
+        LogUtil.exception(getClass(), "Error during fetching connection state", throwable);
     }
 
     private void updateView() {
@@ -100,13 +108,18 @@ public final class ViewProfilePresenter implements Presenter<ViewProfileActivity
     }
 
     private void fetchUser() {
-        final Subscription sub = BaseApplication.get()
+        final Subscription sub =
+                BaseApplication
+                .get()
                 .getTokenManager()
                 .getUserManager()
                 .getUserObservable()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::handleUserLoaded);
+                .subscribe(
+                        this::handleUserLoaded,
+                        this::handleUserError
+                );
 
         if (!BaseApplication.get()
                 .getTokenManager()
@@ -129,6 +142,10 @@ public final class ViewProfilePresenter implements Presenter<ViewProfileActivity
         fetchUserReputation(user.getTokenId());
     }
 
+    private void handleUserError(final Throwable throwable) {
+        LogUtil.exception(getClass(), "Error while fetching user", throwable);
+    }
+
    private void handleNoUser() {
         if (this.activity == null) return;
 
@@ -140,13 +157,17 @@ public final class ViewProfilePresenter implements Presenter<ViewProfileActivity
     }
 
     private void fetchUserReputation(final String userAddress) {
-        final Subscription reputationSub = BaseApplication
+        final Subscription reputationSub =
+                BaseApplication
                 .get()
                 .getTokenManager()
                 .getReputationManager()
                 .getReputationScore(userAddress)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::handleReputationResponse, this::handleReputationError);
+                .subscribe(
+                        this::handleReputationResponse,
+                        this::handleReputationError
+                );
 
         this.subscriptions.add(reputationSub);
     }
@@ -165,7 +186,7 @@ public final class ViewProfilePresenter implements Presenter<ViewProfileActivity
     }
 
     private void handleReputationError(final Throwable throwable) {
-        LogUtil.e(getClass(), "Error during reputation fetching " + throwable.getMessage());
+        LogUtil.exception(getClass(), "Error during reputation fetching", throwable);
     }
 
     @Override

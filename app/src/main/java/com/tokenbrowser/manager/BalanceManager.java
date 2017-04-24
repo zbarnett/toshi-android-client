@@ -80,7 +80,14 @@ public class BalanceManager {
                 .isConnectedSubject()
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
-                .subscribe(unused -> this.refreshBalance());
+                .subscribe(
+                        __ -> this.refreshBalance(),
+                        this::handleConnectionStateError
+                );
+    }
+
+    private void handleConnectionStateError(final Throwable throwable) {
+        LogUtil.exception(getClass(), "Error checking connection state", throwable);
     }
 
     public void refreshBalance() {
@@ -89,7 +96,10 @@ public class BalanceManager {
                 .getBalance(this.wallet.getPaymentAddress())
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
-                .subscribe(this::handleNewBalance, this::handleError);
+                .subscribe(
+                        this::handleNewBalance,
+                        this::handleBalanceError
+                );
     }
 
     private void handleNewBalance(final Balance balance) {
@@ -97,10 +107,9 @@ public class BalanceManager {
         balanceObservable.onNext(balance);
     }
 
-    private void handleError(final Throwable throwable) {
-        LogUtil.e(getClass(), throwable.toString());
+    private void handleBalanceError(final Throwable throwable) {
+        LogUtil.exception(getClass(), "Error while fetching balance", throwable);
     }
-
 
     private Single<MarketRates> getRates() {
         return fetchLatestRates()

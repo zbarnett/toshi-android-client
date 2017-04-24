@@ -24,7 +24,6 @@ import android.graphics.Bitmap;
 import android.view.View;
 import android.widget.Toast;
 
-import com.crashlytics.android.Crashlytics;
 import com.tokenbrowser.R;
 import com.tokenbrowser.model.local.User;
 import com.tokenbrowser.util.LogUtil;
@@ -95,14 +94,13 @@ public class DepositPresenter implements Presenter<DepositActivity> {
     }
 
     private void handleUserError(final Throwable throwable) {
-        Crashlytics.logException(throwable);
-        LogUtil.e(getClass(), throwable.toString());
+        LogUtil.exception(getClass(), "Error while fetching current user", throwable);
     }
 
     private void handleUserCallback(final User user) {
         this.localUser = user;
         updateView();
-    };
+    }
 
     private void updateView() {
         if (this.localUser == null || this.activity == null) return;
@@ -118,14 +116,14 @@ public class DepositPresenter implements Presenter<DepositActivity> {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         this::renderQrCode,
-                        this::handleQrCodeError);
+                        this::handleQrCodeError
+                );
 
         this.subscriptions.add(sub);
     }
 
     private void handleQrCodeError(final Throwable throwable) {
-        Crashlytics.logException(throwable);
-        LogUtil.e(getClass(), throwable.toString());
+        LogUtil.exception(getClass(), "Error while generating qr code", throwable);
     }
 
     private void renderQrCode(final Bitmap qrCodeBitmap) {
