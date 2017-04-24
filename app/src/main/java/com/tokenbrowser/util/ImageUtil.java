@@ -17,15 +17,9 @@
 
 package com.tokenbrowser.util;
 
-import android.app.Activity;
-import android.app.Application;
-import android.content.Context;
-import android.content.ContextWrapper;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.os.Build;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.widget.ImageView;
 
@@ -47,30 +41,41 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
-import rx.Observable;
 import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 public class ImageUtil {
 
-    public static void loadFromNetwork(final String url, final ImageView imageView) {
+    public static void load(final String url, final ImageView imageView) {
         if (url == null || imageView == null) return;
 
-        Observable
-            .fromCallable(() -> fetchFromNetwork(url, imageView))
+        Single
+            .fromCallable(() -> loadFromNetwork(url, imageView))
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .filter(result -> result != null)
-            .toSingle()
             .doOnSubscribe(() -> renderFromCache(url, imageView))
             .subscribe(
-                    result -> renderFileIntoTarget(result, imageView),
+                    __ -> {},
                     throwable -> LogUtil.exception(ImageUtil.class, throwable)
             );
 
+    }
+
+    @Nullable
+    public static Target loadFromNetwork(final String url, final ImageView imageView) {
+        try {
+            return Glide
+                    .with(imageView.getContext())
+                    .load(new ForceLoadGlideUrl(url))
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true)
+                    .into(imageView);
+        } catch (final IllegalArgumentException ex) {
+            LogUtil.i(ImageUtil.class, "Tried to render into a now destroyed view.");
+            return null;
+        }
     }
 
     private static void renderFromCache(final String url, final ImageView imageView) {
@@ -78,62 +83,21 @@ public class ImageUtil {
             .with(imageView.getContext())
             .load(new CachedGlideUrl(url))
             .diskCacheStrategy(DiskCacheStrategy.NONE)
-            .skipMemoryCache(true);
-    }
-
-    @Nullable
-    private static File fetchFromNetwork(final String url, final ImageView imageView) {
-        try {
-            return Glide
-                    .with(imageView.getContext())
-                    .load(new ForceLoadGlideUrl(url))
-                    .downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
-                    .get();
-        } catch (final InterruptedException | ExecutionException e) {
-            LogUtil.print(ImageUtil.class, "Unable to fetch from network. " + e.getMessage());
-            return null;
-        }
+            .skipMemoryCache(true)
+            .into(imageView);
     }
 
     public static void renderFileIntoTarget(final File result, final ImageView imageView) {
-        if (hasDetached(imageView)) return;
+        if (imageView == null || imageView.getContext() == null) return;
 
-        Glide
-            .with(imageView.getContext())
-            .load(result)
-            .into(imageView);
-    }
-
-    private static boolean hasDetached(final ImageView imageView) {
-        final Context context = imageView.getContext();
-        if (context instanceof Application) {
-            return false;
+        try {
+            Glide
+                .with(imageView.getContext())
+                .load(result)
+                .into(imageView);
+        } catch (final IllegalArgumentException ex) {
+            LogUtil.i(ImageUtil.class, "Tried to render into a now destroyed view.");
         }
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            return false;
-        }
-
-        if (context instanceof FragmentActivity) {
-            return ((Activity) context).isDestroyed();
-        } else if (context instanceof Activity) {
-            return ((Activity) context).isDestroyed();
-        } else if (context instanceof ContextWrapper) {
-            final Context baseContext = (((ContextWrapper) context).getBaseContext());
-            return ((Activity) baseContext).isDestroyed();
-        }
-
-        return false;
-    }
-
-    public static void forceLoadFromNetwork(final String url, final ImageView imageView) {
-        if (url == null || imageView == null) return;
-        Glide
-            .with(imageView.getContext())
-            .load(new ForceLoadGlideUrl(url))
-            .diskCacheStrategy(DiskCacheStrategy.NONE)
-            .skipMemoryCache(true)
-            .into(imageView);
     }
 
     public static byte[] compressBitmap(final Bitmap bmp){

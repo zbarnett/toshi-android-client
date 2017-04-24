@@ -48,7 +48,7 @@ public class ContactViewHolder extends ClickableViewHolder {
     public void setUser(final User user) {
         this.name.setText(user.getDisplayName());
         this.username.setText(user.getUsername());
-        ImageUtil.loadFromNetwork(user.getAvatar(), this.avatar);
+        ImageUtil.load(user.getAvatar(), this.avatar);
 
         final double reputationScore = user.getReputationScore() != null
                 ? user.getReputationScore()

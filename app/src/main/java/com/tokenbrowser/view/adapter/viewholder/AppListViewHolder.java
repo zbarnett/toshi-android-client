@@ -40,7 +40,7 @@ public class AppListViewHolder extends RecyclerView.ViewHolder {
 
     public void setApp(final App app) {
         this.appName.setText(app.getCustom().getName());
-        ImageUtil.loadFromNetwork(app.getCustom().getAvatar(), this.appImage);
+        ImageUtil.load(app.getCustom().getAvatar(), this.appImage);
     }
 
     public void bind(final App app, final OnItemClickListener<App> listener) {

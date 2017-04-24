@@ -61,7 +61,7 @@ public class ConversationViewHolder extends ClickableViewHolder {
         final int visibility = conversation.getNumberOfUnread() > 0 ? VISIBLE : GONE;
         this.unreadCounter.setVisibility(visibility);
 
-        ImageUtil.loadFromNetwork(conversation.getMember().getAvatar(), this.avatar);
+        ImageUtil.load(conversation.getMember().getAvatar(), this.avatar);
     }
 
     public void setLatestMessage(final String latestMessage) {

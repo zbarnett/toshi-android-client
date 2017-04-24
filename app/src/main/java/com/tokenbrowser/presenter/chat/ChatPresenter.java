@@ -616,7 +616,7 @@ public final class ChatPresenter implements
         this.activity.setSupportActionBar(this.activity.getBinding().toolbar);
         final ActionBar actionBar = this.activity.getSupportActionBar();
         if (actionBar != null) actionBar.setDisplayShowTitleEnabled(false);
-        ImageUtil.loadFromNetwork(remoteUser.getAvatar(), this.activity.getBinding().avatar);
+        ImageUtil.load(remoteUser.getAvatar(), this.activity.getBinding().avatar);
     }
 
     private void handleBackButtonClicked(final View v) {

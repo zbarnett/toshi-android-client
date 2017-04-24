@@ -117,7 +117,7 @@ public class EditProfilePresenter implements Presenter<EditProfileActivity> {
             return;
         }
         this.activity.getBinding().avatar.setImageResource(0);
-        ImageUtil.loadFromNetwork(this.avatarUrl, this.activity.getBinding().avatar);
+        ImageUtil.load(this.avatarUrl, this.activity.getBinding().avatar);
     }
 
     private void initClickListeners() {
@@ -377,7 +377,7 @@ public class EditProfilePresenter implements Presenter<EditProfileActivity> {
     private void handleUploadSuccess(final User user) {
         if (this.activity == null) return;
         this.isUploading = false;
-        ImageUtil.forceLoadFromNetwork(user.getAvatar(), this.activity.getBinding().avatar);
+        ImageUtil.loadFromNetwork(user.getAvatar(), this.activity.getBinding().avatar);
         Toast.makeText(this.activity, this.activity.getString(R.string.profile_image_success), Toast.LENGTH_SHORT).show();
     }
 
@@ -389,7 +389,7 @@ public class EditProfilePresenter implements Presenter<EditProfileActivity> {
     private void handleUploadError() {
         if (this.activity == null) return;
         this.isUploading = false;
-        ImageUtil.loadFromNetwork(this.avatarUrl, this.activity.getBinding().avatar);
+        ImageUtil.load(this.avatarUrl, this.activity.getBinding().avatar);
         showFailureMessage();
     }
 

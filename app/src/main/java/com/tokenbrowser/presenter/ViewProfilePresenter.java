@@ -104,7 +104,7 @@ public final class ViewProfilePresenter implements Presenter<ViewProfileActivity
     }
 
     private void loadAvatar() {
-        ImageUtil.loadFromNetwork(this.localUser.getAvatar(), this.activity.getBinding().avatar);
+        ImageUtil.load(this.localUser.getAvatar(), this.activity.getBinding().avatar);
     }
 
     private void fetchUser() {

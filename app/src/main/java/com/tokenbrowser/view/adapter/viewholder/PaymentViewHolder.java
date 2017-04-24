@@ -90,7 +90,7 @@ public final class PaymentViewHolder extends RecyclerView.ViewHolder {
             return;
         }
 
-        ImageUtil.loadFromNetwork(this.avatarUri, this.avatar);
+        ImageUtil.load(this.avatarUri, this.avatar);
     }
 
     private void renderPaymentStatus() {
