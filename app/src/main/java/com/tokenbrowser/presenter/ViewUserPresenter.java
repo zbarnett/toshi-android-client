@@ -163,7 +163,7 @@ public final class ViewUserPresenter implements Presenter<ViewUserActivity> {
         binding.location.setText(scannedUser.getLocation());
         binding.about.setVisibility(scannedUser.getAbout() == null ? View.GONE : View.VISIBLE);
         binding.location.setVisibility(scannedUser.getLocation() == null ? View.GONE : View.VISIBLE);
-        ImageUtil.loadFromNetwork(scannedUser.getAvatar(), binding.avatar);
+        ImageUtil.load(scannedUser.getAvatar(), binding.avatar);
         addClickListeners();
         updateAddContactState();
         if (shouldPlayScanSounds()) SoundManager.getInstance().playSound(SoundManager.SCAN_ERROR);

@@ -179,7 +179,7 @@ public class ViewAppPresenter implements Presenter<ViewAppActivity> {
         binding.title.setText(this.app.getCustom().getName());
         binding.name.setText(this.app.getCustom().getName());
         binding.username.setText(this.app.getCustom().getName());
-        ImageUtil.loadFromNetwork(this.app.getCustom().getAvatar(), binding.avatar);
+        ImageUtil.load(this.app.getCustom().getAvatar(), binding.avatar);
     }
 
     private void initClickListeners() {

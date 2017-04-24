@@ -149,7 +149,7 @@ public final class PaymentRequestViewHolder extends RecyclerView.ViewHolder {
             return;
         }
 
-        ImageUtil.loadFromNetwork(this.avatarUri, this.avatar);
+        ImageUtil.load(this.avatarUri, this.avatar);
     }
 
     private final View.OnClickListener handleOnApprovePressed = new View.OnClickListener() {

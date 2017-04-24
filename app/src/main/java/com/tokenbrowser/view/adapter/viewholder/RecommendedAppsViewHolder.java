@@ -57,7 +57,7 @@ public class RecommendedAppsViewHolder extends RecyclerView.ViewHolder {
                 : 0;
         this.ratingView.setStars(reputationScore);
 
-        ImageUtil.loadFromNetwork(app.getCustom().getAvatar(), this.appImage);
+        ImageUtil.load(app.getCustom().getAvatar(), this.appImage);
     }
 
     public void bind(final App app, OnItemClickListener<App> listener) {

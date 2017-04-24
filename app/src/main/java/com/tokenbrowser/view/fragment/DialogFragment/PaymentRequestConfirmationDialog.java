@@ -146,7 +146,7 @@ public class PaymentRequestConfirmationDialog extends DialogFragment {
     }
 
     private void updateView(final User user) {
-        ImageUtil.loadFromNetwork(user.getAvatar(), this.binding.avatar);
+        ImageUtil.load(user.getAvatar(), this.binding.avatar);
 
         final String title = this.paymentType == PaymentType.TYPE_SEND
                 ? this.getString(R.string.confirmation_dialog_title_payment)
