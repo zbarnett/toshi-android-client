@@ -98,7 +98,8 @@ public class User extends RealmObject {
     }
 
     public Double getReputationScore() {
-        return reputation_score;
+        if (this.reputation_score == null) return 0.0;
+        return this.reputation_score;
     }
 
     public int getReviewCount() {

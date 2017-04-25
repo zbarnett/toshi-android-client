@@ -15,23 +15,13 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.tokenbrowser.model.network;
+package com.tokenbrowser.presenter.factory;
 
-public class ReputationScore {
-    private Double score;
-    private int count;
-    private Stars stars;
+import com.tokenbrowser.presenter.QrCodeHandlerPresenter;
 
-    public Double getScore() {
-        if (this.score == null) return 0.0;
-        return score;
-    }
-
-    public int getCount() {
-        return this.count;
-    }
-
-    public Stars getStars() {
-        return this.stars;
+public class QrCodeHandlerPresenterFactory implements PresenterFactory<QrCodeHandlerPresenter> {
+    @Override
+    public QrCodeHandlerPresenter create() {
+        return new QrCodeHandlerPresenter();
     }
 }
