@@ -23,14 +23,15 @@ public class ReputationScore {
     private Stars stars;
 
     public Double getScore() {
+        if (this.score == null) return 0.0;
         return score;
     }
 
     public int getCount() {
-        return count;
+        return this.count;
     }
 
     public Stars getStars() {
-        return stars;
+        return this.stars;
     }
 }

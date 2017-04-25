@@ -159,11 +159,8 @@ public class ViewAppPresenter implements Presenter<ViewAppActivity> {
         final int repCount = reputationScore.getCount();
         final String ratingText = this.activity.getResources().getQuantityString(R.plurals.ratings, repCount, repCount);
         this.activity.getBinding().reviewCount.setText(ratingText);
-
-        final double score = reputationScore.getScore() != null ? reputationScore.getScore() : 0;
-        final String stringScore = String.valueOf(score);
-        this.activity.getBinding().ratingView.setStars(score);
-        this.activity.getBinding().reputationScore.setText(stringScore);
+        this.activity.getBinding().ratingView.setStars(reputationScore.getScore());
+        this.activity.getBinding().reputationScore.setText(String.valueOf(reputationScore.getScore()));
         this.activity.getBinding().ratingInfo.setRatingInfo(reputationScore);
     }
 
