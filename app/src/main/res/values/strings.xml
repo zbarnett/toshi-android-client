@@ -183,4 +183,5 @@
     <string name="copied_payment_address_to_clipboard">Copied %1$s to clipboard</string>
     <string name="eth_deposit_testnet_warning">Do not send ETH from Mainnet. Token is currently using Ropsten revival Testnet.</string>
     <string name="error__dapp_loading">Unable to launch web app</string>
+    <string name="move_and_scale">Move and scale</string>
 </resources>

@@ -99,7 +99,8 @@
         <activity android:name="com.tokenbrowser.view.activity.TransactionOverviewActivity" />
         <activity android:name="com.tokenbrowser.view.activity.QrCodeHandlerActivity" />
         <activity android:name="com.tokenbrowser.view.activity.WebViewActivity" />
-        <activity android:name="com.tokenbrowser.view.activity.ImageCropActivity" />
+        <activity android:name="com.tokenbrowser.view.activity.ImageCropActivity"
+                  android:theme="@style/DarkTheme"/>
 
         <meta-data
             android:name="io.fabric.ApiKey"

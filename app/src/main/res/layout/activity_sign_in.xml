@@ -144,16 +144,17 @@
 
         <FrameLayout
             android:id="@+id/loading_spinner"
-            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#000000"
-            android:alpha="0.7">
+            android:visibility="gone"
+            android:background="@color/semi_transparent_overlay">
+
             <ProgressBar
                 android:layout_gravity="center"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:indeterminate="true"/>
+
         </FrameLayout>
     </FrameLayout>
 
