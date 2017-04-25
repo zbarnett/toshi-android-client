@@ -27,7 +27,7 @@ public class SharedPrefsUtil {
     private static final String HAS_ONBOARDED = "hasOnboarded";
     private static final String HAS_SIGNED_OUT = "hasSignedIn";
     private static final String HAS_BACKED_UP_PHRASE = "hasBackedUpPhrase";
-    private static final String HAS_LOADED_APP_FIRST_TIME = "hasLoadedApp";
+    private static final String HAS_LOADED_APP_FIRST_TIME = "hasLoadedAppFirstTime";
 
     public static boolean hasOnboarded() {
         final SharedPreferences prefs = BaseApplication.get().getSharedPreferences(FileNames.USER_PREFS, Context.MODE_PRIVATE);
