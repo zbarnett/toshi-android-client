@@ -17,37 +17,21 @@
 
 package com.tokenbrowser.presenter;
 
-import android.content.Intent;
 import android.net.Uri;
 import android.widget.Toast;
 
 import com.tokenbrowser.R;
-import com.tokenbrowser.exception.InvalidQrCode;
-import com.tokenbrowser.exception.InvalidQrCodePayment;
-import com.tokenbrowser.model.local.QrCodePayment;
-import com.tokenbrowser.model.local.User;
-import com.tokenbrowser.model.sofa.Payment;
-import com.tokenbrowser.util.PaymentType;
-import com.tokenbrowser.util.QrCode;
-import com.tokenbrowser.util.QrCodeType;
-import com.tokenbrowser.util.SoundManager;
-import com.tokenbrowser.view.BaseApplication;
-import com.tokenbrowser.view.activity.ChatActivity;
+import com.tokenbrowser.util.QrCodeHandler;
 import com.tokenbrowser.view.activity.QrCodeHandlerActivity;
-import com.tokenbrowser.view.activity.ViewUserActivity;
-import com.tokenbrowser.view.fragment.DialogFragment.PaymentConfirmationDialog;
 
-import rx.Single;
-import rx.Subscription;
 import rx.subscriptions.CompositeSubscription;
 
-public class QrCodeHandlerPresenter implements
-        Presenter<QrCodeHandlerActivity>,
-        PaymentConfirmationDialog.OnPaymentConfirmationListener {
+public class QrCodeHandlerPresenter implements Presenter<QrCodeHandlerActivity> {
 
     private QrCodeHandlerActivity activity;
     private CompositeSubscription subscriptions;
     private boolean firstTimeAttaching = true;
+    private QrCodeHandler qrCodeHandler;
 
     @Override
     public void onViewAttached(QrCodeHandlerActivity view) {
@@ -58,6 +42,7 @@ public class QrCodeHandlerPresenter implements
             initLongLivingObjects();
         }
 
+        initQrCodeHandler();
         processIntentData();
     }
 
@@ -65,189 +50,34 @@ public class QrCodeHandlerPresenter implements
         this.subscriptions = new CompositeSubscription();
     }
 
-    private void processIntentData() {
-        final Uri data = this.activity.getIntent().getData();
-        handleIntentUri(data);
-    }
-
-    private void handleIntentUri(final Uri uri) {
-        final QrCode qrCode = new QrCode(uri.toString());
-        final @QrCodeType.Type int qrCodeType = qrCode.getQrCodeType();
-
-        if (qrCodeType == QrCodeType.EXTERNAL) {
-            handleExternalPayment(qrCode);
-        } else if (qrCodeType == QrCodeType.PAY) {
-            handleTokenPayment(qrCode);
-        } else if (qrCodeType == QrCodeType.ADD) {
-            handleAddTokenUser(qrCode);
-        } else {
-            handleInvalidQrCode();
-        }
-    }
-
-    private void handleExternalPayment(final QrCode qrCode) {
-        try {
-            final QrCodePayment payment = qrCode.getExternalPayment();
-            final Subscription sub =
-                    BaseApplication
-                    .get()
-                    .getTokenManager()
-                    .getUserManager()
-                    .getUserFromPaymentAddress(payment.getAddress())
-                    .subscribe(
-                            user -> showTokenPaymentConfirmationDialog(user.getTokenId(), payment),
-                            __ -> showExternalPaymentConfirmationDialog(payment)
-                    );
-
-            this.subscriptions.add(sub);
-        } catch (InvalidQrCodePayment e) {
-            handleInvalidQrCodePayment();
-        }
-    }
-
-    private void showTokenPaymentConfirmationDialog(final String tokenId, final QrCodePayment payment) {
-        if (this.activity == null) return;
-        try {
-            final PaymentConfirmationDialog dialog =
-                    PaymentConfirmationDialog
-                            .newInstanceTokenPayment(
-                                    tokenId,
-                                    payment.getValue(),
-                                    payment.getMemo()
-                            );
-            dialog.show(this.activity.getSupportFragmentManager(), PaymentConfirmationDialog.TAG);
-            dialog.setOnPaymentConfirmationListener(this);
-        } catch (InvalidQrCodePayment e) {
-            handleInvalidQrCodePayment();
-        }
-    }
-
-    private void showExternalPaymentConfirmationDialog(final QrCodePayment payment) {
-        if (this.activity == null) return;
-        try {
-            final PaymentConfirmationDialog dialog =
-                    PaymentConfirmationDialog
-                            .newInstanceExternalPayment(
-                                    payment.getAddress(),
-                                    payment.getValue(),
-                                    payment.getMemo()
-                            );
-            dialog.show(this.activity.getSupportFragmentManager(), PaymentConfirmationDialog.TAG);
-            dialog.setOnPaymentConfirmationListener(this);
-        } catch (InvalidQrCodePayment e) {
-            handleInvalidQrCodePayment();
-        }
-    }
-
-
-    private void handleTokenPayment(final QrCode qrCode) {
-        try {
-            final QrCodePayment payment = qrCode.getPayment();
-            final Subscription sub =
-                    getUserByUsername(payment.getUsername())
-                    .subscribe(
-                            user -> showTokenPaymentConfirmationDialog(user.getTokenId(), payment),
-                            __ -> handleInvalidQrCode()
-                    );
-
-            this.subscriptions.add(sub);
-        } catch (InvalidQrCodePayment e) {
-            handleInvalidQrCode();
-        }
-    }
-
-    private void handleAddTokenUser(final QrCode qrCode) {
-        try {
-            final Subscription sub =
-                    getUserByUsername(qrCode.getUsername())
-                    .subscribe(
-                            user -> goToProfileView(user.getTokenId()),
-                            __ -> handleInvalidQrCode()
-                    );
-
-            this.subscriptions.add(sub);
-        } catch (InvalidQrCode e) {
-            handleInvalidQrCode();
-        }
-    }
-
-    private Single<User> getUserByUsername(final String username) {
-        return BaseApplication
-                .get()
-                .getTokenManager()
-                .getUserManager()
-                .getUserByUsername(username);
-    }
-
-    private void goToProfileView(final String tokenId) {
-        if (this.activity == null) return;
-        final Intent intent = new Intent(this.activity, ViewUserActivity.class)
-                .putExtra(ViewUserActivity.EXTRA__USER_ADDRESS, tokenId)
-                .putExtra(ViewUserActivity.EXTRA__PLAY_SCAN_SOUNDS, true);
-        this.activity.startActivity(intent);
-        this.activity.finish();
+    private void initQrCodeHandler() {
+        this.qrCodeHandler = new QrCodeHandler(this.activity);
+        this.qrCodeHandler.setOnQrCodeHandlerListener(this::handleInvalidQrCode);
     }
 
     private void handleInvalidQrCode() {
-        SoundManager.getInstance().playSound(SoundManager.SCAN_ERROR);
-        Toast.makeText(this.activity, this.activity.getString(R.string.invalid_qr_code), Toast.LENGTH_SHORT).show();
+        Toast.makeText(
+                this.activity,
+                this.activity.getString(R.string.invalid_qr_code),
+                Toast.LENGTH_SHORT
+        ).show();
     }
 
-    @Override
-    public void onPaymentRejected() {
-        this.activity.finish();
-    }
-
-    @Override
-    public void onTokenPaymentApproved(final String tokenId, final Payment payment) {
-        try {
-            goToChatActivityWithPayment(tokenId, payment);
-        } catch (InvalidQrCodePayment e) {
-            handleInvalidQrCodePayment();
-        }
-    }
-
-    private void goToChatActivityWithPayment(final String tokenId, final Payment payment) throws InvalidQrCodePayment {
-        final Intent intent = new Intent(activity, ChatActivity.class)
-                .putExtra(ChatActivity.EXTRA__REMOTE_USER_ADDRESS, tokenId)
-                .putExtra(ChatActivity.EXTRA__PAYMENT_ACTION, PaymentType.TYPE_SEND)
-                .putExtra(ChatActivity.EXTRA__ETH_AMOUNT, payment.getValue())
-                .putExtra(ChatActivity.EXTRA__PLAY_SCAN_SOUNDS, true);
-
-        this.activity.startActivity(intent);
-        this.activity.finish();
-    }
-
-    private void handleInvalidQrCodePayment() {
-        SoundManager.getInstance().playSound(SoundManager.SCAN_ERROR);
-        Toast.makeText(this.activity, this.activity.getString(R.string.invalid_payment), Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onExternalPaymentApproved(final Payment payment) {
-        try {
-            sendExternalPayment(payment);
-        } catch (InvalidQrCodePayment invalidQrCodePayment) {
-            handleInvalidQrCodePayment();
-        }
-    }
-
-    private void sendExternalPayment(final Payment payment) throws InvalidQrCodePayment {
-        BaseApplication
-                .get()
-                .getTokenManager()
-                .getTransactionManager()
-                .sendExternalPayment(payment.getToAddress(), payment.getValue());
+    private void processIntentData() {
+        final Uri data = this.activity.getIntent().getData();
+        this.qrCodeHandler.handleResult(data.toString());
     }
 
     @Override
     public void onViewDetached() {
+        this.qrCodeHandler.clear();
         this.subscriptions.clear();
         this.activity = null;
     }
 
     @Override
     public void onDestroyed() {
+        this.qrCodeHandler = null;
         this.subscriptions = null;
         this.activity = null;
     }
