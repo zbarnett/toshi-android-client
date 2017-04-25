@@ -97,12 +97,12 @@ public class TransactionManager {
             .setToAddress(paymentAddress)
             .generateLocalPrice()
             .subscribe(
-                    payment -> handleLocalPrice(payment, receiver),
-                    this::handleLocalPriceError
+                    payment -> sendNewOutgoingPayment(payment, receiver),
+                    this::handleNonFatalError
             );
     }
 
-    private void handleLocalPrice(final Payment payment, final User receiver) {
+    private void sendNewOutgoingPayment(final Payment payment, final User receiver) {
         final PaymentTask task = new PaymentTask(receiver, payment, OUTGOING);
         this.newPaymentQueue.onNext(task);
     }
@@ -254,41 +254,58 @@ public class TransactionManager {
     }
 
     private void processNewPayment(final PaymentTask task) {
-        task.getPayment()
-            .generateLocalPrice()
-            .observeOn(Schedulers.io())
-            .subscribe(
-                    (updatedPayment) -> handleLocalPrice(updatedPayment, task),
-                    this::handleLocalPriceError
-            );
-    }
+        final Payment payment = task.getPayment();
+        final User sender = getSenderFromTask(task);
+        final User receiver = getReceiverFromTask(task);
 
-    private void handleLocalPrice(final Payment updatedPayment, final PaymentTask task) {
+        final Single<Pair<Payment, SofaMessage>> storePaymentSingle =
+                payment
+                .generateLocalPrice()
+                .flatMap(updatedPayment -> Single.zip (
+                        Single.just(updatedPayment),
+                        Single.just(storePayment(receiver, updatedPayment, sender)),
+                        Pair::new))
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io());
+
         switch (task.getAction()) {
-            case INCOMING: {
-                final User sender = task.getUser();
-                final SofaMessage storedSofaMessage = storePayment(sender, updatedPayment, sender);
-                handleIncomingPayment(updatedPayment, storedSofaMessage);
+            case INCOMING:
+                storePaymentSingle.subscribe(
+                        pair -> handleIncomingPayment(pair.first, pair.second),
+                        this::handleNonFatalError
+                );
                 break;
-            }
-            case OUTGOING: {
-                final User receiver = task.getUser();
-                final User sender = getCurrentLocalUser();
-                final SofaMessage storedSofaMessage = storePayment(receiver, updatedPayment, sender);
-                handleOutgoingPayment(receiver, updatedPayment, storedSofaMessage);
+            case OUTGOING:
+                storePaymentSingle.subscribe(
+                        pair -> handleOutgoingPayment(receiver, pair.first, pair.second),
+                        this::handleNonFatalError
+                );
                 break;
-            }
-            case OUTGOING_EXTERNAL: {
-                final User sender = getCurrentLocalUser();
-                final SofaMessage sofaMessage = new SofaMessage().makeNew(sender, "");
-                handleOutgoingExternalPayment(updatedPayment, sofaMessage);
+            case OUTGOING_EXTERNAL:
+                storePaymentSingle.subscribe(
+                        pair -> handleOutgoingExternalPayment(pair.first, pair.second),
+                        this::handleNonFatalError
+                );
                 break;
-            }
         }
     }
 
-    private void handleLocalPriceError(final Throwable throwable) {
-        LogUtil.exception(getClass(), "Error while generating local price", throwable);
+    private User getSenderFromTask(final PaymentTask task) {
+        if (task.getAction() == INCOMING) return task.getUser();
+        if (task.getAction() == OUTGOING) return getCurrentLocalUser();
+        if (task.getAction() == OUTGOING_EXTERNAL) return getCurrentLocalUser();
+        throw new IllegalStateException("Unknown payment task action.");
+    }
+
+    private User getReceiverFromTask(final PaymentTask task) {
+        if (task.getAction() == INCOMING) return task.getUser();
+        if (task.getAction() == OUTGOING) return task.getUser();
+        if (task.getAction() == OUTGOING_EXTERNAL) return null;
+        throw new IllegalStateException("Unknown payment task action.");
+    }
+
+    private void handleNonFatalError(final Throwable throwable) {
+        LogUtil.exception(getClass(), "Non-fatal error", throwable);
     }
 
     private SofaMessage storePayment(final User receiver, final Payment payment, final User sender) {
@@ -481,6 +498,9 @@ public class TransactionManager {
     }
 
     private void storeMessage(final User receiver, final SofaMessage message) {
+        // receiver will be null if this is an external payment
+        if (receiver == null) return;
+
         message.setSendState(SendState.STATE_SENDING);
         BaseApplication
                 .get()
