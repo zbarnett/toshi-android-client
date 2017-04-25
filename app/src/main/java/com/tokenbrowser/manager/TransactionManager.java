@@ -55,6 +55,7 @@ import rx.subscriptions.CompositeSubscription;
 
 import static com.tokenbrowser.manager.model.PaymentTask.INCOMING;
 import static com.tokenbrowser.manager.model.PaymentTask.OUTGOING;
+import static com.tokenbrowser.manager.model.PaymentTask.OUTGOING_EXTERNAL;
 
 public class TransactionManager {
 
@@ -104,6 +105,18 @@ public class TransactionManager {
     private void handleLocalPrice(final Payment payment, final User receiver) {
         final PaymentTask task = new PaymentTask(receiver, payment, OUTGOING);
         this.newPaymentQueue.onNext(task);
+    }
+
+    public void sendExternalPayment(final String paymentAddress, final String amount) {
+        new Payment()
+                .setToAddress(paymentAddress)
+                .setFromAddress(this.wallet.getPaymentAddress())
+                .setValue(amount)
+                .generateLocalPrice()
+                .subscribe(payment -> {
+                    final PaymentTask task = new PaymentTask(payment, OUTGOING_EXTERNAL);
+                    this.newPaymentQueue.onNext(task);
+                });
     }
 
     public final void updatePayment(final Payment payment) {
@@ -204,7 +217,6 @@ public class TransactionManager {
             this.newPaymentQueue
             .observeOn(Schedulers.io())
             .subscribeOn(Schedulers.io())
-            .filter(paymentTask -> paymentTask.getUser() != null)
             .subscribe(
                     this::processNewPayment,
                     this::handlePaymentError
@@ -242,9 +254,7 @@ public class TransactionManager {
     }
 
     private void processNewPayment(final PaymentTask task) {
-        final Payment payment = task.getPayment();
-
-        payment
+        task.getPayment()
             .generateLocalPrice()
             .observeOn(Schedulers.io())
             .subscribe(
@@ -268,6 +278,12 @@ public class TransactionManager {
                 handleOutgoingPayment(receiver, updatedPayment, storedSofaMessage);
                 break;
             }
+            case OUTGOING_EXTERNAL: {
+                final User sender = getCurrentLocalUser();
+                final SofaMessage sofaMessage = new SofaMessage().makeNew(sender, "");
+                handleOutgoingExternalPayment(updatedPayment, sofaMessage);
+                break;
+            }
         }
     }
 
@@ -289,6 +305,22 @@ public class TransactionManager {
         this.pendingTransactionStore.save(pendingTransaction);
     }
 
+    private void handleOutgoingExternalPayment(final Payment payment, final SofaMessage sofaMessage) {
+        sendNewTransaction(payment)
+                .observeOn(Schedulers.io())
+                .subscribeOn(Schedulers.io())
+                .toSingle()
+                .subscribe(
+                        sentTransaction -> storeUnconfirmedTransaction(sentTransaction.getTxHash(), sofaMessage),
+                        __ -> showExternalPaymentFailedNotification(payment.getToAddress())
+                );
+    }
+
+    private void showExternalPaymentFailedNotification(final String paymentAddress) {
+        final String content = getNotificationContent(paymentAddress);
+        ChatNotificationManager.showChatNotification(null, content);
+    }
+
     private void handleOutgoingPayment(final User receiver, final Payment payment, final SofaMessage storedSofaMessage) {
         sendNewTransaction(payment)
                 .observeOn(Schedulers.io())
@@ -298,16 +330,8 @@ public class TransactionManager {
                     public void onError(final Throwable error) {
                         LogUtil.exception(getClass(), "Error creating transaction", error);
                         updateMessageState(receiver, storedSofaMessage, SendState.STATE_FAILED);
-                        showPaymentFailedNotification(receiver);
+                        showTokenPaymentFailedNotification(receiver);
                         unsubscribe();
-                    }
-
-                    private void showPaymentFailedNotification(final User receiver) {
-                        final String content = String.format(
-                                LocaleUtil.getLocale(),
-                                BaseApplication.get().getString(R.string.payment_failed_message),
-                                receiver.getDisplayName());
-                        ChatNotificationManager.showChatNotification(receiver, content);
                     }
 
                     @Override
@@ -329,6 +353,18 @@ public class TransactionManager {
                         unsubscribe();
                     }
                 });
+    }
+
+    private void showTokenPaymentFailedNotification(final User receiver) {
+        final String content = getNotificationContent(receiver.getDisplayName());
+        ChatNotificationManager.showChatNotification(receiver, content);
+    }
+
+    private String getNotificationContent(final String content) {
+        return String.format(
+                LocaleUtil.getLocale(),
+                BaseApplication.get().getString(R.string.payment_failed_message),
+                content);
     }
 
     private Observable<SentTransaction> sendNewTransaction(final Payment payment) {
