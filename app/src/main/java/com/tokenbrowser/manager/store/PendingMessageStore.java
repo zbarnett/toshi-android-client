@@ -21,7 +21,9 @@ package com.tokenbrowser.manager.store;
 import com.tokenbrowser.model.local.PendingMessage;
 import com.tokenbrowser.model.local.SofaMessage;
 import com.tokenbrowser.model.local.User;
+import com.tokenbrowser.util.LogUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.Realm;
@@ -43,7 +45,13 @@ public class PendingMessageStore {
 
     // Gets, and removes all messages. After calling this any pending messages will be removed
     public List<PendingMessage> fetchAllPendingMessages() {
-        final Realm realm = Realm.getDefaultInstance();
+        final Realm realm;
+        try {
+            realm = Realm.getDefaultInstance();
+        } catch (final IllegalStateException ex) {
+            LogUtil.exception(getClass(), "RealmConfig unexpectedly null", ex);
+            return new ArrayList<>(0);
+        }
         realm.beginTransaction();
         final RealmResults<PendingMessage> result = realm
                 .where(PendingMessage.class)

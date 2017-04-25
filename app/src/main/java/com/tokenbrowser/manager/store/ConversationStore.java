@@ -170,13 +170,20 @@ public class ConversationStore {
     }
 
     public boolean areUnreadMessages() {
-        final Realm localRealmInstance = Realm.getDefaultInstance();
-        final Conversation result = localRealmInstance
+        final Realm realm;
+        try {
+            realm = Realm.getDefaultInstance();
+        } catch (final IllegalStateException ex) {
+            LogUtil.exception(getClass(), "RealmConfig unexpectedly null", ex);
+            return false;
+        }
+
+        final Conversation result = realm
                 .where(Conversation.class)
                 .greaterThan("numberOfUnread", 0)
                 .findFirst();
         final boolean areUnreadMessages = result != null;
-        localRealmInstance.close();
+        realm.close();
         return areUnreadMessages;
     }
 
