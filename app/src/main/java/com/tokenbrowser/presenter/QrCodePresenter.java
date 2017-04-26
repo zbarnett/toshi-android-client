@@ -63,7 +63,7 @@ public class QrCodePresenter implements Presenter<QrCodeActivity> {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        this::showQrCode,
+                        this::handleUser,
                         this::handleUserError
                 );
 
@@ -84,6 +84,12 @@ public class QrCodePresenter implements Presenter<QrCodeActivity> {
 
     private void handleUserError(final Throwable throwable) {
         LogUtil.exception(getClass(), "Error while fetching user", throwable);
+    }
+
+    private void handleUser(final User user) {
+        this.activity.getBinding().name.setText(user.getDisplayName());
+        this.activity.getBinding().username.setText(user.getUsername());
+        showQrCode(user);
     }
 
     private void showQrCode(final User user) {
