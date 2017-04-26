@@ -16,12 +16,18 @@
   ~     along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<resources>
-    <string-array name="settings_options">
-        <item>Local currency</item>
-        <item>About</item>
-        <item>Transactions</item>
-        <item>Web View Test</item>
-        <item>Sign out</item>
-    </string-array>
-</resources>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/fullscreen_dark_background">
+
+        <WebView
+            android:id="@+id/webview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </FrameLayout>
+
+</layout>
