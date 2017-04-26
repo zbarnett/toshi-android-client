@@ -97,14 +97,9 @@ public class TransactionManager {
             .setToAddress(paymentAddress)
             .generateLocalPrice()
             .subscribe(
-                    payment -> sendNewOutgoingPayment(payment, receiver),
+                    payment -> addPaymentTask(receiver, payment, OUTGOING),
                     this::handleNonFatalError
             );
-    }
-
-    private void sendNewOutgoingPayment(final Payment payment, final User receiver) {
-        final PaymentTask task = new PaymentTask(receiver, payment, OUTGOING);
-        this.newPaymentQueue.onNext(task);
     }
 
     public void sendExternalPayment(final String paymentAddress, final String amount) {
@@ -113,10 +108,15 @@ public class TransactionManager {
                 .setFromAddress(this.wallet.getPaymentAddress())
                 .setValue(amount)
                 .generateLocalPrice()
-                .subscribe(payment -> {
-                    final PaymentTask task = new PaymentTask(payment, OUTGOING_EXTERNAL);
-                    this.newPaymentQueue.onNext(task);
-                });
+                .subscribe(
+                        payment -> addPaymentTask(null, payment, OUTGOING_EXTERNAL),
+                        this::handleNonFatalError
+                );
+    }
+
+    private void addPaymentTask(final User receiver, final Payment payment, final @PaymentTask.Action int action) {
+        final PaymentTask task = new PaymentTask(receiver, payment, action);
+        this.newPaymentQueue.onNext(task);
     }
 
     public final void updatePayment(final Payment payment) {
@@ -219,7 +219,7 @@ public class TransactionManager {
             .subscribeOn(Schedulers.io())
             .subscribe(
                     this::processNewPayment,
-                    this::handlePaymentError
+                    this::handleNonFatalError
             );
 
         this.subscriptions.add(sub);
@@ -233,12 +233,8 @@ public class TransactionManager {
                 .getUserFromPaymentAddress(payment.getFromAddress())
                 .subscribe(
                         (sender) -> createNewPayment(sender, payment),
-                        this::handleUserError
+                        this::handleNonFatalError
                 );
-    }
-
-    private void handlePaymentError(final Throwable throwable) {
-        LogUtil.exception(getClass(), "Error while creating new payment", throwable);
     }
 
     private void createNewPayment(final User sender, final Payment payment) {
@@ -247,10 +243,6 @@ public class TransactionManager {
                 payment,
                 payment.getFromAddress().equals(wallet.getPaymentAddress()) ? OUTGOING : INCOMING);
         this.newPaymentQueue.onNext(task);
-    }
-
-    private void handleUserError(final Throwable throwable) {
-        LogUtil.exception(getClass(), "Error while fetching user from payment address", throwable);
     }
 
     private void processNewPayment(final PaymentTask task) {
@@ -493,7 +485,7 @@ public class TransactionManager {
                 // This transaction has never been seen before; create and broadcast it.
                 .subscribe(
                         __ -> createNewPayment(payment),
-                        this::handlePaymentError
+                        this::handleNonFatalError
                 );
     }
 
