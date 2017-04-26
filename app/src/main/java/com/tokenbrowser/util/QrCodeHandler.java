@@ -1,5 +1,8 @@
 package com.tokenbrowser.util;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
@@ -52,6 +55,8 @@ public class QrCodeHandler implements PaymentConfirmationDialog.OnPaymentConfirm
             handleAddQrCode(qrCode);
         } else if (qrCodeType == QrCodeType.PAY) {
             handlePaymentQrCode(qrCode);
+        } else if (qrCodeType == QrCodeType.PAYMENT_ADDRESS) {
+            handlePaymentAddressQrCode(qrCode);
         } else if (result.startsWith(WEB_SIGNIN)) {
             handleWebLogin(result);
         } else {
@@ -167,6 +172,21 @@ public class QrCodeHandler implements PaymentConfirmationDialog.OnPaymentConfirm
                 .getUserManager()
                 .getUserByUsername(username)
                 .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    private void handlePaymentAddressQrCode(final QrCode qrCode) {
+        if (this.activity == null) return;
+        final ClipboardManager clipboard = (ClipboardManager) this.activity.getSystemService(Context.CLIPBOARD_SERVICE);
+        final ClipData clip = ClipData.newPlainText(this.activity.getString(R.string.payment_address), qrCode.getUrl());
+        clipboard.setPrimaryClip(clip);
+
+        Toast.makeText(
+                this.activity,
+                this.activity.getString(R.string.copied_payment_address_to_clipboard, qrCode.getUrl()),
+                Toast.LENGTH_LONG
+        ).show();
+
+        this.activity.finish();
     }
 
     private void handleWebLogin(final String result) {

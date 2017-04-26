@@ -64,8 +64,8 @@ public final class ScannerPresenter implements Presenter<ScannerActivity> {
 
     private void initShortLivingObjects() {
         initCloseButton();
-        initScanner();
         initQrCodeHandler();
+        initScanner();
     }
 
     private void initCloseButton() {
@@ -83,7 +83,7 @@ public final class ScannerPresenter implements Presenter<ScannerActivity> {
 
     private void initQrCodeHandler() {
         this.qrCodeHandler = new QrCodeHandler(this.activity);
-        this.qrCodeHandler.setOnQrCodeHandlerListener(() -> handleInvalidQrCode());
+        this.qrCodeHandler.setOnQrCodeHandlerListener(this::handleInvalidQrCode);
     }
 
     private void handleInvalidQrCode() {
