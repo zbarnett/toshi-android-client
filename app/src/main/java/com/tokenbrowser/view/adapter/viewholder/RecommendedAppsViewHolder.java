@@ -19,7 +19,6 @@ package com.tokenbrowser.view.adapter.viewholder;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.tokenbrowser.R;
@@ -28,11 +27,13 @@ import com.tokenbrowser.util.ImageUtil;
 import com.tokenbrowser.view.adapter.listeners.OnItemClickListener;
 import com.tokenbrowser.view.custom.StarRatingView;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class RecommendedAppsViewHolder extends RecyclerView.ViewHolder {
     private TextView appLabel;
     private TextView appCategory;
     private StarRatingView ratingView;
-    private ImageView appImage;
+    private CircleImageView appImage;
 
     public RecommendedAppsViewHolder(View itemView) {
         super(itemView);
@@ -40,7 +41,7 @@ public class RecommendedAppsViewHolder extends RecyclerView.ViewHolder {
         this.appLabel = (TextView) itemView.findViewById(R.id.app_label);
         this.appCategory = (TextView) itemView.findViewById(R.id.app_category);
         this.ratingView = (StarRatingView) itemView.findViewById(R.id.rating_view);
-        this.appImage = (ImageView) itemView.findViewById(R.id.app_image);
+        this.appImage = (CircleImageView) itemView.findViewById(R.id.app_image);
     }
 
     public void setApp(final App app) {

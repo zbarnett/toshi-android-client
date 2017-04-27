@@ -225,11 +225,11 @@
 
                 <Button
                     android:id="@+id/add_money"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                    android:layout_marginRight="@dimen/activity_horizontal_margin"
-                    style="@style/FlatButton"
+                    android:gravity="left|center_vertical"
+                    style="@style/NoPaddingButton"
+                    android:paddingLeft="@dimen/activity_horizontal_margin"
                     android:text="@string/add_money"/>
 
                 <View
