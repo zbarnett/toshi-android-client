@@ -142,6 +142,14 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/activity_horizontal_margin"
+                    android:textSize="14sp"
+                    android:textColor="@color/error_color"
+                    android:text="@string/eth_deposit_testnet_warning"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="30dp"
                     android:textSize="16sp"
                     android:textStyle="bold"

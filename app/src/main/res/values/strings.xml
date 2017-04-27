@@ -181,4 +181,5 @@
     <string name="invalid_payment">Invalid payment</string>
     <string name="payment_address_with_value">Payment address: %1$s</string>
     <string name="copied_payment_address_to_clipboard">Copied %1$s to clipboard</string>
+    <string name="eth_deposit_testnet_warning">Do not send ETH from Mainnet. Token is currently using Ropsten revival Testnet.</string>
 </resources>
