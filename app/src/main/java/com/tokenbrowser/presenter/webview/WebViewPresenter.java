@@ -34,36 +34,88 @@
 
 package com.tokenbrowser.presenter.webview;
 
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.webkit.JavascriptInterface;
+import android.widget.Toast;
 
+import com.tokenbrowser.R;
 import com.tokenbrowser.presenter.Presenter;
+import com.tokenbrowser.util.LogUtil;
 import com.tokenbrowser.view.activity.WebViewActivity;
+import com.tokenbrowser.view.custom.listener.OnLoadListener;
 
 public class WebViewPresenter implements Presenter<WebViewActivity> {
 
     private WebViewActivity activity;
+    private boolean firstTimeAttached = true;
+    private SofaWebViewClient webClient;
 
     @Override
     public void onViewAttached(final WebViewActivity view) {
         this.activity = view;
+        if (firstTimeAttached) {
+            this.firstTimeAttached = false;
+            initLongLivingObjects();
+        }
+    }
+
+    private void initLongLivingObjects() {
+        initWebClient();
+        initView();
+    }
+
+    private void initWebClient() {
+        if (this.webClient == null) {
+            this.webClient = new SofaWebViewClient(this.loadedListener);
+        }
+    }
+
+    private void initView() {
         initWebView();
+        animateLoadingSpinner();
     }
 
     private void initWebView() {
-        loadTestWebApp();
-        initTestWebApp();
+        loadWebApp();
+        addWebClient();
     }
 
-    private void loadTestWebApp() {
+    private void loadWebApp() {
         final String address = this.activity.getIntent().getStringExtra(WebViewActivity.EXTRA__ADDRESS);
         this.activity.getBinding().webview.getSettings().setJavaScriptEnabled(true);
         this.activity.getBinding().webview.addJavascriptInterface(new SOFAHost(), "SOFAHost");
         this.activity.getBinding().webview.loadUrl(address);
     }
 
-    private void initTestWebApp() {
-        this.activity.getBinding().webview.setWebViewClient(new SofaWebViewClient());
+    private void addWebClient() {
+        this.activity.getBinding().webview.setWebViewClient(this.webClient);
     }
+
+    private void animateLoadingSpinner() {
+        if (this.activity == null) return;
+        final Animation rotateAnimation = AnimationUtils.loadAnimation(this.activity, R.anim.rotate);
+        this.activity.getBinding().loadingView.startAnimation(rotateAnimation);
+    }
+
+    private final OnLoadListener loadedListener = new OnLoadListener() {
+        @Override
+        public void onLoaded() {
+            if (activity == null) return;
+            activity.getBinding().loadingView.clearAnimation();
+            activity.getBinding().loadingView.setVisibility(View.GONE);
+            activity.getBinding().webview.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        public void onError(final Throwable t) {
+            LogUtil.exception(getClass(), "Unable to load Dapp", t);
+            if (activity == null) return;
+            Toast.makeText(activity, R.string.error__dapp_loading, Toast.LENGTH_SHORT).show();
+            activity.finish();
+        }
+    };
 
     @Override
     public void onViewDetached() {
@@ -73,6 +125,8 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
     @Override
     public void onDestroyed() {
         this.activity = null;
+        this.webClient.destroy();
+        this.webClient = null;
     }
 
     private class SOFAHost {

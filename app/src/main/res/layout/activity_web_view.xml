@@ -16,17 +16,27 @@
   ~     along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools">
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/fullscreen_dark_background">
+        android:background="@color/windowBackground">
 
         <WebView
             android:id="@+id/webview"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            tools:visibility="visible"/>
+
+        <ImageView
+            android:id="@+id/loading_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@mipmap/ic_launcher"/>
 
     </FrameLayout>
 

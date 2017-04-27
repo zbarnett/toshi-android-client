@@ -84,7 +84,7 @@ public class BackupPhraseVerifyPresenter implements Presenter<BackupPhraseVerify
 
     private void initListeners() {
         this.activity.getBinding().closeButton.setOnClickListener(this::handleCloseButtonClosed);
-        this.activity.getBinding().dragAndDropView.setOnFinishedListener(this::handleFinishedListener);
+        this.activity.getBinding().dragAndDropView.setOnFinishListener(this::handleFinishedListener);
     }
 
     private void handleFinishedListener() {
