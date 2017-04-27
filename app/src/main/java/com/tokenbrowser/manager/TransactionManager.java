@@ -41,13 +41,13 @@ import com.tokenbrowser.model.sofa.SofaAdapters;
 import com.tokenbrowser.model.sofa.SofaType;
 import com.tokenbrowser.util.LocaleUtil;
 import com.tokenbrowser.util.LogUtil;
-import com.tokenbrowser.util.OnNextSubscriber;
 import com.tokenbrowser.view.BaseApplication;
 import com.tokenbrowser.view.notification.ChatNotificationManager;
 
 import java.io.IOException;
 
 import rx.Observable;
+import rx.Single;
 import rx.Subscription;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
@@ -97,14 +97,9 @@ public class TransactionManager {
             .setToAddress(paymentAddress)
             .generateLocalPrice()
             .subscribe(
-                    payment -> handleLocalPrice(payment, receiver),
-                    this::handleLocalPriceError
+                    payment -> addPaymentTask(receiver, payment, OUTGOING),
+                    this::handleNonFatalError
             );
-    }
-
-    private void handleLocalPrice(final Payment payment, final User receiver) {
-        final PaymentTask task = new PaymentTask(receiver, payment, OUTGOING);
-        this.newPaymentQueue.onNext(task);
     }
 
     public void sendExternalPayment(final String paymentAddress, final String amount) {
@@ -113,10 +108,15 @@ public class TransactionManager {
                 .setFromAddress(this.wallet.getPaymentAddress())
                 .setValue(amount)
                 .generateLocalPrice()
-                .subscribe(payment -> {
-                    final PaymentTask task = new PaymentTask(payment, OUTGOING_EXTERNAL);
-                    this.newPaymentQueue.onNext(task);
-                });
+                .subscribe(
+                        payment -> addPaymentTask(null, payment, OUTGOING_EXTERNAL),
+                        this::handleNonFatalError
+                );
+    }
+
+    private void addPaymentTask(final User receiver, final Payment payment, final @PaymentTask.Action int action) {
+        final PaymentTask task = new PaymentTask(receiver, payment, action);
+        this.newPaymentQueue.onNext(task);
     }
 
     public final void updatePayment(final Payment payment) {
@@ -219,7 +219,7 @@ public class TransactionManager {
             .subscribeOn(Schedulers.io())
             .subscribe(
                     this::processNewPayment,
-                    this::handlePaymentError
+                    this::handleNonFatalError
             );
 
         this.subscriptions.add(sub);
@@ -233,12 +233,8 @@ public class TransactionManager {
                 .getUserFromPaymentAddress(payment.getFromAddress())
                 .subscribe(
                         (sender) -> createNewPayment(sender, payment),
-                        this::handleUserError
+                        this::handleNonFatalError
                 );
-    }
-
-    private void handlePaymentError(final Throwable throwable) {
-        LogUtil.exception(getClass(), "Error while creating new payment", throwable);
     }
 
     private void createNewPayment(final User sender, final Payment payment) {
@@ -249,46 +245,59 @@ public class TransactionManager {
         this.newPaymentQueue.onNext(task);
     }
 
-    private void handleUserError(final Throwable throwable) {
-        LogUtil.exception(getClass(), "Error while fetching user from payment address", throwable);
-    }
-
     private void processNewPayment(final PaymentTask task) {
-        task.getPayment()
-            .generateLocalPrice()
-            .observeOn(Schedulers.io())
-            .subscribe(
-                    (updatedPayment) -> handleLocalPrice(updatedPayment, task),
-                    this::handleLocalPriceError
-            );
-    }
+        final Payment payment = task.getPayment();
+        final User sender = getSenderFromTask(task);
+        final User receiver = getReceiverFromTask(task);
 
-    private void handleLocalPrice(final Payment updatedPayment, final PaymentTask task) {
+        final Single<Pair<Payment, SofaMessage>> storePaymentSingle =
+                payment
+                .generateLocalPrice()
+                .flatMap(updatedPayment -> Single.zip (
+                        Single.just(updatedPayment),
+                        Single.just(storePayment(receiver, updatedPayment, sender)),
+                        Pair::new))
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io());
+
         switch (task.getAction()) {
-            case INCOMING: {
-                final User sender = task.getUser();
-                final SofaMessage storedSofaMessage = storePayment(sender, updatedPayment, sender);
-                handleIncomingPayment(updatedPayment, storedSofaMessage);
+            case INCOMING:
+                storePaymentSingle.subscribe(
+                        pair -> handleIncomingPayment(pair.first, pair.second),
+                        this::handleNonFatalError
+                );
                 break;
-            }
-            case OUTGOING: {
-                final User receiver = task.getUser();
-                final User sender = getCurrentLocalUser();
-                final SofaMessage storedSofaMessage = storePayment(receiver, updatedPayment, sender);
-                handleOutgoingPayment(receiver, updatedPayment, storedSofaMessage);
+            case OUTGOING:
+                storePaymentSingle.subscribe(
+                        pair -> handleOutgoingPayment(receiver, pair.first, pair.second),
+                        this::handleNonFatalError
+                );
                 break;
-            }
-            case OUTGOING_EXTERNAL: {
-                final User sender = getCurrentLocalUser();
-                final SofaMessage sofaMessage = new SofaMessage().makeNew(sender, "");
-                handleOutgoingExternalPayment(updatedPayment, sofaMessage);
+            case OUTGOING_EXTERNAL:
+                storePaymentSingle.subscribe(
+                        pair -> handleOutgoingExternalPayment(pair.first, pair.second),
+                        this::handleNonFatalError
+                );
                 break;
-            }
         }
     }
 
-    private void handleLocalPriceError(final Throwable throwable) {
-        LogUtil.exception(getClass(), "Error while generating local price", throwable);
+    private User getSenderFromTask(final PaymentTask task) {
+        if (task.getAction() == INCOMING) return task.getUser();
+        if (task.getAction() == OUTGOING) return getCurrentLocalUser();
+        if (task.getAction() == OUTGOING_EXTERNAL) return getCurrentLocalUser();
+        throw new IllegalStateException("Unknown payment task action.");
+    }
+
+    private User getReceiverFromTask(final PaymentTask task) {
+        if (task.getAction() == INCOMING) return task.getUser();
+        if (task.getAction() == OUTGOING) return task.getUser();
+        if (task.getAction() == OUTGOING_EXTERNAL) return null;
+        throw new IllegalStateException("Unknown payment task action.");
+    }
+
+    private void handleNonFatalError(final Throwable throwable) {
+        LogUtil.exception(getClass(), "Non-fatal error", throwable);
     }
 
     private SofaMessage storePayment(final User receiver, final Payment payment, final User sender) {
@@ -305,57 +314,48 @@ public class TransactionManager {
         this.pendingTransactionStore.save(pendingTransaction);
     }
 
-    private void handleOutgoingExternalPayment(final Payment payment, final SofaMessage sofaMessage) {
-        sendNewTransaction(payment)
+    private void handleOutgoingPayment(final User receiver, final Payment payment, final SofaMessage storedSofaMessage) {
+        createUnsignedTransaction(payment)
+                .flatMap(this::signAndSendTransaction)
                 .observeOn(Schedulers.io())
                 .subscribeOn(Schedulers.io())
-                .toSingle()
                 .subscribe(
-                        sentTransaction -> storeUnconfirmedTransaction(sentTransaction.getTxHash(), sofaMessage),
-                        __ -> showExternalPaymentFailedNotification(payment.getToAddress())
+                        sentTransaction -> handleOutgoingPaymentSuccess(sentTransaction, receiver, payment, storedSofaMessage),
+                        error -> handleOutgoingPaymentError(error, receiver, storedSofaMessage)
                 );
     }
 
-    private void showExternalPaymentFailedNotification(final String paymentAddress) {
-        final String content = getNotificationContent(paymentAddress);
-        ChatNotificationManager.showChatNotification(null, content);
+    private void handleOutgoingPaymentSuccess(
+            final SentTransaction sentTransaction,
+            final User receiver,
+            final Payment payment,
+            final SofaMessage storedSofaMessage) {
+        final String txHash = sentTransaction.getTxHash();
+        payment.setTxHash(txHash);
+
+        // Update the stored message with the transactions details
+        final SofaMessage updatedMessage = generateMessageFromPayment(payment, getCurrentLocalUser());
+        storedSofaMessage.setPayload(updatedMessage.getPayloadWithHeaders());
+        updateMessageState(receiver, storedSofaMessage, SendState.STATE_SENT);
+        storeUnconfirmedTransaction(txHash, storedSofaMessage);
+
+        BaseApplication
+                .get()
+                .getTokenManager()
+                .getSofaMessageManager()
+                .sendMessage(receiver, storedSofaMessage);
     }
 
-    private void handleOutgoingPayment(final User receiver, final Payment payment, final SofaMessage storedSofaMessage) {
-        sendNewTransaction(payment)
-                .observeOn(Schedulers.io())
-                .subscribeOn(Schedulers.io())
-                .subscribe(new OnNextSubscriber<SentTransaction>() {
-                    @Override
-                    public void onError(final Throwable error) {
-                        LogUtil.exception(getClass(), "Error creating transaction", error);
-                        updateMessageState(receiver, storedSofaMessage, SendState.STATE_FAILED);
-                        showTokenPaymentFailedNotification(receiver);
-                        unsubscribe();
-                    }
-
-                    @Override
-                    public void onNext(final SentTransaction sentTransaction) {
-                        final String txHash = sentTransaction.getTxHash();
-                        payment.setTxHash(txHash);
-
-                        // Update the stored message with the transactions details
-                        final SofaMessage updatedMessage = generateMessageFromPayment(payment, getCurrentLocalUser());
-                        storedSofaMessage.setPayload(updatedMessage.getPayloadWithHeaders());
-                        updateMessageState(receiver, storedSofaMessage, SendState.STATE_SENT);
-                        storeUnconfirmedTransaction(txHash, storedSofaMessage);
-
-                        BaseApplication
-                                .get()
-                                .getTokenManager()
-                                .getSofaMessageManager()
-                                .sendMessage(receiver, storedSofaMessage);
-                        unsubscribe();
-                    }
-                });
+    private void handleOutgoingPaymentError(
+            final Throwable error,
+            final User receiver,
+            final SofaMessage storedSofaMessage) {
+        LogUtil.exception(getClass(), "Error creating transaction", error);
+        updateMessageState(receiver, storedSofaMessage, SendState.STATE_FAILED);
+        showOutgoingPaymentFailedNotification(receiver);
     }
 
-    private void showTokenPaymentFailedNotification(final User receiver) {
+    private void showOutgoingPaymentFailedNotification(final User receiver) {
         final String content = getNotificationContent(receiver.getDisplayName());
         ChatNotificationManager.showChatNotification(receiver, content);
     }
@@ -367,12 +367,35 @@ public class TransactionManager {
                 content);
     }
 
-    private Observable<SentTransaction> sendNewTransaction(final Payment payment) {
+    private void handleOutgoingExternalPayment(final Payment payment, final SofaMessage sofaMessage) {
+
+        createUnsignedTransaction(payment)
+                .flatMap(this::signAndSendTransaction)
+                .observeOn(Schedulers.io())
+                .subscribeOn(Schedulers.io())
+                .subscribe(
+                        sentTransaction -> handleOutgoingExternalPaymentSuccess(sentTransaction, sofaMessage),
+                        error -> handleOutgoingExternalPaymentError(error, payment)
+                );
+    }
+
+    private void handleOutgoingExternalPaymentSuccess(final SentTransaction sentTransaction, final SofaMessage sofaMessage) {
+        final String txHash = sentTransaction.getTxHash();
+        storeUnconfirmedTransaction(txHash, sofaMessage);
+    }
+
+    private void handleOutgoingExternalPaymentError(final Throwable error, final Payment payment) {
+        LogUtil.exception(getClass(), "Error sending external payment.", error);
+        final String paymentAddress = payment.getToAddress();
+        final String content = getNotificationContent(paymentAddress);
+        ChatNotificationManager.showChatNotification(null, content);
+    }
+
+    private Single<UnsignedTransaction> createUnsignedTransaction(final Payment payment) {
         final TransactionRequest transactionRequest = generateTransactionRequest(payment);
-        return EthereumService.getApi()
-                .createTransaction(transactionRequest)
-                .toObservable()
-                .switchMap(this::signAndSendTransaction);
+        return EthereumService
+                .getApi()
+                .createTransaction(transactionRequest);
     }
 
     private TransactionRequest generateTransactionRequest(final Payment payment) {
@@ -382,24 +405,35 @@ public class TransactionManager {
                 .setToAddress(payment.getToAddress());
     }
 
-    private Observable<SentTransaction> signAndSendTransaction(final UnsignedTransaction unsignedTransaction) {
-        return EthereumService
-                .getApi()
-                .getTimestamp()
-                .flatMapObservable(st -> signAndSendTransactionWithTimestamp(unsignedTransaction, st));
+    private Single<SentTransaction> signAndSendTransaction(final UnsignedTransaction unsignedTransaction) {
+        return Single.zip(
+                    signTransaction(unsignedTransaction),
+                    getServerTime(),
+                    Pair::new)
+                .flatMap(pair -> sendSignedTransaction(pair.first, pair.second));
     }
 
-    private Observable<SentTransaction> signAndSendTransactionWithTimestamp(final UnsignedTransaction unsignedTransaction, final ServerTime serverTime) {
+    private Single<ServerTime> getServerTime() {
+        return EthereumService
+                .getApi()
+                .getTimestamp();
+    }
+
+    private Single<SignedTransaction> signTransaction(final UnsignedTransaction unsignedTransaction) {
         final String signature = this.wallet.signTransaction(unsignedTransaction.getTransaction());
-        final SignedTransaction signedTransaction = new SignedTransaction()
+        final SignedTransaction signedTransaction =
+                new SignedTransaction()
                 .setEncodedTransaction(unsignedTransaction.getTransaction())
                 .setSignature(signature);
 
-        final long timestamp = serverTime.get();
+        return Single.just(signedTransaction);
+    }
 
-        return EthereumService.getApi()
-                .sendSignedTransaction(timestamp, signedTransaction)
-                .toObservable();
+    private Single<SentTransaction> sendSignedTransaction(final SignedTransaction signedTransaction, final ServerTime serverTime) {
+        final long timestamp = serverTime.get();
+        return EthereumService
+                .getApi()
+                .sendSignedTransaction(timestamp, signedTransaction);
     }
 
     private void updateMessageState(final User user, final SofaMessage message, final @SendState.State int sendState) {
@@ -451,11 +485,14 @@ public class TransactionManager {
                 // This transaction has never been seen before; create and broadcast it.
                 .subscribe(
                         __ -> createNewPayment(payment),
-                        this::handlePaymentError
+                        this::handleNonFatalError
                 );
     }
 
     private void storeMessage(final User receiver, final SofaMessage message) {
+        // receiver will be null if this is an external payment
+        if (receiver == null) return;
+
         message.setSendState(SendState.STATE_SENDING);
         BaseApplication
                 .get()
