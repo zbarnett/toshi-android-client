@@ -1,6 +1,11 @@
-Token Browser for Android
-=========================
-The android client for connecting to the [Token platform](https://www.tokenbrowser.com)
+![Token Android Cover](https://raw.githubusercontent.com/tokenbrowser/token-android-client/master/images/header.png)
+
+![Screenshots](https://raw.githubusercontent.com/tokenbrowser/token-android-client/master/images/screens.png)
+
+<a href='https://play.google.com/store/apps/details?id=com.tokenbrowser&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/></a>
+
+
+## Running the project
 
 <img src="./app/src/main/res/mipmap-xhdpi/ic_launcher.png?raw=true">
 
