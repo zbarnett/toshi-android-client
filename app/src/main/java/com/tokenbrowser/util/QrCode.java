@@ -55,7 +55,7 @@ public class QrCode {
         } else if (this.url.startsWith(EXTERNAL_URL_PREFIX)) {
             return isPaymentAddressQrCode()
                     ? QrCodeType.PAYMENT_ADDRESS
-                    : QrCodeType.PAY;
+                    : QrCodeType.EXTERNAL_PAY;
         } else {
             return QrCodeType.INVALID;
         }
@@ -64,6 +64,7 @@ public class QrCode {
     public String getUsername() throws InvalidQrCode {
         try {
             final String username = Uri.parse(this.url).getLastPathSegment();
+            if (username == null) throw new InvalidQrCode();
             final String usernameWithoutPrefix = username.startsWith("@")
                     ? username.replaceFirst("@", "")
                     : null;
@@ -91,6 +92,7 @@ public class QrCode {
             final String baseUrl = String.format("%s%s/", BaseApplication.get().getString(R.string.qr_code_base_url), PAY_TYPE);
             this.url = this.url.replaceFirst(EXTERNAL_URL_PREFIX, baseUrl);
             final String address = Uri.parse(this.url).getLastPathSegment();
+            if (address == null) throw new InvalidQrCodePayment();
             return getPaymentWithParams()
                     .setAddress(address);
         } catch (UnsupportedOperationException e) {
