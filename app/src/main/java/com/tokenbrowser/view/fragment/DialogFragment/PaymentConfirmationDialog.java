@@ -34,7 +34,7 @@ import com.tokenbrowser.presenter.factory.PaymentRequestConfirmPresenterFactory;
 import com.tokenbrowser.presenter.factory.PresenterFactory;
 import com.tokenbrowser.util.PaymentType;
 
-public class PaymentConfirmationDialog extends BaseDialogFragment<PaymentRequestConfirmPresenter, PaymentConfirmationDialog> {
+public class PaymentConfirmationDialog extends BasePresenterDialogFragment<PaymentRequestConfirmPresenter, PaymentConfirmationDialog> {
 
     public static final String TAG = "PaymentConfirmationDialog";
     public static final String TOKEN_ID = "token_id";

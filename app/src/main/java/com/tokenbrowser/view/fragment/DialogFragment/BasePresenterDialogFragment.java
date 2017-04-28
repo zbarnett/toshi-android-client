@@ -29,7 +29,7 @@ import com.tokenbrowser.presenter.Presenter;
 import com.tokenbrowser.presenter.PresenterLoader;
 import com.tokenbrowser.presenter.factory.PresenterFactory;
 
-public abstract class BaseDialogFragment<P extends Presenter<V>, V> extends DialogFragment {
+public abstract class BasePresenterDialogFragment<P extends Presenter<V>, V> extends DialogFragment {
     private Presenter<V> presenter;
 
     @NonNull
@@ -55,13 +55,13 @@ public abstract class BaseDialogFragment<P extends Presenter<V>, V> extends Dial
 
             @Override
             public final void onLoadFinished(Loader<P> loader, P presenter) {
-                BaseDialogFragment.this.presenter = presenter;
+                BasePresenterDialogFragment.this.presenter = presenter;
                 onPresenterPrepared(presenter);
             }
 
             @Override
             public final void onLoaderReset(Loader<P> loader) {
-                BaseDialogFragment.this.presenter = null;
+                BasePresenterDialogFragment.this.presenter = null;
                 onPresenterDestroyed();
             }
         });
