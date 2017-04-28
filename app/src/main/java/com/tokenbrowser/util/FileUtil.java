@@ -25,7 +25,6 @@ import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.webkit.MimeTypeMap;
 
-import com.crashlytics.android.Crashlytics;
 import com.tokenbrowser.view.BaseApplication;
 
 import org.whispersystems.libsignal.InvalidMessageException;
