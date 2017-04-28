@@ -49,7 +49,7 @@ public class QrCodeHandler implements PaymentConfirmationDialog.OnPaymentConfirm
         final QrCode qrCode = new QrCode(result);
         final @QrCodeType.Type int qrCodeType = qrCode.getQrCodeType();
 
-        if (qrCodeType == QrCodeType.EXTERNAL) {
+        if (qrCodeType == QrCodeType.EXTERNAL_PAY) {
             handleExternalPayment(qrCode);
         } else if (qrCodeType == QrCodeType.ADD) {
             handleAddQrCode(qrCode);
