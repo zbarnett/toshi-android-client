@@ -343,22 +343,15 @@ public final class ChatPresenter implements
     private void startCameraActivity() {
         final Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (cameraIntent.resolveActivity(this.activity.getPackageManager()) != null) {
-            File photoFile = null;
-            try {
-                photoFile = new FileUtil().createImageFileWithRandomName(this.activity);
-                this.captureImageFilename = photoFile.getName();
-            } catch (IOException e) {
-                LogUtil.exception(getClass(), "Error during creating image file ", e);
-            }
-            if (photoFile != null) {
-                final Uri photoURI = FileProvider.getUriForFile(
-                        BaseApplication.get(),
-                        BuildConfig.APPLICATION_ID + ".photos",
-                        photoFile);
-                grantUriPermission(cameraIntent, photoURI);
-                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                this.activity.startActivityForResult(cameraIntent, CAPTURE_IMAGE);
-            }
+            final File photoFile = new FileUtil().createImageFileWithRandomName();
+            this.captureImageFilename = photoFile.getName();
+            final Uri photoURI = FileProvider.getUriForFile(
+                    BaseApplication.get(),
+                    BuildConfig.APPLICATION_ID + ".photos",
+                    photoFile);
+            grantUriPermission(cameraIntent, photoURI);
+            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+            this.activity.startActivityForResult(cameraIntent, CAPTURE_IMAGE);
         }
     }
 

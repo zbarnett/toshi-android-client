@@ -89,9 +89,9 @@ public class FileUtil {
         }
     }
 
-    public File createImageFileWithRandomName(final Context context) throws IOException {
+    public File createImageFileWithRandomName() {
         final String filename = UUID.randomUUID().toString() + ".jpg";
-        return new File(context.getFilesDir(), filename);
+        return new File(BaseApplication.get().getFilesDir(), filename);
     }
 
     public String getMimeTypeFromFilename(final String filename) {

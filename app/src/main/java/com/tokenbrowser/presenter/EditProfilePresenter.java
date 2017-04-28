@@ -48,7 +48,6 @@ import com.tokenbrowser.view.activity.ImageCropActivity;
 import com.tokenbrowser.view.fragment.DialogFragment.ChooserDialog;
 
 import java.io.File;
-import java.io.IOException;
 
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -234,22 +233,15 @@ public class EditProfilePresenter implements Presenter<EditProfileActivity> {
     private void startCameraActivity() {
         final Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (cameraIntent.resolveActivity(this.activity.getPackageManager()) != null) {
-            File photoFile = null;
-            try {
-                photoFile = new FileUtil().createImageFileWithRandomName(this.activity);
-                this.capturedImagePath = photoFile.getAbsolutePath();
-            } catch (IOException e) {
-                LogUtil.exception(getClass(), "Error during creating image file", e);
-            }
-            if (photoFile != null) {
-                final Uri photoURI = FileProvider.getUriForFile(
-                        BaseApplication.get(),
-                        BuildConfig.APPLICATION_ID + ".photos",
-                        photoFile);
-                grantUriPermission(cameraIntent, photoURI);
-                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                this.activity.startActivityForResult(cameraIntent, CAPTURE_IMAGE);
-            }
+            final File photoFile = new FileUtil().createImageFileWithRandomName();
+            this.capturedImagePath = photoFile.getAbsolutePath();
+            final Uri photoURI = FileProvider.getUriForFile(
+                    BaseApplication.get(),
+                    BuildConfig.APPLICATION_ID + ".photos",
+                    photoFile);
+            grantUriPermission(cameraIntent, photoURI);
+            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+            this.activity.startActivityForResult(cameraIntent, CAPTURE_IMAGE);
         }
     }
 
