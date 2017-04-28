@@ -31,6 +31,7 @@ import android.widget.LinearLayout;
 
 import com.google.android.flexbox.FlexboxLayout;
 import com.tokenbrowser.R;
+import com.tokenbrowser.view.custom.listener.OnFinishListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,18 +43,14 @@ public class DragAndDropView extends LinearLayout {
     private ArrayList<String> userInputtedBackupPhrase;
     private ArrayList<String> remainingInputBackupPhrase;
     private ShadowTextView draggedView;
-    private OnFinishedListener onFinishedListener;
+    private OnFinishListener onFinishedListener;
 
     private static final String BUNDLE__CORRECT_BACKUP_PHRASE = "correctBackupPhrase";
     private static final String BUNDLE__USER_INPUTTED_BACKUP_PHRASE = "userInputtedBackupPhrase";
     private static final String BUNDLE__REMAINING_INPUT_BACKUP_PHRASE = "remainingInputBackupPhrase";
     private static final String BUNDLE__SUPER_STATE = "superState";
 
-    public interface OnFinishedListener {
-        void onFinish();
-    }
-
-    public void setOnFinishedListener(final OnFinishedListener listener) {
+    public void setOnFinishListener(final OnFinishListener listener) {
         this.onFinishedListener = listener;
     }
 
