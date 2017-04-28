@@ -23,6 +23,7 @@ import android.support.annotation.NonNull;
 
 import com.tokenbrowser.R;
 import com.tokenbrowser.databinding.ActivityUserSearchBinding;
+import com.tokenbrowser.presenter.LoaderIds;
 import com.tokenbrowser.presenter.UserSearchPresenter;
 import com.tokenbrowser.presenter.factory.PresenterFactory;
 import com.tokenbrowser.presenter.factory.UserSearchPresenterFactory;
@@ -59,6 +60,6 @@ public class UserSearchActivity extends BasePresenterActivity<UserSearchPresente
 
     @Override
     protected int loaderId() {
-        return 4000;
+        return LoaderIds.get(this.getClass().getCanonicalName());
     }
 }

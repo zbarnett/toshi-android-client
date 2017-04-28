@@ -20,8 +20,9 @@ package com.tokenbrowser.view.activity;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 
-import com.tokenbrowser.BuildConfig;
 import com.crashlytics.android.Crashlytics;
+import com.tokenbrowser.BuildConfig;
+import com.tokenbrowser.presenter.LoaderIds;
 import com.tokenbrowser.presenter.SplashPresenter;
 import com.tokenbrowser.presenter.factory.PresenterFactory;
 import com.tokenbrowser.presenter.factory.SplashPresenterFactory;
@@ -52,6 +53,6 @@ public class SplashActivity extends BasePresenterActivity<SplashPresenter, Splas
 
     @Override
     protected int loaderId() {
-        return 1;
+        return LoaderIds.get(this.getClass().getCanonicalName());
     }
 }

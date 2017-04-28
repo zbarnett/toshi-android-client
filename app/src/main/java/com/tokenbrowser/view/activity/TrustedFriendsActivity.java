@@ -23,6 +23,7 @@ import android.support.annotation.NonNull;
 
 import com.tokenbrowser.R;
 import com.tokenbrowser.databinding.ActivityTrustedFriendsBinding;
+import com.tokenbrowser.presenter.LoaderIds;
 import com.tokenbrowser.presenter.TrustedFriendsPresenter;
 import com.tokenbrowser.presenter.factory.PresenterFactory;
 import com.tokenbrowser.presenter.factory.TrustedFriendsPresenterFactory;
@@ -56,6 +57,6 @@ public class TrustedFriendsActivity extends BasePresenterActivity<TrustedFriends
 
     @Override
     protected int loaderId() {
-        return 5004;
+        return LoaderIds.get(this.getClass().getCanonicalName());
     }
 }

@@ -26,6 +26,7 @@ import android.view.View;
 
 import com.tokenbrowser.R;
 import com.tokenbrowser.databinding.ActivityMainBinding;
+import com.tokenbrowser.presenter.LoaderIds;
 import com.tokenbrowser.presenter.MainPresenter;
 import com.tokenbrowser.presenter.factory.MainPresenterFactory;
 import com.tokenbrowser.presenter.factory.PresenterFactory;
@@ -37,7 +38,6 @@ public class MainActivity
         implements OfflineViewRenderer {
 
     public static final String EXTRA__ACTIVE_TAB = "active_tab";
-    private static final int UNIQUE_ACTIVITY_ID = 9000;
     private ActivityMainBinding binding;
     private MainPresenter presenter;
 
@@ -59,8 +59,8 @@ public class MainActivity
     }
 
     @Override
-    public int loaderId() {
-        return UNIQUE_ACTIVITY_ID;
+    protected int loaderId() {
+        return LoaderIds.get(this.getClass().getCanonicalName());
     }
 
     @Override

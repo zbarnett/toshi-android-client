@@ -21,11 +21,12 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 
-import com.tokenbrowser.presenter.ImageConfirmationPresenter;
-import com.tokenbrowser.presenter.factory.ImageConfirmationPresenterFactory;
-import com.tokenbrowser.presenter.factory.PresenterFactory;
 import com.tokenbrowser.R;
 import com.tokenbrowser.databinding.ActivityImageConfirmationBinding;
+import com.tokenbrowser.presenter.ImageConfirmationPresenter;
+import com.tokenbrowser.presenter.LoaderIds;
+import com.tokenbrowser.presenter.factory.ImageConfirmationPresenterFactory;
+import com.tokenbrowser.presenter.factory.PresenterFactory;
 
 public class ImageConfirmationActivity extends BasePresenterActivity<ImageConfirmationPresenter, ImageConfirmationActivity> {
 
@@ -67,7 +68,7 @@ public class ImageConfirmationActivity extends BasePresenterActivity<ImageConfir
 
     @Override
     protected int loaderId() {
-        return 4007;
+        return LoaderIds.get(this.getClass().getCanonicalName());
     }
 
     @Override

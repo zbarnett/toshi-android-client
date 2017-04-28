@@ -24,6 +24,7 @@ import android.support.annotation.NonNull;
 import com.tokenbrowser.R;
 import com.tokenbrowser.databinding.ActivityAboutBinding;
 import com.tokenbrowser.presenter.AboutPresenter;
+import com.tokenbrowser.presenter.LoaderIds;
 import com.tokenbrowser.presenter.factory.AboutPresenterFactory;
 import com.tokenbrowser.presenter.factory.PresenterFactory;
 
@@ -56,6 +57,6 @@ public class AboutActivity extends BasePresenterActivity<AboutPresenter, AboutAc
 
     @Override
     protected int loaderId() {
-        return 5001;
+        return LoaderIds.get(this.getClass().getCanonicalName());
     }
 }

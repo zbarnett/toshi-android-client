@@ -19,6 +19,7 @@ package com.tokenbrowser.view.activity;
 
 import android.support.annotation.NonNull;
 
+import com.tokenbrowser.presenter.LoaderIds;
 import com.tokenbrowser.presenter.SignOutPresenter;
 import com.tokenbrowser.presenter.factory.PresenterFactory;
 import com.tokenbrowser.presenter.factory.SignOutPresenterFactory;
@@ -36,6 +37,6 @@ public class SignOutActivity extends BasePresenterActivity<SignOutPresenter, Sig
 
     @Override
     protected int loaderId() {
-        return 7000;
+        return LoaderIds.get(this.getClass().getCanonicalName());
     }
 }

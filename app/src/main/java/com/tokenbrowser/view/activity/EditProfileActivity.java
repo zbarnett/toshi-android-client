@@ -28,6 +28,7 @@ import com.tokenbrowser.databinding.ActivityEditProfileBinding;
 import com.tokenbrowser.model.local.ActivityResultHolder;
 import com.tokenbrowser.model.local.PermissionResultHolder;
 import com.tokenbrowser.presenter.EditProfilePresenter;
+import com.tokenbrowser.presenter.LoaderIds;
 import com.tokenbrowser.presenter.factory.EditProfilePresenterFactory;
 import com.tokenbrowser.presenter.factory.PresenterFactory;
 
@@ -120,6 +121,6 @@ public class EditProfileActivity extends BasePresenterActivity<EditProfilePresen
 
     @Override
     protected int loaderId() {
-        return 5003;
+        return LoaderIds.get(this.getClass().getCanonicalName());
     }
 }

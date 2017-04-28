@@ -28,6 +28,7 @@ import android.view.ViewGroup;
 import com.tokenbrowser.R;
 import com.tokenbrowser.databinding.FragmentAppsBinding;
 import com.tokenbrowser.presenter.AppsPresenter;
+import com.tokenbrowser.presenter.LoaderIds;
 import com.tokenbrowser.presenter.factory.AppsPresenterFactory;
 import com.tokenbrowser.presenter.factory.PresenterFactory;
 import com.tokenbrowser.view.fragment.BasePresenterFragment;
@@ -64,6 +65,6 @@ public class AppsFragment extends BasePresenterFragment<AppsPresenter, AppsFragm
 
     @Override
     protected int loaderId() {
-        return 2;
+        return LoaderIds.get(this.getClass().getCanonicalName());
     }
 }

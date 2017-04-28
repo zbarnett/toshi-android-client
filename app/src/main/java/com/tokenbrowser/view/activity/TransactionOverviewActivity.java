@@ -23,6 +23,7 @@ import android.support.annotation.NonNull;
 
 import com.tokenbrowser.R;
 import com.tokenbrowser.databinding.ActivityTransactionOverviewBinding;
+import com.tokenbrowser.presenter.LoaderIds;
 import com.tokenbrowser.presenter.TransactionOverviewPresenter;
 import com.tokenbrowser.presenter.factory.PresenterFactory;
 import com.tokenbrowser.presenter.factory.TransactionOverviewPresenterFactory;
@@ -56,6 +57,6 @@ public class TransactionOverviewActivity extends BasePresenterActivity<Transacti
 
     @Override
     protected int loaderId() {
-        return 5009;
+        return LoaderIds.get(this.getClass().getCanonicalName());
     }
 }

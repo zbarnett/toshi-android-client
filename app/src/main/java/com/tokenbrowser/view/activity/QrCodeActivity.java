@@ -23,6 +23,7 @@ import android.support.annotation.NonNull;
 
 import com.tokenbrowser.R;
 import com.tokenbrowser.databinding.ActivityQrCodeBinding;
+import com.tokenbrowser.presenter.LoaderIds;
 import com.tokenbrowser.presenter.QrCodePresenter;
 import com.tokenbrowser.presenter.factory.PresenterFactory;
 import com.tokenbrowser.presenter.factory.QrCodePresenterFactory;
@@ -56,6 +57,6 @@ public class QrCodeActivity extends BasePresenterActivity<QrCodePresenter, QrCod
 
     @Override
     protected int loaderId() {
-        return 5008;
+        return LoaderIds.get(this.getClass().getCanonicalName());
     }
 }

@@ -23,9 +23,10 @@ import android.support.annotation.NonNull;
 
 import com.tokenbrowser.R;
 import com.tokenbrowser.databinding.ActivityWebViewBinding;
-import com.tokenbrowser.presenter.webview.WebViewPresenter;
+import com.tokenbrowser.presenter.LoaderIds;
 import com.tokenbrowser.presenter.factory.PresenterFactory;
 import com.tokenbrowser.presenter.factory.WebViewPresenterFactory;
+import com.tokenbrowser.presenter.webview.WebViewPresenter;
 
 public class WebViewActivity extends BasePresenterActivity<WebViewPresenter, WebViewActivity> {
 
@@ -57,6 +58,6 @@ public class WebViewActivity extends BasePresenterActivity<WebViewPresenter, Web
 
     @Override
     protected int loaderId() {
-        return 9000;
+        return LoaderIds.get(this.getClass().getCanonicalName());
     }
 }

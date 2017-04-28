@@ -31,11 +31,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.tokenbrowser.presenter.ContactsPresenter;
-import com.tokenbrowser.presenter.factory.ContactsPresenterFactory;
-import com.tokenbrowser.presenter.factory.PresenterFactory;
 import com.tokenbrowser.R;
 import com.tokenbrowser.databinding.FragmentContactsBinding;
+import com.tokenbrowser.presenter.ContactsPresenter;
+import com.tokenbrowser.presenter.LoaderIds;
+import com.tokenbrowser.presenter.factory.ContactsPresenterFactory;
+import com.tokenbrowser.presenter.factory.PresenterFactory;
 import com.tokenbrowser.view.fragment.BasePresenterFragment;
 
 public class ContactsFragment extends BasePresenterFragment<ContactsPresenter, ContactsFragment> {
@@ -80,7 +81,7 @@ public class ContactsFragment extends BasePresenterFragment<ContactsPresenter, C
 
     @Override
     protected int loaderId() {
-        return 4001;
+        return LoaderIds.get(this.getClass().getCanonicalName());
     }
 
     @Override
