@@ -116,7 +116,7 @@ public class EditProfilePresenter implements Presenter<EditProfileActivity> {
             return;
         }
         this.activity.getBinding().avatar.setImageResource(0);
-        ImageUtil.load(this.avatarUrl, this.activity.getBinding().avatar);
+        ImageUtil.loadFromNetwork(this.avatarUrl, this.activity.getBinding().avatar);
     }
 
     private void initClickListeners() {
