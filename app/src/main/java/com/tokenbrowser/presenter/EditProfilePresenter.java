@@ -44,6 +44,7 @@ import com.tokenbrowser.util.LogUtil;
 import com.tokenbrowser.util.OnSingleClickListener;
 import com.tokenbrowser.view.BaseApplication;
 import com.tokenbrowser.view.activity.EditProfileActivity;
+import com.tokenbrowser.view.activity.ImageCropActivity;
 import com.tokenbrowser.view.fragment.DialogFragment.ChooserDialog;
 
 import java.io.File;
@@ -72,7 +73,6 @@ public class EditProfilePresenter implements Presenter<EditProfileActivity> {
     private String locationFieldContents;
     private String avatarUrl;
     private String capturedImagePath;
-    private boolean isUploading;
 
     @Override
     public void onViewAttached(final EditProfileActivity view) {
@@ -111,7 +111,7 @@ public class EditProfilePresenter implements Presenter<EditProfileActivity> {
     }
 
     private void loadAvatar() {
-        if (this.avatarUrl == null || this.isUploading) {
+        if (this.avatarUrl == null) {
             this.activity.getBinding().avatar.setImageDrawable(null);
             this.activity.getBinding().avatar.setImageResource(R.color.textColorHint);
             return;
@@ -327,74 +327,21 @@ public class EditProfilePresenter implements Presenter<EditProfileActivity> {
         }
 
         if (resultHolder.getRequestCode() == PICK_IMAGE) {
-            try {
-                handleGalleryImage(resultHolder);
-            } catch (IOException e) {
-                LogUtil.exception(getClass(), "Error during uploading gallery image", e);
-                showFailureMessage();
-                return false;
-            }
+            final Uri imageUri = resultHolder.getIntent().getData();
+            goToImageCropActivity(imageUri);
         } else if (resultHolder.getRequestCode() == CAPTURE_IMAGE) {
-            handleCameraImage();
+            final File file = new File(this.capturedImagePath);
+            final Uri imageUri = Uri.fromFile(file);
+            goToImageCropActivity(imageUri);
         }
 
         return true;
     }
 
-    private void handleGalleryImage(final ActivityResultHolder resultHolder) throws IOException {
-        final Uri uri = resultHolder.getIntent().getData();
-        final FileUtil fileUtil = new FileUtil();
-        final File file = fileUtil.saveFileFromUri(this.activity, uri);
-        uploadAvatar(file);
-    }
-
-    private void handleCameraImage() {
-        final File cameraImage = new File(this.capturedImagePath);
-        uploadAvatar(cameraImage);
-    }
-
-    private void uploadAvatar(final File file) {
-        if (file == null) return;
-        if (!file.exists()) return;
-
-        this.isUploading = true;
-        final Subscription sub =
-                BaseApplication.get()
-                .getTokenManager()
-                .getUserManager()
-                .uploadAvatar(file)
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSuccess(unused -> tryDeleteCachedFile(file))
-                .doOnError(unused -> tryDeleteCachedFile(file))
-                .subscribe(
-                        this::handleUploadSuccess,
-                        __ -> handleUploadError()
-                );
-
-        this.subscriptions.add(sub);
-    }
-
-    private void handleUploadSuccess(final User user) {
-        if (this.activity == null) return;
-        this.isUploading = false;
-        ImageUtil.loadFromNetwork(user.getAvatar(), this.activity.getBinding().avatar);
-        Toast.makeText(this.activity, this.activity.getString(R.string.profile_image_success), Toast.LENGTH_SHORT).show();
-    }
-
-    private boolean tryDeleteCachedFile(final File file) {
-        if (!file.exists()) return true;
-        return file.delete();
-    }
-
-    private void handleUploadError() {
-        if (this.activity == null) return;
-        this.isUploading = false;
-        ImageUtil.load(this.avatarUrl, this.activity.getBinding().avatar);
-        showFailureMessage();
-    }
-
-    private void showFailureMessage() {
-        Toast.makeText(this.activity, this.activity.getString(R.string.profile_image_error), Toast.LENGTH_SHORT).show();
+    private void goToImageCropActivity(final Uri imageUri) {
+        final Intent intent = new Intent(this.activity, ImageCropActivity.class)
+                .putExtra(ImageCropActivity.IMAGE_URI, imageUri);
+        this.activity.startActivity(intent);
     }
 
     public boolean handlePermissionResult(final PermissionResultHolder permissionResultHolder) {
