@@ -26,6 +26,7 @@ import android.support.annotation.NonNull;
 import com.tokenbrowser.R;
 import com.tokenbrowser.databinding.ActivityScanResultBinding;
 import com.tokenbrowser.model.local.ActivityResultHolder;
+import com.tokenbrowser.presenter.LoaderIds;
 import com.tokenbrowser.presenter.ViewUserPresenter;
 import com.tokenbrowser.presenter.factory.PresenterFactory;
 import com.tokenbrowser.presenter.factory.ViewUserPresenterFactory;
@@ -85,6 +86,6 @@ public class ViewUserActivity extends BasePresenterActivity<ViewUserPresenter, V
 
     @Override
     protected int loaderId() {
-        return 3001;
+        return LoaderIds.get(this.getClass().getCanonicalName());
     }
 }

@@ -21,11 +21,12 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 
-import com.tokenbrowser.presenter.FullscreenImagePresenter;
-import com.tokenbrowser.presenter.factory.FullscreenImagePresenterFactory;
-import com.tokenbrowser.presenter.factory.PresenterFactory;
 import com.tokenbrowser.R;
 import com.tokenbrowser.databinding.ActivityFullscreenImageBinding;
+import com.tokenbrowser.presenter.FullscreenImagePresenter;
+import com.tokenbrowser.presenter.LoaderIds;
+import com.tokenbrowser.presenter.factory.FullscreenImagePresenterFactory;
+import com.tokenbrowser.presenter.factory.PresenterFactory;
 
 public class FullscreenImageActivity extends BasePresenterActivity<FullscreenImagePresenter, FullscreenImageActivity> {
 
@@ -57,6 +58,6 @@ public class FullscreenImageActivity extends BasePresenterActivity<FullscreenIma
 
     @Override
     protected int loaderId() {
-        return 4004;
+        return LoaderIds.get(this.getClass().getCanonicalName());
     }
 }

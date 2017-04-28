@@ -23,6 +23,7 @@ import android.support.annotation.NonNull;
 
 import com.tokenbrowser.R;
 import com.tokenbrowser.databinding.ActivitySignInBinding;
+import com.tokenbrowser.presenter.LoaderIds;
 import com.tokenbrowser.presenter.SignInPresenter;
 import com.tokenbrowser.presenter.factory.PresenterFactory;
 import com.tokenbrowser.presenter.factory.SignInPresenterFactory;
@@ -56,6 +57,6 @@ public class SignInActivity extends BasePresenterActivity<SignInPresenter, SignI
 
     @Override
     protected int loaderId() {
-        return 1;
+        return LoaderIds.get(this.getClass().getCanonicalName());
     }
 }

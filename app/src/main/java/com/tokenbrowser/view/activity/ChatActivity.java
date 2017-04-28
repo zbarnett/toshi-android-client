@@ -24,12 +24,13 @@ import android.support.annotation.NonNull;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.tokenbrowser.R;
+import com.tokenbrowser.databinding.ActivityChatBinding;
 import com.tokenbrowser.model.local.ActivityResultHolder;
+import com.tokenbrowser.presenter.LoaderIds;
 import com.tokenbrowser.presenter.chat.ChatPresenter;
 import com.tokenbrowser.presenter.factory.ChatPresenterFactory;
 import com.tokenbrowser.presenter.factory.PresenterFactory;
-import com.tokenbrowser.R;
-import com.tokenbrowser.databinding.ActivityChatBinding;
 
 public final class ChatActivity extends BasePresenterActivity<ChatPresenter, ChatActivity> {
 
@@ -103,7 +104,7 @@ public final class ChatActivity extends BasePresenterActivity<ChatPresenter, Cha
 
     @Override
     protected int loaderId() {
-        return 4002;
+        return LoaderIds.get(this.getClass().getCanonicalName());
     }
 
     @Override

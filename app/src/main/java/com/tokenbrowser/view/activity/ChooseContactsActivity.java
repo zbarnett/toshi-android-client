@@ -24,6 +24,7 @@ import android.support.annotation.NonNull;
 import com.tokenbrowser.R;
 import com.tokenbrowser.databinding.ActivityChooseContactBinding;
 import com.tokenbrowser.presenter.ChooseContactPresenter;
+import com.tokenbrowser.presenter.LoaderIds;
 import com.tokenbrowser.presenter.factory.ChooseContactsPresenterFactory;
 import com.tokenbrowser.presenter.factory.PresenterFactory;
 
@@ -61,6 +62,6 @@ public class ChooseContactsActivity extends BasePresenterActivity<ChooseContactP
 
     @Override
     protected int loaderId() {
-        return 5002;
+        return LoaderIds.get(this.getClass().getCanonicalName());
     }
 }

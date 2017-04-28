@@ -24,6 +24,7 @@ import android.support.annotation.NonNull;
 import com.tokenbrowser.R;
 import com.tokenbrowser.databinding.ActivityBackupPhraseBinding;
 import com.tokenbrowser.presenter.BackupPhrasePresenter;
+import com.tokenbrowser.presenter.LoaderIds;
 import com.tokenbrowser.presenter.factory.BackupPhrasePresenterFactory;
 import com.tokenbrowser.presenter.factory.PresenterFactory;
 
@@ -56,6 +57,6 @@ public class BackupPhraseActivity extends BasePresenterActivity<BackupPhrasePres
 
     @Override
     protected int loaderId() {
-        return 5006;
+        return LoaderIds.get(this.getClass().getCanonicalName());
     }
 }

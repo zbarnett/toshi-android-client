@@ -25,6 +25,7 @@ import android.view.View;
 import com.tokenbrowser.R;
 import com.tokenbrowser.databinding.ActivityScannerBinding;
 import com.tokenbrowser.model.local.PermissionResultHolder;
+import com.tokenbrowser.presenter.LoaderIds;
 import com.tokenbrowser.presenter.ScannerPresenter;
 import com.tokenbrowser.presenter.factory.PresenterFactory;
 import com.tokenbrowser.presenter.factory.ScannerPresenterFactory;
@@ -78,7 +79,7 @@ public class ScannerActivity
 
     @Override
     protected int loaderId() {
-        return hashCode();
+        return LoaderIds.get(this.getClass().getCanonicalName());
     }
 
     @Override

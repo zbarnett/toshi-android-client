@@ -30,11 +30,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.tokenbrowser.R;
+import com.tokenbrowser.databinding.FragmentRecentBinding;
+import com.tokenbrowser.presenter.LoaderIds;
 import com.tokenbrowser.presenter.RecentPresenter;
 import com.tokenbrowser.presenter.factory.PresenterFactory;
 import com.tokenbrowser.presenter.factory.RecentPresenterFactory;
-import com.tokenbrowser.R;
-import com.tokenbrowser.databinding.FragmentRecentBinding;
 import com.tokenbrowser.view.fragment.BasePresenterFragment;
 
 public class RecentFragment extends BasePresenterFragment<RecentPresenter, RecentFragment> {
@@ -78,7 +79,7 @@ public class RecentFragment extends BasePresenterFragment<RecentPresenter, Recen
 
     @Override
     protected int loaderId() {
-        return hashCode();
+        return LoaderIds.get(this.getClass().getCanonicalName());
     }
 
     @Override

@@ -28,12 +28,13 @@ import android.view.ViewGroup;
 import com.tokenbrowser.R;
 import com.tokenbrowser.databinding.FragmentPaymentRequestConfirmationBinding;
 import com.tokenbrowser.model.sofa.Payment;
+import com.tokenbrowser.presenter.LoaderIds;
 import com.tokenbrowser.presenter.PaymentRequestConfirmPresenter;
 import com.tokenbrowser.presenter.factory.PaymentRequestConfirmPresenterFactory;
 import com.tokenbrowser.presenter.factory.PresenterFactory;
 import com.tokenbrowser.util.PaymentType;
 
-public class PaymentConfirmationDialog extends BaseDialogFragment<PaymentRequestConfirmPresenter, PaymentConfirmationDialog> {
+public class PaymentConfirmationDialog extends BasePresenterDialogFragment<PaymentRequestConfirmPresenter, PaymentConfirmationDialog> {
 
     public static final String TAG = "PaymentConfirmationDialog";
     public static final String TOKEN_ID = "token_id";
@@ -108,6 +109,6 @@ public class PaymentConfirmationDialog extends BaseDialogFragment<PaymentRequest
 
     @Override
     protected int loaderId() {
-        return 10;
+        return LoaderIds.get(this.getClass().getCanonicalName());
     }
 }

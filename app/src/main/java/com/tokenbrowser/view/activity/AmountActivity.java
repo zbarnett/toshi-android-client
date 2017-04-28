@@ -24,6 +24,7 @@ import android.support.annotation.NonNull;
 import com.tokenbrowser.R;
 import com.tokenbrowser.databinding.ActivityAmountBinding;
 import com.tokenbrowser.presenter.AmountPresenter;
+import com.tokenbrowser.presenter.LoaderIds;
 import com.tokenbrowser.presenter.factory.AmountPresenterFactory;
 import com.tokenbrowser.presenter.factory.PresenterFactory;
 
@@ -57,6 +58,6 @@ public class AmountActivity extends BasePresenterActivity<AmountPresenter, Amoun
 
     @Override
     protected int loaderId() {
-        return 8001;
+        return LoaderIds.get(this.getClass().getCanonicalName());
     }
 }

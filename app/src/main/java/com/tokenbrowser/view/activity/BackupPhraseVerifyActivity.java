@@ -24,6 +24,7 @@ import android.support.annotation.NonNull;
 import com.tokenbrowser.R;
 import com.tokenbrowser.databinding.ActivityBackupPhraseVerifyBinding;
 import com.tokenbrowser.presenter.BackupPhraseVerifyPresenter;
+import com.tokenbrowser.presenter.LoaderIds;
 import com.tokenbrowser.presenter.factory.BackupPhraseVerifyPresenterFactory;
 import com.tokenbrowser.presenter.factory.PresenterFactory;
 
@@ -57,6 +58,6 @@ public class BackupPhraseVerifyActivity
 
     @Override
     protected int loaderId() {
-        return 5007;
+        return LoaderIds.get(this.getClass().getCanonicalName());
     }
 }

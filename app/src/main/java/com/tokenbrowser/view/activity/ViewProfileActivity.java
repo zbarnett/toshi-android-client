@@ -23,6 +23,7 @@ import android.support.annotation.NonNull;
 
 import com.tokenbrowser.R;
 import com.tokenbrowser.databinding.ActivityViewProfileBinding;
+import com.tokenbrowser.presenter.LoaderIds;
 import com.tokenbrowser.presenter.ViewProfilePresenter;
 import com.tokenbrowser.presenter.factory.PresenterFactory;
 import com.tokenbrowser.presenter.factory.ViewProfilePresenterFactory;
@@ -56,6 +57,6 @@ public class ViewProfileActivity extends BasePresenterActivity<ViewProfilePresen
 
     @Override
     protected int loaderId() {
-        return 5002;
+        return LoaderIds.get(this.getClass().getCanonicalName());
     }
 }

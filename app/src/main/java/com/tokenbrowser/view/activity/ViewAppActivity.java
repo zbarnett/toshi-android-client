@@ -25,6 +25,7 @@ import android.support.annotation.NonNull;
 import com.tokenbrowser.R;
 import com.tokenbrowser.databinding.ActivityViewAppBinding;
 import com.tokenbrowser.model.local.ActivityResultHolder;
+import com.tokenbrowser.presenter.LoaderIds;
 import com.tokenbrowser.presenter.ViewAppPresenter;
 import com.tokenbrowser.presenter.factory.PresenterFactory;
 import com.tokenbrowser.presenter.factory.ViewAppPresenterFactory;
@@ -84,6 +85,6 @@ public class ViewAppActivity extends BasePresenterActivity<ViewAppPresenter, Vie
 
     @Override
     protected int loaderId() {
-        return 2001;
+        return LoaderIds.get(this.getClass().getCanonicalName());
     }
 }

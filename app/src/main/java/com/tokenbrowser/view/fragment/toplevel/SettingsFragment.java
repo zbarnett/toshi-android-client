@@ -28,6 +28,7 @@ import android.view.ViewGroup;
 
 import com.tokenbrowser.R;
 import com.tokenbrowser.databinding.FragmentSettingsBinding;
+import com.tokenbrowser.presenter.LoaderIds;
 import com.tokenbrowser.presenter.SettingsPresenter;
 import com.tokenbrowser.presenter.factory.PresenterFactory;
 import com.tokenbrowser.presenter.factory.SettingsPresenterFactory;
@@ -67,6 +68,6 @@ public class SettingsFragment extends BasePresenterFragment<SettingsPresenter, S
 
     @Override
     protected int loaderId() {
-        return 5001;
+        return LoaderIds.get(this.getClass().getCanonicalName());
     }
 }

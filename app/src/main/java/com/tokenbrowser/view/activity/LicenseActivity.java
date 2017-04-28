@@ -24,6 +24,7 @@ import android.support.annotation.NonNull;
 import com.tokenbrowser.R;
 import com.tokenbrowser.databinding.ActivityLicenseBinding;
 import com.tokenbrowser.presenter.LicensePresenter;
+import com.tokenbrowser.presenter.LoaderIds;
 import com.tokenbrowser.presenter.factory.LicensePresenterFactory;
 import com.tokenbrowser.presenter.factory.PresenterFactory;
 
@@ -58,6 +59,6 @@ public class LicenseActivity extends BasePresenterActivity<LicensePresenter, Lic
 
     @Override
     protected int loaderId() {
-        return 5003;
+        return LoaderIds.get(this.getClass().getCanonicalName());
     }
 }

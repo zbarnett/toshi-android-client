@@ -24,6 +24,7 @@ import android.support.annotation.NonNull;
 import com.tokenbrowser.R;
 import com.tokenbrowser.databinding.ActivityDepositBinding;
 import com.tokenbrowser.presenter.DepositPresenter;
+import com.tokenbrowser.presenter.LoaderIds;
 import com.tokenbrowser.presenter.factory.DepositPresenterFactory;
 import com.tokenbrowser.presenter.factory.PresenterFactory;
 
@@ -56,6 +57,6 @@ public class DepositActivity extends BasePresenterActivity<DepositPresenter, Dep
 
     @Override
     protected int loaderId() {
-        return 5003;
+        return LoaderIds.get(this.getClass().getCanonicalName());
     }
 }
