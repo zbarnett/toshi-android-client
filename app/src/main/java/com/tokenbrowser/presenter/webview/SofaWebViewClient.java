@@ -18,6 +18,7 @@
 package com.tokenbrowser.presenter.webview;
 
 
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -39,7 +40,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 
-public class SofaWebViewClient extends WebViewClient {
+/* package */ class SofaWebViewClient extends WebViewClient {
 
     private final OnLoadListener listener;
     private final CompositeSubscription subscriptions;
@@ -90,26 +91,27 @@ public class SofaWebViewClient extends WebViewClient {
     }
 
     @Override
-    public void onPageFinished(final WebView webView, final String url) {
+    public void onPageStarted(WebView webView, String url, Bitmap favicon) {
         final Subscription sub =
                 getSofaScript()
                 .subscribe(
-                        sofaScript -> this.handlePageFinished(sofaScript, webView),
+                        sofaScript -> this.injectSofaScript(sofaScript, webView),
                         this.listener::onError
                 );
         this.subscriptions.add(sub);
     }
 
-    private void handlePageFinished(final String sofaScript, final WebView webView) {
+    @Override
+    public void onPageFinished(WebView webView, final String url) {
+        this.listener.onLoaded();
+    }
+
+    private void injectSofaScript(final String sofaScript, final WebView webView) {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
             webView.evaluateJavascript(sofaScript, null);
-            webView.evaluateJavascript("SOFA.initialize();", null);
         } else {
             webView.loadUrl("javascript:" + sofaScript, null);
-            webView.loadUrl("javascript:SOFA.initialize();");
         }
-
-        this.listener.onLoaded();
     }
 
     private Single<String> getSofaScript() {
@@ -125,7 +127,7 @@ public class SofaWebViewClient extends WebViewClient {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public void destroy() {
+    /* package */ void destroy() {
         this.subscriptions.clear();
     }
 }

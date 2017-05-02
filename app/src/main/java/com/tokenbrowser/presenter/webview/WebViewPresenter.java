@@ -26,6 +26,7 @@ import android.widget.Toast;
 import com.tokenbrowser.R;
 import com.tokenbrowser.presenter.Presenter;
 import com.tokenbrowser.util.LogUtil;
+import com.tokenbrowser.view.BaseApplication;
 import com.tokenbrowser.view.activity.WebViewActivity;
 import com.tokenbrowser.view.custom.listener.OnLoadListener;
 
@@ -114,7 +115,13 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
     private class SOFAHost {
         @JavascriptInterface
         public String getAccounts() {
-            return "0x0";
+            return BaseApplication
+                    .get()
+                    .getTokenManager()
+                    .getWallet()
+                    .toBlocking()
+                    .value()
+                    .getPaymentAddress();
         }
 
         @JavascriptInterface
@@ -124,7 +131,13 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
 
         @JavascriptInterface
         public String signTransaction(final String unsignedTransaction) {
-            return "signature";
+            return BaseApplication
+                    .get()
+                    .getTokenManager()
+                    .getWallet()
+                    .toBlocking()
+                    .value()
+                    .signTransaction(unsignedTransaction);
         }
     }
 }
