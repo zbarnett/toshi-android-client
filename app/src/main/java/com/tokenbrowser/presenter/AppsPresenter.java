@@ -41,6 +41,7 @@ import java.util.concurrent.TimeUnit;
 import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 
 public class AppsPresenter implements Presenter<AppsFragment>{
@@ -49,6 +50,7 @@ public class AppsPresenter implements Presenter<AppsFragment>{
     private AppsFragment fragment;
     private CompositeSubscription subscriptions;
     private boolean firstTimeAttaching = true;
+    private SearchAppAdapter searchAppAdapter;
 
     @Override
     public void onViewAttached(AppsFragment view) {
@@ -65,6 +67,22 @@ public class AppsPresenter implements Presenter<AppsFragment>{
 
     private void initLongLivingObjects() {
         this.subscriptions = new CompositeSubscription();
+          initAdapter();
+    }
+
+    private void initAdapter() {
+        this.searchAppAdapter = new SearchAppAdapter(new ArrayList<>());
+        this.searchAppAdapter.setOnItemClickListener(this::handleAppClicked);
+        this.searchAppAdapter.setOnDappLaunchListener(this::handleDappLaunch);
+
+        tryRerunQuery();
+    }
+
+    private void tryRerunQuery() {
+        final String searchQuery = this.fragment.getBinding().search.getText().toString();
+        if (searchQuery.length() > 0) {
+            runSearchQuery(searchQuery);
+        }
     }
 
     private void initView() {
@@ -90,10 +108,7 @@ public class AppsPresenter implements Presenter<AppsFragment>{
 
         final RecyclerView filteredApps = this.fragment.getBinding().searchList;
         filteredApps.setLayoutManager(new LinearLayoutManager(this.fragment.getContext()));
-        final SearchAppAdapter searchAppAdapter = new SearchAppAdapter(new ArrayList<>());
-        filteredApps.setAdapter(searchAppAdapter);
-        searchAppAdapter.setOnItemClickListener(this::handleAppClicked);
-        searchAppAdapter.setOnDappLaunchListener(this::handleDappLaunch);
+        filteredApps.setAdapter(this.searchAppAdapter);
     }
 
     private void handleAppClicked(final App app) {
@@ -114,21 +129,29 @@ public class AppsPresenter implements Presenter<AppsFragment>{
                 .skip(1)
                 .debounce(400, TimeUnit.MILLISECONDS)
                 .map(CharSequence::toString)
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(searchString -> updateViewState())
-                .doOnNext(this::tryRenderDappLink)
-                .flatMap(this::runSearchQuery)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        this::handleAppSearchResponse,
-                        this::handleAppSearchError
-                );
+                .subscribe(this::runSearchQuery);
 
         updateViewState();
         this.subscriptions.add(sub);
     }
 
-    private Observable<List<App>> runSearchQuery(final String searchString) {
+    private void runSearchQuery(final String query) {
+        final Subscription sub =
+            Observable.just(query)
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(searchString -> updateViewState())
+                .doOnNext(this::tryRenderDappLink)
+                .observeOn(Schedulers.io())
+                .flatMap(this::searchApps)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        this::handleAppSearchResponse,
+                        this::handleAppSearchError
+                );
+        this.subscriptions.add(sub);
+    }
+
+    private Observable<List<App>> searchApps(final String searchString) {
         return BaseApplication
                 .get()
                 .getTokenManager()
@@ -153,19 +176,16 @@ public class AppsPresenter implements Presenter<AppsFragment>{
     }
 
     private void tryRenderDappLink(final String searchString) {
-        final SearchAppAdapter searchAdapter = (SearchAppAdapter) this.fragment.getBinding().searchList.getAdapter();
-
         if (!Patterns.WEB_URL.matcher(searchString).matches()) {
-            searchAdapter.removeDapp();
+            this.searchAppAdapter.removeDapp();
             return;
         }
 
-        searchAdapter.addDapp(searchString);
+        this.searchAppAdapter.addDapp(searchString);
     }
 
     private void handleAppSearchResponse(final List<App> apps) {
-        final SearchAppAdapter searchAdapter = (SearchAppAdapter) this.fragment.getBinding().searchList.getAdapter();
-        searchAdapter.addItems(apps);
+        this.searchAppAdapter.addItems(apps);
     }
 
     private void requestAppData() {
