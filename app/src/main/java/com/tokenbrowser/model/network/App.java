@@ -32,6 +32,7 @@ public class App {
     }
 
     public Double getReputationScore() {
+        if (this.reputation_score == null) return 0.0;
         return reputation_score;
     }
 
