@@ -27,46 +27,44 @@ import com.tokenbrowser.util.LogUtil;
 import com.tokenbrowser.view.activity.ImageConfirmationActivity;
 
 import java.io.File;
-import java.io.IOException;
+
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.subscriptions.CompositeSubscription;
 
 public class ImageConfirmationPresenter implements Presenter<ImageConfirmationActivity> {
 
     private ImageConfirmationActivity activity;
+    private CompositeSubscription subscriptions;
+    private boolean firstTimeAttaching = true;
+
     private Uri fileUri;
     private File imageFile;
 
     @Override
     public void onViewAttached(ImageConfirmationActivity view) {
         this.activity = view;
+
+        if (this.firstTimeAttaching) {
+            this.firstTimeAttaching = false;
+            initLongLivingObjects();
+        }
+
         initShortLivingObjects();
+    }
+
+    private void initLongLivingObjects() {
+        this.subscriptions = new CompositeSubscription();
     }
 
     private void initShortLivingObjects() {
         processIntentData();
-        saveFileToLocalStorage();
-        initToolbar();
         initClickListeners();
-        showImage();
+        saveFileToLocalStorage();
     }
 
     private void processIntentData() {
         this.fileUri = this.activity.getIntent().getParcelableExtra(ImageConfirmationActivity.FILE_URI);
-    }
-
-    private void saveFileToLocalStorage() {
-        try {
-            this.imageFile = new FileUtil().saveFileFromUri(this.activity, fileUri);
-        } catch (IOException e) {
-            LogUtil.exception(getClass(), "Error during saving file to local storage", e);
-        }
-    }
-
-    private void initToolbar() {
-        final String title = this.imageFile.getName().length() > 15
-                ? String.format("%.15s...", this.imageFile.getName())
-                : this.imageFile.getName();
-
-        this.activity.getBinding().title.setText(title);
     }
 
     private void initClickListeners() {
@@ -94,17 +92,49 @@ public class ImageConfirmationPresenter implements Presenter<ImageConfirmationAc
         this.activity.finish();
     }
 
+    private void saveFileToLocalStorage() {
+        final Subscription sub =
+                new FileUtil().saveFileFromUri(this.activity, this.fileUri)
+                .doOnSuccess(file -> this.imageFile = file)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        __ -> updateView(),
+                        this::handleFileError
+                );
+
+        this.subscriptions.add(sub);
+    }
+
+    private void updateView() {
+        initToolbar();
+        showImage();
+    }
+
+    private void initToolbar() {
+        final String title = this.imageFile.getName().length() > 15
+                ? String.format("%.15s...", this.imageFile.getName())
+                : this.imageFile.getName();
+
+        this.activity.getBinding().title.setText(title);
+    }
+
     private void showImage() {
         ImageUtil.renderFileIntoTarget(this.imageFile, this.activity.getBinding().image);
     }
 
+    private void handleFileError(final Throwable throwable) {
+        LogUtil.exception(getClass(), "Error during saving file to local storage", throwable);
+    }
+
     @Override
     public void onViewDetached() {
+        this.subscriptions.clear();
         this.activity = null;
     }
 
     @Override
     public void onDestroyed() {
+        this.subscriptions = null;
         this.activity = null;
     }
 }

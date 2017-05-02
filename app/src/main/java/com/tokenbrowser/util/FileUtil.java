@@ -32,7 +32,6 @@ import org.whispersystems.signalservice.api.SignalServiceMessageReceiver;
 import org.whispersystems.signalservice.api.messages.SignalServiceAttachmentPointer;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,21 +41,26 @@ import java.util.UUID;
 import okio.BufferedSink;
 import okio.Okio;
 import okio.Source;
+import rx.Single;
+import rx.schedulers.Schedulers;
 
 public class FileUtil {
 
     public static final int MAX_SIZE = 1024 * 1024;
 
-    public File saveFileFromUri(final Context context, final Uri uri) throws IOException {
-        final String mimeType = context.getContentResolver().getType(uri);
-        final MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
-        final String fileExtension = mimeTypeMap.getExtensionFromMimeType(mimeType);
-        final String fileName = String.format("%s.%s", UUID.randomUUID().toString(), fileExtension);
-        final File destFile = new File(BaseApplication.get().getFilesDir(), fileName);
-        final InputStream inputStream = BaseApplication.get()
-                .getContentResolver()
-                .openInputStream(uri);
-        return writeToFileFromInputStream(destFile, inputStream);
+    public Single<File> saveFileFromUri(final Context context, final Uri uri) {
+        return Single.fromCallable(() -> {
+            final String mimeType = context.getContentResolver().getType(uri);
+            final MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+            final String fileExtension = mimeTypeMap.getExtensionFromMimeType(mimeType);
+            final String fileName = String.format("%s.%s", UUID.randomUUID().toString(), fileExtension);
+            final File destFile = new File(BaseApplication.get().getFilesDir(), fileName);
+            final InputStream inputStream = BaseApplication.get()
+                    .getContentResolver()
+                    .openInputStream(uri);
+            return writeToFileFromInputStream(destFile, inputStream);
+        })
+        .subscribeOn(Schedulers.io());
     }
 
     private File writeToFileFromInputStream(final File file, final InputStream inputStream) throws IOException {
@@ -98,14 +102,15 @@ public class FileUtil {
         return  MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension);
     }
 
-    public void compressImage(final long maxSize, final File file) throws FileNotFoundException {
-        if (file.length() <= maxSize) {
-            return;
-        }
-
-        final int compressPercentage = (int)(((double)maxSize / file.length()) * 100);
-        final Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
-        final OutputStream outputStream = new FileOutputStream(file);
-        bitmap.compress(Bitmap.CompressFormat.JPEG, compressPercentage, outputStream);
+    public Single<File> compressImage(final long maxSize, final File file) {
+        return Single.fromCallable(() -> {
+            if (file.length() <= maxSize) return file;
+            final int compressPercentage = (int)(((double)maxSize / file.length()) * 100);
+            final Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+            final OutputStream outputStream = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, compressPercentage, outputStream);
+            return file;
+        })
+        .subscribeOn(Schedulers.io());
     }
 }
