@@ -846,16 +846,26 @@ public final class ChatPresenter implements
         }
 
         final File file = new File(filePath);
-        final FileUtil fileUtil = new FileUtil();
-        fileUtil.compressImage(FileUtil.MAX_SIZE, file);
-        sendMediaMessage(file.getAbsolutePath());
+        final Subscription sub =
+                new FileUtil().compressImage(FileUtil.MAX_SIZE, file)
+                .subscribe(
+                        compressedFile -> sendMediaMessage(compressedFile.getAbsolutePath()),
+                        this::handleError
+                );
+
+        this.subscriptions.add(sub);
     }
 
     private void handleCameraResult() throws FileNotFoundException {
         final File file = new File(this.activity.getFilesDir(), this.captureImageFilename);
-        final FileUtil fileUtil = new FileUtil();
-        fileUtil.compressImage(FileUtil.MAX_SIZE, file);
-        sendMediaMessage(file.getAbsolutePath());
+        final Subscription sub =
+                new FileUtil().compressImage(FileUtil.MAX_SIZE, file)
+                .subscribe(
+                        compressedFile -> sendMediaMessage(compressedFile.getAbsolutePath()),
+                        this::handleError
+                );
+
+        this.subscriptions.add(sub);
     }
 
     private void sendMediaMessage(final String filePath) {

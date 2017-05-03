@@ -31,10 +31,8 @@ import com.tokenbrowser.view.activity.ImageCropActivity;
 
 import java.io.File;
 
-import rx.Single;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 
 public class ImageCropPresenter implements Presenter<ImageCropActivity> {
@@ -148,29 +146,16 @@ public class ImageCropPresenter implements Presenter<ImageCropActivity> {
     }
 
     private void createNewFileAndUploadAvatar(final Uri uri) {
+        final FileUtil fileUtil = new FileUtil();
         final Subscription sub =
-                saveFileFromUri(uri)
-                .flatMap(this::compressImage)
+                fileUtil.saveFileFromUri(this.activity, uri)
+                .flatMap(file -> fileUtil.compressImage(FileUtil.MAX_SIZE, file))
                 .subscribe(
                         this::uploadAvatar,
                         __ -> handleUploadError()
                 );
 
         this.subscriptions.add(sub);
-    }
-
-    private Single<File> saveFileFromUri(final Uri uri) {
-        return Single.fromCallable(() -> new FileUtil()
-                .saveFileFromUri(this.activity, uri))
-                .subscribeOn(Schedulers.io());
-    }
-
-    private Single<File> compressImage(final File file) {
-        return Single.fromCallable(() -> {
-            new FileUtil().compressImage(FileUtil.MAX_SIZE, file);
-            return file;
-        })
-        .subscribeOn(Schedulers.io());
     }
 
     private void uploadAvatar(final File file) {
