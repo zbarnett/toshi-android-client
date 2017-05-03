@@ -22,9 +22,11 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.tokenbrowser.R;
-import com.tokenbrowser.databinding.ActivityScanResultBinding;
+import com.tokenbrowser.databinding.ActivityUserProfileBinding;
 import com.tokenbrowser.model.local.ActivityResultHolder;
 import com.tokenbrowser.presenter.LoaderIds;
 import com.tokenbrowser.presenter.ViewUserPresenter;
@@ -35,9 +37,10 @@ public class ViewUserActivity extends BasePresenterActivity<ViewUserPresenter, V
     public static final String EXTRA__USER_ADDRESS = "extra_user_address";
     public static final String EXTRA__PLAY_SCAN_SOUNDS = "play_scan_sounds";
 
-    private ActivityScanResultBinding binding;
+    private ActivityUserProfileBinding binding;
     private ViewUserPresenter presenter;
     private ActivityResultHolder resultHolder;
+    private Menu menu;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -46,7 +49,7 @@ public class ViewUserActivity extends BasePresenterActivity<ViewUserPresenter, V
     }
 
     private void init() {
-        this.binding = DataBindingUtil.setContentView(this, R.layout.activity_scan_result);
+        this.binding = DataBindingUtil.setContentView(this, R.layout.activity_user_profile);
     }
 
     @Override
@@ -55,7 +58,7 @@ public class ViewUserActivity extends BasePresenterActivity<ViewUserPresenter, V
         tryProcessResultHolder();
     }
 
-    public ActivityScanResultBinding getBinding() {
+    public ActivityUserProfileBinding getBinding() {
         return this.binding;
     }
 
@@ -87,5 +90,22 @@ public class ViewUserActivity extends BasePresenterActivity<ViewUserPresenter, V
     @Override
     protected int loaderId() {
         return LoaderIds.get(this.getClass().getCanonicalName());
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(final Menu menu) {
+        this.menu = menu;
+        getMenuInflater().inflate(R.menu.profile, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(final MenuItem item) {
+        this.presenter.handleActionMenuClicked(item);
+        return super.onOptionsItemSelected(item);
+    }
+
+    public Menu getMenu() {
+        return this.menu;
     }
 }

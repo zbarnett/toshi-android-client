@@ -186,4 +186,16 @@
     <string name="move_and_scale">Move and scale</string>
     <string name="crop_error">Unable to crop the image. Please try again</string>
     <string name="confirm_image">Confirm image</string>
+    <string name="block">Block</string>
+    <string name="unblock">Unblock</string>
+    <string name="report">Report</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="block_user_dialog_title">Block username</string>
+    <string name="block_user_dialog_message">They won\'t be able to find your profile, or message you on Token. Users won\'t know that you\'ve blocked them.</string>
+    <string name="unblock_user_dialog_title">Unblock username</string>
+    <string name="unblock_user_dialog_message">They will be able to find your profile and message you on Token. Users won\'t know that you\'ve blocked them.</string>
+    <string name="block_user_confirmation_dialog_title">Username blocked</string>
+    <string name="block_user_confirmation_dialog_message">You can unblock them any time from their profile</string>
+    <string name="unblock_user_confirmation_dialog_title">Username unblocked</string>
+    <string name="unblock_user_confirmation_dialog_message">You can block them any time from their profile</string>
 </resources>
