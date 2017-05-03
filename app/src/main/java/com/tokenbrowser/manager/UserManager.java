@@ -23,8 +23,10 @@ import android.content.SharedPreferences;
 
 import com.tokenbrowser.crypto.HDWallet;
 import com.tokenbrowser.manager.network.IdService;
+import com.tokenbrowser.manager.store.BlockedUserStore;
 import com.tokenbrowser.manager.store.ContactStore;
 import com.tokenbrowser.manager.store.UserStore;
+import com.tokenbrowser.model.local.BlockedUser;
 import com.tokenbrowser.model.local.Contact;
 import com.tokenbrowser.model.local.User;
 import com.tokenbrowser.model.network.ServerTime;
@@ -43,6 +45,7 @@ import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.adapter.rxjava.HttpException;
+import rx.Completable;
 import rx.Observable;
 import rx.Single;
 import rx.schedulers.Schedulers;
@@ -58,6 +61,7 @@ public class UserManager {
     private HDWallet wallet;
     private ContactStore contactStore;
     private UserStore userStore;
+    private BlockedUserStore blockedUserStore;
 
     /* package */ UserManager() {
         initDatabases();
@@ -87,6 +91,7 @@ public class UserManager {
     private void initDatabases() {
         this.contactStore = new ContactStore();
         this.userStore = new UserStore();
+        this.blockedUserStore = new BlockedUserStore();
     }
 
     private void attachConnectivityListener() {
@@ -308,6 +313,26 @@ public class UserManager {
 
     public void saveContact(final User user) {
         this.contactStore.save(user);
+    }
+
+    public Single<Boolean> isUserBlocked(final String ownerAddress) {
+        return this.blockedUserStore
+                .isBlocked(ownerAddress)
+                .subscribeOn(Schedulers.io());
+    }
+
+    public Completable blockUser(final String ownerAddress) {
+        final BlockedUser blockedUser = new BlockedUser()
+                .setOwnerAddress(ownerAddress);
+        return Completable.fromAction(() ->
+                this.blockedUserStore.save(blockedUser))
+                .subscribeOn(Schedulers.io());
+    }
+
+    public Completable unblockUser(final String ownerAddress) {
+        return Completable.fromAction(() ->
+                this.blockedUserStore.delete(ownerAddress))
+                .subscribeOn(Schedulers.io());
     }
 
     public Single<ServerTime> getTimestamp() {
