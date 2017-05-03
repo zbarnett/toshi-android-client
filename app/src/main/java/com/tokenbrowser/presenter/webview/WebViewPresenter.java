@@ -113,15 +113,23 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
     }
 
     private class SOFAHost {
+
+        @JavascriptInterface
+        public String getRcpUrl() {
+            return "https://propsten.infura.io";
+        }
+
         @JavascriptInterface
         public String getAccounts() {
-            return BaseApplication
+            return "[\"" +
+                    BaseApplication
                     .get()
                     .getTokenManager()
                     .getWallet()
                     .toBlocking()
                     .value()
-                    .getPaymentAddress();
+                    .getPaymentAddress()
+                    + "\"]";
         }
 
         @JavascriptInterface
