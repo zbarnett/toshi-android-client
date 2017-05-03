@@ -19,9 +19,11 @@ package com.tokenbrowser.util;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.webkit.MimeTypeMap;
 
@@ -112,5 +114,26 @@ public class FileUtil {
             return file;
         })
         .subscribeOn(Schedulers.io());
+    }
+
+    public String getDisplayNameFromUri(final Uri uri) {
+        final String [] projection = { MediaStore.Images.Media.DISPLAY_NAME };
+        final Cursor cursor =
+                BaseApplication.get()
+                .getContentResolver()
+                .query(
+                        uri,
+                        projection,
+                        null,
+                        null,
+                        null
+                );
+
+        if (cursor == null) return null;
+        final int column_index = cursor.getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME);
+        cursor.moveToFirst();
+        final String displayName = cursor.getString(column_index);
+        cursor.close();
+        return displayName;
     }
 }

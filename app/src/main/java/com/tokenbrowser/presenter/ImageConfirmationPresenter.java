@@ -21,12 +21,11 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 
+import com.bumptech.glide.Glide;
+import com.tokenbrowser.R;
 import com.tokenbrowser.util.FileUtil;
-import com.tokenbrowser.util.ImageUtil;
 import com.tokenbrowser.util.LogUtil;
 import com.tokenbrowser.view.activity.ImageConfirmationActivity;
-
-import java.io.File;
 
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -38,8 +37,7 @@ public class ImageConfirmationPresenter implements Presenter<ImageConfirmationAc
     private CompositeSubscription subscriptions;
     private boolean firstTimeAttaching = true;
 
-    private Uri fileUri;
-    private File imageFile;
+    private Uri imageUri;
 
     @Override
     public void onViewAttached(ImageConfirmationActivity view) {
@@ -59,67 +57,63 @@ public class ImageConfirmationPresenter implements Presenter<ImageConfirmationAc
 
     private void initShortLivingObjects() {
         processIntentData();
+        initToolbar();
+        showImage();
         initClickListeners();
-        saveFileToLocalStorage();
     }
 
     private void processIntentData() {
-        this.fileUri = this.activity.getIntent().getParcelableExtra(ImageConfirmationActivity.FILE_URI);
+        this.imageUri = this.activity.getIntent().getParcelableExtra(ImageConfirmationActivity.FILE_URI);
+    }
+
+    private void initToolbar() {
+        final String displayName = new FileUtil().getDisplayNameFromUri(this.imageUri);
+        final String toolbarTitle = displayName != null
+                ? displayName
+                : this.activity.getString(R.string.confirm_image);
+
+        final String title = toolbarTitle.length() > 15
+                ? String.format("%.15s...", toolbarTitle)
+                : toolbarTitle;
+
+        this.activity.getBinding().title.setText(title);
+    }
+
+    private void showImage() {
+        Glide
+                .with(this.activity)
+                .load(this.imageUri)
+                .into(this.activity.getBinding().image);
     }
 
     private void initClickListeners() {
-        this.activity.getBinding().closeButton.setOnClickListener(v -> handleBackButtonClicked());
-        this.activity.getBinding().approveButton.setOnClickListener(v -> handleConfirmedClicked());
+        this.activity.getBinding().closeButton.setOnClickListener(__ -> handleBackButtonClicked());
+        this.activity.getBinding().approveButton.setOnClickListener(__ -> saveFileToLocalStorage());
     }
 
     public void handleBackButtonClicked() {
-        deleteFile();
         final Intent intent = new Intent();
-        this.activity.setResult(Activity.RESULT_OK, intent);
-        this.activity.finish();
-    }
-
-    private boolean deleteFile() {
-        if (this.imageFile == null) return true;
-        return this.imageFile.delete();
-    }
-
-    private void handleConfirmedClicked() {
-        final Intent intent = new Intent()
-                .putExtra(ImageConfirmationActivity.FILE_PATH,
-                        this.imageFile.getAbsolutePath());
-        this.activity.setResult(Activity.RESULT_OK, intent);
+        this.activity.setResult(Activity.RESULT_CANCELED, intent);
         this.activity.finish();
     }
 
     private void saveFileToLocalStorage() {
         final Subscription sub =
-                new FileUtil().saveFileFromUri(this.activity, this.fileUri)
-                .doOnSuccess(file -> this.imageFile = file)
+                new FileUtil().saveFileFromUri(this.activity, this.imageUri)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        __ -> updateView(),
+                        file -> finishWithResult(file.getAbsolutePath()),
                         this::handleFileError
                 );
 
         this.subscriptions.add(sub);
     }
 
-    private void updateView() {
-        initToolbar();
-        showImage();
-    }
-
-    private void initToolbar() {
-        final String title = this.imageFile.getName().length() > 15
-                ? String.format("%.15s...", this.imageFile.getName())
-                : this.imageFile.getName();
-
-        this.activity.getBinding().title.setText(title);
-    }
-
-    private void showImage() {
-        ImageUtil.renderFileIntoTarget(this.imageFile, this.activity.getBinding().image);
+    private void finishWithResult(final String path) {
+        final Intent intent = new Intent()
+                .putExtra(ImageConfirmationActivity.FILE_PATH, path);
+        this.activity.setResult(Activity.RESULT_OK, intent);
+        this.activity.finish();
     }
 
     private void handleFileError(final Throwable throwable) {
