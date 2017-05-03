@@ -19,13 +19,14 @@ package com.tokenbrowser.util;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.webkit.MimeTypeMap;
 
-import com.crashlytics.android.Crashlytics;
 import com.tokenbrowser.view.BaseApplication;
 
 import org.whispersystems.libsignal.InvalidMessageException;
@@ -33,7 +34,6 @@ import org.whispersystems.signalservice.api.SignalServiceMessageReceiver;
 import org.whispersystems.signalservice.api.messages.SignalServiceAttachmentPointer;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,21 +43,26 @@ import java.util.UUID;
 import okio.BufferedSink;
 import okio.Okio;
 import okio.Source;
+import rx.Single;
+import rx.schedulers.Schedulers;
 
 public class FileUtil {
 
     public static final int MAX_SIZE = 1024 * 1024;
 
-    public File saveFileFromUri(final Context context, final Uri uri) throws IOException {
-        final String mimeType = context.getContentResolver().getType(uri);
-        final MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
-        final String fileExtension = mimeTypeMap.getExtensionFromMimeType(mimeType);
-        final String fileName = String.format("%s.%s", UUID.randomUUID().toString(), fileExtension);
-        final File destFile = new File(BaseApplication.get().getFilesDir(), fileName);
-        final InputStream inputStream = BaseApplication.get()
-                .getContentResolver()
-                .openInputStream(uri);
-        return writeToFileFromInputStream(destFile, inputStream);
+    public Single<File> saveFileFromUri(final Context context, final Uri uri) {
+        return Single.fromCallable(() -> {
+            final String mimeType = context.getContentResolver().getType(uri);
+            final MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+            final String fileExtension = mimeTypeMap.getExtensionFromMimeType(mimeType);
+            final String fileName = String.format("%s.%s", UUID.randomUUID().toString(), fileExtension);
+            final File destFile = new File(BaseApplication.get().getFilesDir(), fileName);
+            final InputStream inputStream = BaseApplication.get()
+                    .getContentResolver()
+                    .openInputStream(uri);
+            return writeToFileFromInputStream(destFile, inputStream);
+        })
+        .subscribeOn(Schedulers.io());
     }
 
     private File writeToFileFromInputStream(final File file, final InputStream inputStream) throws IOException {
@@ -89,9 +94,9 @@ public class FileUtil {
         }
     }
 
-    public File createImageFileWithRandomName(final Context context) throws IOException {
+    public File createImageFileWithRandomName() {
         final String filename = UUID.randomUUID().toString() + ".jpg";
-        return new File(context.getFilesDir(), filename);
+        return new File(BaseApplication.get().getFilesDir(), filename);
     }
 
     public String getMimeTypeFromFilename(final String filename) {
@@ -99,14 +104,36 @@ public class FileUtil {
         return  MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension);
     }
 
-    public void compressImage(final long maxSize, final File file) throws FileNotFoundException {
-        if (file.length() <= maxSize) {
-            return;
-        }
+    public Single<File> compressImage(final long maxSize, final File file) {
+        return Single.fromCallable(() -> {
+            if (file.length() <= maxSize) return file;
+            final int compressPercentage = (int)(((double)maxSize / file.length()) * 100);
+            final Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+            final OutputStream outputStream = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, compressPercentage, outputStream);
+            return file;
+        })
+        .subscribeOn(Schedulers.io());
+    }
 
-        final int compressPercentage = (int)(((double)maxSize / file.length()) * 100);
-        final Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
-        final OutputStream outputStream = new FileOutputStream(file);
-        bitmap.compress(Bitmap.CompressFormat.JPEG, compressPercentage, outputStream);
+    public String getDisplayNameFromUri(final Uri uri) {
+        final String [] projection = { MediaStore.Images.Media.DISPLAY_NAME };
+        final Cursor cursor =
+                BaseApplication.get()
+                .getContentResolver()
+                .query(
+                        uri,
+                        projection,
+                        null,
+                        null,
+                        null
+                );
+
+        if (cursor == null) return null;
+        final int column_index = cursor.getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME);
+        cursor.moveToFirst();
+        final String displayName = cursor.getString(column_index);
+        cursor.close();
+        return displayName;
     }
 }

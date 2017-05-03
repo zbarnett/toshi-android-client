@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ 	Copyright (c) 2017. Token Browser, Inc
+  ~
+  ~ 	This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/fullscreen_dark_background">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                style="@style/ToolbarTheme"
+                android:background="@color/fullscreen_dark_background">
+
+                <ImageButton
+                    android:id="@+id/close_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:scaleType="fitCenter"
+                    android:padding="16dp"
+                    android:background="@android:color/transparent"
+                    app:srcCompat="@drawable/ic_clear"/>
+
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/Toolbar.TitleText"
+                    android:textStyle="bold"
+                    android:text="@string/move_and_scale"/>
+
+                <android.support.v4.widget.Space
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"/>
+
+                <ImageButton
+                    android:id="@+id/approve"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:scaleType="fitCenter"
+                    android:tint="@color/textColorContrast"
+                    android:background="@android:color/transparent"
+                    app:srcCompat="@drawable/ic_done" />
+
+            </LinearLayout>
+
+            <com.steelkiwi.cropiwa.CropIwaView
+                android:id="@+id/crop_image_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:ci_dynamic_aspect_ratio="false"
+                app:ci_draw_grid="false"
+                app:ci_scale_enabled="true"
+                app:ci_translation_enabled="true"
+                app:ci_crop_shape="oval"
+                app:ci_border_width="1dp"
+                app:ci_border_color="#FFF"
+                app:ci_max_scale="100"
+                app:ci_overlay_color="@color/semi_transparent_overlay" />
+
+        </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/loading_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:background="@color/semi_transparent_overlay">
+
+            <ProgressBar
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:indeterminate="true"/>
+
+        </FrameLayout>
+    </FrameLayout>
+
+</layout>

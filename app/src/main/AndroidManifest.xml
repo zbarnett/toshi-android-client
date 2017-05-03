@@ -18,7 +18,6 @@
 
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     package="com.tokenbrowser">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -99,6 +98,8 @@
         <activity android:name="com.tokenbrowser.view.activity.TransactionOverviewActivity" />
         <activity android:name="com.tokenbrowser.view.activity.QrCodeHandlerActivity" />
         <activity android:name="com.tokenbrowser.view.activity.WebViewActivity" />
+        <activity android:name="com.tokenbrowser.view.activity.ImageCropActivity"
+                  android:theme="@style/DarkTheme"/>
 
         <meta-data
             android:name="io.fabric.ApiKey"

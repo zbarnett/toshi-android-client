@@ -183,4 +183,7 @@
     <string name="copied_payment_address_to_clipboard">Copied %1$s to clipboard</string>
     <string name="eth_deposit_testnet_warning">Do not send ETH from Mainnet. Token is currently using Ropsten revival Testnet.</string>
     <string name="error__dapp_loading">Unable to launch web app</string>
+    <string name="move_and_scale">Move and scale</string>
+    <string name="crop_error">Unable to crop the image. Please try again</string>
+    <string name="confirm_image">Confirm image</string>
 </resources>

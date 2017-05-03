@@ -125,6 +125,8 @@ dependencies {
             'com.madgag.spongycastle:prov:1.54.0.0',
             //UI
             'com.beloo.widget:ChipsLayoutManager:0.3.4.1@aar',
+            'com.github.tokenbrowser:cropiwa:v1.0.1',
+
     )
 
     compile('com.crashlytics.sdk.android:crashlytics:2.6.2@aar') {
@@ -156,6 +158,7 @@ dependencyVerification {
             'com.squareup.okhttp3:logging-interceptor:2f77bb4b1b2ecf1c330a54295b0b112f65a56d2c16b7937303ad601b1de18fde',
             'com.artemzin.rxjava:proguard-rules:7f1d15f39c3b58cedb8327becdd23ad8a914210feb021a4fa37150c4acb2b6f7',
             'com.github.bumptech.glide:glide:76ef123957b5fbaebb05fcbe6606dd58c3bc3fcdadb257f99811d0ac9ea9b88b',
+            'com.github.bumptech.glide:okhttp3-integration:71ab84d78b569dcc6238242edc68087d90f7ba7251958b9071b0eb6f1bd1eea0',
             'io.reactivex:rxandroid:78dd5de7459c3438c09cd1435baeb8b09665019b24054ffba21ec84d068f954e',
             'com.jakewharton.rxbinding:rxbinding:a0c6b79106edcdfa878d089722ba62081789c8f7d768dfddd52f2f3c16bbf4bc',
             'de.hdodenhof:circleimageview:bcbc588e19e6dcf8c120b1957776bfe229efba5d2fbe5da7156372eeacf65503',
@@ -165,6 +168,7 @@ dependencyVerification {
             'com.madgag.spongycastle:core:1e7fa4b19ccccd1011364ab838d0b4702470c178bbbdd94c5c90b2d4d749ea1e',
             'com.madgag.spongycastle:prov:cf89c550fda86c0f26858c3d851ac1d2ce49cd78dd144cd86f307b7ea3e6afd7',
             'com.beloo.widget:ChipsLayoutManager:27b6ad23e8ba18a6a6c43e279db126322601d93daf621946541e4b50dc988874',
+            'com.github.tokenbrowser:cropiwa:3d7c881231f1c6a6ba0cc82363412f507c3b05e032213971af00a958f210d04d',
             'com.crashlytics.sdk.android:crashlytics:110212c02ece0c4471383e579d378be8b9ad8d5bf51a2c35ad0610d9166065c7',
             'com.google.firebase:firebase-core:558cda4b5421d0ad206a7c14247b649579aebc37259082e80579e14199042ea0',
             'com.android.databinding:library:f172550208c2e86973271cdc1d9b527545d923527abed2daa894cf1499619869',
@@ -217,8 +221,5 @@ dependencyVerification {
             'com.squareup.okio:okio:8c5436cadfab36bbd97db5f5c43b7bfdb5bf2f5f894ec8709b1929f14bdd010c',
     ]
 }
-
-
-
 
 apply plugin: 'com.google.gms.google-services'

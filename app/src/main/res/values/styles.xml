@@ -34,6 +34,10 @@
     <style name="FullScreenTheme" parent="AppTheme">
     </style>
 
+    <style name="DarkTheme" parent="AppTheme">
+        <item name="colorPrimaryDark">@color/colorSecondaryDark</item>
+    </style>
+
     <style name="ToolbarTheme" parent="@style/ThemeOverlay.AppCompat.ActionBar">
         <item name="android:background">@color/colorPrimary</item>
         <item name="selectableItemBackground">?android:selectableItemBackground</item>

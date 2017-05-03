@@ -22,6 +22,7 @@
     <color name="windowBackgroundContrast">#E7E7E7</color>
     <color name="colorPrimary">#01C236</color>
     <color name="colorPrimaryDark">#0BA133</color>
+    <color name="colorSecondaryDark">#000000</color>
     <color name="colorAccent">#33AFFF</color>
     <color name="textColorPrimary">#000000</color>
     <color name="textColorSecondary">#9F9FA3</color>
@@ -44,6 +45,7 @@
     <color name="error_color">#FB3E3E</color>
     <color name="disabled_button_color">#D1D1D1</color>
     <color name="fullscreen_dark_background">#000000</color>
+    <color name="semi_transparent_overlay">#99000000</color>
 
     <color name="icon_color">#66000000</color>
     <color name="profile_icon_text_color">#67676A</color>
