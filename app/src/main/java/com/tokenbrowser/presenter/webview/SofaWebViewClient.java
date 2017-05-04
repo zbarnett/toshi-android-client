@@ -31,13 +31,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.concurrent.TimeUnit;
 
 import rx.Completable;
-import rx.Single;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 
 /* package */ class SofaWebViewClient extends WebViewClient {
@@ -55,10 +52,9 @@ import rx.subscriptions.CompositeSubscription;
     private void asyncLoadSofaScript() {
         final Subscription sub =
                 loadSofaScript()
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        () -> {},
+                        this.listener::onReady,
                         this.listener::onError
                 );
         this.subscriptions.add(sub);
@@ -92,39 +88,20 @@ import rx.subscriptions.CompositeSubscription;
 
     @Override
     public void onPageStarted(WebView webView, String url, Bitmap favicon) {
-        final Subscription sub =
-                getSofaScript()
-                .subscribe(
-                        sofaScript -> this.injectSofaScript(sofaScript, webView),
-                        this.listener::onError
-                );
-        this.subscriptions.add(sub);
+        injectSofaScript(webView);
+    }
+
+    private void injectSofaScript(final WebView webView) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+            webView.evaluateJavascript(this.sofaScript, null);
+        } else {
+            webView.loadUrl("javascript:" + this.sofaScript, null);
+        }
     }
 
     @Override
     public void onPageFinished(WebView webView, final String url) {
         this.listener.onLoaded();
-    }
-
-    private void injectSofaScript(final String sofaScript, final WebView webView) {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
-            webView.evaluateJavascript(sofaScript, null);
-        } else {
-            webView.loadUrl("javascript:" + sofaScript, null);
-        }
-    }
-
-    private Single<String> getSofaScript() {
-        return
-                Single.fromCallable(() -> {
-                    while (sofaScript == null) {
-                        Thread.sleep(100);
-                    }
-                    return sofaScript;
-                })
-                .timeout(10, TimeUnit.SECONDS)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
     }
 
     /* package */ void destroy() {

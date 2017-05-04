@@ -61,15 +61,13 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
     }
 
     private void initWebView() {
-        loadWebApp();
+        injectSofaHost();
         addWebClient();
     }
 
-    private void loadWebApp() {
-        final String address = this.activity.getIntent().getStringExtra(WebViewActivity.EXTRA__ADDRESS);
+    private void injectSofaHost() {
         this.activity.getBinding().webview.getSettings().setJavaScriptEnabled(true);
         this.activity.getBinding().webview.addJavascriptInterface(new SOFAHost(), "SOFAHost");
-        this.activity.getBinding().webview.loadUrl(address);
     }
 
     private void addWebClient() {
@@ -83,6 +81,13 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
     }
 
     private final OnLoadListener loadedListener = new OnLoadListener() {
+        @Override
+        public void onReady() {
+            if (activity == null) return;
+            final String address = activity.getIntent().getStringExtra(WebViewActivity.EXTRA__ADDRESS);
+            activity.getBinding().webview.loadUrl(address);
+        }
+
         @Override
         public void onLoaded() {
             if (activity == null) return;

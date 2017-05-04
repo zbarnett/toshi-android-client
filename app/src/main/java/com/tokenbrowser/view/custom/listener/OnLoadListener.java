@@ -18,6 +18,7 @@
 package com.tokenbrowser.view.custom.listener;
 
 public interface OnLoadListener {
+    void onReady();
     void onLoaded();
     void onError(final Throwable t);
 }
