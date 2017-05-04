@@ -262,6 +262,7 @@ public final class ChatPresenter implements
     }
 
     private void initLayoutManager() {
+        if (this.activity == null) return;
         this.layoutManager = new SpeedyLinearLayoutManager(this.activity);
         this.activity.getBinding().messagesList.setLayoutManager(this.layoutManager);
     }
@@ -278,17 +279,24 @@ public final class ChatPresenter implements
     }
 
     private void initRecyclerView() {
-        this.messageAdapter.notifyDataSetChanged();
-        this.activity.getBinding().messagesList.setAdapter(this.messageAdapter);
+        if (this.activity == null) return;
+        attachMessageAdapter();
 
         // Hack to scroll to bottom when keyboard rendered
         this.activity.getBinding().messagesList.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
+            if (this.activity == null) return;
             if (bottom < oldBottom) {
-                activity.getBinding().messagesList.postDelayed(this::smoothScrollToBottom, 100);
+                this.activity.getBinding().messagesList.postDelayed(this::smoothScrollToBottom, 100);
             }
         });
 
         this.activity.getBinding().messagesList.getLayoutManager().scrollToPosition(this.lastVisibleMessagePosition);
+    }
+
+    private void attachMessageAdapter() {
+        if (this.messageAdapter == null) return;
+        this.messageAdapter.notifyDataSetChanged();
+        this.activity.getBinding().messagesList.setAdapter(this.messageAdapter);
     }
 
     private void updateEmptyState() {
