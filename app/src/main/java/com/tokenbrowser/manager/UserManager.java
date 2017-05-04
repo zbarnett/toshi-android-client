@@ -72,7 +72,9 @@ public class UserManager {
                 this.userSubject
                 .filter(user -> user != null)
                 .first()
-                .toSingle();
+                .toSingle()
+                .doOnError(t -> LogUtil.exception(getClass(), "getCurrentUser", t))
+                .onErrorReturn(null);
     }
 
     public UserManager init(final HDWallet wallet) {
@@ -202,6 +204,7 @@ public class UserManager {
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .first(user -> user != null && !user.needsRefresh())
+                .doOnError(t -> LogUtil.exception(getClass(), "getUserFromPaymentAddress", t))
                 .toSingle();
 
     }
@@ -225,7 +228,8 @@ public class UserManager {
                 .map(userSearchResults -> userSearchResults.getResults().get(0))
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
-                .doOnNext(this::cacheUser);
+                .doOnNext(this::cacheUser)
+                .doOnError(t -> LogUtil.exception(getClass(), "fetchAndCacheFromNetworkByPaymentAddress", t));
     }
 
     private void cacheUser(final User user) {
@@ -268,6 +272,8 @@ public class UserManager {
                 .flatMapIterable(users -> users)
                 .filter(user -> user != null && user.getUsernameForEditing().equals(username))
                 .first(user -> !user.needsRefresh())
+                .doOnError(t -> LogUtil.exception(getClass(), "getUSerByUsername", t))
+                .onErrorReturn(t -> null)
                 .toSingle();
     }
 

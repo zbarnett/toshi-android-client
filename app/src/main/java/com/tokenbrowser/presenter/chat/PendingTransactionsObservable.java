@@ -23,6 +23,7 @@ import com.tokenbrowser.model.local.SofaMessage;
 import com.tokenbrowser.model.local.User;
 import com.tokenbrowser.model.sofa.Payment;
 import com.tokenbrowser.model.sofa.SofaAdapters;
+import com.tokenbrowser.util.LogUtil;
 import com.tokenbrowser.view.BaseApplication;
 
 import java.io.IOException;
@@ -62,7 +63,9 @@ Observable<PendingTransaction> observable = pto.init(user); // Only PendingTrans
                 .getTokenManager()
                 .getTransactionManager()
                 .getPendingTransactionObservable()
-                .filter(this::shouldBeBroadcast);
+                .filter(this::shouldBeBroadcast)
+                .doOnError(t -> LogUtil.exception(getClass(), "subscribeToPendingTransactionChanges", t))
+                .onErrorReturn(t -> null);
     }
 
     private boolean shouldBeBroadcast(final PendingTransaction pendingTransaction) {
