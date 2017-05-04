@@ -116,7 +116,7 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
 
         @JavascriptInterface
         public String getRcpUrl() {
-            return "https://propsten.infura.io";
+            return "http://192.168.2.63:8545";
         }
 
         @JavascriptInterface
