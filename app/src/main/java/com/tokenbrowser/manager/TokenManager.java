@@ -21,12 +21,12 @@ package com.tokenbrowser.manager;
 import com.tokenbrowser.crypto.HDWallet;
 import com.tokenbrowser.crypto.signal.SignalPreferences;
 import com.tokenbrowser.manager.store.TokenMigration;
+import com.tokenbrowser.util.LogUtil;
 import com.tokenbrowser.util.SharedPrefsUtil;
 import com.tokenbrowser.view.BaseApplication;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -152,7 +152,7 @@ public class TokenManager {
         return
                 this.walletSubject
                 .filter(wallet -> wallet != null)
-                .timeout(3, TimeUnit.SECONDS)
+                .doOnError(t -> LogUtil.exception(getClass(), "Wallet is null", t))
                 .onErrorReturn(__ -> null)
                 .first()
                 .toSingle();

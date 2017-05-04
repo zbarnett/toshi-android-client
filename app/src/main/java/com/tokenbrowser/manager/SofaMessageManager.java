@@ -328,6 +328,7 @@ public final class SofaMessageManager {
                 .get()
                 .isConnectedSubject()
                 .filter(isConnected -> isConnected)
+                .onErrorReturn(__ -> false)
                 .subscribe(
                         isConnected -> sendPendingMessages(),
                         this::handleConnectionStateError
