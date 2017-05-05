@@ -526,10 +526,26 @@ public final class SofaMessageManager {
             final Optional<String> messageBody = dataMessage.get().getBody();
             final Optional<List<SignalServiceAttachment>> attachments = dataMessage.get().getAttachments();
             final DecryptedSignalMessage decryptedMessage = new DecryptedSignalMessage(messageSource, messageBody.get(), attachments);
+
+            if (isUserBlocked(messageSource)) {
+                LogUtil.i(getClass(), "A blocked user is trying to send a message");
+                return null;
+            }
+
             saveIncomingMessageToDatabase(decryptedMessage);
             return decryptedMessage;
         }
         return null;
+    }
+
+    private boolean isUserBlocked(final String address) {
+        return BaseApplication
+            .get()
+            .getTokenManager()
+            .getUserManager()
+            .isUserBlocked(address)
+            .toBlocking()
+            .value();
     }
 
     private void saveIncomingMessageToDatabase(final DecryptedSignalMessage signalMessage) {
@@ -541,14 +557,15 @@ public final class SofaMessageManager {
         processAttachments(signalMessage);
 
         BaseApplication
-        .get()
-        .getTokenManager()
-        .getUserManager()
-        .getUserFromAddress(signalMessage.getSource())
-        .subscribe(
-                (user) -> this.saveIncomingMessageFromUserToDatabase(user, signalMessage),
-                this::handleUserError
-        );
+            .get()
+            .getTokenManager()
+            .getUserManager()
+            .getUserFromAddress(signalMessage.getSource())
+            .toSingle()
+            .subscribe(
+                    (user) -> this.saveIncomingMessageFromUserToDatabase(user, signalMessage),
+                    this::handleUserError
+            );
     }
 
     private void processAttachments(final DecryptedSignalMessage signalMessage) {

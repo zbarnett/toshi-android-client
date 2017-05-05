@@ -122,6 +122,12 @@ public class TokenMigration implements RealmMigration {
             realm.writeEncryptedCopyTo(new File(realm.getPath(), this.wallet.getOwnerAddress()), this.wallet.generateDatabaseEncryptionKey());
             oldVersion++;
         }
+
+        if (oldVersion == 8) {
+            final RealmObjectSchema blockedUserSchema = schema.create("BlockedUser");
+            blockedUserSchema.addField("owner_address", String.class);
+            oldVersion++;
+        }
     }
 
     @Override

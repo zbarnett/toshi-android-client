@@ -25,13 +25,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
+        <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            style="@style/ToolbarTheme">
+            style="@style/ToolbarTheme"
+            app:contentInsetStart="0dp">
 
             <ImageButton
                 android:id="@+id/close_button"
@@ -50,9 +51,9 @@
                 android:textSize="18sp"
                 android:textStyle="bold"
                 style="@style/Toolbar.TitleText"
-                tools:text="Name"/>
+                tools:text="Contact Name"/>
 
-        </LinearLayout>
+        </android.support.v7.widget.Toolbar>
 
         <ScrollView
             android:layout_width="match_parent"

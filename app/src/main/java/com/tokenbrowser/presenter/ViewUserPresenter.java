@@ -22,13 +22,15 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.content.res.AppCompatResources;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
 import com.tokenbrowser.R;
-import com.tokenbrowser.databinding.ActivityScanResultBinding;
+import com.tokenbrowser.databinding.ActivityUserProfileBinding;
 import com.tokenbrowser.model.local.ActivityResultHolder;
 import com.tokenbrowser.model.local.User;
 import com.tokenbrowser.model.network.ReputationScore;
@@ -37,6 +39,7 @@ import com.tokenbrowser.util.LogUtil;
 import com.tokenbrowser.util.OnSingleClickListener;
 import com.tokenbrowser.util.PaymentType;
 import com.tokenbrowser.util.SoundManager;
+import com.tokenbrowser.util.UserBlockingHandler;
 import com.tokenbrowser.view.BaseApplication;
 import com.tokenbrowser.view.activity.AmountActivity;
 import com.tokenbrowser.view.activity.ChatActivity;
@@ -47,15 +50,19 @@ import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.subscriptions.CompositeSubscription;
 
-public final class ViewUserPresenter implements Presenter<ViewUserActivity> {
+public final class ViewUserPresenter implements
+        Presenter<ViewUserActivity>,
+        UserBlockingHandler.OnBlockingListener {
 
     private static final int ETH_PAY_CODE = 2;
 
-    private boolean firstTimeAttached = true;
-    private CompositeSubscription subscriptions;
     private ViewUserActivity activity;
+    private CompositeSubscription subscriptions;
+    private boolean firstTimeAttached = true;
+
     private User scannedUser;
     private String userAddress;
+    private UserBlockingHandler userBlockingHandler;
 
     @Override
     public void onViewAttached(final ViewUserActivity activity) {
@@ -72,11 +79,19 @@ public final class ViewUserPresenter implements Presenter<ViewUserActivity> {
     }
 
     private void initShortLivingObjects() {
+        initToolbar();
         initClickListeners();
         processIntentData();
+        initUserBlockingHandler();
+        isUserBlocked();
         loadUser();
         fetchUserReputation();
-        initClickListeners();
+    }
+
+    private void initToolbar() {
+        this.activity.setSupportActionBar(this.activity.getBinding().toolbar);
+        final ActionBar actionBar = this.activity.getSupportActionBar();
+        if (actionBar != null) actionBar.setDisplayShowTitleEnabled(false);
     }
 
     private void initClickListeners() {
@@ -85,6 +100,37 @@ public final class ViewUserPresenter implements Presenter<ViewUserActivity> {
 
     private void processIntentData() {
         this.userAddress = this.activity.getIntent().getStringExtra(ViewUserActivity.EXTRA__USER_ADDRESS);
+    }
+
+    private void initUserBlockingHandler() {
+        this.userBlockingHandler = new UserBlockingHandler(this.activity)
+                .setUserAddress(this.userAddress)
+                .setOnBlockingListener(this);
+    }
+
+    private void isUserBlocked() {
+        final Subscription sub =
+                BaseApplication
+                .get()
+                .getTokenManager()
+                .getUserManager()
+                .isUserBlocked(this.userAddress)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        this::handleBlockedUser,
+                        this::handleError
+                );
+
+        this.subscriptions.add(sub);
+    }
+
+    private void handleError(final Throwable throwable) {
+        LogUtil.exception(getClass(), "Error during fetching user blocked state", throwable);
+    }
+
+    private void handleBlockedUser(final boolean isBlocked) {
+        if (isBlocked) setUnblockedMenuItem();
+        else setBlockedMenuItem();
     }
 
     private void loadUser() {
@@ -152,7 +198,7 @@ public final class ViewUserPresenter implements Presenter<ViewUserActivity> {
 
     private void handleUserLoaded(final User scannedUser) {
         this.scannedUser = scannedUser;
-        final ActivityScanResultBinding binding = this.activity.getBinding();
+        final ActivityUserProfileBinding binding = this.activity.getBinding();
         binding.title.setText(scannedUser.getDisplayName());
         binding.name.setText(scannedUser.getDisplayName());
         binding.username.setText(scannedUser.getUsername());
@@ -293,14 +339,67 @@ public final class ViewUserPresenter implements Presenter<ViewUserActivity> {
         this.activity.finish();
     }
 
+    public void handleActionMenuClicked(final MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.block: {
+                handleBlockClicked();
+                break;
+            }
+            case R.id.report: {
+                reportUser();
+                break;
+            }
+            default: {
+                LogUtil.d(getClass(), "Not valid menu item");
+            }
+        }
+    }
+
+    private void handleBlockClicked() {
+        this.userBlockingHandler.blockOrUnblockUser();
+    }
+
+    @Override
+    public void onUserBlocked() {
+        setUnblockedMenuItem();
+    }
+
+    @Override
+    public void onUserUnblocked() {
+        setBlockedMenuItem();
+    }
+
+    private void setBlockedMenuItem() {
+        if (this.activity.getMenu() == null) return;
+        final MenuItem menuItem = this.activity.getMenu().findItem(R.id.block);
+        menuItem.setTitle(this.activity.getString(R.string.block));
+    }
+
+    private void setUnblockedMenuItem() {
+        if (this.activity.getMenu() == null) return;
+        final MenuItem menuItem = this.activity.getMenu().findItem(R.id.block);
+        menuItem.setTitle(this.activity.getString(R.string.unblock));
+    }
+
+    private void reportUser() {
+        Toast.makeText(
+                this.activity,
+                this.activity.getString(R.string.not_implemented),
+                Toast.LENGTH_SHORT
+        ).show();
+    }
+
     @Override
     public void onViewDetached() {
+        this.userBlockingHandler.clear();
         this.subscriptions.clear();
         this.activity = null;
     }
 
     @Override
     public void onDestroyed() {
+        this.userBlockingHandler = null;
         this.subscriptions = null;
+        this.activity = null;
     }
 }

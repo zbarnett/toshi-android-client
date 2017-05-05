@@ -42,6 +42,7 @@ import com.tokenbrowser.crypto.signal.model.DecryptedSignalMessage;
 import com.tokenbrowser.crypto.util.TypeConverter;
 import com.tokenbrowser.manager.TokenManager;
 import com.tokenbrowser.model.local.SofaMessage;
+import com.tokenbrowser.model.local.User;
 import com.tokenbrowser.model.sofa.Payment;
 import com.tokenbrowser.model.sofa.SofaAdapters;
 import com.tokenbrowser.model.sofa.SofaType;
@@ -98,7 +99,7 @@ public class GcmMessageReceiver extends GcmListenerService {
 
             if (sofaMessage.getType() == SofaType.PAYMENT) {
                 final Payment payment = this.adapters.paymentFrom(sofaMessage.getPayload());
-                handlePayment(payment);
+                checkIfUserIsBlocked(payment);
             } else {
                 tryShowSignalMessage();
             }
@@ -106,6 +107,28 @@ public class GcmMessageReceiver extends GcmListenerService {
         } catch (final Exception ex) {
             LogUtil.exception(getClass(), ex);
         }
+    }
+
+    private void checkIfUserIsBlocked(final Payment payment) {
+        isUserBlocked(payment.getFromAddress())
+                .toObservable()
+                .filter(isBlocked -> !isBlocked)
+                .toSingle()
+                .subscribe(
+                        __ -> handlePayment(payment),
+                        this::handleIncomingMessageError
+                );
+    }
+
+    private Single<Boolean> isUserBlocked(final String paymentAddress) {
+        return getUserFromPaymentAddress(paymentAddress)
+                .flatMap(user ->
+                        BaseApplication
+                        .get()
+                        .getTokenManager()
+                        .getUserManager()
+                        .isUserBlocked(user.getTokenId())
+                );
     }
 
     private void handleIncomingMessageError(final Throwable throwable) {
@@ -217,19 +240,19 @@ public class GcmMessageReceiver extends GcmListenerService {
 
     private void handleLocalCurrency(final Payment payment, final String localCurrency) {
         final String content = String.format(Locale.getDefault(), this.getString(R.string.latest_message__payment_incoming), localCurrency);
-        getUserFromPaymentAddress(payment, content);
-    }
-
-    private void getUserFromPaymentAddress(final Payment payment, final String content) {
-        BaseApplication
-                .get()
-                .getTokenManager()
-                .getUserManager()
-                .getUserFromPaymentAddress(payment.getFromAddress())
+        getUserFromPaymentAddress(payment.getFromAddress())
                 .subscribe(
                         (sender) -> ChatNotificationManager.showChatNotification(sender, content),
                         this::handleError
                 );
+    }
+
+    private Single<User> getUserFromPaymentAddress(final String paymentAddress) {
+        return BaseApplication
+                .get()
+                .getTokenManager()
+                .getUserManager()
+                .getUserFromPaymentAddress(paymentAddress);
     }
 
     private void handleError(final Throwable throwable) {
