@@ -56,6 +56,7 @@ public class ViewUserActivity extends BasePresenterActivity<ViewUserPresenter, V
     public void onResume() {
         super.onResume();
         tryProcessResultHolder();
+        tryCreateOptionsMenu();
     }
 
     public ActivityUserProfileBinding getBinding() {
@@ -94,9 +95,15 @@ public class ViewUserActivity extends BasePresenterActivity<ViewUserPresenter, V
 
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
-        this.menu = menu;
         getMenuInflater().inflate(R.menu.profile, menu);
+        this.menu = menu;
+        tryCreateOptionsMenu();
         return true;
+    }
+
+    private void tryCreateOptionsMenu() {
+        if (this.presenter == null || this.menu == null) return;
+        this.presenter.createOptionsMenu();
     }
 
     @Override
