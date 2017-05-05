@@ -83,7 +83,6 @@ public final class ViewUserPresenter implements
         initClickListeners();
         processIntentData();
         initUserBlockingHandler();
-        isUserBlocked();
         loadUser();
         fetchUserReputation();
     }
@@ -106,31 +105,6 @@ public final class ViewUserPresenter implements
         this.userBlockingHandler = new UserBlockingHandler(this.activity)
                 .setUserAddress(this.userAddress)
                 .setOnBlockingListener(this);
-    }
-
-    private void isUserBlocked() {
-        final Subscription sub =
-                BaseApplication
-                .get()
-                .getTokenManager()
-                .getUserManager()
-                .isUserBlocked(this.userAddress)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        this::handleBlockedUser,
-                        this::handleError
-                );
-
-        this.subscriptions.add(sub);
-    }
-
-    private void handleError(final Throwable throwable) {
-        LogUtil.exception(getClass(), "Error during fetching user blocked state", throwable);
-    }
-
-    private void handleBlockedUser(final boolean isBlocked) {
-        if (isBlocked) setUnblockedMenuItem();
-        else setBlockedMenuItem();
     }
 
     private void loadUser() {
@@ -367,6 +341,35 @@ public final class ViewUserPresenter implements
     @Override
     public void onUserUnblocked() {
         setBlockedMenuItem();
+    }
+
+    public void createOptionsMenu() {
+        isUserBlocked();
+    }
+
+    private void isUserBlocked() {
+        final Subscription sub =
+                BaseApplication
+                .get()
+                .getTokenManager()
+                .getUserManager()
+                .isUserBlocked(this.userAddress)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        this::handleBlockedUser,
+                        this::handleError
+                );
+
+        this.subscriptions.add(sub);
+    }
+
+    private void handleError(final Throwable throwable) {
+        LogUtil.exception(getClass(), "Error during fetching user blocked state", throwable);
+    }
+
+    private void handleBlockedUser(final boolean isBlocked) {
+        if (isBlocked) setUnblockedMenuItem();
+        else setBlockedMenuItem();
     }
 
     private void setBlockedMenuItem() {
