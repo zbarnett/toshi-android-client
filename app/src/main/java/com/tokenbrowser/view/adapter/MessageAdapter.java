@@ -48,7 +48,6 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
     private final static int SENDER_MASK = 0x1000;
 
     private final List<SofaMessage> sofaMessages;
-    private final SofaAdapters adapters;
     private OnItemClickListener<SofaMessage> onPaymentRequestApproveListener;
     private OnItemClickListener<SofaMessage> onPaymentRequestRejectListener;
     private OnItemClickListener<String> onUsernameClickListener;
@@ -56,7 +55,6 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     public MessageAdapter() {
         this.sofaMessages = new ArrayList<>();
-        this.adapters = new SofaAdapters();
     }
 
     public final MessageAdapter addOnPaymentRequestApproveListener(final OnItemClickListener<SofaMessage> listener) {
@@ -193,7 +191,7 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
             case SofaType.COMMAND_REQUEST:
             case SofaType.PLAIN_TEXT: {
                 final TextViewHolder vh = (TextViewHolder) holder;
-                final Message message = this.adapters.messageFrom(payload);
+                final Message message = SofaAdapters.get().messageFrom(payload);
                 vh
                         .setText(message.getBody())
                         .setAvatarUri(sofaMessage.getSender() != null ? sofaMessage.getSender().getAvatar() : null)
@@ -216,7 +214,7 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
 
             case SofaType.PAYMENT: {
                 final PaymentViewHolder vh = (PaymentViewHolder) holder;
-                final Payment payment = this.adapters.paymentFrom(payload);
+                final Payment payment = SofaAdapters.get().paymentFrom(payload);
                 vh.setPayment(payment)
                   .setSendState(sofaMessage.getSendState())
                   .setAvatarUri(sofaMessage.getSender() != null ? sofaMessage.getSender().getAvatar() : null)
@@ -226,7 +224,7 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
 
             case SofaType.PAYMENT_REQUEST: {
                 final PaymentRequestViewHolder vh = (PaymentRequestViewHolder) holder;
-                final PaymentRequest request = this.adapters.txRequestFrom(payload);
+                final PaymentRequest request = SofaAdapters.get().txRequestFrom(payload);
                 vh.setPaymentRequest(request)
                   .setAvatarUri(sofaMessage.getSender() != null ? sofaMessage.getSender().getAvatar() : null)
                   .setOnApproveListener(this.handleOnPaymentRequestApproved)

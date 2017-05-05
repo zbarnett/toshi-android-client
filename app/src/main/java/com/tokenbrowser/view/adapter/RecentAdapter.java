@@ -44,12 +44,10 @@ import java.util.List;
 
 public class RecentAdapter extends RecyclerView.Adapter<ConversationViewHolder> implements ClickableViewHolder.OnClickListener {
 
-    private final SofaAdapters adapters;
     private List<Conversation> conversations;
     private OnItemClickListener<Conversation> onItemClickListener;
 
     public RecentAdapter() {
-        this.adapters = new SofaAdapters();
         this.conversations = new ArrayList<>(0);
     }
 
@@ -113,15 +111,15 @@ public class RecentAdapter extends RecyclerView.Adapter<ConversationViewHolder> 
         try {
             switch (sofaMessage.getType()) {
                 case SofaType.PLAIN_TEXT: {
-                    final Message message = this.adapters.messageFrom(sofaMessage.getPayload());
+                    final Message message = SofaAdapters.get().messageFrom(sofaMessage.getPayload());
                     return message.getBody();
                 }
                 case SofaType.PAYMENT: {
-                    final Payment payment = this.adapters.paymentFrom(sofaMessage.getPayload());
+                    final Payment payment = SofaAdapters.get().paymentFrom(sofaMessage.getPayload());
                     return payment.toUserVisibleString(sentByLocal, sofaMessage.getSendState());
                 }
                 case SofaType.PAYMENT_REQUEST: {
-                    final PaymentRequest request = this.adapters.txRequestFrom(sofaMessage.getPayload());
+                    final PaymentRequest request = SofaAdapters.get().txRequestFrom(sofaMessage.getPayload());
                     return request.toUserVisibleString(sentByLocal, sofaMessage.getSendState());
                 }
                 case SofaType.COMMAND_REQUEST:

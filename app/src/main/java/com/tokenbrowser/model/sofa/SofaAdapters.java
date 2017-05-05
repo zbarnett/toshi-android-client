@@ -26,6 +26,8 @@ import java.io.IOException;
 
 public class SofaAdapters {
 
+    private static SofaAdapters instance;
+
     private final Moshi moshi;
     private final JsonAdapter<Message> messageAdapter;
     private final JsonAdapter<PaymentRequest> paymentRequestAdapter;
@@ -34,7 +36,14 @@ public class SofaAdapters {
     private final JsonAdapter<Init> initAdapter;
     private final JsonAdapter<InitRequest> initRequestJsonAdapter;
 
-    public SofaAdapters() {
+    public static SofaAdapters get() {
+        if (instance == null) {
+            instance = new SofaAdapters();
+        }
+        return instance;
+    }
+
+    private SofaAdapters() {
         this.moshi = new Moshi.Builder().build();
         this.messageAdapter = moshi.adapter(Message.class);
         this.paymentRequestAdapter = moshi.adapter(PaymentRequest.class);
