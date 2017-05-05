@@ -32,7 +32,8 @@
     <color name="textColorHintToolbar">#4DD199</color>
     <color name="textColorInput">#212121</color>
     <color name="textColorLightButton">#4F4F53</color>
-    <color name="inactiveColor">#B6BCBF</color>
+    <color name="inactiveIconColor">#B6BCBF</color>
+    <color name="inactiveTextColor">#95999B</color>
 
     <color name="input_bg">#FFFFFF</color>
     <color name="balance_bar__bg">#FFFFFF</color>
