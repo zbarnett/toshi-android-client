@@ -198,4 +198,11 @@
     <string name="block_user_confirmation_dialog_message">You can unblock them any time from their profile</string>
     <string name="unblock_user_confirmation_dialog_title">Username unblocked</string>
     <string name="unblock_user_confirmation_dialog_message">You can block them any time from their profile</string>
+    <string name="report_message_inappropriate">It\'s inappropriate</string>
+    <string name="report_message_spam">It\'s spam</string>
+    <string name="report_confirmation_title">Thanks</string>
+    <string name="report_confirmation_message">Your feedback is important in helping us keep the Token community safe.</string>
+    <string name="report_spam">Spam</string>
+    <string name="report_inappropriate">Inappropriate behavior</string>
+    <string name="report_error">Error during sending report</string>
 </resources>
