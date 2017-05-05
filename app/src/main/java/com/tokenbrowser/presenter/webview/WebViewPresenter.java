@@ -30,10 +30,14 @@ import com.tokenbrowser.view.BaseApplication;
 import com.tokenbrowser.view.activity.WebViewActivity;
 import com.tokenbrowser.view.custom.listener.OnLoadListener;
 
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+
 public class WebViewPresenter implements Presenter<WebViewActivity> {
 
     private WebViewActivity activity;
     private SofaWebViewClient webClient;
+    private SofaInjector sofaInjector;
 
     @Override
     public void onViewAttached(final WebViewActivity view) {
@@ -45,6 +49,10 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
     private void initWebClient() {
         if (this.webClient == null) {
             this.webClient = new SofaWebViewClient(this.loadedListener);
+        }
+
+        if (this.sofaInjector == null) {
+            this.sofaInjector = new SofaInjector(this.loadedListener);
         }
     }
 
@@ -85,7 +93,26 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
         public void onReady() {
             if (activity == null) return;
             final String address = activity.getIntent().getStringExtra(WebViewActivity.EXTRA__ADDRESS);
-            activity.getBinding().webview.loadUrl(address);
+
+            sofaInjector.loadUrl(address)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                            this::handleWebResourceResponse,
+                            this::onError
+                    );
+        }
+
+        private void handleWebResourceResponse(final SofaInjectResponse response) {
+            if (activity == null) return;
+            activity.getBinding()
+                    .webview
+                    .loadDataWithBaseURL(
+                        response.getAddress(),
+                        response.getData(),
+                        response.getMimeType(),
+                        response.getEncoding(),
+                        null);
         }
 
         @Override
@@ -113,7 +140,8 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
     @Override
     public void onDestroyed() {
         this.activity = null;
-        this.webClient.destroy();
+        this.sofaInjector.destroy();
+        this.sofaInjector = null;
         this.webClient = null;
     }
 
@@ -121,7 +149,7 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
 
         @JavascriptInterface
         public String getRcpUrl() {
-            return "http://192.168.2.63:8545";
+            return BaseApplication.get().getResources().getString(R.string.rcp_url);
         }
 
         @JavascriptInterface
