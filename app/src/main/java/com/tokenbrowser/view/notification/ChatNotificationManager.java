@@ -91,7 +91,7 @@ public class ChatNotificationManager {
         final SofaMessage sofaMessage = new SofaMessage().makeNew(dsm.getBody());
         try {
             if (sofaMessage.getType() == SofaType.PLAIN_TEXT) {
-                return new SofaAdapters().messageFrom(sofaMessage.getPayload()).getBody();
+                return SofaAdapters.get().messageFrom(sofaMessage.getPayload()).getBody();
             }
         } catch (final IOException ex) {
             // Nop

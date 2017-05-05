@@ -42,7 +42,6 @@ Observable<PendingTransaction> observable = pto.init(user); // Only PendingTrans
 /* package */ class PendingTransactionsObservable {
 
     private User remoteUser;
-    private SofaAdapters adapters;
 
     /**
      * Initialises PendingTransactionsObservable with the user whose PendingTransactions to observe
@@ -52,7 +51,6 @@ Observable<PendingTransaction> observable = pto.init(user); // Only PendingTrans
      */
     /* package */ Observable<PendingTransaction> init(final User remoteUser) {
         this.remoteUser = remoteUser;
-        this.adapters = new SofaAdapters();
         return subscribeToPendingTransactionChanges();
     }
 
@@ -71,7 +69,7 @@ Observable<PendingTransaction> observable = pto.init(user); // Only PendingTrans
     private boolean shouldBeBroadcast(final PendingTransaction pendingTransaction) {
         try {
             final SofaMessage sofaMessage = pendingTransaction.getSofaMessage();
-            final Payment payment = this.adapters.paymentFrom(sofaMessage.getPayload());
+            final Payment payment = SofaAdapters.get().paymentFrom(sofaMessage.getPayload());
             final @Payment.PaymentDirection int paymentDirection =
                     payment.getPaymentDirection()
                             .toBlocking()

@@ -61,12 +61,6 @@ import rx.Single;
 
 public class GcmMessageReceiver extends GcmListenerService {
 
-    private final SofaAdapters adapters;
-
-    public GcmMessageReceiver() {
-        this.adapters = new SofaAdapters();
-    }
-
     @Override
     public void onMessageReceived(final String from, final Bundle data) {
         if (SharedPrefsUtil.hasSignedOut()) return;
@@ -98,7 +92,7 @@ public class GcmMessageReceiver extends GcmListenerService {
             final SofaMessage sofaMessage = new SofaMessage().makeNew(messageBody);
 
             if (sofaMessage.getType() == SofaType.PAYMENT) {
-                final Payment payment = this.adapters.paymentFrom(sofaMessage.getPayload());
+                final Payment payment = SofaAdapters.get().paymentFrom(sofaMessage.getPayload());
                 checkIfUserIsBlocked(payment);
             } else {
                 tryShowSignalMessage();

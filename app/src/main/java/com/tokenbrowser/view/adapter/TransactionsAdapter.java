@@ -36,11 +36,9 @@ import java.util.List;
 
 public class TransactionsAdapter extends RecyclerView.Adapter<TransactionViewHolder> {
 
-    private final SofaAdapters adapters;
     private final List<PendingTransaction> transactions;
 
     public TransactionsAdapter() {
-        this.adapters = new SofaAdapters();
         this.transactions = new ArrayList<>();
     }
 
@@ -61,7 +59,7 @@ public class TransactionsAdapter extends RecyclerView.Adapter<TransactionViewHol
         try {
             final PendingTransaction transaction = this.transactions.get(position);
             final String sofaMessage = transaction.getSofaMessage().getPayload();
-            final Payment payment = this.adapters.paymentFrom(sofaMessage);
+            final Payment payment = SofaAdapters.get().paymentFrom(sofaMessage);
             holder.setPayment(payment);
         } catch (final IOException ex) {
             LogUtil.exception(getClass(), "Error while getting payment from sofa message", ex);

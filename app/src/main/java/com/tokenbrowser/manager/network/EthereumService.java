@@ -122,7 +122,7 @@ public class EthereumService {
                     .makeNew(response.body().string());
             
             response.close();
-            return new SofaAdapters().paymentFrom(sofaMessage.getPayload());
+            return SofaAdapters.get().paymentFrom(sofaMessage.getPayload());
         });
     }
 }

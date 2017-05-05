@@ -64,7 +64,6 @@ public class TransactionManager {
 
     private HDWallet wallet;
     private PendingTransactionStore pendingTransactionStore;
-    private SofaAdapters adapters;
     private CompositeSubscription subscriptions;
 
     /*package */ TransactionManager() {
@@ -127,11 +126,12 @@ public class TransactionManager {
                                                 final SofaMessage sofaMessage,
                                                 final @PaymentRequest.State int newState) {
         try {
-            final PaymentRequest paymentRequest = adapters
+            final PaymentRequest paymentRequest =
+                    SofaAdapters.get()
                     .txRequestFrom(sofaMessage.getPayload())
                     .setState(newState);
 
-            final String updatedPayload = adapters.toJson(paymentRequest);
+            final String updatedPayload = SofaAdapters.get().toJson(paymentRequest);
             sofaMessage.setPayload(updatedPayload);
             BaseApplication
                     .get()
@@ -149,13 +149,8 @@ public class TransactionManager {
     }
 
     private void initEverything() {
-        initAdapters();
         updatePendingTransactions();
         attachSubscribers();
-    }
-
-    private void initAdapters() {
-        this.adapters = new SofaAdapters();
     }
 
     private void updatePendingTransactions() {
@@ -191,7 +186,7 @@ public class TransactionManager {
     private Boolean isUnconfirmed(final PendingTransaction pendingTransaction) {
         try {
             final SofaMessage sofaMessage = pendingTransaction.getSofaMessage();
-            final Payment payment = this.adapters.paymentFrom(sofaMessage.getPayload());
+            final Payment payment = SofaAdapters.get().paymentFrom(sofaMessage.getPayload());
             return payment.getStatus().equals(SofaType.UNCONFIRMED);
         } catch (final IOException ex) {
             return false;
@@ -451,7 +446,7 @@ public class TransactionManager {
 
 
     private SofaMessage generateMessageFromPayment(final Payment payment, final User sender) {
-        final String messageBody = this.adapters.toJson(payment);
+        final String messageBody = SofaAdapters.get().toJson(payment);
         return new SofaMessage().makeNewFromTransaction(payment.getTxHash(), sender, messageBody);
     }
 
@@ -541,11 +536,11 @@ public class TransactionManager {
         }
 
         final SofaMessage sofaMessage = pendingTransaction.getSofaMessage();
-        final Payment existingPayment = adapters.paymentFrom(sofaMessage.getPayload());
+        final Payment existingPayment = SofaAdapters.get().paymentFrom(sofaMessage.getPayload());
 
         existingPayment.setStatus(updatedPayment.getStatus());
 
-        final String messageBody = adapters.toJson(existingPayment);
+        final String messageBody = SofaAdapters.get().toJson(existingPayment);
         return sofaMessage.setPayload(messageBody);
     }
 

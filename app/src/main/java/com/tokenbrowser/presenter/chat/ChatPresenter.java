@@ -109,7 +109,6 @@ public final class ChatPresenter implements
     private MessageAdapter messageAdapter;
     private User remoteUser;
     private SpeedyLinearLayoutManager layoutManager;
-    private SofaAdapters adapters;
     private HDWallet userWallet;
     private CompositeSubscription subscriptions;
     private boolean firstViewAttachment = true;
@@ -140,7 +139,6 @@ public final class ChatPresenter implements
     }
 
     private void initMessageAdapter() {
-        this.adapters = new SofaAdapters();
         this.messageAdapter = new MessageAdapter()
                 .addOnPaymentRequestApproveListener(message -> updatePaymentRequestState(message, PaymentRequest.ACCEPTED))
                 .addOnPaymentRequestRejectListener(message -> updatePaymentRequestState(message, PaymentRequest.REJECTED))
@@ -409,7 +407,7 @@ public final class ChatPresenter implements
 
             final String userInput = activity.getBinding().userInput.getText().toString();
             final Message message = new Message().setBody(userInput);
-            final String messageBody = adapters.toJson(message);
+            final String messageBody = SofaAdapters.get().toJson(message);
             final SofaMessage sofaMessage = new SofaMessage().makeNew(getCurrentLocalUser(), messageBody);
             outgoingMessageQueue.send(sofaMessage);
 
@@ -456,7 +454,7 @@ public final class ChatPresenter implements
         final Command command = new Command()
                 .setBody(control.getLabel())
                 .setValue(control.getValue());
-        final String commandPayload = adapters.toJson(command);
+        final String commandPayload = SofaAdapters.get().toJson(command);
         final SofaMessage sofaMessage = new SofaMessage().makeNew(getCurrentLocalUser(), commandPayload);
         this.outgoingMessageQueue.send(sofaMessage);
     }
@@ -597,7 +595,7 @@ public final class ChatPresenter implements
     }
 
     private void sendPaymentRequest(final PaymentRequest request) {
-        final String messageBody = this.adapters.toJson(request);
+        final String messageBody = SofaAdapters.get().toJson(request);
         final SofaMessage message = new SofaMessage().makeNew(getCurrentLocalUser(), messageBody);
         this.outgoingMessageQueue.send(message);
     }
@@ -738,7 +736,7 @@ public final class ChatPresenter implements
         }
 
         try {
-            final Message message = this.adapters.messageFrom(sofaMessage.getPayload());
+            final Message message = SofaAdapters.get().messageFrom(sofaMessage.getPayload());
             if (message.shouldHideKeyboard()) {
                 hideKeyboard();
             }
@@ -758,7 +756,7 @@ public final class ChatPresenter implements
         }
 
         try {
-            final Message message = adapters.messageFrom(sofaMessage.getPayload());
+            final Message message = SofaAdapters.get().messageFrom(sofaMessage.getPayload());
             final boolean notNullAndNotZero = message.getControls() != null && message.getControls().size() > 0;
             this.activity.getBinding().controlView.hideView();
 
@@ -878,7 +876,7 @@ public final class ChatPresenter implements
 
     private void sendMediaMessage(final String filePath) {
         final Message message = new Message();
-        final String messageBody = this.adapters.toJson(message);
+        final String messageBody = SofaAdapters.get().toJson(message);
         final SofaMessage sofaMessage = new SofaMessage()
                 .makeNew(getCurrentLocalUser(), messageBody)
                 .setAttachmentFilePath(filePath);

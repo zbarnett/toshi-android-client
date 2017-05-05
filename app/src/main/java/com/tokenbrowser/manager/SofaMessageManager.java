@@ -109,7 +109,6 @@ public final class SofaMessageManager {
     private ConversationStore conversationStore;
     private PendingMessageStore pendingMessageStore;
     private String userAgent;
-    private SofaAdapters adapters;
     private boolean receiveMessages;
     private SignalServiceUrl[] signalServiceUrls;
     private String gcmToken;
@@ -120,7 +119,6 @@ public final class SofaMessageManager {
         this.conversationStore = new ConversationStore();
         this.pendingMessageStore = new PendingMessageStore();
         this.userAgent = "Android " + BuildConfig.APPLICATION_ID + " - " + BuildConfig.VERSION_NAME +  ":" + BuildConfig.VERSION_CODE;
-        this.adapters = new SofaAdapters();
         this.signalServiceUrls = new SignalServiceUrl[1];
         this.sharedPreferences = BaseApplication.get().getSharedPreferences(FileNames.GCM_PREFS, Context.MODE_PRIVATE);
         this.subscriptions = new CompositeSubscription();
@@ -620,9 +618,9 @@ public final class SofaMessageManager {
 
     private void respondToInitRequest(final User sender, final SofaMessage remoteMessage) {
         try {
-            final InitRequest initRequest = this.adapters.initRequestFrom(remoteMessage.getPayload());
+            final InitRequest initRequest = SofaAdapters.get().initRequestFrom(remoteMessage.getPayload());
             final Init initMessage = new Init().construct(initRequest, this.wallet.getPaymentAddress());
-            final String payload = this.adapters.toJson(initMessage);
+            final String payload = SofaAdapters.get().toJson(initMessage);
             final SofaMessage newSofaMessage = new SofaMessage().makeNew(sender, payload);
 
             BaseApplication.get()
@@ -644,10 +642,10 @@ public final class SofaMessageManager {
 
     private Single<String> generatePayloadWithLocalAmountEmbedded(final SofaMessage remoteMessage) {
         try {
-            final PaymentRequest request = adapters.txRequestFrom(remoteMessage.getPayload());
+            final PaymentRequest request = SofaAdapters.get().txRequestFrom(remoteMessage.getPayload());
             return request
                     .generateLocalPrice()
-                    .map((updatedPaymentRequest) -> adapters.toJson(updatedPaymentRequest));
+                    .map((updatedPaymentRequest) -> SofaAdapters.get().toJson(updatedPaymentRequest));
         } catch (final IOException ex) {
             LogUtil.exception(getClass(), "Unable to embed local price", ex);
         }
@@ -711,7 +709,7 @@ public final class SofaMessageManager {
 
     private SofaMessage generateOnboardingMessage(final User localUser) {
         final Message sofaMessage = new Message().setBody("");
-        final String messageBody = new SofaAdapters().toJson(sofaMessage);
+        final String messageBody = SofaAdapters.get().toJson(sofaMessage);
         return new SofaMessage().makeNew(localUser, messageBody);
     }
 
