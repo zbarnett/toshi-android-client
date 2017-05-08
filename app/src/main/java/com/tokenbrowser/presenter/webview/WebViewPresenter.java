@@ -26,13 +26,18 @@ import android.widget.Toast;
 import com.tokenbrowser.R;
 import com.tokenbrowser.presenter.Presenter;
 import com.tokenbrowser.util.LogUtil;
+import com.tokenbrowser.view.BaseApplication;
 import com.tokenbrowser.view.activity.WebViewActivity;
 import com.tokenbrowser.view.custom.listener.OnLoadListener;
+
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class WebViewPresenter implements Presenter<WebViewActivity> {
 
     private WebViewActivity activity;
     private SofaWebViewClient webClient;
+    private SofaInjector sofaInjector;
 
     @Override
     public void onViewAttached(final WebViewActivity view) {
@@ -44,6 +49,10 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
     private void initWebClient() {
         if (this.webClient == null) {
             this.webClient = new SofaWebViewClient(this.loadedListener);
+        }
+
+        if (this.sofaInjector == null) {
+            this.sofaInjector = new SofaInjector(this.loadedListener);
         }
     }
 
@@ -60,15 +69,13 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
     }
 
     private void initWebView() {
-        loadWebApp();
+        injectSofaHost();
         addWebClient();
     }
 
-    private void loadWebApp() {
-        final String address = this.activity.getIntent().getStringExtra(WebViewActivity.EXTRA__ADDRESS);
+    private void injectSofaHost() {
         this.activity.getBinding().webview.getSettings().setJavaScriptEnabled(true);
         this.activity.getBinding().webview.addJavascriptInterface(new SOFAHost(), "SOFAHost");
-        this.activity.getBinding().webview.loadUrl(address);
     }
 
     private void addWebClient() {
@@ -82,6 +89,32 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
     }
 
     private final OnLoadListener loadedListener = new OnLoadListener() {
+        @Override
+        public void onReady() {
+            if (activity == null) return;
+            final String address = activity.getIntent().getStringExtra(WebViewActivity.EXTRA__ADDRESS);
+
+            sofaInjector.loadUrl(address)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                            this::handleWebResourceResponse,
+                            this::onError
+                    );
+        }
+
+        private void handleWebResourceResponse(final SofaInjectResponse response) {
+            if (activity == null) return;
+            activity.getBinding()
+                    .webview
+                    .loadDataWithBaseURL(
+                        response.getAddress(),
+                        response.getData(),
+                        response.getMimeType(),
+                        response.getEncoding(),
+                        null);
+        }
+
         @Override
         public void onLoaded() {
             if (activity == null) return;
@@ -107,14 +140,29 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
     @Override
     public void onDestroyed() {
         this.activity = null;
-        this.webClient.destroy();
+        this.sofaInjector.destroy();
+        this.sofaInjector = null;
         this.webClient = null;
     }
 
     private class SOFAHost {
+
+        @JavascriptInterface
+        public String getRcpUrl() {
+            return BaseApplication.get().getResources().getString(R.string.rcp_url);
+        }
+
         @JavascriptInterface
         public String getAccounts() {
-            return "0x0";
+            return "[\"" +
+                    BaseApplication
+                    .get()
+                    .getTokenManager()
+                    .getWallet()
+                    .toBlocking()
+                    .value()
+                    .getPaymentAddress()
+                    + "\"]";
         }
 
         @JavascriptInterface
@@ -124,7 +172,13 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
 
         @JavascriptInterface
         public String signTransaction(final String unsignedTransaction) {
-            return "signature";
+            return BaseApplication
+                    .get()
+                    .getTokenManager()
+                    .getWallet()
+                    .toBlocking()
+                    .value()
+                    .signTransaction(unsignedTransaction);
         }
     }
 }
