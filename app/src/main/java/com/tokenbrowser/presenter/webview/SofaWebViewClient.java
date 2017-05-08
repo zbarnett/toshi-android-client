@@ -35,5 +35,11 @@ import com.tokenbrowser.view.custom.listener.OnLoadListener;
     @Override
     public void onPageFinished(WebView webView, final String url) {
         this.listener.onLoaded();
+        super.onPageFinished(webView, url);
+    }
+
+    @Override
+    public void onPageCommitVisible(WebView view, String url) {
+        this.listener.onLoaded();
     }
 }

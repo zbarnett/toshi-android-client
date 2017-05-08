@@ -20,6 +20,7 @@ package com.tokenbrowser.presenter.webview;
 
 import android.support.annotation.NonNull;
 
+import com.squareup.okhttp.HttpUrl;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
@@ -31,6 +32,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URI;
 
 import rx.Completable;
 import rx.Single;
@@ -70,7 +72,7 @@ import rx.subscriptions.CompositeSubscription;
 
     private SofaInjectResponse loadAndInjectSofa(final String url) throws IOException {
         final Request request = new Request.Builder()
-                .url(url)
+                .url(formatUrl(url))
                 .build();
 
         final Response response = this.client.newCall(request).execute();
@@ -85,6 +87,14 @@ import rx.subscriptions.CompositeSubscription;
                 .setMimeType(response.header("content-type", "text/plain"))
                 .setEncoding(response.header("content-encoding", "utf-8"))
                 .build();
+    }
+
+    private HttpUrl formatUrl(final String url) {
+        final URI uri = URI.create(url);
+        final String formattedUri = uri.getScheme() == null
+                ? "http://" + uri.toASCIIString()
+                : uri.toASCIIString();
+        return HttpUrl.parse(formattedUri);
     }
 
     private Completable loadSofaScript() {
