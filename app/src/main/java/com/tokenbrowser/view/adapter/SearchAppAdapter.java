@@ -92,6 +92,14 @@ public class SearchAppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         this.dapp = null;
     }
 
+    public App getFirstApp() {
+        if (this.apps == null || this.apps.size() <= 1) {
+            return null;
+        }
+        // Header is always at position 0
+        return this.apps.get(1);
+    }
+
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
@@ -145,5 +153,10 @@ public class SearchAppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     @Override
     public int getItemCount() {
         return this.apps.size();
+    }
+
+    public int getNumberOfApps() {
+        // Remove the header.
+        return this.apps.size() - 1;
     }
 }
