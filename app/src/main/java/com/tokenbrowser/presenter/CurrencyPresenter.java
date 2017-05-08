@@ -22,6 +22,7 @@ import android.support.v7.widget.RecyclerView;
 
 import com.tokenbrowser.model.network.Currency;
 import com.tokenbrowser.util.LogUtil;
+import com.tokenbrowser.util.SharedPrefsUtil;
 import com.tokenbrowser.view.BaseApplication;
 import com.tokenbrowser.view.activity.CurrencyActivity;
 import com.tokenbrowser.view.adapter.CurrencyAdapter;
@@ -82,7 +83,10 @@ public class CurrencyPresenter implements Presenter<CurrencyActivity> {
         this.activity.getBinding().closeButton.setOnClickListener(__ -> this.activity.finish());
     }
 
-    private void handleCurrencyClicked(final Currency currency) {}
+    private void handleCurrencyClicked(final Currency currency) {
+        SharedPrefsUtil.saveCurrency(currency.getId());
+        this.activity.finish();
+    }
 
     private void getCurrencies() {
         final Subscription sub =
