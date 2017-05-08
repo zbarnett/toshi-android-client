@@ -28,6 +28,7 @@ import com.tokenbrowser.manager.store.ContactStore;
 import com.tokenbrowser.manager.store.UserStore;
 import com.tokenbrowser.model.local.BlockedUser;
 import com.tokenbrowser.model.local.Contact;
+import com.tokenbrowser.model.local.Report;
 import com.tokenbrowser.model.local.User;
 import com.tokenbrowser.model.network.ServerTime;
 import com.tokenbrowser.model.network.UserDetails;
@@ -332,6 +333,18 @@ public class UserManager {
     public Completable unblockUser(final String ownerAddress) {
         return Completable.fromAction(() ->
                 this.blockedUserStore.delete(ownerAddress))
+                .subscribeOn(Schedulers.io());
+    }
+
+    public Single<Void> reportUser(final Report report) {
+        return IdService
+                .getApi()
+                .getTimestamp()
+                .flatMap(serverTime ->
+                        IdService
+                        .getApi()
+                        .reportUser(report, serverTime.get())
+                )
                 .subscribeOn(Schedulers.io());
     }
 

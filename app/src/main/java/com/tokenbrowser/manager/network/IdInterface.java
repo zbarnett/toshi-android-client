@@ -18,6 +18,7 @@
 package com.tokenbrowser.manager.network;
 
 
+import com.tokenbrowser.model.local.Report;
 import com.tokenbrowser.model.local.User;
 import com.tokenbrowser.model.network.ServerTime;
 import com.tokenbrowser.model.network.UserDetails;
@@ -69,6 +70,10 @@ public interface IdInterface {
     @Multipart
     @PUT("v1/user")
     Single<User> uploadFile(@Part MultipartBody.Part file,
+                            @Query("timestamp") long timestamp);
+
+    @POST("v1/report")
+    Single<Void> reportUser(@Body Report report,
                             @Query("timestamp") long timestamp);
 }
 

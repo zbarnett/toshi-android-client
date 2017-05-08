@@ -40,6 +40,7 @@ import com.tokenbrowser.util.OnSingleClickListener;
 import com.tokenbrowser.util.PaymentType;
 import com.tokenbrowser.util.SoundManager;
 import com.tokenbrowser.util.UserBlockingHandler;
+import com.tokenbrowser.util.UserReportingHandler;
 import com.tokenbrowser.view.BaseApplication;
 import com.tokenbrowser.view.activity.AmountActivity;
 import com.tokenbrowser.view.activity.ChatActivity;
@@ -63,6 +64,7 @@ public final class ViewUserPresenter implements
     private User scannedUser;
     private String userAddress;
     private UserBlockingHandler userBlockingHandler;
+    private UserReportingHandler userReportingHandler;
 
     @Override
     public void onViewAttached(final ViewUserActivity activity) {
@@ -82,7 +84,7 @@ public final class ViewUserPresenter implements
         initToolbar();
         initClickListeners();
         processIntentData();
-        initUserBlockingHandler();
+        initHandlers();
         loadUser();
         fetchUserReputation();
     }
@@ -101,7 +103,9 @@ public final class ViewUserPresenter implements
         this.userAddress = this.activity.getIntent().getStringExtra(ViewUserActivity.EXTRA__USER_ADDRESS);
     }
 
-    private void initUserBlockingHandler() {
+    private void initHandlers() {
+        this.userReportingHandler = new UserReportingHandler(this.activity)
+                .setUserAddress(this.userAddress);
         this.userBlockingHandler = new UserBlockingHandler(this.activity)
                 .setUserAddress(this.userAddress)
                 .setOnBlockingListener(this);
@@ -385,11 +389,7 @@ public final class ViewUserPresenter implements
     }
 
     private void reportUser() {
-        Toast.makeText(
-                this.activity,
-                this.activity.getString(R.string.not_implemented),
-                Toast.LENGTH_SHORT
-        ).show();
+        this.userReportingHandler.showReportDialog();
     }
 
     @Override
