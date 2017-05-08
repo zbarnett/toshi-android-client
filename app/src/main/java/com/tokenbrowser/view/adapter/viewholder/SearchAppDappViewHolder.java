@@ -23,6 +23,8 @@ import android.widget.Button;
 
 import com.tokenbrowser.R;
 import com.tokenbrowser.model.local.Dapp;
+import com.tokenbrowser.util.LocaleUtil;
+import com.tokenbrowser.view.BaseApplication;
 import com.tokenbrowser.view.adapter.listeners.OnItemClickListener;
 
 public class SearchAppDappViewHolder extends RecyclerView.ViewHolder {
@@ -37,7 +39,9 @@ public class SearchAppDappViewHolder extends RecyclerView.ViewHolder {
 
     public SearchAppDappViewHolder setDapp(final Dapp dapp) {
         this.dapp = dapp;
-        this.launchDappButton.setText(this.dapp.getAddress());
+        final String textResource = BaseApplication.get().getResources().getString(R.string.launch_dapp);
+        final String buttonText = String.format(LocaleUtil.getLocale(), textResource,  this.dapp.getAddress());
+        this.launchDappButton.setText(buttonText);
         return this;
     }
 
