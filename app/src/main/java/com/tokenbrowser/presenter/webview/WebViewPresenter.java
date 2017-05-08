@@ -63,7 +63,7 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
     }
 
     private void initToolbar() {
-        final String address = this.activity.getIntent().getStringExtra(WebViewActivity.EXTRA__ADDRESS);
+        final String address = getAddress();
         this.activity.getBinding().title.setText(address);
         this.activity.getBinding().closeButton.setOnClickListener(__ -> this.activity.onBackPressed());
     }
@@ -92,7 +92,7 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
         @Override
         public void onReady() {
             if (activity == null) return;
-            final String address = activity.getIntent().getStringExtra(WebViewActivity.EXTRA__ADDRESS);
+            final String address = getAddress();
 
             sofaInjector.loadUrl(address)
                     .subscribeOn(Schedulers.io())
@@ -131,6 +131,10 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
             activity.finish();
         }
     };
+
+    private String getAddress() {
+        return this.activity.getIntent().getStringExtra(WebViewActivity.EXTRA__ADDRESS).trim();
+    }
 
     @Override
     public void onViewDetached() {

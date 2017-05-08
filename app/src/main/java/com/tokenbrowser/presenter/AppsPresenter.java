@@ -176,7 +176,7 @@ public class AppsPresenter implements Presenter<AppsFragment>{
     }
 
     private void tryRenderDappLink(final String searchString) {
-        if (!Patterns.WEB_URL.matcher(searchString).matches()) {
+        if (!Patterns.WEB_URL.matcher(searchString.trim()).matches()) {
             this.searchAppAdapter.removeDapp();
             return;
         }
