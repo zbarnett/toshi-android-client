@@ -39,6 +39,8 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
     private SofaWebViewClient webClient;
     private SofaInjector sofaInjector;
 
+    private boolean isLoaded = false;
+
     @Override
     public void onViewAttached(final WebViewActivity view) {
         this.activity = view;
@@ -47,18 +49,19 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
     }
 
     private void initWebClient() {
-        if (this.webClient == null) {
-            this.webClient = new SofaWebViewClient(this.loadedListener);
+        if (this.webClient != null) {
+            hideLoadingSpinner();
+            return;
         }
-
-        if (this.sofaInjector == null) {
-            this.sofaInjector = new SofaInjector(this.loadedListener);
-        }
+        this.webClient = new SofaWebViewClient(this.loadedListener);
+        this.sofaInjector = new SofaInjector(this.loadedListener);
+        this.activity.getBinding().webview.getSettings().setJavaScriptEnabled(true);
+        this.activity.getBinding().webview.addJavascriptInterface(new SOFAHost(), "SOFAHost");
+        this.activity.getBinding().webview.setWebViewClient(this.webClient);
     }
 
     private void initView() {
         initToolbar();
-        initWebView();
         animateLoadingSpinner();
     }
 
@@ -68,22 +71,8 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
         this.activity.getBinding().closeButton.setOnClickListener(__ -> this.activity.onBackPressed());
     }
 
-    private void initWebView() {
-        injectSofaHost();
-        addWebClient();
-    }
-
-    private void injectSofaHost() {
-        this.activity.getBinding().webview.getSettings().setJavaScriptEnabled(true);
-        this.activity.getBinding().webview.addJavascriptInterface(new SOFAHost(), "SOFAHost");
-    }
-
-    private void addWebClient() {
-        this.activity.getBinding().webview.setWebViewClient(this.webClient);
-    }
-
     private void animateLoadingSpinner() {
-        if (this.activity == null) return;
+        if (this.activity == null || this.isLoaded) return;
         final Animation rotateAnimation = AnimationUtils.loadAnimation(this.activity, R.anim.rotate);
         this.activity.getBinding().loadingView.startAnimation(rotateAnimation);
     }
@@ -118,9 +107,8 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
         @Override
         public void onLoaded() {
             if (activity == null) return;
-            activity.getBinding().loadingView.clearAnimation();
-            activity.getBinding().loadingView.setVisibility(View.GONE);
-            activity.getBinding().webview.setVisibility(View.VISIBLE);
+            hideLoadingSpinner();
+            isLoaded = true;
         }
 
         @Override
@@ -132,6 +120,12 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
         }
     };
 
+    private void hideLoadingSpinner() {
+        activity.getBinding().loadingView.clearAnimation();
+        activity.getBinding().loadingView.setVisibility(View.GONE);
+        activity.getBinding().webview.setVisibility(View.VISIBLE);
+    }
+
     private String getAddress() {
         return this.activity.getIntent().getStringExtra(WebViewActivity.EXTRA__ADDRESS).trim();
     }
@@ -139,14 +133,22 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
     @Override
     public void onViewDetached() {
         this.activity = null;
+        // WebView doesn't handle orientation change so
+        // we can destroy it. This seems to be an Android issue.
+        // this kinda sucks.
+        destroy();
     }
 
     @Override
     public void onDestroyed() {
         this.activity = null;
+    }
+
+    private void destroy() {
         this.sofaInjector.destroy();
         this.sofaInjector = null;
         this.webClient = null;
+        this.isLoaded = false;
     }
 
     private class SOFAHost {
