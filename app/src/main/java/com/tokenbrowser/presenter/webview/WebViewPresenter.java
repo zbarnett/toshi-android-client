@@ -56,6 +56,8 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
         this.webClient = new SofaWebViewClient(this.loadedListener);
         this.sofaInjector = new SofaInjector(this.loadedListener);
         this.activity.getBinding().webview.getSettings().setJavaScriptEnabled(true);
+        this.activity.getBinding().webview.getSettings().setBuiltInZoomControls(true);
+        this.activity.getBinding().webview.getSettings().setDisplayZoomControls(false);
         this.activity.getBinding().webview.addJavascriptInterface(new SOFAHost(), "SOFAHost");
         this.activity.getBinding().webview.setWebViewClient(this.webClient);
     }
