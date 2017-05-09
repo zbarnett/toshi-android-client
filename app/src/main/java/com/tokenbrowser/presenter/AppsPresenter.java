@@ -44,6 +44,8 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 
+import static android.view.inputmethod.EditorInfo.IME_ACTION_DONE;
+
 public class AppsPresenter implements Presenter<AppsFragment>{
 
     private List<App> apps;
@@ -124,15 +126,24 @@ public class AppsPresenter implements Presenter<AppsFragment>{
     }
 
     private void initSearchView() {
-        final Subscription sub =
+        final Subscription searchSub =
                 RxTextView.textChanges(this.fragment.getBinding().search)
                 .skip(1)
                 .debounce(400, TimeUnit.MILLISECONDS)
                 .map(CharSequence::toString)
                 .subscribe(this::runSearchQuery);
 
+        final Subscription enterSub =
+                RxTextView.editorActions(this.fragment.getBinding().search)
+                        .filter(event -> event == IME_ACTION_DONE)
+                        .subscribe(
+                                __ -> this.handleSearchPressed(),
+                                t -> LogUtil.e(getClass(), t.toString()));
+
         updateViewState();
-        this.subscriptions.add(sub);
+
+        this.subscriptions.add(searchSub);
+        this.subscriptions.add(enterSub);
     }
 
     private void runSearchQuery(final String query) {
@@ -149,6 +160,16 @@ public class AppsPresenter implements Presenter<AppsFragment>{
                         this::handleAppSearchError
                 );
         this.subscriptions.add(sub);
+    }
+
+    private void handleSearchPressed() {
+        if (this.searchAppAdapter == null || this.searchAppAdapter.getNumberOfApps() != 1) return;
+        final App appToLaunch = this.searchAppAdapter.getFirstApp();
+        if (appToLaunch == null) return;
+        if (appToLaunch instanceof Dapp) {
+            this.handleDappLaunch((Dapp) appToLaunch);
+        }
+
     }
 
     private Observable<List<App>> searchApps(final String searchString) {
@@ -176,7 +197,7 @@ public class AppsPresenter implements Presenter<AppsFragment>{
     }
 
     private void tryRenderDappLink(final String searchString) {
-        if (!Patterns.WEB_URL.matcher(searchString).matches()) {
+        if (!Patterns.WEB_URL.matcher(searchString.trim()).matches()) {
             this.searchAppAdapter.removeDapp();
             return;
         }
