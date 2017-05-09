@@ -15,20 +15,18 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.tokenbrowser.manager.network;
+package com.tokenbrowser.model.network;
 
-import com.tokenbrowser.model.network.Currencies;
-import com.tokenbrowser.model.network.MarketRates;
+public class Currency {
+    private String id;
+    private String name;
+    private String min_size;
 
-import retrofit2.http.GET;
-import retrofit2.http.Query;
-import rx.Single;
+    public String getId() {
+        return id;
+    }
 
-public interface CurrencyInterface {
-
-    @GET("/v2/exchange-rates")
-    Single<MarketRates> getRates(@Query("currency") String currency);
-
-    @GET("/v2/currencies")
-    Single<Currencies> getCurrencies();
+    public String getName() {
+        return name;
+    }
 }
