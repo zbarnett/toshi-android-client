@@ -15,28 +15,21 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.tokenbrowser.model.network;
+package com.tokenbrowser.view.adapter.viewholder;
 
-public class Currency {
-    private String id;
-    private String name;
-    private String min_size;
-    private boolean isHeader;
+import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.TextView;
 
-    public String getId() {
-        return id;
+public class CurrencyHeaderViewHolder extends RecyclerView.ViewHolder {
+    private TextView textView;
+
+    public CurrencyHeaderViewHolder(View itemView) {
+        super(itemView);
+        this.textView = (TextView) itemView;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public boolean isHeader() {
-        return isHeader;
-    }
-
-    public Currency setHeader(boolean header) {
-        this.isHeader = header;
-        return this;
+    public void setText(final String value) {
+        this.textView.setText(value);
     }
 }
