@@ -30,7 +30,7 @@
             android:layout_height="?attr/actionBarSize"
             android:gravity="center_vertical"
             android:focusableInTouchMode="true"
-            style="@style/ToolbarTheme">
+            style="@style/Toolbar">
 
             <TextView
                 android:id="@+id/title"
