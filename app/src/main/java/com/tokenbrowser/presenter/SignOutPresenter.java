@@ -51,19 +51,9 @@ public class SignOutPresenter implements Presenter<SignOutActivity> {
     }
 
     private Completable clearAndUnregister() {
-        return Completable
-                .mergeDelayError(
-                    unregisterChatGcm(),
-                    unregisterEthGcm(),
-                    clearUserDataAndLogOut()
-        );
-    }
-
-    private Completable clearUserDataAndLogOut() {
-        return BaseApplication
-                .get()
-                .getTokenManager()
-                .clearUserData();
+        return unregisterChatGcm()
+              .andThen(unregisterEthGcm())
+              .andThen(clearUserDataAndLogOut());
     }
 
     private Completable unregisterChatGcm() {
@@ -77,12 +67,18 @@ public class SignOutPresenter implements Presenter<SignOutActivity> {
     private Completable unregisterEthGcm() {
         return GcmUtil
                 .getGcmToken()
-                .flatMap(token -> BaseApplication
+                .flatMapCompletable(token -> BaseApplication
                         .get()
                         .getTokenManager()
                         .getBalanceManager()
-                        .unregisterFromGcm(token))
-                .toCompletable();
+                        .unregisterFromGcm(token));
+    }
+
+    private Completable clearUserDataAndLogOut() {
+        return BaseApplication
+                .get()
+                .getTokenManager()
+                .clearUserData();
     }
 
     private void goToSignInActivity() {
