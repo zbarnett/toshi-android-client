@@ -24,13 +24,12 @@ import android.view.ViewGroup;
 
 import com.tokenbrowser.R;
 import com.tokenbrowser.model.network.Currency;
-import com.tokenbrowser.view.BaseApplication;
 import com.tokenbrowser.view.adapter.listeners.OnItemClickListener;
 import com.tokenbrowser.view.adapter.viewholder.CurrencyViewHolder;
 
 import java.util.List;
 
-public class CurrencyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class CurrencyAdapter extends RecyclerView.Adapter<CurrencyViewHolder> {
 
     private List<Currency> currencies;
     private OnItemClickListener<Currency> listener;
@@ -46,35 +45,22 @@ public class CurrencyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     public void addItems(final List<Currency> currencies) {
         this.currencies.clear();
-        final Currency header = new Currency()
-                .setHeader(true);
-        this.currencies.add(header); //Add header
         this.currencies.addAll(currencies);
         notifyDataSetChanged();
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public CurrencyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         final View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item__currency, parent, false);
         return new CurrencyViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(CurrencyViewHolder holder, int position) {
         final Currency currency = this.currencies.get(position);
-        renderItemView(currency, holder);
-    }
-
-    private void renderItemView(final Currency currency, final RecyclerView.ViewHolder holder) {
-        final CurrencyViewHolder vh = (CurrencyViewHolder) holder;
-        if (currency.isHeader()) {
-            final String headerString = BaseApplication.get().getString(R.string.currencies);
-            vh.setHeaderText(headerString);
-        } else {
-            vh
-                    .setCurrency(currency)
-                    .setOnClickListener(this.listener, currency);
-        }
+        holder
+                .setCurrency(currency)
+                .setOnClickListener(this.listener, currency);
     }
 
     @Override

@@ -56,11 +56,13 @@ public class CurrencyPresenter implements Presenter<CurrencyActivity> {
 
     private void initLongLivingObjects() {
         this.subscriptions = new CompositeSubscription();
+        this.currencies = new ArrayList<>();
     }
 
     private void initShortLivingObjects() {
         initRecyclerView();
         initClickListeners();
+        hideAppBarIfScrolled();
         getCurrencies();
     }
 
@@ -68,15 +70,15 @@ public class CurrencyPresenter implements Presenter<CurrencyActivity> {
         final RecyclerView recyclerView = this.activity.getBinding().recyclerView;
         final LinearLayoutManager llm = new LinearLayoutManager(this.activity);
         recyclerView.setLayoutManager(llm);
-        final List<Currency> currencies = this.currencies != null
-                ? this.currencies
-                : new ArrayList<>();
-        final CurrencyAdapter adapter = new CurrencyAdapter(currencies)
+        final CurrencyAdapter adapter = new CurrencyAdapter(this.currencies)
                 .setOnClickListener(this::handleCurrencyClicked);
         recyclerView.setAdapter(adapter);
-
-        if (this.currencies == null || scrollPosition == -1) return;
         llm.scrollToPosition(this.scrollPosition);
+    }
+
+    private void hideAppBarIfScrolled() {
+        if (this.scrollPosition != -1)
+        this.activity.getBinding().appBar.setExpanded(false);
     }
 
     private void initClickListeners() {
