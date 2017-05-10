@@ -31,6 +31,7 @@ import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
+import rx.Completable;
 import rx.Single;
 
 public interface EthereumInterface {
@@ -56,7 +57,7 @@ public interface EthereumInterface {
             @Body GcmRegistration gcmRegistration);
 
     @POST("/v1/gcm/deregister")
-    Single<Void> unregisterGcm(
+    Completable unregisterGcm(
             @Query("timestamp") long timestamp,
             @Body GcmRegistration gcmRegistration);
 

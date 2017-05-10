@@ -41,6 +41,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import rx.Completable;
 import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -173,12 +174,12 @@ public class BalanceManager {
                 .flatMap((st) -> registerForGcmWithTimestamp(token, st));
     }
 
-    public Single<Void> unregisterFromGcm(final String token) {
+    public Completable unregisterFromGcm(final String token) {
         return EthereumService
                 .getApi()
                 .getTimestamp()
                 .subscribeOn(Schedulers.io())
-                .flatMap((st) -> unregisterGcmWithTimestamp(token, st));
+                .flatMapCompletable((st) -> unregisterGcmWithTimestamp(token, st));
     }
 
     private Single<Void> registerForGcmWithTimestamp(final String token, final ServerTime serverTime) {
@@ -191,9 +192,9 @@ public class BalanceManager {
                 .registerGcm(serverTime.get(), new GcmRegistration(token));
     }
 
-    private Single<Void> unregisterGcmWithTimestamp(final String token, final ServerTime serverTime) {
+    private Completable unregisterGcmWithTimestamp(final String token, final ServerTime serverTime) {
         if (serverTime == null) {
-            throw new IllegalStateException("ServerTime was null");
+            throw new IllegalStateException("Unable to fetch server time");
         }
 
         return EthereumService
