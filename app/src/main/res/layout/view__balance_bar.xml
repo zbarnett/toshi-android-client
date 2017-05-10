@@ -88,6 +88,7 @@
             android:layout_height="match_parent"
             style="@style/FlatButton"
             android:textSize="14sp"
+            android:textAllCaps="true"
             android:visibility="gone"
             tools:visibility="visible"
             android:text="@string/button_request"/>
@@ -103,6 +104,7 @@
             style="@style/FlatButton"
             android:minWidth="0dp"
             android:textSize="14sp"
+            android:textAllCaps="true"
             android:visibility="gone"
             tools:visibility="visible"
             android:text="@string/button_pay"/>
