@@ -158,7 +158,7 @@
                 <TextView
                     android:id="@+id/my_qr_code"
                     android:layout_width="match_parent"
-                    android:layout_height="54dp"
+                    android:layout_height="@dimen/button_height"
                     android:paddingLeft="@dimen/activity_horizontal_margin"
                     android:paddingRight="@dimen/activity_horizontal_margin"
                     android:gravity="center_vertical"
@@ -226,7 +226,7 @@
                 <Button
                     android:id="@+id/add_money"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/button_height"
                     android:gravity="left|center_vertical"
                     style="@style/NoPaddingButton"
                     android:paddingLeft="@dimen/activity_horizontal_margin"
@@ -280,7 +280,7 @@
                 <LinearLayout
                     android:id="@+id/backup_phrase"
                     android:layout_width="match_parent"
-                    android:layout_height="54dp"
+                    android:layout_height="@dimen/button_height"
                     android:orientation="horizontal"
                     android:paddingLeft="@dimen/activity_horizontal_margin"
                     android:paddingRight="@dimen/activity_horizontal_margin"
@@ -297,7 +297,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="30dp"
-                        android:textSize="16sp"
+                        android:textSize="17sp"
                         android:textColor="@color/textColorPrimary"
                         android:text="@string/store_backup_phrase"/>
 
@@ -313,7 +313,7 @@
                 <LinearLayout
                     android:id="@+id/trusted_friends"
                     android:layout_width="match_parent"
-                    android:layout_height="54dp"
+                    android:layout_height="@dimen/button_height"
                     android:orientation="horizontal"
                     android:paddingLeft="@dimen/activity_horizontal_margin"
                     android:paddingRight="@dimen/activity_horizontal_margin"
@@ -330,7 +330,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="30dp"
-                        android:textSize="16sp"
+                        android:textSize="17sp"
                         android:textColor="@color/textColorPrimary"
                         android:text="@string/choose_trusted_friends"/>
 
