@@ -206,4 +206,6 @@
     <string name="report_inappropriate">Inappropriate behavior</string>
     <string name="report_error">Error during sending report</string>
     <string name="launch_dapp">Launch %s</string>
+    <string name="local_currency">Local currency</string>
+    <string name="currencies">Currencies</string>
 </resources>
