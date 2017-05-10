@@ -55,29 +55,48 @@
 
         </LinearLayout>
 
-        <EditText
-            android:id="@+id/user_input"
+        <android.support.design.widget.CoordinatorLayout
             android:layout_width="match_parent"
-            android:layout_height="54dp"
-            android:paddingLeft="16dp"
-            android:textSize="16sp"
-            style="@style/SearchEditText"
-            android:singleLine="true"
-            android:maxLines="1"
-            android:imeOptions="actionNext"
-            android:hint="@string/search_people"/>
+            android:layout_height="wrap_content">
 
-        <View
-            android:layout_width="wrap_content"
-            android:layout_height="10dp"
-            android:background="@color/divider"/>
+            <android.support.design.widget.AppBarLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/windowBackground"
+                app:elevation="0dp">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/search_results"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="@dimen/activity_horizontal_margin"
-            android:clipToPadding="false" />
+                <EditText
+                    android:id="@+id/user_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp"
+                    app:layout_scrollFlags="scroll"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                    android:paddingLeft="16dp"
+                    android:singleLine="true"
+                    android:maxLines="1"
+                    android:imeOptions="actionNext"
+                    style="@style/SearchEditText"
+                    android:textSize="16sp"
+                    android:hint="@string/search_people"/>
 
+                <View
+                    android:layout_width="wrap_content"
+                    android:layout_height="10dp"
+                    app:layout_scrollFlags="scroll"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                    android:background="@color/divider"/>
+
+            </android.support.design.widget.AppBarLayout>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/search_results"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="@dimen/activity_horizontal_margin"
+                android:clipToPadding="false"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+
+        </android.support.design.widget.CoordinatorLayout>
     </LinearLayout>
+
 </layout>
