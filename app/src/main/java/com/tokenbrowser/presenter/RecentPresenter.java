@@ -27,8 +27,10 @@ import android.view.MenuItem;
 import com.tokenbrowser.R;
 import com.tokenbrowser.model.local.Conversation;
 import com.tokenbrowser.util.LogUtil;
+import com.tokenbrowser.util.UserSearchType;
 import com.tokenbrowser.view.BaseApplication;
 import com.tokenbrowser.view.activity.ChatActivity;
+import com.tokenbrowser.view.activity.UserSearchActivity;
 import com.tokenbrowser.view.adapter.RecentAdapter;
 import com.tokenbrowser.view.adapter.listeners.OnItemClickListener;
 import com.tokenbrowser.view.custom.HorizontalLineDivider;
@@ -159,6 +161,20 @@ public final class RecentPresenter implements
         this.fragment.startActivity(intent);
     }
 
+    public void handleActionMenuClicked(final MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.add_new_conversation: {
+                goToUserSearchActivity();
+            }
+        }
+    }
+
+    private void goToUserSearchActivity() {
+        final Intent intent = new Intent(this.fragment.getContext(), UserSearchActivity.class)
+                .putExtra(UserSearchActivity.VIEW_TYPE, UserSearchType.CONVERSATION);
+        this.fragment.startActivity(intent);
+    }
+
     @Override
     public void onViewDetached() {
         this.subscriptions.clear();
@@ -170,14 +186,4 @@ public final class RecentPresenter implements
         this.subscriptions = null;
         this.adapter = null;
     }
-
-    public void handleActionMenuClicked(final MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.add_new_conversation: {
-                goToUserSearchActivity();
-            }
-        }
-    }
-
-    private void goToUserSearchActivity() {}
 }

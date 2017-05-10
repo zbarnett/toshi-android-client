@@ -18,22 +18,26 @@
 package com.tokenbrowser.presenter;
 
 import android.content.Intent;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.jakewharton.rxbinding.widget.RxTextView;
+import com.tokenbrowser.R;
 import com.tokenbrowser.model.local.User;
 import com.tokenbrowser.util.KeyboardUtil;
 import com.tokenbrowser.util.LogUtil;
 import com.tokenbrowser.util.OnSingleClickListener;
+import com.tokenbrowser.util.UserSearchType;
 import com.tokenbrowser.view.BaseApplication;
+import com.tokenbrowser.view.activity.ChatActivity;
 import com.tokenbrowser.view.activity.UserSearchActivity;
 import com.tokenbrowser.view.activity.ViewUserActivity;
 import com.tokenbrowser.view.adapter.ContactsAdapter;
 import com.tokenbrowser.view.adapter.listeners.OnItemClickListener;
+import com.tokenbrowser.view.custom.HorizontalLineDivider;
 
 import java.util.concurrent.TimeUnit;
 
@@ -48,8 +52,9 @@ public final class UserSearchPresenter
 
     private boolean firstTimeAttaching = true;
     private UserSearchActivity activity;
-    private ContactsAdapter adapter;
     private CompositeSubscription subscriptions;
+
+    private @UserSearchType.Type int viewType;
 
     @Override
     public void onViewAttached(final UserSearchActivity activity) {
@@ -64,18 +69,29 @@ public final class UserSearchPresenter
 
     private void initLongLivingObjects() {
         this.subscriptions = new CompositeSubscription();
-        this.adapter = new ContactsAdapter()
-                .setOnItemClickListener(this);
     }
 
     private void initShortLivingObjects() {
+        processIntentData();
         initToolbar();
+        initSearch();
         initRecyclerView();
     }
 
-    private void initToolbar() {
-        this.activity.getBinding().closeButton.setOnClickListener(this.handleCloseClicked);
+    @SuppressWarnings("WrongConstant")
+    private void processIntentData() {
+        this.viewType = this.activity.getIntent().getIntExtra(UserSearchActivity.VIEW_TYPE, UserSearchType.PROFILE);
+    }
 
+    private void initToolbar() {
+        final String title = this.viewType == UserSearchType.PROFILE
+                ? this.activity.getString(R.string.search)
+                : this.activity.getString(R.string.new_chat);
+        this.activity.getBinding().title.setText(title);
+        this.activity.getBinding().closeButton.setOnClickListener(this.handleCloseClicked);
+    }
+
+    private void initSearch() {
         final Subscription sub =
                 RxTextView
                 .textChangeEvents(this.activity.getBinding().userInput)
@@ -92,7 +108,7 @@ public final class UserSearchPresenter
 
     private void submitQuery(final String query) {
         if (query.length() < 3) {
-            this.adapter.clear();
+            this.getContactsAdapter().clear();
             return;
         }
 
@@ -104,7 +120,7 @@ public final class UserSearchPresenter
                 .searchOnlineUsers(query)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        users -> this.adapter.setUsers(users),
+                        users -> this.getContactsAdapter().setUsers(users),
                         this::handleSearchError
                 );
 
@@ -120,10 +136,20 @@ public final class UserSearchPresenter
         final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this.activity);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(this.adapter);
+        final ContactsAdapter adapter = new ContactsAdapter()
+                .setOnItemClickListener(this);
+        recyclerView.setAdapter(adapter);
 
-        final DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.VERTICAL);
-        recyclerView.addItemDecoration(dividerItemDecoration);
+        final int dividerLeftPadding = this.activity.getResources().getDimensionPixelSize(R.dimen.avatar_size_small)
+                + this.activity.getResources().getDimensionPixelSize(R.dimen.activity_horizontal_margin);
+        final HorizontalLineDivider lineDivider =
+                new HorizontalLineDivider(ContextCompat.getColor(this.activity, R.color.divider))
+                        .setLeftPadding(dividerLeftPadding);
+        recyclerView.addItemDecoration(lineDivider);
+    }
+
+    private ContactsAdapter getContactsAdapter() {
+        return (ContactsAdapter) this.activity.getBinding().searchResults.getAdapter();
     }
 
     private final OnSingleClickListener handleCloseClicked = new OnSingleClickListener() {
@@ -136,8 +162,26 @@ public final class UserSearchPresenter
 
     @Override
     public void onItemClick(final User clickedUser) {
-        final Intent intent = new Intent(this.activity, ViewUserActivity.class);
-        intent.putExtra(ViewUserActivity.EXTRA__USER_ADDRESS, clickedUser.getTokenId());
+        if (this.viewType == UserSearchType.PROFILE) {
+            goToProfileActivity(clickedUser);
+        } else {
+            goToChatActivity(clickedUser);
+        }
+    }
+
+    private void goToProfileActivity(final User user) {
+        final Intent intent = new Intent(this.activity, ViewUserActivity.class)
+                .putExtra(ViewUserActivity.EXTRA__USER_ADDRESS, user.getTokenId());
+        goToActivity(intent);
+    }
+
+    private void goToChatActivity(final User user) {
+        final Intent intent = new Intent(this.activity, ChatActivity.class)
+                .putExtra(ChatActivity.EXTRA__REMOTE_USER_ADDRESS, user.getTokenId());
+        goToActivity(intent);
+    }
+
+    private void goToActivity(final Intent intent) {
         this.activity.startActivity(intent);
         this.activity.finish();
     }
@@ -151,6 +195,6 @@ public final class UserSearchPresenter
     @Override
     public void onDestroyed() {
         this.subscriptions = null;
-        this.adapter = null;
+        this.activity = null;
     }
 }

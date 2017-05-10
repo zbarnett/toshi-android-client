@@ -30,8 +30,9 @@ import com.tokenbrowser.presenter.factory.UserSearchPresenterFactory;
 
 public class UserSearchActivity extends BasePresenterActivity<UserSearchPresenter, UserSearchActivity> {
 
+    public static final String VIEW_TYPE = "view_type";
+
     private ActivityUserSearchBinding binding;
-    private UserSearchPresenter presenter;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -54,9 +55,7 @@ public class UserSearchActivity extends BasePresenterActivity<UserSearchPresente
     }
 
     @Override
-    protected void onPresenterPrepared(@NonNull final UserSearchPresenter presenter) {
-        this.presenter = presenter;
-    }
+    protected void onPresenterPrepared(@NonNull final UserSearchPresenter presenter) {}
 
     @Override
     protected int loaderId() {

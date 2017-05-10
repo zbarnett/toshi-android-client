@@ -211,4 +211,6 @@
     <string name="review_submitted">Review submitted</string>
     <string name="scan_info_text">Scan QR Code</string>
     <string name="add_new_conversation">Add new conversation</string>
+    <string name="search">Search</string>
+    <string name="new_chat">New chat</string>
 </resources>

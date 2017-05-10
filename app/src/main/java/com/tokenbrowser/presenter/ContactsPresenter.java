@@ -30,6 +30,7 @@ import com.tokenbrowser.model.local.User;
 import com.tokenbrowser.R;
 import com.tokenbrowser.util.LogUtil;
 import com.tokenbrowser.util.OnSingleClickListener;
+import com.tokenbrowser.util.UserSearchType;
 import com.tokenbrowser.view.BaseApplication;
 import com.tokenbrowser.view.activity.ScannerActivity;
 import com.tokenbrowser.view.activity.UserSearchActivity;
@@ -180,7 +181,8 @@ public final class ContactsPresenter implements
 
     private void startUserSearchActivity() {
         if (this.fragment == null) return;
-        final Intent intent = new Intent(this.fragment.getActivity(), UserSearchActivity.class);
+        final Intent intent = new Intent(this.fragment.getActivity(), UserSearchActivity.class)
+                .putExtra(UserSearchActivity.VIEW_TYPE, UserSearchType.PROFILE);
         fragment.startActivity(intent);
     }
 

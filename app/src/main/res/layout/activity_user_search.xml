@@ -18,7 +18,8 @@
 
 <layout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <LinearLayout
         android:orientation="vertical"
@@ -43,19 +44,33 @@
                 android:tint="@color/textColorContrast"
                 android:padding="16dp" />
 
-            <EditText
-                android:id="@+id/user_input"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                style="@style/ToolbarEditText"
-                android:paddingLeft="8dp"
-                android:layout_marginRight="16dp"
-                android:hint="@string/search_people"
-                android:singleLine="true"
-                android:maxLines="1"
-                android:imeOptions="actionNext" />
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                style="@style/Toolbar.TitleText"
+                tools:text="Title"/>
 
         </LinearLayout>
+
+        <EditText
+            android:id="@+id/user_input"
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:paddingLeft="16dp"
+            android:textSize="16sp"
+            style="@style/SearchEditText"
+            android:singleLine="true"
+            android:maxLines="1"
+            android:imeOptions="actionNext"
+            android:hint="@string/search_people"/>
+
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="10dp"
+            android:background="@color/divider"/>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/search_results"
