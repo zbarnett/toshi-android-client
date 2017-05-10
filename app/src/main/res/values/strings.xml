@@ -209,4 +209,5 @@
     <string name="local_currency">Local currency</string>
     <string name="currencies">Currencies</string>
     <string name="review_submitted">Review submitted</string>
+    <string name="scan_info_text">Scan QR Code</string>
 </resources>
