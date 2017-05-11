@@ -19,8 +19,10 @@ package com.tokenbrowser.model.network;
 
 public class GcmRegistration {
     private String registration_id;
+    private String address;
 
-    public GcmRegistration(final String gcmRegistrationId) {
+    public GcmRegistration(final String gcmRegistrationId, final String address) {
         this.registration_id = gcmRegistrationId;
+        this.address = address;
     }
 }

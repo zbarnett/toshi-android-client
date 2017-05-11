@@ -54,7 +54,6 @@ public class RegistrationIntentService extends IntentService {
     public static final String CHAT_SERVICE_SENT_TOKEN_TO_SERVER = "chatServiceSentTokenToServer";
     public static final String ETH_SERVICE_SENT_TOKEN_TO_SERVER = "sentTokenToServer";
     public static final String REGISTRATION_COMPLETE = "registrationComplete";
-    public static final String WATCHING_TRANSACTIONS = "watchingTransactions";
 
     private final SharedPreferences sharedPreferences;
 
@@ -85,12 +84,8 @@ public class RegistrationIntentService extends IntentService {
 
     private void registerChatServiceGcm(final String token, final boolean forceUpdate) {
         final boolean sentToServer = sharedPreferences.getBoolean(CHAT_SERVICE_SENT_TOKEN_TO_SERVER, false);
-        final boolean watchingTransactions = sharedPreferences.getBoolean(WATCHING_TRANSACTIONS, false);
-
         if (!forceUpdate && sentToServer) {
-            if (!watchingTransactions) {
-                watchWalletTransactions();
-            }
+            return;
         }
 
         BaseApplication
@@ -121,32 +116,10 @@ public class RegistrationIntentService extends IntentService {
 
     public void handleGcmSuccess(final Void unused) {
         this.sharedPreferences.edit().putBoolean(ETH_SERVICE_SENT_TOKEN_TO_SERVER, true).apply();
-        watchWalletTransactions();
-    }
-
-    private void watchWalletTransactions() {
-        BaseApplication
-                .get()
-                .getTokenManager()
-                .getBalanceManager()
-                .watchForWalletTransactions()
-                .subscribe(
-                        this::handleWatchWalletSuccess,
-                        this::handleWatchWalletFailure
-                );
     }
 
     public void handleGcmFailure(final Throwable error) {
         this.sharedPreferences.edit().putBoolean(ETH_SERVICE_SENT_TOKEN_TO_SERVER, false).apply();
         LogUtil.exception(getClass(), "Error while registering gcm", error);
-    }
-
-    private void handleWatchWalletSuccess(final Void unused) {
-        sharedPreferences.edit().putBoolean(WATCHING_TRANSACTIONS, true).apply();
-    }
-
-    private void handleWatchWalletFailure(final Throwable error) {
-        sharedPreferences.edit().putBoolean(WATCHING_TRANSACTIONS, false).apply();
-        LogUtil.exception(getClass(), "Error while watching wallet transactions", error);
     }
 }
