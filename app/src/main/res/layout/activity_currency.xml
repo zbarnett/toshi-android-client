@@ -30,7 +30,7 @@
             android:layout_height="?attr/actionBarSize"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            style="@style/ToolbarTheme">
+            style="@style/Toolbar">
 
             <ImageButton
                 android:id="@+id/close_button"
