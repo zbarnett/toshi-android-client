@@ -210,4 +210,5 @@
     <string name="currencies">Currencies</string>
     <string name="review_submitted">Review submitted</string>
     <string name="scan_info_text">Scan QR Code</string>
+    <string name="add_new_conversation">Add new conversation</string>
 </resources>

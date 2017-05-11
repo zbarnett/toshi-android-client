@@ -84,7 +84,7 @@ public class RecentFragment extends BasePresenterFragment<RecentPresenter, Recen
 
     @Override
     public void onCreateOptionsMenu(final Menu menu, final MenuInflater inflater) {
-        inflater.inflate(R.menu.contacts, menu);
+        inflater.inflate(R.menu.recent, menu);
     }
 
     @Override
