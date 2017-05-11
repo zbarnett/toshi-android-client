@@ -17,26 +17,19 @@
 
 package com.tokenbrowser.presenter.webview;
 
+import android.os.Build;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
+import android.webkit.WebView;
 import android.widget.Toast;
 
 import com.tokenbrowser.R;
-import com.tokenbrowser.crypto.HDWallet;
-import com.tokenbrowser.model.local.UnsignedW3Transaction;
-import com.tokenbrowser.model.sofa.SofaAdapters;
 import com.tokenbrowser.presenter.Presenter;
 import com.tokenbrowser.util.LogUtil;
-import com.tokenbrowser.view.BaseApplication;
 import com.tokenbrowser.view.activity.WebViewActivity;
 import com.tokenbrowser.view.custom.listener.OnLoadListener;
-import com.tokenbrowser.view.fragment.DialogFragment.PaymentConfirmationDialog;
-import com.tokenbrowser.view.fragment.DialogFragment.WebPaymentConfirmationListener;
-
-import java.io.IOException;
 
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -46,8 +39,7 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
     private WebViewActivity activity;
     private SofaWebViewClient webClient;
     private SofaInjector sofaInjector;
-
-    private PaymentConfirmationDialog paymentConfirmationDialog;
+    private SofaHostWrapper sofaHostWrapper;
 
     private boolean isLoaded = false;
 
@@ -63,20 +55,29 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
             hideLoadingSpinner();
             return;
         }
-        this.webClient = new SofaWebViewClient(this.loadedListener);
-        this.sofaInjector = new SofaInjector(this.loadedListener);
-        initSettings();
-        this.activity.getBinding().webview.addJavascriptInterface(new SOFAHost(), "SOFAHost");
-        this.activity.getBinding().webview.setWebViewClient(this.webClient);
+        initInjectsAndEmbeds();
+        initWebSettings();
+        injectEverything();
     }
 
-    private void initSettings() {
+    private void initInjectsAndEmbeds() {
+        this.webClient = new SofaWebViewClient(this.loadedListener);
+        this.sofaInjector = new SofaInjector(this.loadedListener);
+        this.sofaHostWrapper = new SofaHostWrapper(this.activity);
+    }
+
+    private void initWebSettings() {
         final WebSettings webSettings = this.activity.getBinding().webview.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
         webSettings.setBuiltInZoomControls(true);
         webSettings.setDisplayZoomControls(false);
         webSettings.setUseWideViewPort(false);
+    }
+
+    private void injectEverything() {
+        this.activity.getBinding().webview.addJavascriptInterface(this.sofaHostWrapper.getSofaHost(), "SOFAHost");
+        this.activity.getBinding().webview.setWebViewClient(this.webClient);
     }
 
     private void initView() {
@@ -168,76 +169,8 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
         this.sofaInjector = null;
         this.webClient = null;
         this.isLoaded = false;
-
-        if (this.paymentConfirmationDialog != null) {
-            this.paymentConfirmationDialog.dismiss();
-            this.paymentConfirmationDialog = null;
-        }
+        this.sofaHostWrapper.destroy();
+        this.sofaHostWrapper = null;
     }
 
-    private HDWallet getWallet() {
-        return BaseApplication
-                .get()
-                .getTokenManager()
-                .getWallet()
-                .toBlocking()
-                .value();
-    }
-
-    private class SOFAHost {
-
-        @JavascriptInterface
-        public String getRcpUrl() {
-            return BaseApplication.get().getResources().getString(R.string.rcp_url);
-        }
-
-        @JavascriptInterface
-        public String getAccounts() {
-            return "[\"" + getWallet().getPaymentAddress() + "\"]";
-        }
-
-        @JavascriptInterface
-        public boolean approveTransaction(final String unsignedTransaction) {
-            final UnsignedW3Transaction transaction;
-            try {
-                transaction = SofaAdapters.get().unsignedW3TransactionFrom(unsignedTransaction);
-            } catch (final IOException e) {
-                LogUtil.exception(getClass(), "Unable to parse unsigned transaction. ", e);
-                return false;
-            }
-
-            return transaction.getFrom().equals(getWallet().getPaymentAddress());
-        }
-
-        @JavascriptInterface
-        public void signTransaction(final String unsignedTransaction) {
-
-            final UnsignedW3Transaction transaction;
-            try {
-                transaction = SofaAdapters.get().unsignedW3TransactionFrom(unsignedTransaction);
-            } catch (final IOException e) {
-                LogUtil.exception(getClass(), "Unable to parse unsigned transaction. ", e);
-                return;
-            }
-            if (activity == null) return;
-            paymentConfirmationDialog =
-                    PaymentConfirmationDialog
-                            .newInstanceWebPayment(
-                                    unsignedTransaction,
-                                    transaction.getTo(),
-                                    transaction.getValue(),
-                                    null
-                            );
-            paymentConfirmationDialog.show(activity.getSupportFragmentManager(), PaymentConfirmationDialog.TAG);
-            paymentConfirmationDialog.setOnPaymentConfirmationListener(this.confirmationListener);
-        }
-
-        private final WebPaymentConfirmationListener confirmationListener = new WebPaymentConfirmationListener() {
-            @Override
-            public void onWebPaymentApproved(final String unsignedTransaction) {
-                final String signedTransaction = getWallet().signTransaction(unsignedTransaction);
-                // To Do -- pass the signed transaction back to webview
-            }
-        };
-    }
 }
