@@ -50,7 +50,7 @@
                 android:textSize="18sp"
                 android:textStyle="bold"
                 style="@style/Toolbar.TitleText"
-                android:text="@string/qr_code"/>
+                android:text="@string/my_qr_code"/>
         </LinearLayout>
 
         <android.support.v4.widget.Space
