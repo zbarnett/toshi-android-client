@@ -135,10 +135,11 @@ public class AppsPresenter implements Presenter<AppsFragment>{
 
         final Subscription enterSub =
                 RxTextView.editorActions(this.fragment.getBinding().search)
-                        .filter(event -> event == IME_ACTION_DONE)
-                        .subscribe(
-                                __ -> this.handleSearchPressed(),
-                                t -> LogUtil.e(getClass(), t.toString()));
+                .filter(event -> event == IME_ACTION_DONE)
+                .subscribe(
+                        __ -> this.handleSearchPressed(),
+                        t -> LogUtil.e(getClass(), t.toString())
+                );
 
         updateViewState();
 
@@ -150,7 +151,7 @@ public class AppsPresenter implements Presenter<AppsFragment>{
         final Subscription sub =
             Observable.just(query)
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(searchString -> updateViewState())
+                .doOnNext(__ -> updateViewState())
                 .doOnNext(this::tryRenderDappLink)
                 .observeOn(Schedulers.io())
                 .flatMap(this::searchApps)
