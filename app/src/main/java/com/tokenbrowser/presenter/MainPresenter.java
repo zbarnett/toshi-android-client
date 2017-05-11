@@ -99,6 +99,8 @@ public class MainPresenter implements Presenter<MainActivity> {
         navBar.setOnTabSelectedListener(this.tabListener);
         navBar.setSoundEffectsEnabled(false);
         navBar.setBehaviorTranslationEnabled(false);
+
+        navBar.setTitleTextSizeInSp(13.0f, 12.0f);
     }
 
     private void attachUnreadMessagesSubscription() {
