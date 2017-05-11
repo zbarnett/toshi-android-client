@@ -234,11 +234,27 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
             }
 
             if (actionId == EditorInfo.IME_ACTION_SEND) {
-                sendButtonClicked.onSingleClick(v);
+                sendMessage();
                 return true;
             }
             return false;
         });
+    }
+
+    public void sendMessage() {
+        if (userInputInvalid()) return;
+
+        final String userInput = this.activity.getBinding().userInput.getText().toString();
+        final Message message = new Message().setBody(userInput);
+        final String messageBody = SofaAdapters.get().toJson(message);
+        final SofaMessage sofaMessage = new SofaMessage().makeNew(getCurrentLocalUser(), messageBody);
+        this.outgoingMessageQueue.send(sofaMessage);
+
+        this.activity.getBinding().userInput.setText(null);
+    }
+
+    private boolean userInputInvalid() {
+        return activity.getBinding().userInput.getText().toString().trim().length() == 0;
     }
 
     private void initShortLivingObjects() {
@@ -303,7 +319,6 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     }
 
     private void initButtons() {
-        this.activity.getBinding().sendButton.setOnClickListener(this.sendButtonClicked);
         this.activity.getBinding().balanceBar.setOnRequestClicked(this.requestButtonClicked);
         this.activity.getBinding().balanceBar.setOnPayClicked(this.payButtonClicked);
         this.activity.getBinding().controlView.setOnControlClickedListener(this::handleControlClicked);
@@ -390,27 +405,6 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
                     BaseApplication.get().getString(R.string.select_picture)), PICK_IMAGE);
         }
     }
-
-    private final OnSingleClickListener sendButtonClicked = new OnSingleClickListener() {
-        @Override
-        public void onSingleClick(final View v) {
-            if (userInputInvalid()) {
-                return;
-            }
-
-            final String userInput = activity.getBinding().userInput.getText().toString();
-            final Message message = new Message().setBody(userInput);
-            final String messageBody = SofaAdapters.get().toJson(message);
-            final SofaMessage sofaMessage = new SofaMessage().makeNew(getCurrentLocalUser(), messageBody);
-            outgoingMessageQueue.send(sofaMessage);
-
-            activity.getBinding().userInput.setText(null);
-        }
-
-        private boolean userInputInvalid() {
-            return activity.getBinding().userInput.getText().toString().trim().length() == 0;
-        }
-    };
 
     private final OnSingleClickListener requestButtonClicked = new OnSingleClickListener() {
         @Override
