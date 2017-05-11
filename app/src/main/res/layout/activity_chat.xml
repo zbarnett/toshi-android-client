@@ -64,7 +64,7 @@
                 tools:src="@mipmap/ic_launcher"
                 android:layout_width="34dp"
                 android:layout_height="34dp"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"/>
+                android:layout_marginRight="@dimen/activity_horizontal_margin" />
 
         </LinearLayout>
 
@@ -152,9 +152,22 @@
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="48dp"
             android:background="@color/input_bg"
             android:gravity="center_vertical">
+
+            <EditText
+                android:id="@+id/user_input"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:background="@android:color/transparent"
+                android:hint="@string/send_message"
+                android:imeOptions="actionSend"
+                android:inputType="textCapSentences|textAutoCorrect"
+                android:maxLength="1500"
+                android:maxLines="1" />
 
             <ImageButton
                 android:id="@+id/add_button"
@@ -165,31 +178,10 @@
                 app:srcCompat="@drawable/ic_add_circle_black_24px"
                 android:padding="12dp" />
 
-            <EditText
-                android:id="@+id/user_input"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@android:color/transparent"
-                android:hint="@string/send_message"
-                android:imeOptions="actionSend"
-                android:inputType="textCapSentences|textAutoCorrect"
-                android:maxLength="1500"
-                android:maxLines="1" />
-
-            <ImageButton
-                android:id="@+id/send_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:scaleType="fitCenter"
-                android:background="@android:color/transparent"
-                app:srcCompat="@drawable/ic_action_content_send"
-                android:soundEffectsEnabled="false"
-                android:padding="8dp" />
-
             <android.support.v4.widget.Space
-                android:layout_width="8dp"
-                android:layout_height="match_parent" />
+                android:layout_width="4dp"
+                android:layout_height="0dp" />
+
         </LinearLayout>
     </LinearLayout>
 

@@ -21,11 +21,6 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <View
-        android:layout_width="wrap_content"
-        android:layout_height="10dp"
-        android:background="@color/divider"/>
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -33,6 +28,6 @@
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:textSize="14sp"
         android:textColor="@color/textColorSecondary"
-        android:text="@string/recommended"/>
+        android:text="@string/search_results"/>
 
 </LinearLayout>

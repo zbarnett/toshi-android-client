@@ -98,7 +98,9 @@
                         android:layout_height="@dimen/avatar_size_small"
                         tools:src="@mipmap/ic_launcher"
                         android:layout_marginRight="@dimen/activity_horizontal_margin"
-                        app:layout_rowSpan="2"/>
+                        app:layout_rowSpan="2"
+                        app:civ_border_width="1dp"
+                        app:civ_border_color="@color/divider"/>
 
                     <TextView
                         android:id="@+id/name"
