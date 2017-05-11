@@ -102,10 +102,7 @@ public class PaymentRequest {
     }
 
     public String getLocalPrice() {
-        if (this.androidClientSideCustomData == null) {
-            return null;
-        }
-
+        if (this.androidClientSideCustomData == null) return null;
         return this.androidClientSideCustomData.localPrice;
     }
 
@@ -119,16 +116,13 @@ public class PaymentRequest {
     }
 
     public @State int getState() {
-        if (this.androidClientSideCustomData == null) {
-            return PENDING;
-        }
-
+        if (this.androidClientSideCustomData == null) return PENDING;
         return this.androidClientSideCustomData.state;
     }
 
     public String toUserVisibleString(final boolean sentByLocal, final @SendState.State int sentStatus) {
         final @StringRes int successMessageId = sentByLocal
-                ? R.string.latest_message__payment_outgoing
+                ? R.string.latest_message__payment_request_outgoing
                 : R.string.latest_message__payment_incoming;
         final @StringRes int messageId = sentStatus == SendState.STATE_FAILED
                 ? R.string.latest_message__request_failed
