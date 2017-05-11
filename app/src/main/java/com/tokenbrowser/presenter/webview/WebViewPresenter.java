@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.webkit.JavascriptInterface;
+import android.webkit.WebSettings;
 import android.widget.Toast;
 
 import com.tokenbrowser.R;
@@ -64,11 +65,18 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
         }
         this.webClient = new SofaWebViewClient(this.loadedListener);
         this.sofaInjector = new SofaInjector(this.loadedListener);
-        this.activity.getBinding().webview.getSettings().setJavaScriptEnabled(true);
-        this.activity.getBinding().webview.getSettings().setBuiltInZoomControls(true);
-        this.activity.getBinding().webview.getSettings().setDisplayZoomControls(false);
+        initSettings();
         this.activity.getBinding().webview.addJavascriptInterface(new SOFAHost(), "SOFAHost");
         this.activity.getBinding().webview.setWebViewClient(this.webClient);
+    }
+
+    private void initSettings() {
+        final WebSettings webSettings = this.activity.getBinding().webview.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+        webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+        webSettings.setBuiltInZoomControls(true);
+        webSettings.setDisplayZoomControls(false);
+        webSettings.setUseWideViewPort(false);
     }
 
     private void initView() {
