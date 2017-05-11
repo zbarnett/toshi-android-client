@@ -20,71 +20,69 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/windowBackgroundContrast">
-
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:gravity="center_vertical"
-        android:theme="@style/AddToolbarTheme"
-        style="@style/Toolbar">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/windowBackgroundContrast">
 
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/Toolbar.TitleText"
-            android:text="@string/tab_recent"/>
-
-    </android.support.v7.widget.Toolbar>
-
-    <ViewSwitcher
-        android:id="@+id/empty_state__switcher"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recents"
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="@dimen/activity_horizontal_margin"
-            android:clipToPadding="false"
-            android:background="@color/windowBackground"/>
-        
-        <LinearLayout
-            android:id="@+id/empty_state"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_gravity="center"
-            android:gravity="center_horizontal">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:srcCompat="@drawable/ic_contact_list__empty_state"/>
-
-            <android.support.v4.widget.Space
-                android:layout_width="0dp"
-                android:layout_height="8dp"/>
+            android:layout_height="?attr/actionBarSize"
+            android:gravity="center_vertical"
+            android:theme="@style/AddToolbarTheme"
+            style="@style/Toolbar">
 
             <TextView
+                android:id="@+id/title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/recents_list__empty_state"
-                android:textColor="@color/textColorSecondary"
+                style="@style/Toolbar.TitleText"
+                android:text="@string/tab_recent"/>
+
+        </android.support.v7.widget.Toolbar>
+
+        <ViewSwitcher
+            android:id="@+id/empty_state__switcher"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recents"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="@dimen/activity_horizontal_margin"
+                android:clipToPadding="false"
+                android:background="@color/windowBackground"/>
+
+            <LinearLayout
+                android:id="@+id/empty_state"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
                 android:layout_gravity="center"
-                android:gravity="center_horizontal"
-                android:drawablePadding="8dp"
-                />
-        </LinearLayout>
+                android:gravity="center_horizontal">
 
-    </ViewSwitcher>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_contact_list__empty_state"/>
 
-</LinearLayout>
+                <android.support.v4.widget.Space
+                    android:layout_width="0dp"
+                    android:layout_height="8dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/recents_list__empty_state"
+                    android:textColor="@color/textColorSecondary"
+                    android:layout_gravity="center"
+                    android:gravity="center_horizontal"
+                    android:drawablePadding="8dp" />
+            </LinearLayout>
+        </ViewSwitcher>
+    </LinearLayout>
+
 </layout>

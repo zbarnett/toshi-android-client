@@ -24,12 +24,12 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 
-import com.tokenbrowser.model.local.Conversation;
 import com.tokenbrowser.R;
+import com.tokenbrowser.model.local.Conversation;
 import com.tokenbrowser.util.LogUtil;
+import com.tokenbrowser.util.UserSearchType;
 import com.tokenbrowser.view.BaseApplication;
 import com.tokenbrowser.view.activity.ChatActivity;
-import com.tokenbrowser.view.activity.ScannerActivity;
 import com.tokenbrowser.view.activity.UserSearchActivity;
 import com.tokenbrowser.view.adapter.RecentAdapter;
 import com.tokenbrowser.view.adapter.listeners.OnItemClickListener;
@@ -161,6 +161,20 @@ public final class RecentPresenter implements
         this.fragment.startActivity(intent);
     }
 
+    public void handleActionMenuClicked(final MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.add_new_conversation: {
+                goToUserSearchActivity();
+            }
+        }
+    }
+
+    private void goToUserSearchActivity() {
+        final Intent intent = new Intent(this.fragment.getContext(), UserSearchActivity.class)
+                .putExtra(UserSearchActivity.VIEW_TYPE, UserSearchType.CONVERSATION);
+        this.fragment.startActivity(intent);
+    }
+
     @Override
     public void onViewDetached() {
         this.subscriptions.clear();
@@ -171,37 +185,5 @@ public final class RecentPresenter implements
     public void onDestroyed() {
         this.subscriptions = null;
         this.adapter = null;
-    }
-
-    public void handleActionMenuClicked(final MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.scan_qr:
-                startScanQrActivity();
-                break;
-            case R.id.invite_friends:
-                handleInviteFriends();
-                break;
-            case R.id.search_people:
-                startUserSearchActivity();
-                break;
-        }
-    }
-
-    private void handleInviteFriends() {
-        final Intent sendIntent = new Intent()
-                .setAction(Intent.ACTION_SEND)
-                .putExtra(Intent.EXTRA_TEXT, this.fragment.getActivity().getString(R.string.invite_friends_intent_message))
-                .setType("text/plain");
-        this.fragment.startActivity(sendIntent);
-    }
-
-    private void startUserSearchActivity() {
-        final Intent intent = new Intent(fragment.getActivity(), UserSearchActivity.class);
-        this.fragment.startActivity(intent);
-    }
-
-    private void startScanQrActivity() {
-        final Intent intent = new Intent(fragment.getActivity(), ScannerActivity.class);
-        this.fragment.startActivity(intent);
     }
 }

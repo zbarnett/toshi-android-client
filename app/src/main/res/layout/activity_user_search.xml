@@ -18,7 +18,8 @@
 
 <layout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <LinearLayout
         android:orientation="vertical"
@@ -43,26 +44,59 @@
                 android:tint="@color/textColorContrast"
                 android:padding="16dp" />
 
-            <EditText
-                android:id="@+id/user_input"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                style="@style/ToolbarEditText"
-                android:paddingLeft="8dp"
-                android:layout_marginRight="16dp"
-                android:hint="@string/search_people"
-                android:singleLine="true"
-                android:maxLines="1"
-                android:imeOptions="actionNext" />
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                style="@style/Toolbar.TitleText"
+                tools:text="Title"/>
 
         </LinearLayout>
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/search_results"
+        <android.support.design.widget.CoordinatorLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="@dimen/activity_horizontal_margin"
-            android:clipToPadding="false" />
+            android:layout_height="wrap_content">
 
+            <android.support.design.widget.AppBarLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/windowBackground"
+                app:elevation="0dp">
+
+                <EditText
+                    android:id="@+id/user_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp"
+                    app:layout_scrollFlags="scroll"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                    android:paddingLeft="16dp"
+                    android:singleLine="true"
+                    android:maxLines="1"
+                    android:imeOptions="actionNext"
+                    style="@style/SearchEditText"
+                    android:textSize="16sp"
+                    android:hint="@string/search_people"/>
+
+                <View
+                    android:layout_width="wrap_content"
+                    android:layout_height="10dp"
+                    app:layout_scrollFlags="scroll"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                    android:background="@color/divider"/>
+
+            </android.support.design.widget.AppBarLayout>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/search_results"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="@dimen/activity_horizontal_margin"
+                android:clipToPadding="false"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+
+        </android.support.design.widget.CoordinatorLayout>
     </LinearLayout>
+
 </layout>
