@@ -99,7 +99,7 @@ public final class PaymentViewHolder extends RecyclerView.ViewHolder {
 
         if (this.payment.getStatus().equals(SofaType.CONFIRMED)) {
             this.statusMessage.setText(R.string.error__transaction_succeeded);
-            this.statusIcon.setImageResource(R.drawable.ic_done_with_background);
+            this.statusIcon.setImageResource(R.drawable.ic_done_green);
             return;
         }
 

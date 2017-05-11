@@ -70,7 +70,7 @@ public class TransactionViewHolder extends RecyclerView.ViewHolder {
     private void setDrawable(final Payment payment) {
         switch (payment.getStatus()) {
             case SofaType.CONFIRMED:
-                this.status.setImageResource(R.drawable.ic_done_with_background);
+                this.status.setImageResource(R.drawable.ic_done_green);
                 break;
             case SofaType.FAILED:
                 this.status.setImageResource(R.drawable.ic_clear_with_background);
