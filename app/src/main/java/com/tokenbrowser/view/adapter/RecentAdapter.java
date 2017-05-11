@@ -112,7 +112,7 @@ public class RecentAdapter extends RecyclerView.Adapter<ConversationViewHolder> 
             switch (sofaMessage.getType()) {
                 case SofaType.PLAIN_TEXT: {
                     final Message message = SofaAdapters.get().messageFrom(sofaMessage.getPayload());
-                    return message.getBody();
+                    return message.toUserVisibleString(sentByLocal, sofaMessage.hasAttachment());
                 }
                 case SofaType.PAYMENT: {
                     final Payment payment = SofaAdapters.get().paymentFrom(sofaMessage.getPayload());

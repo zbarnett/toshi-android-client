@@ -18,6 +18,11 @@
 package com.tokenbrowser.model.sofa;
 
 
+import android.support.annotation.StringRes;
+
+import com.tokenbrowser.R;
+import com.tokenbrowser.view.BaseApplication;
+
 import java.util.List;
 
 public class Message {
@@ -26,7 +31,6 @@ public class Message {
     private List<Control> controls;
     // Default behaviour is to how the keyboard
     private boolean showKeyboard = true;
-    private String attachmentFilename;
 
     public String getBody() {
         return this.body;
@@ -34,11 +38,6 @@ public class Message {
 
     public Message setBody(final String body) {
         this.body = body;
-        return this;
-    }
-
-    public Message setAttachmentFilename(final String filename) {
-        this.attachmentFilename = filename;
         return this;
     }
 
@@ -50,7 +49,16 @@ public class Message {
         return !this.showKeyboard;
     }
 
-    public String getAttachmentFilename() {
-        return attachmentFilename;
+    public String toUserVisibleString(final boolean sentByLocal, final boolean hasAttachment) {
+        if (hasAttachment) return getImageMessage(sentByLocal);
+        else return this.body;
+    }
+
+    private String getImageMessage(final boolean sentByLocal) {
+        final @StringRes int successMessageId = sentByLocal
+                ? R.string.latest_sent_image
+                : R.string.latest_received_image;
+
+        return BaseApplication.get().getResources().getString(successMessageId);
     }
 }
