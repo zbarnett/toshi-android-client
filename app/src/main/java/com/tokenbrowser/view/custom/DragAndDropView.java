@@ -121,6 +121,7 @@ public class DragAndDropView extends LinearLayout {
                 .setShadowEnabled(false)
                 .setCornerRadius(getResources().getDimensionPixelSize(R.dimen.backup_phrase_corner_radius))
                 .setBackground(null);
+        textView.setMinimumWidth(200);
         return textView;
     }
 
@@ -131,6 +132,7 @@ public class DragAndDropView extends LinearLayout {
                 .setShadowEnabled(true)
                 .setCornerRadius(getResources().getDimensionPixelSize(R.dimen.backup_phrase_corner_radius))
                 .setText(phrase);
+        textView.setMinimumWidth(200);
         return textView;
     }
 
