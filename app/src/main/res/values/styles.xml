@@ -38,16 +38,22 @@
         <item name="colorPrimaryDark">@color/colorSecondaryDark</item>
     </style>
 
-    <style name="ToolbarTheme" parent="@style/ThemeOverlay.AppCompat.ActionBar">
+    <style name="Toolbar" parent="@style/ThemeOverlay.AppCompat.ActionBar">
         <item name="android:background">@color/colorPrimary</item>
         <item name="selectableItemBackground">?android:selectableItemBackground</item>
         <item name="selectableItemBackgroundBorderless">?android:selectableItemBackground</item>
+        <item name="android:actionOverflowButtonStyle">@style/ButtonOverflow</item>
+    </style>
+
+    <style name="AddToolbarTheme" parent="AppTheme">
+        <item name="android:actionOverflowButtonStyle">@style/ButtonOverflow</item>
     </style>
 
     <style name="Toolbar.TitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
         <item name="android:textColor">@color/textColorContrast</item>
         <item name="android:textStyle">normal</item>
-        <item name="android:textSize">18sp</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:fontFamily">@string/fontFamily_medium</item>
     </style>
 
     <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
@@ -128,6 +134,11 @@
 
     <style name="PositiveButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
         <item name="android:textColor">@color/colorPrimary</item>
+    </style>
+
+    <style name="ButtonOverflow" parent="android:style/Widget.Holo.ActionButton.Overflow">
+        <item name="android:src">@drawable/ic_add_black_24dp</item>
+        <item name="android:tint">@color/windowBackground</item>
     </style>
 
 </resources>
