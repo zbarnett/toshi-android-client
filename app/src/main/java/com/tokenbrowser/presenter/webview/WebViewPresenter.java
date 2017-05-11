@@ -75,6 +75,7 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
         webSettings.setBuiltInZoomControls(true);
         webSettings.setDisplayZoomControls(false);
         webSettings.setUseWideViewPort(false);
+        webSettings.setDomStorageEnabled(true);
     }
 
     private void injectEverything() {
