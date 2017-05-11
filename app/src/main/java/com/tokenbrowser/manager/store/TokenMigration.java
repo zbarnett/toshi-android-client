@@ -124,8 +124,11 @@ public class TokenMigration implements RealmMigration {
         }
 
         if (oldVersion == 8) {
+            if (schema.contains("BlockedUser")) {
+                schema.remove("BlockedUser");
+            }
             final RealmObjectSchema blockedUserSchema = schema.create("BlockedUser");
-            blockedUserSchema.addField("owner_address", String.class);
+            blockedUserSchema.addField("owner_address", String.class, FieldAttribute.PRIMARY_KEY);
             oldVersion++;
         }
     }
