@@ -49,10 +49,10 @@
 
         <TextView
             android:id="@+id/name"
-            android:textColor="@color/textColorPrimary"
-            android:textStyle="bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/textColorPrimary"
+            style="@style/TextStyleMedium"
             tools:text="Damn Daniel!"/>
 
         <TextView

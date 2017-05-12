@@ -95,7 +95,7 @@
                         android:layout_height="wrap_content"
                         android:textColor="@color/textColorPrimary"
                         android:textSize="22sp"
-                        android:textStyle="bold"
+                        style="@style/TextStyleMedium"
                         tools:text="Damn Daniel!"/>
 
                     <TextView

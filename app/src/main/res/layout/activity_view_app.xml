@@ -84,7 +84,7 @@
                     android:layout_gravity="center_horizontal"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="22sp"
-                    android:textStyle="bold"
+                    style="@style/TextStyleMedium"
                     tools:text="Damn Daniel!"/>
 
                 <android.support.v4.widget.Space

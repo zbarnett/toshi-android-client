@@ -103,7 +103,7 @@
                     <TextView
                         android:id="@+id/name"
                         android:textColor="@color/textColorPrimary"
-                        android:textStyle="bold"
+                        style="@style/TextStyleMedium"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         tools:text="Damn Daniel!"/>
