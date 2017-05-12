@@ -47,7 +47,7 @@
     <dimen name="backup_phrase_corner_radius">3dp</dimen>
 
     <dimen name="image_frame_padding">16dp</dimen>
-    <dimen name="round_corners_image_view__default_size">250dp</dimen>
+    <dimen name="chat_image__max_width">250dp</dimen>
 
     <dimen name="list_header_text_size">14sp</dimen>
     <dimen name="list_item_text_size">16sp</dimen>
