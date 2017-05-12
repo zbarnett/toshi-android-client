@@ -46,17 +46,36 @@ public class ChatNotification {
 
     private final User sender;
     private final ArrayList<String> messages;
+    private List<String> lastFewMessages;
+    private CharSequence lastMessage;
     private static final int MAXIMUM_NUMBER_OF_SHOWN_MESSAGES = 5;
     private Bitmap largeIcon;
 
     public ChatNotification(final User sender) {
         this.sender = sender;
         this.messages = new ArrayList<>();
+        generateLatestMessages(this.messages);
     }
 
     public ChatNotification addUnreadMessage(final String unreadMessage) {
         this.messages.add(unreadMessage);
+        generateLatestMessages(this.messages);
         return this;
+    }
+
+    private synchronized void generateLatestMessages(final ArrayList<String> messages) {
+        if (messages.size() == 0) {
+            this.lastMessage = "";
+            this.lastFewMessages = new ArrayList<>(0);
+            return;
+        }
+
+        this.lastMessage = messages.get(messages.size() -1);
+
+        final int end = Math.max(messages.size(), 0);
+        final int start = Math.max(end - MAXIMUM_NUMBER_OF_SHOWN_MESSAGES, 0);
+        this.lastFewMessages = messages.subList(start, end);
+
     }
 
     public String getTag() {
@@ -73,14 +92,12 @@ public class ChatNotification {
         return this.largeIcon;
     }
 
-    public List<String> getLastFewMessages() {
-        if (messages.size() == 0) {
-            return new ArrayList<>(0);
-        }
+    public CharSequence getLastMessage() {
+        return this.lastMessage;
+    }
 
-        final int end = Math.max(messages.size(), 0);
-        final int start = Math.max(end - MAXIMUM_NUMBER_OF_SHOWN_MESSAGES, 0);
-        return messages.subList(start, end);
+    public List<String> getLastFewMessages() {
+        return this.lastFewMessages;
     }
 
     public PendingIntent getPendingIntent() {
@@ -127,12 +144,6 @@ public class ChatNotification {
 
     public int getNumberOfUnreadMessages() {
         return messages.size();
-    }
-
-    public CharSequence getLastMessage() {
-        return messages.size() == 0
-                ? ""
-                : messages.get(messages.size() -1);
     }
 
     public Completable generateLargeIcon() {

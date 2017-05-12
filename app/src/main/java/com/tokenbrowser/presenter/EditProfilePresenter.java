@@ -293,7 +293,9 @@ public class EditProfilePresenter implements Presenter<EditProfileActivity> {
 
     private void handleUserUpdated() {
         showToast("Saved successfully!");
-        this.activity.onBackPressed();
+        if (this.activity != null) {
+            this.activity.onBackPressed();
+        }
     }
 
     private void handleUserUpdateFailed(final Throwable throwable) {

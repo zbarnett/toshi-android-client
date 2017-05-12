@@ -26,6 +26,7 @@ import com.journeyapps.barcodescanner.CaptureManager;
 import com.tokenbrowser.R;
 import com.tokenbrowser.model.local.PermissionResultHolder;
 import com.tokenbrowser.model.local.ScanResult;
+import com.tokenbrowser.util.LogUtil;
 import com.tokenbrowser.util.QrCodeHandler;
 import com.tokenbrowser.view.activity.ScannerActivity;
 
@@ -127,9 +128,14 @@ public final class ScannerPresenter implements Presenter<ScannerActivity> {
 
     @Override
     public void onViewDetached() {
-        if (this.capture != null) {
-            this.capture.onPause();
+        try {
+            if (this.capture != null) {
+                this.capture.onPause();
+            }
+        } catch (final IllegalArgumentException ex) {
+            LogUtil.exception(getClass(), ex);
         }
+
         this.qrCodeHandler.clear();
         this.subscriptions.clear();
         this.activity = null;
@@ -137,9 +143,14 @@ public final class ScannerPresenter implements Presenter<ScannerActivity> {
 
     @Override
     public void onDestroyed() {
-        if (this.capture != null) {
-            this.capture.onDestroy();
+        try {
+            if (this.capture != null) {
+                this.capture.onDestroy();
+            }
+        } catch (final IllegalArgumentException ex) {
+            LogUtil.exception(getClass(), ex);
         }
+        
         this.qrCodeHandler = null;
         this.activity = null;
     }

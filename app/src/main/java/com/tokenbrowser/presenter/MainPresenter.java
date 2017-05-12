@@ -52,6 +52,7 @@ public class MainPresenter implements Presenter<MainActivity> {
     private final AHBottomNavigation.OnTabSelectedListener tabListener = new AHBottomNavigation.OnTabSelectedListener() {
         @Override
         public boolean onTabSelected(final int position, final boolean wasSelected) {
+            if (activity == null) return false;
             if (position == SCAN_POSITION) {
                 openScanActivity();
                 return false;

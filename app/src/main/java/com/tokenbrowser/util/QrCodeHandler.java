@@ -129,7 +129,7 @@ public class QrCodeHandler implements PaymentConfirmationDialog.OnPaymentConfirm
                     getUserByUsername(qrCode.getUsername())
                     .doOnSuccess(__ -> playScanSound())
                     .subscribe(
-                            user -> goToProfileView(user.getTokenId()),
+                            this::handleUserToAdd,
                             __ -> handleInvalidQrCode()
                     );
 
@@ -137,6 +137,15 @@ public class QrCodeHandler implements PaymentConfirmationDialog.OnPaymentConfirm
         } catch (InvalidQrCode e) {
             handleInvalidQrCode();
         }
+    }
+
+    private void handleUserToAdd(final User user) {
+        if (user == null) {
+            handleInvalidQrCode();
+            return;
+        }
+
+        goToProfileView(user.getTokenId());
     }
 
     private void goToProfileView(final String tokenId) {
