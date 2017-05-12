@@ -36,12 +36,10 @@
 
             <TextView
                 android:id="@+id/title"
-                style="@style/Toolbar.TitleText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/tab_5"
-                android:textAppearance="@style/Toolbar.TitleText"
-                />
+                style="@style/Toolbar.TitleText"
+                android:text="@string/tab_5" />
 
         </android.support.v7.widget.Toolbar>
 

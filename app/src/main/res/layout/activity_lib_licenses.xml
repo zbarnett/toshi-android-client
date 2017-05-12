@@ -47,8 +47,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 style="@style/Toolbar.TitleText"
-                android:textSize="18sp"
-                android:textStyle="bold"
                 android:text="@string/open_source_licenses"/>
 
         </LinearLayout>
