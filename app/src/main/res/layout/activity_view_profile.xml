@@ -78,8 +78,8 @@
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/avatar"
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
                         tools:src="@mipmap/ic_launcher"
                         android:layout_marginRight="8dp"
                         app:layout_rowSpan="4"
