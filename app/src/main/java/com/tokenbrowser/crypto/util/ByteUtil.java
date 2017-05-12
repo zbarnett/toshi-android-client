@@ -194,6 +194,26 @@ public class ByteUtil {
     }
 
     /**
+     * Convert a byte-array into a hex String.<br>
+     * Will pad the result with 0 to the length
+     * desired.
+     *
+     * @param data - byte-array to convert to a hex-string
+     * @param size - size of result in bytes
+     * @return hex representation of the data, zero padded to desired size.<br>
+     */
+    public static String toZeroPaddedHexString(final byte[] data, final int size) {
+        final String hex = toHexString(data);
+        final StringBuffer sb = new StringBuffer("");
+        final int requiredPadding = size - hex.length();
+        while (sb.length() < requiredPadding) {
+            sb.append("0");
+        }
+        sb.append(hex);
+        return sb.toString();
+    }
+
+    /**
      * Calculate packet length
      *
      * @param msg byte[]
