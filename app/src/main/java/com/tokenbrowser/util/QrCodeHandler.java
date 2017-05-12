@@ -144,7 +144,7 @@ public class QrCodeHandler implements PaymentConfirmationDialog.OnPaymentConfirm
             handleInvalidQrCode();
             return;
         }
-        
+
         goToProfileView(user.getTokenId());
     }
 
