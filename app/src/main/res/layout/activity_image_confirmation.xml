@@ -43,11 +43,14 @@
                 android:tint="@color/textColorContrast"
                 app:srcCompat="@drawable/ic_arrow_back"/>
 
+            <android.support.v4.widget.Space
+                android:layout_width="16dp"
+                android:layout_height="0dp" />
+
             <TextView
                 android:id="@+id/title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
                 style="@style/Toolbar.TitleText"
                 tools:text="123454322.jpg"/>
 
