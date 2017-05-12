@@ -30,9 +30,10 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:gravity="center_vertical"
-            android:orientation="horizontal"
+            android:theme="@style/RegularToolbarTheme"
             style="@style/Toolbar"
-            app:contentInsetStart="0dp">
+            app:contentInsetStart="0dp"
+            app:contentInsetEndWithActions="0dp">
 
             <ImageButton
                 android:id="@+id/close_button"
@@ -43,6 +44,10 @@
                 app:srcCompat="@drawable/ic_arrow_back"
                 android:tint="@color/textColorContrast"
                 android:padding="16dp" />
+
+            <android.support.v4.widget.Space
+                android:layout_width="16dp"
+                android:layout_height="0dp" />
 
             <TextView
                 android:id="@+id/title"
@@ -75,8 +80,8 @@
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/avatar"
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
                         tools:src="@mipmap/ic_launcher"
                         android:layout_marginRight="8dp"
                         app:layout_rowSpan="4"
@@ -94,7 +99,7 @@
                         android:layout_height="wrap_content"
                         android:textColor="@color/textColorPrimary"
                         android:textSize="22sp"
-                        android:textStyle="bold"
+                        style="@style/TextStyleMedium"
                         tools:text="Damn Daniel!"/>
 
                     <TextView

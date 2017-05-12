@@ -44,12 +44,14 @@
                 android:tint="@color/textColorContrast"
                 android:padding="16dp" />
 
+            <android.support.v4.widget.Space
+                android:layout_width="16dp"
+                android:layout_height="0dp" />
+
             <TextView
                 android:id="@+id/title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="18sp"
-                android:textStyle="bold"
                 style="@style/Toolbar.TitleText"
                 android:text="@string/profile"/>
         </LinearLayout>
@@ -76,8 +78,8 @@
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/avatar"
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
                         tools:src="@mipmap/ic_launcher"
                         android:layout_marginRight="8dp"
                         app:layout_rowSpan="4"
@@ -95,7 +97,7 @@
                         android:layout_height="wrap_content"
                         android:textColor="@color/textColorPrimary"
                         android:textSize="22sp"
-                        android:textStyle="bold"
+                        style="@style/TextStyleMedium"
                         tools:text="Damn Daniel!"/>
 
                     <TextView

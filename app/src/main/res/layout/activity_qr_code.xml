@@ -43,14 +43,17 @@
                 android:padding="16dp"
                 app:srcCompat="@drawable/ic_arrow_back"/>
 
+            <android.support.v4.widget.Space
+                android:layout_width="16dp"
+                android:layout_height="0dp" />
+
             <TextView
                 android:id="@+id/title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="18sp"
-                android:textStyle="bold"
                 style="@style/Toolbar.TitleText"
                 android:text="@string/my_qr_code"/>
+
         </LinearLayout>
 
         <android.support.v4.widget.Space
@@ -74,7 +77,7 @@
             android:layout_gravity="center_horizontal"
             android:textColor="@color/textColorPrimary"
             android:textSize="22sp"
-            android:textStyle="bold"
+            style="@style/TextStyleMedium"
             tools:text="Damn Daniel!"/>
 
         <android.support.v4.widget.Space

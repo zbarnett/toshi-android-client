@@ -47,10 +47,10 @@
 
         <TextView
             android:id="@+id/name"
-            android:textColor="@color/textColorPrimary"
-            android:textStyle="bold"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            style="@style/TextStyleMedium"
+            android:textColor="@color/textColorPrimary"
             tools:text="Damn Daniel!"/>
 
         <TextView

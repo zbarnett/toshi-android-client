@@ -49,10 +49,19 @@
         <item name="android:actionOverflowButtonStyle">@style/ButtonOverflow</item>
     </style>
 
+    <style name="RegularToolbarTheme" parent="AppTheme">
+        <item name="android:actionOverflowButtonStyle">@style/RegularOverflow</item>
+    </style>
+
     <style name="Toolbar.TitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
         <item name="android:textColor">@color/textColorContrast</item>
         <item name="android:textStyle">normal</item>
         <item name="android:textSize">20sp</item>
+        <item name="android:fontFamily">@string/fontFamily_medium</item>
+    </style>
+
+    <style name="TextStyleMedium">
+        <item name="android:textStyle">normal</item>
         <item name="android:fontFamily">@string/fontFamily_medium</item>
     </style>
 
@@ -95,11 +104,17 @@
         <item name="android:foreground">?android:attr/selectableItemBackground</item>
     </style>
 
+    <style name="FlatButtonMedium" parent="FlatButton">
+        <item name="android:textStyle">normal</item>
+        <item name="android:fontFamily">@string/fontFamily_medium</item>
+    </style>
+
     <style name="NoPaddingButton" parent="android:Widget.Holo.Button">
         <item name="android:textSize">16sp</item>
         <item name="android:background">@null</item>
         <item name="android:textColor">@color/flat_button</item>
-        <item name="android:textStyle">bold</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:fontFamily">@string/fontFamily_medium</item>
         <item name="android:gravity">center</item>
         <item name="android:foreground">?android:attr/selectableItemBackground</item>
     </style>
@@ -109,7 +124,8 @@
         <item name="android:textSize">16sp</item>
         <item name="android:background">@null</item>
         <item name="android:textColor">@color/colorPrimary</item>
-        <item name="android:textStyle">bold</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:fontFamily">@string/fontFamily_medium</item>
         <item name="android:foreground">?android:attr/selectableItemBackground</item>
         <item name="android:layout_gravity">center_horizontal</item>
     </style>
@@ -138,6 +154,10 @@
 
     <style name="ButtonOverflow" parent="android:style/Widget.Holo.ActionButton.Overflow">
         <item name="android:src">@drawable/ic_add_white</item>
+    </style>
+
+    <style name="RegularOverflow" parent="android:style/Widget.Holo.ActionButton.Overflow">
+        <item name="android:src">@drawable/ic_dotted_menu</item>
     </style>
 
 </resources>

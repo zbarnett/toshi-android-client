@@ -48,7 +48,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/subTitleSize"
-            android:textStyle="bold"
+            style="@style/TextStyleMedium"
             tools:text="$0.00 USD"/>
 
         <Space

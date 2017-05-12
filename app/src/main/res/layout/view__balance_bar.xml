@@ -43,7 +43,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="@dimen/subTitleSize"
-        android:textStyle="bold"
+        style="@style/TextStyleMedium"
         tools:text="$0.00 USD"/>
 
     <TextView
@@ -86,7 +86,7 @@
             android:id="@+id/request_button"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            style="@style/FlatButton"
+            style="@style/FlatButtonMedium"
             android:textSize="14sp"
             android:textAllCaps="true"
             android:visibility="gone"
@@ -101,7 +101,7 @@
             android:id="@+id/pay_button"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            style="@style/FlatButton"
+            style="@style/FlatButtonMedium"
             android:minWidth="0dp"
             android:textSize="14sp"
             android:textAllCaps="true"

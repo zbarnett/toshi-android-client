@@ -72,7 +72,7 @@
             android:lineSpacingExtra="2dp"
             android:textColor="@color/colorPrimary"
             android:textSize="@dimen/defaultTextSize"
-            android:textStyle="bold"
+            style="@style/TextStyleMedium"
             tools:text="$20.00 USD"/>
 
         <TextView

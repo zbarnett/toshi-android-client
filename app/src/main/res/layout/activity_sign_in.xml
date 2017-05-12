@@ -135,7 +135,7 @@
                 android:layout_marginBottom="34dp"
                 android:textColor="@color/colorPrimary"
                 android:textSize="15sp"
-                android:textStyle="bold"
+                style="@style/TextStyleMedium"
                 android:text="@string/create_new_account"/>
 
         </LinearLayout>

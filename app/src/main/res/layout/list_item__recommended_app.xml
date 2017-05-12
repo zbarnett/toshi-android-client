@@ -18,6 +18,7 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" 
     android:layout_width="79dp"
     android:layout_height="match_parent"
@@ -36,7 +37,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:textSize="14sp"
-        android:textColor="@color/textColorPrimary" />
+        android:textColor="@color/textColorPrimary"
+        style="@style/TextStyleMedium"
+        tools:text="App name"/>
 
     <TextView
         android:id="@+id/app_category"
