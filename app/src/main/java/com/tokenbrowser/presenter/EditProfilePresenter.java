@@ -23,11 +23,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.view.View;
 import android.widget.Toast;
@@ -42,6 +39,7 @@ import com.tokenbrowser.util.FileUtil;
 import com.tokenbrowser.util.ImageUtil;
 import com.tokenbrowser.util.LogUtil;
 import com.tokenbrowser.util.OnSingleClickListener;
+import com.tokenbrowser.util.PermissionUtil;
 import com.tokenbrowser.view.BaseApplication;
 import com.tokenbrowser.view.activity.EditProfileActivity;
 import com.tokenbrowser.view.activity.ImageCropActivity;
@@ -58,20 +56,21 @@ public class EditProfilePresenter implements Presenter<EditProfileActivity> {
 
     private static final int PICK_IMAGE = 1;
     private static final int CAPTURE_IMAGE = 2;
-    private static final int CAMERA_PERMISSION = 5;
-    private static final int READ_EXTERNAL_STORAGE_PERMISSION = 6;
     private static final String INTENT_TYPE = "image/*";
     private static final String CAPTURED_IMAGE_PATH = "capturedImagePath";
 
     private EditProfileActivity activity;
     private CompositeSubscription subscriptions;
     private boolean firstTimeAttaching = true;
+
+    private String capturedImagePath;
+    private ChooserDialog chooserDialog;
+
     private String displayNameFieldContents;
     private String userNameFieldContents;
     private String aboutFieldContents;
     private String locationFieldContents;
     private String avatarUrl;
-    private String capturedImagePath;
 
     @Override
     public void onViewAttached(final EditProfileActivity view) {
@@ -87,7 +86,7 @@ public class EditProfilePresenter implements Presenter<EditProfileActivity> {
         initToolbar();
         updateView();
         initClickListeners();
-        attachListeners();
+        getUser();
     }
 
     private void initToolbar() {
@@ -123,7 +122,7 @@ public class EditProfilePresenter implements Presenter<EditProfileActivity> {
         this.activity.getBinding().closeButton.setOnClickListener(__ -> this.activity.finish());
     }
 
-    private void attachListeners() {
+    private void getUser() {
         final Subscription sub =
                 BaseApplication
                 .get()
@@ -202,8 +201,8 @@ public class EditProfilePresenter implements Presenter<EditProfileActivity> {
     };
 
     private void handleAvatarClicked(final View v) {
-        final ChooserDialog dialog = ChooserDialog.newInstance();
-        dialog.setOnChooserClickListener(new ChooserDialog.OnChooserClickListener() {
+        this.chooserDialog = ChooserDialog.newInstance();
+        this.chooserDialog.setOnChooserClickListener(new ChooserDialog.OnChooserClickListener() {
             @Override
             public void captureImageClicked() {
                 checkCameraPermission();
@@ -214,19 +213,32 @@ public class EditProfilePresenter implements Presenter<EditProfileActivity> {
                 checkExternalStoragePermission();
             }
         });
-        dialog.show(this.activity.getSupportFragmentManager(), ChooserDialog.TAG);
+        this.chooserDialog.show(this.activity.getSupportFragmentManager(), ChooserDialog.TAG);
+    }
+
+    private void checkExternalStoragePermission() {
+        final boolean hasPermission = PermissionUtil.hasPermission(this.activity, Manifest.permission.READ_EXTERNAL_STORAGE);
+        if (hasPermission) {
+            startCameraActivity();
+        } else {
+            PermissionUtil.requestPermission(
+                    this.activity,
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    PermissionUtil.READ_EXTERNAL_STORAGE_PERMISSION
+            );
+        }
     }
 
     private void checkCameraPermission() {
-        if (ContextCompat.checkSelfPermission(this.activity,
-                Manifest.permission.CAMERA)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            ActivityCompat.requestPermissions(this.activity,
-                    new String[]{Manifest.permission.CAMERA},
-                    CAMERA_PERMISSION);
+        final boolean hasPermission = PermissionUtil.hasPermission(this.activity, Manifest.permission.CAMERA);
+        if (hasPermission) {
+            startGalleryActivity();
         } else {
-            startCameraActivity();
+            PermissionUtil.requestPermission(
+                    this.activity,
+                    Manifest.permission.CAMERA,
+                    PermissionUtil.CAMERA_PERMISSION
+            );
         }
     }
 
@@ -239,34 +251,9 @@ public class EditProfilePresenter implements Presenter<EditProfileActivity> {
                     BaseApplication.get(),
                     BuildConfig.APPLICATION_ID + ".photos",
                     photoFile);
-            grantUriPermission(cameraIntent, photoURI);
+            PermissionUtil.grantUriPermission(this.activity, cameraIntent, photoURI);
             cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
             this.activity.startActivityForResult(cameraIntent, CAPTURE_IMAGE);
-        }
-    }
-
-    private void grantUriPermission(final Intent intent, final Uri uri) {
-        if (Build.VERSION.SDK_INT >= 21) return;
-        final PackageManager pm = this.activity.getPackageManager();
-        final String packageName = intent.resolveActivity(pm).getPackageName();
-        this.activity.grantUriPermission(
-                packageName,
-                uri,
-                Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                        | Intent.FLAG_GRANT_READ_URI_PERMISSION
-        );
-    }
-
-    private void checkExternalStoragePermission() {
-        if (ContextCompat.checkSelfPermission(this.activity,
-                Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            ActivityCompat.requestPermissions(this.activity,
-                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                    READ_EXTERNAL_STORAGE_PERMISSION);
-        } else {
-            startGalleryActivity();
         }
     }
 
@@ -340,17 +327,14 @@ public class EditProfilePresenter implements Presenter<EditProfileActivity> {
         if (permissionResultHolder == null || this.activity == null) return false;
         final int[] grantResults = permissionResultHolder.getGrantResults();
         if (grantResults.length == 0) return true;
+        if (grantResults[0] != PackageManager.PERMISSION_GRANTED) return true;
 
-        if (permissionResultHolder.getRequestCode() == CAMERA_PERMISSION) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                startCameraActivity();
-                return true;
-            }
-        } else if (permissionResultHolder.getRequestCode() == READ_EXTERNAL_STORAGE_PERMISSION) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                startGalleryActivity();
-                return true;
-            }
+        if (permissionResultHolder.getRequestCode() == PermissionUtil.CAMERA_PERMISSION) {
+            startCameraActivity();
+            return true;
+        } else if (permissionResultHolder.getRequestCode() == PermissionUtil.READ_EXTERNAL_STORAGE_PERMISSION) {
+            startGalleryActivity();
+            return true;
         }
 
         return false;
@@ -367,8 +351,16 @@ public class EditProfilePresenter implements Presenter<EditProfileActivity> {
     @Override
     public void onViewDetached() {
         saveFields();
+        closeDialogs();
         this.subscriptions.clear();
         this.activity = null;
+    }
+
+    private void closeDialogs() {
+        if (this.chooserDialog != null) {
+            this.chooserDialog.dismiss();
+            this.chooserDialog = null;
+        }
     }
 
     @Override

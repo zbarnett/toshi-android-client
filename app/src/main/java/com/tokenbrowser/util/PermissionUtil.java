@@ -19,7 +19,7 @@ public class PermissionUtil {
         return ContextCompat.checkSelfPermission(activity, permission) == PackageManager.PERMISSION_GRANTED;
     }
 
-    public static void requestPermissionIfNeeded(@NonNull final AppCompatActivity activity,
+    public static void requestPermission(@NonNull final AppCompatActivity activity,
                                                  @NonNull final String permission,
                                                  final int requestCode) {
         ActivityCompat
