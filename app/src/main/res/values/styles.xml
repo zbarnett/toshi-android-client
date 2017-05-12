@@ -49,6 +49,10 @@
         <item name="android:actionOverflowButtonStyle">@style/ButtonOverflow</item>
     </style>
 
+    <style name="RegularToolbarTheme" parent="AppTheme">
+        <item name="android:actionOverflowButtonStyle">@style/RegularOverflow</item>
+    </style>
+
     <style name="Toolbar.TitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
         <item name="android:textColor">@color/textColorContrast</item>
         <item name="android:textStyle">normal</item>
@@ -138,6 +142,10 @@
 
     <style name="ButtonOverflow" parent="android:style/Widget.Holo.ActionButton.Overflow">
         <item name="android:src">@drawable/ic_add_white</item>
+    </style>
+
+    <style name="RegularOverflow" parent="android:style/Widget.Holo.ActionButton.Overflow">
+        <item name="android:src">@drawable/ic_dotted_menu</item>
     </style>
 
 </resources>
