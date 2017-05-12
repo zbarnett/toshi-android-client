@@ -31,6 +31,8 @@ import com.tokenbrowser.util.LogUtil;
 import com.tokenbrowser.view.activity.WebViewActivity;
 import com.tokenbrowser.view.custom.listener.OnLoadListener;
 
+import java.net.URI;
+
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -73,6 +75,7 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
         webSettings.setBuiltInZoomControls(true);
         webSettings.setDisplayZoomControls(false);
         webSettings.setUseWideViewPort(false);
+        webSettings.setDomStorageEnabled(true);
     }
 
     private void injectEverything() {
@@ -147,7 +150,11 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
     }
 
     private String getAddress() {
-        return this.activity.getIntent().getStringExtra(WebViewActivity.EXTRA__ADDRESS).trim();
+        final String url = this.activity.getIntent().getStringExtra(WebViewActivity.EXTRA__ADDRESS).trim();
+        final URI uri = URI.create(url);
+        return uri.getScheme() == null
+                ? "http://" + uri.toASCIIString()
+                : uri.toASCIIString();
     }
 
     @Override
