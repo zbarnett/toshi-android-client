@@ -114,6 +114,7 @@ public class AppsPresenter implements Presenter<AppsFragment>{
     }
 
     private void handleAppClicked(final App app) {
+        if (this.fragment == null) return;
         final Intent intent = new Intent(this.fragment.getContext(), ViewUserActivity.class)
                 .putExtra(ViewUserActivity.EXTRA__USER_ADDRESS, app.getTokenId());
         this.fragment.getContext().startActivity(intent);
