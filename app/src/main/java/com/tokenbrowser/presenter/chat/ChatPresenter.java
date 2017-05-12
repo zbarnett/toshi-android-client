@@ -26,8 +26,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.util.Pair;
 import android.view.KeyEvent;
@@ -59,6 +57,7 @@ import com.tokenbrowser.util.KeyboardUtil;
 import com.tokenbrowser.util.LogUtil;
 import com.tokenbrowser.util.OnSingleClickListener;
 import com.tokenbrowser.util.PaymentType;
+import com.tokenbrowser.util.PermissionUtil;
 import com.tokenbrowser.util.SoundManager;
 import com.tokenbrowser.view.Animation.SlideUpAnimator;
 import com.tokenbrowser.view.BaseApplication;
@@ -92,9 +91,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     private static final int PAY_RESULT_CODE = 2;
     private static final int PICK_IMAGE = 3;
     private static final int CAPTURE_IMAGE = 4;
-    private static final int CAMERA_PERMISSION = 5;
     private static final int CONFIRM_IMAGE = 6;
-    private static final int READ_EXTERNAL_STORAGE_PERMISSION = 7;
 
     private static final String CAPTURE_FILENAME = "caputureImageFilename";
 
@@ -341,16 +338,29 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         dialog.show(this.activity.getSupportFragmentManager(), ChooserDialog.TAG);
     }
 
-    private void checkCameraPermission() {
-        if (ContextCompat.checkSelfPermission(this.activity,
-                Manifest.permission.CAMERA)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            ActivityCompat.requestPermissions(this.activity,
-                    new String[]{Manifest.permission.CAMERA},
-                    CAMERA_PERMISSION);
-        } else {
+    private void checkExternalStoragePermission() {
+        final boolean hasPermission = PermissionUtil.hasPermission(this.activity, Manifest.permission.READ_EXTERNAL_STORAGE);
+        if (hasPermission) {
             startCameraActivity();
+        } else {
+            PermissionUtil.requestPermission(
+                    this.activity,
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    PermissionUtil.READ_EXTERNAL_STORAGE_PERMISSION
+            );
+        }
+    }
+
+    private void checkCameraPermission() {
+        final boolean hasPermission = PermissionUtil.hasPermission(this.activity, Manifest.permission.CAMERA);
+        if (hasPermission) {
+            startGalleryActivity();
+        } else {
+            PermissionUtil.requestPermission(
+                    this.activity,
+                    Manifest.permission.CAMERA,
+                    PermissionUtil.CAMERA_PERMISSION
+            );
         }
     }
 
@@ -363,34 +373,9 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
                     BaseApplication.get(),
                     BuildConfig.APPLICATION_ID + ".photos",
                     photoFile);
-            grantUriPermission(cameraIntent, photoURI);
+            PermissionUtil.grantUriPermission(this.activity, cameraIntent, photoURI);
             cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
             this.activity.startActivityForResult(cameraIntent, CAPTURE_IMAGE);
-        }
-    }
-
-    private void grantUriPermission(final Intent intent, final Uri uri) {
-        if (Build.VERSION.SDK_INT >= 21) return;
-        final PackageManager pm = this.activity.getPackageManager();
-        final String packageName = intent.resolveActivity(pm).getPackageName();
-        this.activity.grantUriPermission(
-                packageName,
-                uri,
-                Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                        | Intent.FLAG_GRANT_READ_URI_PERMISSION
-        );
-    }
-
-    private void checkExternalStoragePermission() {
-        if (ContextCompat.checkSelfPermission(this.activity,
-                Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            ActivityCompat.requestPermissions(this.activity,
-                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                    READ_EXTERNAL_STORAGE_PERMISSION);
-        } else {
-            startGalleryActivity();
         }
     }
 
@@ -823,18 +808,15 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
                                   @NonNull final String permissions[],
                                   @NonNull final int[] grantResults) {
         if (grantResults.length == 0) return;
+        if (grantResults[0] != PackageManager.PERMISSION_GRANTED) return;
 
         switch (requestCode) {
-            case CAMERA_PERMISSION: {
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    startCameraActivity();
-                }
+            case PermissionUtil.CAMERA_PERMISSION: {
+                startCameraActivity();
                 break;
             }
-            case READ_EXTERNAL_STORAGE_PERMISSION: {
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    startGalleryActivity();
-                }
+            case PermissionUtil.READ_EXTERNAL_STORAGE_PERMISSION: {
+                startGalleryActivity();
                 break;
             }
         }
