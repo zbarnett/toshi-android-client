@@ -72,7 +72,6 @@ import com.tokenbrowser.view.fragment.DialogFragment.ChooserDialog;
 import com.tokenbrowser.view.notification.ChatNotificationManager;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -96,19 +95,21 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     private static final String CAPTURE_FILENAME = "caputureImageFilename";
 
     private ChatActivity activity;
+    private boolean firstViewAttachment = true;
+    private CompositeSubscription subscriptions;
+
     private MessageAdapter messageAdapter;
     private User remoteUser;
     private SpeedyLinearLayoutManager layoutManager;
     private HDWallet userWallet;
-    private CompositeSubscription subscriptions;
-    private boolean firstViewAttachment = true;
-    private int lastVisibleMessagePosition;
     private Pair<PublishSubject<SofaMessage>, PublishSubject<SofaMessage>> chatObservables;
     private Subscription newMessageSubscription;
     private Subscription updatedMessageSubscription;
     private OutgoingMessageQueue outgoingMessageQueue;
     private PendingTransactionsObservable pendingTransactionsObservable;
+
     private String captureImageFilename;
+    private int lastVisibleMessagePosition;
 
     @Override
     public void onViewAttached(final ChatActivity activity) {
@@ -212,7 +213,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         this.messageAdapter.updateMessage(sofaMessage);
     }
 
-    private void initSubscribers() {
+    private void getWallet() {
         final Subscription walletSub =
                 BaseApplication.get()
                 .getTokenManager()
@@ -224,7 +225,9 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
                 );
 
         this.subscriptions.add(walletSub);
+    }
 
+    private void initEditorActionListener() {
         this.activity.getBinding().userInput.setOnEditorActionListener((v, actionId, event) -> {
             if (event != null && event.getAction() != KeyEvent.ACTION_DOWN) {
                 return false;
@@ -238,7 +241,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         });
     }
 
-    public void sendMessage() {
+    private void sendMessage() {
         if (userInputInvalid()) return;
 
         final String userInput = this.activity.getBinding().userInput.getText().toString();
@@ -255,7 +258,8 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     }
 
     private void initShortLivingObjects() {
-        initSubscribers();
+        getWallet();
+        initEditorActionListener();
         initLayoutManager();
         initAdapterAnimation();
         initRecyclerView();
@@ -781,25 +785,11 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
             final String value = resultHolder.getIntent().getStringExtra(AmountPresenter.INTENT_EXTRA__ETH_AMOUNT);
             sendPaymentWithValue(value);
         } else if (resultHolder.getRequestCode() == PICK_IMAGE) {
-            try {
-                handleGalleryResult(resultHolder);
-            } catch (IOException e) {
-                LogUtil.exception(getClass(), "Error during image saving", e);
-                return false;
-            }
+            handleGalleryResult(resultHolder);
         } else if (resultHolder.getRequestCode() == CAPTURE_IMAGE) {
-            try {
-                handleCameraResult();
-            } catch (FileNotFoundException e) {
-                LogUtil.exception(getClass(), "Error during sending camera image", e);
-                return false;
-            }
+            handleCameraResult();
         } else if (resultHolder.getRequestCode() == CONFIRM_IMAGE) {
-            try {
-                handleConfirmationResult(resultHolder);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
+            handleConfirmationResult(resultHolder);
         }
         return true;
     }
@@ -822,14 +812,14 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         }
     }
 
-    private void handleGalleryResult(final ActivityResultHolder resultHolder) throws IOException {
+    private void handleGalleryResult(final ActivityResultHolder resultHolder) {
         final Uri uri = resultHolder.getIntent().getData();
         final Intent confirmationIntent = new Intent(this.activity, ImageConfirmationActivity.class)
                 .putExtra(ImageConfirmationActivity.FILE_URI, uri);
         this.activity.startActivityForResult(confirmationIntent, CONFIRM_IMAGE);
     }
 
-    private void handleConfirmationResult(final ActivityResultHolder resultHolder) throws FileNotFoundException {
+    private void handleConfirmationResult(final ActivityResultHolder resultHolder) {
         final String filePath = resultHolder.getIntent().getStringExtra(ImageConfirmationActivity.FILE_PATH);
 
         if (filePath == null) {
@@ -848,8 +838,13 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         this.subscriptions.add(sub);
     }
 
-    private void handleCameraResult() throws FileNotFoundException {
-        final File file = new File(this.activity.getFilesDir(), this.captureImageFilename);
+    private void handleCameraResult() {
+        if (this.captureImageFilename == null) {
+            LogUtil.exception(getClass(), "Error during sending camera image");
+            return;
+        }
+
+        final File file = new File(BaseApplication.get().getFilesDir(), this.captureImageFilename);
         final Subscription sub =
                 new FileUtil().compressImage(FileUtil.MAX_SIZE, file)
                 .subscribe(
