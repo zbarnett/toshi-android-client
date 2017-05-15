@@ -26,8 +26,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.util.Pair;
 import android.view.KeyEvent;
@@ -59,6 +57,7 @@ import com.tokenbrowser.util.KeyboardUtil;
 import com.tokenbrowser.util.LogUtil;
 import com.tokenbrowser.util.OnSingleClickListener;
 import com.tokenbrowser.util.PaymentType;
+import com.tokenbrowser.util.PermissionUtil;
 import com.tokenbrowser.util.SoundManager;
 import com.tokenbrowser.view.Animation.SlideUpAnimator;
 import com.tokenbrowser.view.BaseApplication;
@@ -73,7 +72,6 @@ import com.tokenbrowser.view.fragment.DialogFragment.ChooserDialog;
 import com.tokenbrowser.view.notification.ChatNotificationManager;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -92,26 +90,26 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     private static final int PAY_RESULT_CODE = 2;
     private static final int PICK_IMAGE = 3;
     private static final int CAPTURE_IMAGE = 4;
-    private static final int CAMERA_PERMISSION = 5;
     private static final int CONFIRM_IMAGE = 6;
-    private static final int READ_EXTERNAL_STORAGE_PERMISSION = 7;
 
     private static final String CAPTURE_FILENAME = "caputureImageFilename";
 
     private ChatActivity activity;
+    private boolean firstViewAttachment = true;
+    private CompositeSubscription subscriptions;
+
     private MessageAdapter messageAdapter;
     private User remoteUser;
     private SpeedyLinearLayoutManager layoutManager;
     private HDWallet userWallet;
-    private CompositeSubscription subscriptions;
-    private boolean firstViewAttachment = true;
-    private int lastVisibleMessagePosition;
     private Pair<PublishSubject<SofaMessage>, PublishSubject<SofaMessage>> chatObservables;
     private Subscription newMessageSubscription;
     private Subscription updatedMessageSubscription;
     private OutgoingMessageQueue outgoingMessageQueue;
     private PendingTransactionsObservable pendingTransactionsObservable;
+
     private String captureImageFilename;
+    private int lastVisibleMessagePosition;
 
     @Override
     public void onViewAttached(final ChatActivity activity) {
@@ -215,7 +213,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         this.messageAdapter.updateMessage(sofaMessage);
     }
 
-    private void initSubscribers() {
+    private void getWallet() {
         final Subscription walletSub =
                 BaseApplication.get()
                 .getTokenManager()
@@ -227,7 +225,9 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
                 );
 
         this.subscriptions.add(walletSub);
+    }
 
+    private void initEditorActionListener() {
         this.activity.getBinding().userInput.setOnEditorActionListener((v, actionId, event) -> {
             if (event != null && event.getAction() != KeyEvent.ACTION_DOWN) {
                 return false;
@@ -241,7 +241,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         });
     }
 
-    public void sendMessage() {
+    private void sendMessage() {
         if (userInputInvalid()) return;
 
         final String userInput = this.activity.getBinding().userInput.getText().toString();
@@ -258,7 +258,8 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     }
 
     private void initShortLivingObjects() {
-        initSubscribers();
+        getWallet();
+        initEditorActionListener();
         initLayoutManager();
         initAdapterAnimation();
         initRecyclerView();
@@ -341,16 +342,29 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         dialog.show(this.activity.getSupportFragmentManager(), ChooserDialog.TAG);
     }
 
-    private void checkCameraPermission() {
-        if (ContextCompat.checkSelfPermission(this.activity,
-                Manifest.permission.CAMERA)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            ActivityCompat.requestPermissions(this.activity,
-                    new String[]{Manifest.permission.CAMERA},
-                    CAMERA_PERMISSION);
-        } else {
+    private void checkExternalStoragePermission() {
+        final boolean hasPermission = PermissionUtil.hasPermission(this.activity, Manifest.permission.READ_EXTERNAL_STORAGE);
+        if (hasPermission) {
             startCameraActivity();
+        } else {
+            PermissionUtil.requestPermission(
+                    this.activity,
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    PermissionUtil.READ_EXTERNAL_STORAGE_PERMISSION
+            );
+        }
+    }
+
+    private void checkCameraPermission() {
+        final boolean hasPermission = PermissionUtil.hasPermission(this.activity, Manifest.permission.CAMERA);
+        if (hasPermission) {
+            startGalleryActivity();
+        } else {
+            PermissionUtil.requestPermission(
+                    this.activity,
+                    Manifest.permission.CAMERA,
+                    PermissionUtil.CAMERA_PERMISSION
+            );
         }
     }
 
@@ -363,34 +377,9 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
                     BaseApplication.get(),
                     BuildConfig.APPLICATION_ID + ".photos",
                     photoFile);
-            grantUriPermission(cameraIntent, photoURI);
+            PermissionUtil.grantUriPermission(this.activity, cameraIntent, photoURI);
             cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
             this.activity.startActivityForResult(cameraIntent, CAPTURE_IMAGE);
-        }
-    }
-
-    private void grantUriPermission(final Intent intent, final Uri uri) {
-        if (Build.VERSION.SDK_INT >= 21) return;
-        final PackageManager pm = this.activity.getPackageManager();
-        final String packageName = intent.resolveActivity(pm).getPackageName();
-        this.activity.grantUriPermission(
-                packageName,
-                uri,
-                Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                        | Intent.FLAG_GRANT_READ_URI_PERMISSION
-        );
-    }
-
-    private void checkExternalStoragePermission() {
-        if (ContextCompat.checkSelfPermission(this.activity,
-                Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            ActivityCompat.requestPermissions(this.activity,
-                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                    READ_EXTERNAL_STORAGE_PERMISSION);
-        } else {
-            startGalleryActivity();
         }
     }
 
@@ -796,25 +785,11 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
             final String value = resultHolder.getIntent().getStringExtra(AmountPresenter.INTENT_EXTRA__ETH_AMOUNT);
             sendPaymentWithValue(value);
         } else if (resultHolder.getRequestCode() == PICK_IMAGE) {
-            try {
-                handleGalleryResult(resultHolder);
-            } catch (IOException e) {
-                LogUtil.exception(getClass(), "Error during image saving", e);
-                return false;
-            }
+            handleGalleryResult(resultHolder);
         } else if (resultHolder.getRequestCode() == CAPTURE_IMAGE) {
-            try {
-                handleCameraResult();
-            } catch (FileNotFoundException e) {
-                LogUtil.exception(getClass(), "Error during sending camera image", e);
-                return false;
-            }
+            handleCameraResult();
         } else if (resultHolder.getRequestCode() == CONFIRM_IMAGE) {
-            try {
-                handleConfirmationResult(resultHolder);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
+            handleConfirmationResult(resultHolder);
         }
         return true;
     }
@@ -823,31 +798,28 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
                                   @NonNull final String permissions[],
                                   @NonNull final int[] grantResults) {
         if (grantResults.length == 0) return;
+        if (grantResults[0] != PackageManager.PERMISSION_GRANTED) return;
 
         switch (requestCode) {
-            case CAMERA_PERMISSION: {
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    startCameraActivity();
-                }
+            case PermissionUtil.CAMERA_PERMISSION: {
+                startCameraActivity();
                 break;
             }
-            case READ_EXTERNAL_STORAGE_PERMISSION: {
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    startGalleryActivity();
-                }
+            case PermissionUtil.READ_EXTERNAL_STORAGE_PERMISSION: {
+                startGalleryActivity();
                 break;
             }
         }
     }
 
-    private void handleGalleryResult(final ActivityResultHolder resultHolder) throws IOException {
+    private void handleGalleryResult(final ActivityResultHolder resultHolder) {
         final Uri uri = resultHolder.getIntent().getData();
         final Intent confirmationIntent = new Intent(this.activity, ImageConfirmationActivity.class)
                 .putExtra(ImageConfirmationActivity.FILE_URI, uri);
         this.activity.startActivityForResult(confirmationIntent, CONFIRM_IMAGE);
     }
 
-    private void handleConfirmationResult(final ActivityResultHolder resultHolder) throws FileNotFoundException {
+    private void handleConfirmationResult(final ActivityResultHolder resultHolder) {
         final String filePath = resultHolder.getIntent().getStringExtra(ImageConfirmationActivity.FILE_PATH);
 
         if (filePath == null) {
@@ -866,8 +838,13 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         this.subscriptions.add(sub);
     }
 
-    private void handleCameraResult() throws FileNotFoundException {
-        final File file = new File(this.activity.getFilesDir(), this.captureImageFilename);
+    private void handleCameraResult() {
+        if (this.captureImageFilename == null) {
+            LogUtil.exception(getClass(), "Error during sending camera image");
+            return;
+        }
+
+        final File file = new File(BaseApplication.get().getFilesDir(), this.captureImageFilename);
         final Subscription sub =
                 new FileUtil().compressImage(FileUtil.MAX_SIZE, file)
                 .subscribe(
