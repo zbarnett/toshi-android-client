@@ -101,6 +101,7 @@
         <activity android:name="com.tokenbrowser.view.activity.ImageCropActivity"
                   android:theme="@style/DarkTheme"/>
         <activity android:name="com.tokenbrowser.view.activity.CurrencyActivity" />
+        <activity android:name="com.tokenbrowser.view.activity.LandingActivity" />
 
         <meta-data
             android:name="io.fabric.ApiKey"
