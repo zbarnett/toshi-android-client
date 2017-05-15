@@ -108,6 +108,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     private OutgoingMessageQueue outgoingMessageQueue;
     private PendingTransactionsObservable pendingTransactionsObservable;
 
+    private boolean isConversationLoaded = false;
     private String captureImageFilename;
     private int lastVisibleMessagePosition;
 
@@ -676,6 +677,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
                 );
 
         this.subscriptions.addAll(this.newMessageSubscription, this.updatedMessageSubscription);
+        this.isConversationLoaded = true;
     }
 
     private void tryClearMessageSubscriptions() {
@@ -861,7 +863,20 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         final SofaMessage sofaMessage = new SofaMessage()
                 .makeNew(getCurrentLocalUser(), messageBody)
                 .setAttachmentFilePath(filePath);
-        this.outgoingMessageQueue.send(sofaMessage);
+        sendMediaMessage(sofaMessage);
+    }
+
+    private void sendMediaMessage(final SofaMessage sofaMessage) {
+        Single.fromCallable(() -> {
+            while (!this.isConversationLoaded) {
+                Thread.sleep(50);
+            }
+            return sofaMessage;
+        })
+        .subscribeOn(Schedulers.io())
+        .subscribe(message -> {
+            this.outgoingMessageQueue.send(message);
+        });
     }
 
     private void handleError(final Throwable throwable) {
@@ -873,6 +888,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         this.lastVisibleMessagePosition = this.layoutManager.findLastVisibleItemPosition();
         this.subscriptions.clear();
         this.messageAdapter.clear();
+        this.isConversationLoaded = false;
         this.activity = null;
     }
 
