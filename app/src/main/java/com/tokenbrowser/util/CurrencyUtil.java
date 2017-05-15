@@ -35,7 +35,12 @@ public class CurrencyUtil {
     }
 
     public static String getSymbolFromCurrencyCode(final String currencyCode) {
-        final Currency currency = Currency.getInstance(currencyCode);
-        return currency.getSymbol();
+        try {
+            final Currency currency = Currency.getInstance(currencyCode);
+            return currency.getSymbol();
+        } catch (NullPointerException | IllegalArgumentException e) {
+            LogUtil.exception(CurrencyUtil.class, "Error during getting symbol from currency code", e);
+            return currencyCode;
+        }
     }
 }
