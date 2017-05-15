@@ -221,4 +221,7 @@
     <string name="start_a_chat">Start a chat</string>
     <string name="empty_state_contact_message">Your favorites will be listed here. You can invite friends to join Toshi.</string>
     <string name="no_favorites_yet">No Favorites yet</string>
+    <string name="welcome_to_token">Welcome to Token</string>
+    <string name="splash_view_info">A browser for the Ethereum network that provides universal access to financial services</string>
+    <string name="start_with_a_new_account">Start with a new account</string>
 </resources>
