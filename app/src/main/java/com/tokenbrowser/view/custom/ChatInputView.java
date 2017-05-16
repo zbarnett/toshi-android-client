@@ -17,15 +17,27 @@
 
 package com.tokenbrowser.view.custom;
 
+import android.animation.Animator;
+import android.animation.LayoutTransition;
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.content.Context;
 import android.support.annotation.Nullable;
+import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
+import com.jakewharton.rxbinding.widget.RxTextView;
 import com.tokenbrowser.R;
+import com.tokenbrowser.util.LogUtil;
+
+import rx.Subscription;
+import rx.subscriptions.CompositeSubscription;
 
 public class ChatInputView extends LinearLayout {
 
@@ -39,6 +51,7 @@ public class ChatInputView extends LinearLayout {
 
     private OnAttachmentClickedListener attachmentClickedListener;
     private OnSendClickedListener sendClickedListener;
+    private CompositeSubscription subscriptions;
 
     public ChatInputView(Context context) {
         super(context);
@@ -69,6 +82,7 @@ public class ChatInputView extends LinearLayout {
         inflate(getContext(), R.layout.view_chat_input, this);
         initClickListener();
         initEditorActionListener();
+        initLayoutChangeAnimation();
     }
 
     private void initClickListener() {
@@ -90,6 +104,16 @@ public class ChatInputView extends LinearLayout {
         });
     }
 
+    private void initLayoutChangeAnimation() {
+        final Animator showAnimation = ObjectAnimator.ofPropertyValuesHolder(PropertyValuesHolder.ofFloat("scaleX", 1, 0));
+        final Animator hideAnimation = ObjectAnimator.ofPropertyValuesHolder(PropertyValuesHolder.ofFloat("scaleX", 0, 1));
+        final LayoutTransition layoutTransition = new LayoutTransition();
+        layoutTransition.setDuration(50);
+        layoutTransition.setAnimator(LayoutTransition.APPEARING, hideAnimation);
+        layoutTransition.setAnimator(LayoutTransition.DISAPPEARING, showAnimation);
+        setLayoutTransition(layoutTransition);
+    }
+
     private void handleSendClicked() {
         final String userInput = getText();
         if (userInput.trim().length() == 0) return;
@@ -109,5 +133,55 @@ public class ChatInputView extends LinearLayout {
     public void setText(final String value) {
         final EditText userInput = (EditText) findViewById(R.id.user_input);
         userInput.setText(value);
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        this.subscriptions = new CompositeSubscription();
+        initTextChangesListener();
+    }
+
+    private void initTextChangesListener() {
+        final EditText userInput = (EditText) findViewById(R.id.user_input);
+        final Subscription sub =
+                RxTextView.textChanges(userInput)
+                .subscribe(
+                        this::showOrHideSendButton,
+                        throwable -> LogUtil.e(getClass(), "Error when typing")
+                );
+
+        this.subscriptions.add(sub);
+    }
+
+    private void showOrHideSendButton(final CharSequence charSequence) {
+        if (charSequence.length() > 0) {
+            showSendButton();
+        } else {
+            hideSendButton();
+        }
+    }
+
+    private void showSendButton() {
+        final ImageButton sendButton = (ImageButton) findViewById(R.id.send_button);
+        sendButton.setVisibility(View.VISIBLE);
+        ViewCompat.animate(sendButton)
+                .alpha(1f)
+                .setDuration(50);
+    }
+
+    private void hideSendButton() {
+        final ImageButton sendButton = (ImageButton) findViewById(R.id.send_button);
+        ViewCompat.animate(sendButton)
+                .alpha(0f)
+                .setDuration(50)
+                .withEndAction(() -> sendButton.setVisibility(View.GONE));
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        if (this.subscriptions == null) return;
+        this.subscriptions.clear();
     }
 }
