@@ -24,9 +24,9 @@ import android.net.Uri;
 import com.tokenbrowser.util.LogUtil;
 import com.tokenbrowser.util.SharedPrefsUtil;
 import com.tokenbrowser.view.BaseApplication;
+import com.tokenbrowser.view.activity.LandingActivity;
 import com.tokenbrowser.view.activity.MainActivity;
 import com.tokenbrowser.view.activity.QrCodeHandlerActivity;
-import com.tokenbrowser.view.activity.SignInActivity;
 import com.tokenbrowser.view.activity.SplashActivity;
 
 import rx.Subscription;
@@ -59,10 +59,10 @@ public class SplashPresenter implements Presenter<SplashActivity> {
     private void redirect() {
         final boolean hasSignedOut = SharedPrefsUtil.hasSignedOut();
 
-        if (!hasSignedOut) {
-            initManagersAndGoToAnotherActivity();
+        if (hasSignedOut) {
+            goToLandingActivity();
         } else {
-            goToSignInActivity();
+            initManagersAndGoToAnotherActivity();
         }
     }
 
@@ -71,19 +71,15 @@ public class SplashPresenter implements Presenter<SplashActivity> {
                 BaseApplication
                 .get()
                 .getTokenManager()
-                .init()
+                .tryInit()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         __ -> goToAnotherActivity(),
-                        this::handleError
+                        __ -> goToLandingActivity()
                 );
 
         this.subscriptions.add(sub);
-    }
-
-    private void handleError(final Throwable throwable) {
-        LogUtil.exception(getClass(), "Error while initiating managers", throwable);
     }
 
     private void goToAnotherActivity() {
@@ -124,8 +120,8 @@ public class SplashPresenter implements Presenter<SplashActivity> {
         goToActivity(intent);
     }
 
-    private void goToSignInActivity() {
-        final Intent intent = new Intent(this.activity, SignInActivity.class);
+    private void goToLandingActivity() {
+        final Intent intent = new Intent(this.activity, LandingActivity.class);
         goToActivity(intent);
     }
 
