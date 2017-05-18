@@ -26,6 +26,7 @@
     <color name="colorAccent">#33AFFF</color>
     <color name="textColorPrimary">#000000</color>
     <color name="textColorSecondary">#9F9FA3</color>
+    <color name="textColorSecondaryTransparent">#8B000000</color>
     <color name="textColorTertiary">#B3FFFFFF</color>
     <color name="textColorContrast">#FFFFFF</color>
     <color name="textColorHint">#B2B4B8</color>
