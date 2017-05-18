@@ -69,9 +69,14 @@ public final class RecentPresenter implements
     }
 
     private void initShortLivingObjects() {
+        initClickListeners();
         initRecentsAdapter();
         populateRecentsAdapter();
         attachSubscriber();
+    }
+
+    private void initClickListeners() {
+        this.fragment.getBinding().startChat.setOnClickListener(__ -> goToUserSearchActivity());
     }
 
     private void initRecentsAdapter() {

@@ -25,9 +25,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.tokenbrowser.R;
 import com.tokenbrowser.model.local.Contact;
 import com.tokenbrowser.model.local.User;
-import com.tokenbrowser.R;
 import com.tokenbrowser.util.LogUtil;
 import com.tokenbrowser.util.OnSingleClickListener;
 import com.tokenbrowser.util.UserSearchType;
@@ -67,9 +67,14 @@ public final class ContactsPresenter implements
     }
 
     private void initShortLivingObjects() {
+        initClickListeners();
         initRecyclerView();
         loadContacts();
+    }
+
+    private void initClickListeners() {
         this.fragment.getBinding().userSearch.setOnClickListener(this.handleUserSearchClicked);
+        this.fragment.getBinding().inviteFriends.setOnClickListener(__ -> handleInviteFriends());
     }
 
     private void initRecyclerView() {
@@ -128,26 +133,15 @@ public final class ContactsPresenter implements
         if (this.fragment == null) return;
         
         // Hide empty state if we have some content
-        final boolean showingEmptyState = this.fragment.getBinding().emptyStateSwitcher.getCurrentView().getId() == this.fragment.getBinding().emptyState.getId();
         final boolean shouldShowEmptyState = this.adapter.getItemCount() == 0;
 
-        if (shouldShowEmptyState && !showingEmptyState) {
-            this.fragment.getBinding().emptyStateSwitcher.showPrevious();
-        } else if (!shouldShowEmptyState && showingEmptyState) {
-            this.fragment.getBinding().emptyStateSwitcher.showNext();
+        if (shouldShowEmptyState) {
+            this.fragment.getBinding().emptyState.setVisibility(View.VISIBLE);
+            this.fragment.getBinding().contacts.setVisibility(View.GONE);
+        } else {
+            this.fragment.getBinding().emptyState.setVisibility(View.GONE);
+            this.fragment.getBinding().contacts.setVisibility(View.VISIBLE);
         }
-    }
-
-    @Override
-    public void onViewDetached() {
-        this.subscriptions.clear();
-        this.fragment = null;
-    }
-
-    @Override
-    public void onDestroyed() {
-        this.adapter = null;
-        this.fragment = null;
     }
 
     private final OnSingleClickListener handleUserSearchClicked = new OnSingleClickListener() {
@@ -190,5 +184,17 @@ public final class ContactsPresenter implements
         if (this.fragment == null) return;
         final Intent intent = new Intent(this.fragment.getActivity(), ScannerActivity.class);
         this.fragment.getActivity().startActivity(intent);
+    }
+
+    @Override
+    public void onViewDetached() {
+        this.subscriptions.clear();
+        this.fragment = null;
+    }
+
+    @Override
+    public void onDestroyed() {
+        this.adapter = null;
+        this.fragment = null;
     }
 }
