@@ -24,7 +24,6 @@ import android.content.SharedPreferences;
 import com.tokenbrowser.crypto.HDWallet;
 import com.tokenbrowser.manager.network.CurrencyService;
 import com.tokenbrowser.manager.network.EthereumService;
-import com.tokenbrowser.model.network.Addresses;
 import com.tokenbrowser.model.network.Balance;
 import com.tokenbrowser.model.network.Currencies;
 import com.tokenbrowser.model.network.GcmRegistration;
@@ -201,7 +200,7 @@ public class BalanceManager {
 
         return EthereumService
                 .getApi()
-                .registerGcm(serverTime.get(), new GcmRegistration(token));
+                .registerGcm(serverTime.get(), new GcmRegistration(token, wallet.getPaymentAddress()));
     }
 
     private Completable unregisterGcmWithTimestamp(final String token, final ServerTime serverTime) {
@@ -211,30 +210,7 @@ public class BalanceManager {
 
         return EthereumService
                 .getApi()
-                .unregisterGcm(serverTime.get(), new GcmRegistration(token));
-    }
-
-    public Single<Void> watchForWalletTransactions() {
-        return EthereumService
-                .getApi()
-                .getTimestamp()
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .flatMap(this::watchForWalletTransactionsWithTimestamp);
-    }
-
-    private Single<Void> watchForWalletTransactionsWithTimestamp(final ServerTime serverTime) {
-        if (serverTime == null) {
-            throw new IllegalStateException("ServerTime was null");
-        }
-
-        final List<String> list = new ArrayList<>();
-        list.add(wallet.getPaymentAddress());
-        final Addresses addresses = new Addresses(list);
-
-        return EthereumService
-                .getApi()
-                .startWatchingAddresses(serverTime.get(), addresses);
+                .unregisterGcm(serverTime.get(), new GcmRegistration(token, wallet.getPaymentAddress()));
     }
 
     /* package */ Single<Payment> getTransactionStatus(final String transactionHash) {

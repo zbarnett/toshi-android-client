@@ -17,7 +17,6 @@
 
 package com.tokenbrowser.manager.network;
 
-import com.tokenbrowser.model.network.Addresses;
 import com.tokenbrowser.model.network.Balance;
 import com.tokenbrowser.model.network.GcmRegistration;
 import com.tokenbrowser.model.network.SentTransaction;
@@ -60,9 +59,4 @@ public interface EthereumInterface {
     Completable unregisterGcm(
             @Query("timestamp") long timestamp,
             @Body GcmRegistration gcmRegistration);
-
-    @POST("/v1/register")
-    Single<Void> startWatchingAddresses(
-            @Query("timestamp") long timestamp,
-            @Body Addresses addresses);
 }
