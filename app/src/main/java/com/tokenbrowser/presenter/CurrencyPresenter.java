@@ -20,7 +20,9 @@ package com.tokenbrowser.presenter;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import com.tokenbrowser.model.network.Currencies;
 import com.tokenbrowser.model.network.Currency;
+import com.tokenbrowser.util.CurrencyComparator;
 import com.tokenbrowser.util.LogUtil;
 import com.tokenbrowser.util.SharedPrefsUtil;
 import com.tokenbrowser.view.BaseApplication;
@@ -28,10 +30,13 @@ import com.tokenbrowser.view.activity.CurrencyActivity;
 import com.tokenbrowser.view.adapter.CurrencyAdapter;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import rx.Single;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 
 public class CurrencyPresenter implements Presenter<CurrencyActivity> {
@@ -97,7 +102,9 @@ public class CurrencyPresenter implements Presenter<CurrencyActivity> {
                 .getTokenManager()
                 .getBalanceManager()
                 .getCurrencies()
-                .doOnSuccess(currencies -> this.currencies = currencies.getData())
+                .map(Currencies::getData)
+                .flatMap(this::sortCurrencies)
+                .doOnSuccess(currencies -> this.currencies = currencies)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         __ -> handleCurrencies(),
@@ -105,6 +112,14 @@ public class CurrencyPresenter implements Presenter<CurrencyActivity> {
                 );
 
         this.subscriptions.add(sub);
+    }
+
+    private Single<List<Currency>> sortCurrencies(final List<Currency> currencies) {
+        return Single.fromCallable(() -> {
+            Collections.sort(currencies, new CurrencyComparator());
+            return currencies;
+        })
+        .subscribeOn(Schedulers.io());
     }
 
     private void handleCurrencies() {

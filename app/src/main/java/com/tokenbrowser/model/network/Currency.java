@@ -21,7 +21,6 @@ public class Currency {
     private String id;
     private String name;
     private String min_size;
-    private boolean isHeader;
 
     public String getId() {
         return id;
@@ -29,14 +28,5 @@ public class Currency {
 
     public String getName() {
         return name;
-    }
-
-    public boolean isHeader() {
-        return isHeader;
-    }
-
-    public Currency setHeader(boolean header) {
-        this.isHeader = header;
-        return this;
     }
 }
