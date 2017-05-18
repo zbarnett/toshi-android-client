@@ -219,7 +219,7 @@ public class EditProfilePresenter implements Presenter<EditProfileActivity> {
     private void checkExternalStoragePermission() {
         final boolean hasPermission = PermissionUtil.hasPermission(this.activity, Manifest.permission.READ_EXTERNAL_STORAGE);
         if (hasPermission) {
-            startCameraActivity();
+            startGalleryActivity();
         } else {
             PermissionUtil.requestPermission(
                     this.activity,
@@ -232,7 +232,7 @@ public class EditProfilePresenter implements Presenter<EditProfileActivity> {
     private void checkCameraPermission() {
         final boolean hasPermission = PermissionUtil.hasPermission(this.activity, Manifest.permission.CAMERA);
         if (hasPermission) {
-            startGalleryActivity();
+            startCameraActivity();
         } else {
             PermissionUtil.requestPermission(
                     this.activity,
