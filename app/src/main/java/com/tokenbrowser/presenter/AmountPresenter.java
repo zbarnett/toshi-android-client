@@ -91,8 +91,10 @@ public class AmountPresenter implements Presenter<AmountActivity> {
 
     private void setCurrency() {
         final String currency = SharedPrefsUtil.getCurrency();
-        final String currencySymbol = CurrencyUtil.getSymbolFromCurrencyCode(currency);
-        this.activity.getBinding().localCurrency.setText(currencySymbol);
+        final String currencyCode = CurrencyUtil.getCode(currency);
+        final String currencySymbol = CurrencyUtil.getSymbol(currency);
+        this.activity.getBinding().localCurrencySymbol.setText(currencySymbol);
+        this.activity.getBinding().localCurrencyCode.setText(currencyCode);
     }
 
     private void initSeparator() {

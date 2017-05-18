@@ -39,7 +39,7 @@ import com.tokenbrowser.view.BaseApplication;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.NumberFormat;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -140,12 +140,16 @@ public class BalanceManager {
              final BigDecimal marketRate = marketRates.getRate(currency);
              final BigDecimal localAmount = marketRate.multiply(ethAmount);
 
-             final NumberFormat numberFormat = CurrencyUtil.getNumberFormat(currency);
+             final DecimalFormat numberFormat = CurrencyUtil.getNumberFormat();
              numberFormat.setGroupingUsed(true);
              numberFormat.setMaximumFractionDigits(2);
              numberFormat.setMinimumFractionDigits(2);
 
-             return numberFormat.format(localAmount);
+             final String amount = numberFormat.format(localAmount);
+             final String currencyCode = CurrencyUtil.getCode(currency);
+             final String currencySymbol = CurrencyUtil.getSymbol(currency);
+
+             return String.format("%s%s %s", currencySymbol, amount, currencyCode);
          });
     }
 
