@@ -75,13 +75,14 @@ public class SharedPrefsUtil {
         return prefs.getBoolean(HAS_BACKED_UP_PHRASE, false);
     }
 
-    //Only clearing HAS_BACKED_UP_PHRASE and STORED_QR_CODE
+    //Only clearing HAS_BACKED_UP_PHRASE, STORED_QR_CODE AND LOCAL_CURRENCY_CODE
     public static void clear() {
         final SharedPreferences prefs = BaseApplication.get().getSharedPreferences(FileNames.USER_PREFS, Context.MODE_PRIVATE);
         prefs
                 .edit()
                 .putBoolean(HAS_BACKED_UP_PHRASE, false)
                 .putString(STORED_QR_CODE, null)
+                .putString(LOCAL_CURRENCY_CODE, null)
                 .apply();
     }
 
