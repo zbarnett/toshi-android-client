@@ -34,7 +34,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:gravity="center_vertical"
-                style="@style/Toolbar">
+                style="@style/Toolbar"
+                app:contentInsetStart="0dp">
+
+                <ImageButton
+                    android:id="@+id/close_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:scaleType="fitCenter"
+                    android:padding="16dp"
+                    android:tint="@color/textColorContrast"
+                    android:background="@android:color/transparent"
+                    app:srcCompat="@drawable/ic_arrow_back"/>
+
+                <android.support.v4.widget.Space
+                    android:layout_width="16dp"
+                    android:layout_height="0dp" />
 
                 <TextView
                     android:id="@+id/title"
@@ -121,22 +136,6 @@
                 android:textSize="15sp"
                 android:textAllCaps="false"
                 android:text="@string/scan_qr_to_sign_in"/>
-
-            <android.support.v4.widget.Space
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1"/>
-
-            <TextView
-                android:id="@+id/create_new_account"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="34dp"
-                android:textColor="@color/colorPrimary"
-                android:textSize="15sp"
-                style="@style/TextStyleMedium"
-                android:text="@string/create_new_account"/>
 
         </LinearLayout>
 

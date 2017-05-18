@@ -19,13 +19,13 @@ package com.tokenbrowser.presenter;
 
 import android.content.Intent;
 import android.support.annotation.StringRes;
+import android.support.v4.app.ActivityCompat;
 import android.view.View;
 import android.widget.Toast;
 
 import com.tokenbrowser.R;
 import com.tokenbrowser.crypto.HDWallet;
 import com.tokenbrowser.manager.TokenManager;
-import com.tokenbrowser.util.LogUtil;
 import com.tokenbrowser.util.SharedPrefsUtil;
 import com.tokenbrowser.view.BaseApplication;
 import com.tokenbrowser.view.activity.MainActivity;
@@ -65,8 +65,8 @@ public class SignInPresenter implements Presenter<SignInActivity> {
     }
 
     private void initClickListeners() {
+        this.activity.getBinding().closeButton.setOnClickListener(__ -> this.activity.finish());
         this.activity.getBinding().signIn.setOnClickListener(v -> handleSignInClicked());
-        this.activity.getBinding().createNewAccount.setOnClickListener(v -> handleCreateNewAccountClicked());
     }
 
     private void handleSignInClicked() {
@@ -86,8 +86,7 @@ public class SignInPresenter implements Presenter<SignInActivity> {
 
     private void tryCreateWallet(final String masterSeed) {
         if (this.onGoingTask) return;
-        this.onGoingTask = true;
-        this.activity.getBinding().loadingSpinner.setVisibility(View.VISIBLE);
+        startLoadingTask();
 
         final Subscription sub =
                 new HDWallet()
@@ -97,11 +96,16 @@ public class SignInPresenter implements Presenter<SignInActivity> {
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSuccess(__ -> SharedPrefsUtil.setHasBackedUpPhrase())
                 .subscribe(
-                        __ -> handleSuccess(),
-                        __ -> handleWalletError(R.string.unable_to_restore_wallet)
+                        __ -> handleWalletSuccess(),
+                        __ -> handleWalletError()
                 );
 
         this.subscriptions.add(sub);
+    }
+
+    private void startLoadingTask() {
+        this.onGoingTask = true;
+        this.activity.getBinding().loadingSpinner.setVisibility(View.VISIBLE);
     }
 
     private Single<TokenManager> initWallet(final HDWallet wallet) {
@@ -111,43 +115,25 @@ public class SignInPresenter implements Presenter<SignInActivity> {
                 .init(wallet);
     }
 
-    private void handleCreateNewAccountClicked() {
-        if (this.onGoingTask) return;
-        this.onGoingTask = true;
-        this.activity.getBinding().loadingSpinner.setVisibility(View.VISIBLE);
-
-        final Subscription sub =
-                BaseApplication
-                .get()
-                .getTokenManager()
-                .init()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        __ -> handleSuccess(),
-                        throwable -> {
-                            LogUtil.exception(getClass(), "Error while creating new wallet", throwable);
-                            handleWalletError(R.string.unable_to_create_wallet);
-                        }
-                );
-
-        this.subscriptions.add(sub);
-    }
-
-    private void handleSuccess() {
-        this.onGoingTask = false;
+    private void handleWalletSuccess() {
+        stopLoadingTask();
         goToMainActivity();
     }
 
     private void goToMainActivity() {
         SharedPrefsUtil.setSignedIn();
         final Intent intent = new Intent(this.activity, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         this.activity.startActivity(intent);
-        this.activity.finish();
+        ActivityCompat.finishAffinity(this.activity);
     }
 
-    private void handleWalletError(final @StringRes int stringId) {
-        showToast(stringId);
+    private void handleWalletError() {
+        showToast(R.string.unable_to_restore_wallet);
+        stopLoadingTask();
+    }
+
+    private void stopLoadingTask() {
         this.onGoingTask = false;
         this.activity.getBinding().loadingSpinner.setVisibility(View.GONE);
     }

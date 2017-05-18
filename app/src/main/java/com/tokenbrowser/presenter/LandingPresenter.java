@@ -17,31 +17,33 @@
 
 package com.tokenbrowser.presenter;
 
-import android.app.PendingIntent;
 import android.content.Intent;
-import android.net.Uri;
+import android.support.annotation.StringRes;
+import android.view.View;
+import android.widget.Toast;
 
+import com.tokenbrowser.R;
 import com.tokenbrowser.util.LogUtil;
 import com.tokenbrowser.util.SharedPrefsUtil;
 import com.tokenbrowser.view.BaseApplication;
 import com.tokenbrowser.view.activity.LandingActivity;
 import com.tokenbrowser.view.activity.MainActivity;
-import com.tokenbrowser.view.activity.QrCodeHandlerActivity;
-import com.tokenbrowser.view.activity.SplashActivity;
+import com.tokenbrowser.view.activity.SignInActivity;
 
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 
-public class SplashPresenter implements Presenter<SplashActivity> {
+public class LandingPresenter implements Presenter<LandingActivity> {
 
-    private SplashActivity activity;
-    private CompositeSubscription subscriptions;
+    private LandingActivity activity;
     private boolean firstTimeAttaching = true;
+    private CompositeSubscription subscriptions;
+    private boolean onGoingTask = false;
 
     @Override
-    public void onViewAttached(SplashActivity view) {
+    public void onViewAttached(LandingActivity view) {
         this.activity = view;
 
         if (this.firstTimeAttaching) {
@@ -49,85 +51,76 @@ public class SplashPresenter implements Presenter<SplashActivity> {
             initLongLivingObjects();
         }
 
-        redirect();
+        initClickListeners();
     }
 
     private void initLongLivingObjects() {
         this.subscriptions = new CompositeSubscription();
     }
 
-    private void redirect() {
-        final boolean hasSignedOut = SharedPrefsUtil.hasSignedOut();
-
-        if (hasSignedOut) {
-            goToLandingActivity();
-        } else {
-            initManagersAndGoToAnotherActivity();
-        }
+    private void initClickListeners() {
+        this.activity.getBinding().signIn.setOnClickListener(__ -> goToSignInActivity());
+        this.activity.getBinding().createNewAccount.setOnClickListener(__ -> handleCreateNewAccountClicked());
     }
 
-    private void initManagersAndGoToAnotherActivity() {
+    private void goToSignInActivity() {
+        final Intent intent = new Intent(this.activity, SignInActivity.class);
+        this.activity.startActivity(intent);
+    }
+
+    private void handleCreateNewAccountClicked() {
+        if (this.onGoingTask) return;
+        startLoadingTask();
+
         final Subscription sub =
                 BaseApplication
                 .get()
                 .getTokenManager()
-                .tryInit()
+                .init()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        __ -> goToAnotherActivity(),
-                        __ -> goToLandingActivity()
+                        __ -> handleWalletSuccess(),
+                        this::handleWalletError
                 );
 
         this.subscriptions.add(sub);
     }
 
-    private void goToAnotherActivity() {
-        SharedPrefsUtil.setSignedIn();
-
-        final PendingIntent nextIntent = this.activity.getIntent().getParcelableExtra(SplashActivity.EXTRA__NEXT_INTENT);
-        if (nextIntent != null) {
-            try {
-                nextIntent.send();
-            } catch (final PendingIntent.CanceledException ex) {
-                LogUtil.exception(getClass(), ex);
-            }
-            this.activity.finish();
-        } else {
-            if (!tryGoToQrActivity()) {
-                goToMainActivity();
-            }
-        }
+    private void startLoadingTask() {
+        this.onGoingTask = true;
+        this.activity.getBinding().loadingSpinner.setVisibility(View.VISIBLE);
     }
 
-    private boolean tryGoToQrActivity() {
-        final Uri uri = this.activity.getIntent().getData();
-        if (uri != null) {
-            goToQrCodeActivity(uri);
-            return true;
-        }
-        return false;
-    }
-
-    private void goToQrCodeActivity(final Uri uri) {
-        final Intent intent = new Intent(this.activity, QrCodeHandlerActivity.class)
-                .setData(uri);
-        goToActivity(intent);
+    private void handleWalletSuccess() {
+        stopLoadingTask();
+        goToMainActivity();
     }
 
     private void goToMainActivity() {
+        SharedPrefsUtil.setSignedIn();
         final Intent intent = new Intent(this.activity, MainActivity.class);
-        goToActivity(intent);
-    }
-
-    private void goToLandingActivity() {
-        final Intent intent = new Intent(this.activity, LandingActivity.class);
-        goToActivity(intent);
-    }
-
-    private void goToActivity(final Intent intent) {
         this.activity.startActivity(intent);
         this.activity.finish();
+    }
+
+    private void handleWalletError(final Throwable throwable) {
+        LogUtil.exception(getClass(), "Error while creating new wallet", throwable);
+        stopLoadingTask();
+        showToast(R.string.unable_to_create_wallet);
+    }
+
+    private void stopLoadingTask() {
+        this.onGoingTask = false;
+        this.activity.getBinding().loadingSpinner.setVisibility(View.GONE);
+    }
+
+    private void showToast(final @StringRes int stringId) {
+        Toast.makeText(
+                this.activity,
+                this.activity.getString(stringId),
+                Toast.LENGTH_SHORT
+        ).show();
     }
 
     @Override

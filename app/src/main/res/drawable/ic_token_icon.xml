@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ 	Copyright (c) 2017. Token Browser, Inc
+  ~
+  ~ 	This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="54dp"
+    android:height="54dp"
+    android:viewportWidth="54"
+    android:viewportHeight="54">
+
+    <group
+        android:translateX="-153.000000"
+        android:translateY="-99.000000">
+        <path
+            android:fillColor="#FDFDFD"
+            android:strokeWidth="1"
+            android:pathData="M180,153 C194.911688,153 207,140.911688 207,126 C207,111.088312 194.911688,99
+180,99 C165.088312,99 153,111.088312 153,126 C153,140.911688 165.088312,153
+180,153 Z M171.209302,118.95935 C171.209302,117.992825 171.987438,117.209302
+172.95935,117.209302 L187.04065,117.209302 C188.007175,117.209302
+188.790698,117.987438 188.790698,118.95935 L188.790698,133.04065
+C188.790698,134.007175 188.012562,134.790698 187.04065,134.790698
+L172.95935,134.790698 C171.992825,134.790698 171.209302,134.012562
+171.209302,133.04065 L171.209302,118.95935 Z" />
+    </group>
+</vector>

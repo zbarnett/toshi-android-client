@@ -21,7 +21,7 @@ import android.content.Intent;
 
 import com.tokenbrowser.util.GcmUtil;
 import com.tokenbrowser.view.BaseApplication;
-import com.tokenbrowser.view.activity.SignInActivity;
+import com.tokenbrowser.view.activity.LandingActivity;
 import com.tokenbrowser.view.activity.SignOutActivity;
 
 import rx.Completable;
@@ -46,8 +46,8 @@ public class SignOutPresenter implements Presenter<SignOutActivity> {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        this::goToSignInActivity,
-                        __ -> goToSignInActivity());
+                        this::goToLandingActivity,
+                        __ -> goToLandingActivity());
     }
 
     private Completable clearAndUnregister() {
@@ -81,8 +81,8 @@ public class SignOutPresenter implements Presenter<SignOutActivity> {
                 .clearUserData();
     }
 
-    private void goToSignInActivity() {
-        final Intent intent = new Intent(this.activity, SignInActivity.class);
+    private void goToLandingActivity() {
+        final Intent intent = new Intent(this.activity, LandingActivity.class);
         this.activity.startActivity(intent);
         this.activity.finish();
     }
