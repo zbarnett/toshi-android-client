@@ -28,13 +28,11 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.content.FileProvider;
 import android.util.Pair;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.PathInterpolator;
-import android.view.inputmethod.EditorInfo;
 import android.widget.Toast;
 
 import com.tokenbrowser.BuildConfig;
@@ -214,6 +212,17 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         this.messageAdapter.updateMessage(sofaMessage);
     }
 
+    private void initShortLivingObjects() {
+        getWallet();
+        initClickListeners();
+        initLayoutManager();
+        initAdapterAnimation();
+        initRecyclerView();
+        initControlView();
+        processIntentData();
+        initLoadingSpinner(this.remoteUser);
+    }
+
     private void getWallet() {
         final Subscription walletSub =
                 BaseApplication.get()
@@ -226,48 +235,6 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
                 );
 
         this.subscriptions.add(walletSub);
-    }
-
-    private void initEditorActionListener() {
-        this.activity.getBinding().userInput.setOnEditorActionListener((v, actionId, event) -> {
-            if (event != null && event.getAction() != KeyEvent.ACTION_DOWN) {
-                return false;
-            }
-
-            if (actionId == EditorInfo.IME_ACTION_SEND) {
-                sendMessage();
-                return true;
-            }
-            return false;
-        });
-    }
-
-    private void sendMessage() {
-        if (userInputInvalid()) return;
-
-        final String userInput = this.activity.getBinding().userInput.getText().toString();
-        final Message message = new Message().setBody(userInput);
-        final String messageBody = SofaAdapters.get().toJson(message);
-        final SofaMessage sofaMessage = new SofaMessage().makeNew(getCurrentLocalUser(), messageBody);
-        this.outgoingMessageQueue.send(sofaMessage);
-
-        this.activity.getBinding().userInput.setText(null);
-    }
-
-    private boolean userInputInvalid() {
-        return activity.getBinding().userInput.getText().toString().trim().length() == 0;
-    }
-
-    private void initShortLivingObjects() {
-        getWallet();
-        initEditorActionListener();
-        initLayoutManager();
-        initAdapterAnimation();
-        initRecyclerView();
-        initButtons();
-        initControlView();
-        processIntentData();
-        initLoadingSpinner(this.remoteUser);
     }
 
     private void initLayoutManager() {
@@ -320,14 +287,23 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         }
     }
 
-    private void initButtons() {
+    private void initClickListeners() {
+        this.activity.getBinding().chatInput
+                .setOnSendMessageClicked(this::sendMessage)
+                .setOnAttachmentClicked(this::handleAddAttachmentsClicked);
         this.activity.getBinding().balanceBar.setOnRequestClicked(this.requestButtonClicked);
         this.activity.getBinding().balanceBar.setOnPayClicked(this.payButtonClicked);
         this.activity.getBinding().controlView.setOnControlClickedListener(this::handleControlClicked);
-        this.activity.getBinding().addButton.setOnClickListener(this::handleAddButtonClicked);
     }
 
-    private void handleAddButtonClicked(final View v) {
+    private void sendMessage(final String userInput) {
+        final Message message = new Message().setBody(userInput);
+        final String messageBody = SofaAdapters.get().toJson(message);
+        final SofaMessage sofaMessage = new SofaMessage().makeNew(getCurrentLocalUser(), messageBody);
+        this.outgoingMessageQueue.send(sofaMessage);
+    }
+
+    private void handleAddAttachmentsClicked() {
         final ChooserDialog dialog = ChooserDialog.newInstance();
         dialog.setOnChooserClickListener(new ChooserDialog.OnChooserClickListener() {
             @Override
@@ -725,7 +701,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     }
 
     private void handleKeyboardVisibility(final SofaMessage sofaMessage) {
-        final boolean viewIsNull = this.activity == null || this.activity.getBinding().userInput == null;
+        final boolean viewIsNull = this.activity == null || this.activity.getBinding().chatInput == null;
         if (viewIsNull || sofaMessage.isSentBy(getCurrentLocalUser())) {
             return;
         }
@@ -742,7 +718,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     }
 
     private void hideKeyboard() {
-        KeyboardUtil.hideKeyboard(this.activity.getBinding().userInput);
+        KeyboardUtil.hideKeyboard(this.activity.getBinding().chatInput.getInputView());
     }
 
     private void setControlView(final SofaMessage sofaMessage) {

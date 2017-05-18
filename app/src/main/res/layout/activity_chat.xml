@@ -153,40 +153,12 @@
 
         <include layout="@layout/horizontal_divider"/>
 
-        <LinearLayout
-            android:orientation="horizontal"
+        <com.tokenbrowser.view.custom.ChatInputView
+            android:id="@+id/chat_input"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:background="@color/input_bg"
-            android:gravity="center_vertical">
+            android:layout_height="52dp"
+            android:background="@color/windowBackground"/>
 
-            <EditText
-                android:id="@+id/user_input"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:background="@android:color/transparent"
-                android:hint="@string/send_message"
-                android:imeOptions="actionSend"
-                android:inputType="textCapSentences|textAutoCorrect"
-                android:maxLength="1500"
-                android:maxLines="1" />
-
-            <ImageButton
-                android:id="@+id/add_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:scaleType="fitCenter"
-                android:background="@android:color/transparent"
-                app:srcCompat="@drawable/ic_add_circle_black_24px"
-                android:padding="12dp" />
-
-            <android.support.v4.widget.Space
-                android:layout_width="4dp"
-                android:layout_height="0dp" />
-
-        </LinearLayout>
     </LinearLayout>
 
 </layout>
