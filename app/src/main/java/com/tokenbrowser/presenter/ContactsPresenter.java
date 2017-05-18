@@ -67,9 +67,14 @@ public final class ContactsPresenter implements
     }
 
     private void initShortLivingObjects() {
+        initClickListeners();
         initRecyclerView();
         loadContacts();
+    }
+
+    private void initClickListeners() {
         this.fragment.getBinding().userSearch.setOnClickListener(this.handleUserSearchClicked);
+        this.fragment.getBinding().inviteFriends.setOnClickListener(__ -> handleInviteFriends());
     }
 
     private void initRecyclerView() {

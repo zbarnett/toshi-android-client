@@ -219,4 +219,6 @@
     <string name="no_chats_yet">No Chats yet</string>
     <string name="empty_state_recent_message">Once you start a new conversation, you’ll see it here.</string>
     <string name="start_a_chat">Start a chat</string>
+    <string name="empty_state_contact_message">Your favorites will be listed here. You can invite friends to join Toshi.</string>
+    <string name="no_favorites_yet">No Favorites yet</string>
 </resources>

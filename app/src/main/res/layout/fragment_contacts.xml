@@ -20,87 +20,103 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/windowBackgroundContrast">
-
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:gravity="center_vertical"
-        android:theme="@style/AddToolbarTheme"
-        style="@style/Toolbar">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/windowBackground">
 
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/Toolbar.TitleText"
-            android:text="@string/tab_4"/>
-
-    </android.support.v7.widget.Toolbar>
-
-    <TextView
-        android:id="@+id/user_search"
-        android:layout_width="match_parent"
-        android:layout_height="54dp"
-        android:background="@color/windowBackground"
-        android:gravity="center_vertical"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:text="@string/search_people"
-        android:textColor="@color/textColorHint"
-        android:textSize="16sp" />
-
-    <android.support.v4.widget.Space
-        android:layout_width="wrap_content"
-        android:layout_height="10dp"/>
-
-    <ViewSwitcher
-        android:id="@+id/empty_state__switcher"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/contacts"
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="@dimen/activity_horizontal_margin"
-            android:clipToPadding="false"
-            android:background="@color/windowBackground"/>
-
-        <LinearLayout
-            android:id="@+id/empty_state"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_gravity="center"
-            android:gravity="center_horizontal">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:srcCompat="@drawable/ic_contact_list__empty_state"/>
-
-            <android.support.v4.widget.Space
-                android:layout_width="0dp"
-                android:layout_height="8dp"/>
+            android:layout_height="?attr/actionBarSize"
+            android:gravity="center_vertical"
+            android:theme="@style/AddToolbarTheme"
+            style="@style/Toolbar">
 
             <TextView
+                android:id="@+id/title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/contact_list__empty_state"
-                android:textColor="@color/textColorSecondary"
+                style="@style/Toolbar.TitleText"
+                android:text="@string/tab_4"/>
+
+        </android.support.v7.widget.Toolbar>
+
+        <TextView
+            android:id="@+id/user_search"
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:background="@color/windowBackground"
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:text="@string/search_people"
+            android:textColor="@color/textColorHint"
+            android:textSize="16sp" />
+
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="10dp"
+            android:background="@color/divider"/>
+
+        <ViewSwitcher
+            android:id="@+id/empty_state__switcher"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/contacts"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="@dimen/activity_horizontal_margin"
+                android:clipToPadding="false"
+                android:background="@color/windowBackground"/>
+
+            <LinearLayout
+                android:id="@+id/empty_state"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
                 android:layout_gravity="center"
-                android:gravity="center_horizontal"
-                android:drawablePadding="8dp"
-                />
-        </LinearLayout>
+                android:gravity="center_horizontal">
 
-    </ViewSwitcher>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp"
+                    android:textColor="@color/textColorPrimary"
+                    android:textStyle="normal"
+                    android:fontFamily="@string/fontFamily_medium"
+                    android:text="@string/no_favorites_yet"/>
 
-</LinearLayout>
+                <android.support.v4.widget.Space
+                    android:layout_width="0dp"
+                    android:layout_height="11dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="54dp"
+                    android:layout_marginRight="54dp"
+                    android:gravity="center"
+                    android:textSize="16sp"
+                    android:textColor="@color/textColorSecondaryTransparent"
+                    android:text="@string/empty_state_contact_message"/>
+
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="20dp" />
+
+                <Button
+                    android:id="@+id/invite_friends"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/TextViewButton"
+                    android:text="@string/invite_friends"/>
+
+            </LinearLayout>
+        </ViewSwitcher>
+    </LinearLayout>
+
 </layout>
