@@ -47,16 +47,16 @@
         android:gravity="left"
         android:layout_marginBottom="@dimen/bubbleMargin"
         android:layout_marginTop="@dimen/bubbleMargin"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:paddingTop="12dp"
-        android:paddingBottom="12dp"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:paddingTop="9dp"
+        android:paddingBottom="9dp"
         android:background="@drawable/background__remote_message"
         android:autoLink="web"
         android:lineSpacingExtra="2dp"
         android:textColor="@color/textColorPrimary"
-        android:textColorLink="@color/colorAccent"
-        android:textSize="@dimen/defaultTextSize"
+        android:textColorLink="@color/colorPrimary"
+        android:textSize="16sp"
         tools:text="Remote Message! www.test.com"  />
 
 </LinearLayout>
