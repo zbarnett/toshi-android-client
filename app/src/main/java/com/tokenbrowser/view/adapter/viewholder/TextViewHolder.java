@@ -25,6 +25,7 @@ import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.tokenbrowser.R;
@@ -43,7 +44,7 @@ public final class TextViewHolder extends RecyclerView.ViewHolder {
 
     private @NonNull TextView message;
     private @Nullable CircleImageView avatar;
-    private @Nullable TextView sentStatusMessage;
+    private @Nullable ImageView sentStatus;
 
     private String text;
     private @SendState.State int sendState;
@@ -53,7 +54,7 @@ public final class TextViewHolder extends RecyclerView.ViewHolder {
         super(v);
         this.message = (TextView) v.findViewById(R.id.message);
         this.avatar = (CircleImageView) v.findViewById(R.id.avatar);
-        this.sentStatusMessage = (TextView) v.findViewById(R.id.sent_status_message);
+        this.sentStatus = (ImageView) v.findViewById(R.id.sent_status);
     }
 
     public TextViewHolder setText(final String text) {
@@ -91,17 +92,11 @@ public final class TextViewHolder extends RecyclerView.ViewHolder {
     }
 
     private void setSendState() {
-        if (this.sentStatusMessage == null) {
-            return;
-        }
-
-        this.sentStatusMessage.setVisibility(View.GONE);
-        if (this.sendState == SendState.STATE_FAILED || this.sendState == SendState.STATE_PENDING) {
-            this.sentStatusMessage.setVisibility(View.VISIBLE);
-            this.sentStatusMessage.setText(this.sendState == SendState.STATE_FAILED
-                    ? R.string.error__message_failed
-                    : R.string.error__message_pending);
-        }
+        if (this.sentStatus == null) return;
+        final int visibility = this.sendState == SendState.STATE_FAILED || this.sendState == SendState.STATE_PENDING
+                ? View.VISIBLE
+                : View.GONE;
+        this.sentStatus.setVisibility(visibility);
     }
 
     public void setClickableUsernames(final OnItemClickListener<String> listener) {
