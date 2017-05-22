@@ -239,8 +239,10 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
             case SofaType.PAYMENT_REQUEST: {
                 final PaymentRequestViewHolder vh = (PaymentRequestViewHolder) holder;
                 final PaymentRequest request = SofaAdapters.get().txRequestFrom(payload);
+                final User remoteUser = this.conversation == null ? null : conversation.getMember();
                 vh.setPaymentRequest(request)
                   .setAvatarUri(sofaMessage.getSender() != null ? sofaMessage.getSender().getAvatar() : null)
+                  .setRemoteUser(remoteUser)
                   .setOnApproveListener(this.handleOnPaymentRequestApproved)
                   .setOnRejectListener(this.handleOnPaymentRequestRejected)
                   .draw();

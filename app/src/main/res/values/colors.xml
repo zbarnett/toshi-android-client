@@ -37,6 +37,7 @@
     <color name="inactiveIconColor">#B6BCBF</color>
     <color name="inactiveTextColor">#95999B</color>
     <color name="textColorChatTertiary">#808080</color>
+    <color name="textColorPaymentBody">#575757</color>
 
     <color name="input_bg">#FFFFFF</color>
     <color name="balance_bar__bg">#FFFFFF</color>
