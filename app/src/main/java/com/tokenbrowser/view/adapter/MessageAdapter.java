@@ -22,13 +22,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.tokenbrowser.model.sofa.SofaMessage;
 import com.tokenbrowser.R;
+import com.tokenbrowser.model.local.Conversation;
 import com.tokenbrowser.model.local.User;
 import com.tokenbrowser.model.sofa.Message;
 import com.tokenbrowser.model.sofa.Payment;
 import com.tokenbrowser.model.sofa.PaymentRequest;
 import com.tokenbrowser.model.sofa.SofaAdapters;
+import com.tokenbrowser.model.sofa.SofaMessage;
 import com.tokenbrowser.model.sofa.SofaType;
 import com.tokenbrowser.util.LogUtil;
 import com.tokenbrowser.view.BaseApplication;
@@ -53,6 +54,7 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
     private OnItemClickListener<SofaMessage> onPaymentRequestRejectListener;
     private OnItemClickListener<String> onUsernameClickListener;
     private OnItemClickListener<String> onImageClickListener;
+    private Conversation conversation;
 
     public MessageAdapter() {
         this.sofaMessages = new ArrayList<>();
@@ -78,7 +80,23 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
         return this;
     }
 
-    public final void addMessages(final Collection<SofaMessage> sofaMessages) {
+
+    private boolean shouldShowChatMessage(final SofaMessage sofaMessage) {
+        return sofaMessage.getType() != SofaType.UNKNOWN
+                && sofaMessage.getType() != SofaType.INIT
+                && sofaMessage.getType() != SofaType.INIT_REQUEST;
+    }
+
+    public void setConversation(final Conversation conversation) {
+        this.conversation = conversation;
+        final List<SofaMessage> messages = conversation == null
+                ? new ArrayList<>(0)
+                : conversation.getAllMessages();
+        addMessages(messages);
+        notifyItemInserted(this.sofaMessages.size() - 1);
+    }
+
+    private void addMessages(final Collection<SofaMessage> sofaMessages) {
         this.sofaMessages.clear();
         notifyDataSetChanged();
 
@@ -90,13 +108,7 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
     }
 
-    private boolean shouldShowChatMessage(final SofaMessage sofaMessage) {
-        return sofaMessage.getType() != SofaType.UNKNOWN
-                && sofaMessage.getType() != SofaType.INIT
-                && sofaMessage.getType() != SofaType.INIT_REQUEST;
-    }
-
-    public final void addMessage(final SofaMessage sofaMessage) {
+    private void addMessage(final SofaMessage sofaMessage) {
         this.sofaMessages.add(sofaMessage);
         notifyItemInserted(this.sofaMessages.size() - 1);
     }
@@ -137,9 +149,7 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
             }
 
             case SofaType.PAYMENT: {
-                final View v = isRemote
-                        ? LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item__payment_remote, parent, false)
-                        : LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item__payment_local, parent, false);
+                final View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item__payment, parent, false);
                 return new PaymentViewHolder(v);
             }
 
@@ -218,9 +228,10 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
             case SofaType.PAYMENT: {
                 final PaymentViewHolder vh = (PaymentViewHolder) holder;
                 final Payment payment = SofaAdapters.get().paymentFrom(payload);
+                final User remoteUser = this.conversation == null ? null : conversation.getMember();
                 vh.setPayment(payment)
+                  .setRemoteUser(remoteUser)
                   .setSendState(sofaMessage.getSendState())
-                  .setAvatarUri(sofaMessage.getSender() != null ? sofaMessage.getSender().getAvatar() : null)
                   .draw();
                 break;
             }
