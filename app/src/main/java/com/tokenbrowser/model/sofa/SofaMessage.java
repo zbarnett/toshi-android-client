@@ -161,6 +161,14 @@ public class SofaMessage extends RealmObject {
                 .setPayload(sofaPayload);
     }
 
+    public SofaMessage makeNewTimeStampMessage() {
+        final String sofaHeader = SofaType.createHeader(SofaType.TIMESTAMP);
+        final @SofaType.Type int sofaType = SofaType.getType(sofaHeader);
+
+        return setType(sofaType)
+                .setPayload("");
+    }
+
     // This will set the private key to be the txHash to ensure all
     // payments reference the same SofaMessage.
     public SofaMessage makeNewFromTransaction(

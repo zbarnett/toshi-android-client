@@ -39,6 +39,9 @@ import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
 public class ConversationStore {
+
+    private static final int FIFTEEN_MINUTES = 1000 * 60 * 15;
+
     private static String watchedConversationId;
     private final static PublishSubject<SofaMessage> newMessageObservable = PublishSubject.create();
     private final static PublishSubject<SofaMessage> updatedMessageObservable = PublishSubject.create();
@@ -62,30 +65,56 @@ public class ConversationStore {
     }
 
     public void saveNewMessage(final User user, final SofaMessage message) {
-        Single.fromCallable(() -> {
-            final Realm realm = Realm.getDefaultInstance();
-            realm.beginTransaction();
+        saveMessage(user, message)
+        .observeOn(Schedulers.immediate())
+        .subscribeOn(Schedulers.from(dbThread))
+        .subscribe(
+                conversationForBroadcast -> {
+                    broadcastNewChatMessage(user.getTokenId(), message);
+                    broadcastConversationChanged(conversationForBroadcast);
+                },
+                this::handleError
+        );
+    }
+
+    private Single<Conversation> saveMessage(final User user, final SofaMessage message) {
+        return Single.fromCallable(() -> {
             final Conversation existingConversation = loadWhere("conversationId", user.getTokenId());
             final Conversation conversationToStore = existingConversation == null
                     ? new Conversation(user)
                     : existingConversation;
+
+            if (shouldSaveTimestampMessage(message, conversationToStore)) {
+                final SofaMessage timestamMessage =
+                        generateTimestampMessage();
+                conversationToStore.addMessage(timestamMessage);
+                broadcastNewChatMessage(user.getTokenId(), timestamMessage);
+            }
+
+            final Realm realm = Realm.getDefaultInstance();
+            realm.beginTransaction();
             final SofaMessage storedMessage = realm.copyToRealmOrUpdate(message);
             conversationToStore.setLatestMessage(storedMessage);
+
             conversationToStore.setNumberOfUnread(calculateNumberOfUnread(conversationToStore));
             final Conversation storedConversation = realm.copyToRealmOrUpdate(conversationToStore);
-            final Conversation conversationForBroadcast = realm.copyFromRealm(storedConversation);
-
             realm.commitTransaction();
+            final Conversation conversationForBroadcast = realm.copyFromRealm(storedConversation);
             realm.close();
+
             return conversationForBroadcast;
-        })
-        .observeOn(Schedulers.immediate())
-        .subscribeOn(Schedulers.from(dbThread))
-        .subscribe(conversationForBroadcast -> {
-            broadcastNewChatMessage(user.getTokenId(), message);
-            broadcastConversationChanged(conversationForBroadcast);
-        },
-        this::handleError);
+        });
+    }
+
+    private SofaMessage generateTimestampMessage() {
+        return new SofaMessage().makeNewTimeStampMessage();
+    }
+
+    private boolean shouldSaveTimestampMessage(final SofaMessage message,
+                                               final Conversation conversation) {
+        final long newMessageTimestamp = message.getCreationTime();
+        final long latestMessageTimestamp = conversation.getUpdatedTime();
+        return newMessageTimestamp - latestMessageTimestamp > FIFTEEN_MINUTES;
     }
 
     private int calculateNumberOfUnread(final Conversation conversationToStore) {
