@@ -21,7 +21,7 @@ package com.tokenbrowser.manager.store;
 import android.util.Pair;
 
 import com.tokenbrowser.model.local.Conversation;
-import com.tokenbrowser.model.local.SofaMessage;
+import com.tokenbrowser.model.sofa.SofaMessage;
 import com.tokenbrowser.model.local.User;
 import com.tokenbrowser.util.LogUtil;
 

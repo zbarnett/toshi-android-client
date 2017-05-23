@@ -17,7 +17,6 @@
 
 package com.tokenbrowser.model.sofa;
 
-import com.tokenbrowser.model.local.SofaMessage;
 import com.tokenbrowser.util.FileUtil;
 
 import java.io.File;
