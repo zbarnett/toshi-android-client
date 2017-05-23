@@ -268,7 +268,7 @@ public class QrCodeHandler implements PaymentConfirmationDialog.OnPaymentConfirm
     }
 
     @Override
-    public void onWebPaymentApproved(final String unsignedTransaction) {
+    public void onWebPaymentApproved(final String callbackId, final String unsignedTransaction) {
         LogUtil.e(getClass(), "Unexpected onWebPaymentApproved call.");
     }
 

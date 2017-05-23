@@ -22,6 +22,7 @@ import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.JsonDataException;
 import com.squareup.moshi.Moshi;
 import com.tokenbrowser.model.local.UnsignedW3Transaction;
+import com.tokenbrowser.presenter.webview.SofaDappCallback;
 
 import java.io.IOException;
 
@@ -37,6 +38,7 @@ public class SofaAdapters {
     private final JsonAdapter<Init> initAdapter;
     private final JsonAdapter<InitRequest> initRequestJsonAdapter;
     private final JsonAdapter<UnsignedW3Transaction> unsignedW3TransactionAdapter;
+    private final JsonAdapter<SofaDappCallback> dappCallbackTransactionAdapter;
 
     public static SofaAdapters get() {
         if (instance == null) {
@@ -54,6 +56,7 @@ public class SofaAdapters {
         this.initAdapter = moshi.adapter(Init.class);
         this.initRequestJsonAdapter = moshi.adapter(InitRequest.class);
         this.unsignedW3TransactionAdapter = moshi.adapter(UnsignedW3Transaction.class);
+        this.dappCallbackTransactionAdapter = moshi.adapter(SofaDappCallback.class);
     }
 
     public String toJson(final Message sofaMessage) {
@@ -73,6 +76,10 @@ public class SofaAdapters {
 
     public String toJson(final Init init) {
         return SofaType.createHeader(SofaType.INIT) + this.initAdapter.toJson(init);
+    }
+
+    public String toJson(final SofaDappCallback callback) {
+        return this.dappCallbackTransactionAdapter.toJson(callback);
     }
 
     public Message messageFrom(final String payload) throws IOException {

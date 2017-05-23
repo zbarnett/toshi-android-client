@@ -17,8 +17,19 @@
 
 package com.tokenbrowser.presenter.webview;
 
-/* package */ interface SofaHostListener {
-    void getAccounts(String id);
-    void approveTransaction(String id, String unsignedTransaction);
-    void signTransaction(String id, String unsignedTransaction);
+
+public class SofaDappCallback {
+
+    private String error;
+    private String result;
+
+    public SofaDappCallback setError(final String error) {
+        this.error = error;
+        return this;
+    }
+
+    public SofaDappCallback setResult(final String result) {
+        this.result = result;
+        return this;
+    }
 }

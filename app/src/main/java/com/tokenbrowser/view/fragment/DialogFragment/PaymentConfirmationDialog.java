@@ -36,13 +36,14 @@ import com.tokenbrowser.util.PaymentType;
 
 public class PaymentConfirmationDialog extends BasePresenterDialogFragment<PaymentRequestConfirmPresenter, PaymentConfirmationDialog> {
 
-    public static final String TAG = "PaymentConfirmationDialog";
-    public static final String TOKEN_ID = "token_id";
-    public static final String PAYMENT_ADDRESS = "payment_address";
-    public static final String UNSIGNED_TRANSACTION = "unsigned_transaction";
+    public static final String CALLBACK_ID = "callback_id";
     public static final String ETH_AMOUNT = "eth_amount";
     public static final String MEMO = "memo";
+    public static final String PAYMENT_ADDRESS = "payment_address";
     public static final String PAYMENT_TYPE = "payment_type";
+    public static final String TAG = "PaymentConfirmationDialog";
+    public static final String TOKEN_ID = "token_id";
+    public static final String UNSIGNED_TRANSACTION = "unsigned_transaction";
 
     private FragmentPaymentRequestConfirmationBinding binding;
     private OnPaymentConfirmationListener listener;
@@ -66,10 +67,12 @@ public class PaymentConfirmationDialog extends BasePresenterDialogFragment<Payme
     public static PaymentConfirmationDialog newInstanceWebPayment(@NonNull final String unsignedTransaction,
                                                                   @NonNull final String paymentAddress,
                                                                   @NonNull final String value,
+                                                                  @NonNull final String callbackId,
                                                                   @Nullable final String memo) {
         final Bundle bundle = new Bundle();
         bundle.putString(UNSIGNED_TRANSACTION, unsignedTransaction);
         bundle.putString(PAYMENT_ADDRESS, paymentAddress);
+        bundle.putString(CALLBACK_ID, callbackId);
         return newInstance(bundle, value, memo);
     }
 
@@ -88,7 +91,7 @@ public class PaymentConfirmationDialog extends BasePresenterDialogFragment<Payme
         void onPaymentRejected();
         void onTokenPaymentApproved(final String tokenId, final Payment payment);
         void onExternalPaymentApproved(final Payment payment);
-        void onWebPaymentApproved(final String unsignedTransaction);
+        void onWebPaymentApproved(final String callbackId, final String unsignedTransaction);
     }
 
     public void setOnPaymentConfirmationListener(final OnPaymentConfirmationListener listener) {

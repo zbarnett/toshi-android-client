@@ -45,11 +45,12 @@ public class PaymentRequestConfirmPresenter implements Presenter<PaymentConfirma
     private boolean firstTimeAttached = true;
 
     private User user;
+    private String callbackId;
     private String encodedEthAmount;
-    private String tokenId;
-    private String paymentAddress;
-    private String unsignedTransaction;
     private String memo;
+    private String paymentAddress;
+    private String tokenId;
+    private String unsignedTransaction;
     private @PaymentType.Type int paymentType;
 
     @Override
@@ -91,7 +92,7 @@ public class PaymentRequestConfirmPresenter implements Presenter<PaymentConfirma
 
         if (this.unsignedTransaction != null) {
             this.view.getPaymentConfirmationListener()
-                     .onWebPaymentApproved(this.unsignedTransaction);
+                     .onWebPaymentApproved(this.callbackId, this.unsignedTransaction);
             this.view.dismiss();
             return;
         }
@@ -122,6 +123,7 @@ public class PaymentRequestConfirmPresenter implements Presenter<PaymentConfirma
         this.encodedEthAmount = this.view.getArguments().getString(PaymentConfirmationDialog.ETH_AMOUNT);
         this.memo = this.view.getArguments().getString(PaymentConfirmationDialog.MEMO);
         this.paymentType = this.view.getArguments().getInt(PaymentConfirmationDialog.PAYMENT_TYPE);
+        this.callbackId = this.view.getArguments().getString(PaymentConfirmationDialog.CALLBACK_ID);
     }
 
     private void tryLoadUser() {

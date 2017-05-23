@@ -17,12 +17,10 @@
 
 package com.tokenbrowser.presenter.webview;
 
-import android.os.Build;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.webkit.WebSettings;
-import android.webkit.WebView;
 import android.widget.Toast;
 
 import com.tokenbrowser.R;
@@ -65,7 +63,7 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
     private void initInjectsAndEmbeds() {
         this.webClient = new SofaWebViewClient(this.loadedListener);
         this.sofaInjector = new SofaInjector(this.loadedListener);
-        this.sofaHostWrapper = new SofaHostWrapper(this.activity);
+        this.sofaHostWrapper = new SofaHostWrapper(this.activity, this.activity.getBinding().webview);
     }
 
     private void initWebSettings() {
