@@ -53,10 +53,6 @@ import java.io.IOException;
         return this.sofaHost;
     }
 
-    public String getRcpUrl() {
-        return BaseApplication.get().getResources().getString(R.string.rcp_url);
-    }
-
     public String getAccounts() {
         return "[\"" + this.wallet.getPaymentAddress() + "\"]";
     }

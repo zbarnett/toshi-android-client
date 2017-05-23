@@ -30,11 +30,6 @@ import android.webkit.JavascriptInterface;
     }
 
     @JavascriptInterface
-    public String getRcpUrl() {
-        return this.listener.getRcpUrl();
-    }
-
-    @JavascriptInterface
     public String getAccounts() {
         return this.listener.getAccounts();
     }

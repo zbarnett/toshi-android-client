@@ -108,9 +108,16 @@ import rx.subscriptions.CompositeSubscription;
             }
         }
 
+        // Finally inject RCP URL
+        sb.append(getRcpUrlInjection());
+
         this.sofaScript = "<script>" + sb.toString() + "</script>";
 
         return Completable.complete();
+    }
+
+    private String getRcpUrlInjection() {
+        return "SOFA.config.rcpUrl = \"" + BaseApplication.get().getResources().getString(R.string.rcp_url) + "\";";
     }
 
     private String injectSofaScript(final String body) {

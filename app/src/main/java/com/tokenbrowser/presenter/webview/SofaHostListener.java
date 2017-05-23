@@ -18,7 +18,6 @@
 package com.tokenbrowser.presenter.webview;
 
 /* package */ interface SofaHostListener {
-    String getRcpUrl();
     String getAccounts();
     boolean approveTransaction(String unsignedTransaction);
     void signTransaction(String unsignedTransaction);
