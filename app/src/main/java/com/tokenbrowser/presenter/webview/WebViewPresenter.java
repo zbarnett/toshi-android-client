@@ -17,10 +17,13 @@
 
 package com.tokenbrowser.presenter.webview;
 
+import android.os.Build;
+import android.support.multidex.BuildConfig;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.webkit.WebSettings;
+import android.webkit.WebView;
 import android.widget.Toast;
 
 import com.tokenbrowser.R;
@@ -74,6 +77,10 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
         webSettings.setDisplayZoomControls(false);
         webSettings.setUseWideViewPort(false);
         webSettings.setDomStorageEnabled(true);
+
+        if (BuildConfig.DEBUG && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            WebView.setWebContentsDebuggingEnabled(true);
+        }
     }
 
     private void injectEverything() {
