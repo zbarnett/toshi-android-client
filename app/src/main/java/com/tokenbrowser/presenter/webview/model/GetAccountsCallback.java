@@ -15,21 +15,23 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.tokenbrowser.presenter.webview;
+package com.tokenbrowser.presenter.webview.model;
 
 
-public class SofaDappCallback {
+public class GetAccountsCallback {
 
-    private String error;
     private String result;
 
-    public SofaDappCallback setError(final String error) {
-        this.error = error;
+    public GetAccountsCallback setResult(final String result) {
+        this.result = result;
         return this;
     }
 
-    public SofaDappCallback setResult(final String result) {
-        this.result = result;
-        return this;
+
+    public String toJsonEncodedString() {
+        return String.format(
+                "{\\\"result\\\":[\\\"%s\\\"]}",
+                result
+        );
     }
 }

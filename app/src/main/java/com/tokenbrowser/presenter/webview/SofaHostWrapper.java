@@ -18,12 +18,18 @@
 package com.tokenbrowser.presenter.webview;
 
 
+import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.webkit.WebView;
 
 import com.tokenbrowser.crypto.HDWallet;
 import com.tokenbrowser.model.local.UnsignedW3Transaction;
 import com.tokenbrowser.model.sofa.SofaAdapters;
+import com.tokenbrowser.presenter.webview.model.ApproveTransactionCallback;
+import com.tokenbrowser.presenter.webview.model.GetAccountsCallback;
+import com.tokenbrowser.presenter.webview.model.SignTransactionCallback;
 import com.tokenbrowser.util.LogUtil;
 import com.tokenbrowser.view.BaseApplication;
 import com.tokenbrowser.view.fragment.DialogFragment.PaymentConfirmationDialog;
@@ -56,18 +62,18 @@ import java.io.IOException;
     }
 
     public void getAccounts(final String id) {
-        final SofaDappCallback callback =
-                new SofaDappCallback()
-                        .setResult("[\"" + this.wallet.getPaymentAddress() + "\"]");
-        doCallBack(id, callback);
+        final GetAccountsCallback callback =
+                new GetAccountsCallback().setResult(this.wallet.getPaymentAddress());
+
+        doCallBack(id, callback.toJsonEncodedString());
     }
 
     public void approveTransaction(final String id, final String unsignedTransaction) {
         final boolean shouldApprove = shouldApproveTransaction(unsignedTransaction);
-        final SofaDappCallback callback =
-                new SofaDappCallback()
-                        .setResult(String.valueOf(shouldApprove));
-        doCallBack(id, callback);
+        final ApproveTransactionCallback callback =
+                new ApproveTransactionCallback()
+                        .setResult(shouldApprove);
+        doCallBack(id, callback.toJsonEncodedString());
     }
 
     private boolean shouldApproveTransaction(final String unsignedTransaction) {
@@ -115,17 +121,23 @@ import java.io.IOException;
         @Override
         public void onWebPaymentApproved(final String callbackId, final String unsignedTransaction) {
             final String signedTransaction = wallet.signTransaction(unsignedTransaction);
-            final SofaDappCallback callback =
-                    new SofaDappCallback()
+            final SignTransactionCallback callback =
+                    new SignTransactionCallback()
                             .setResult(signedTransaction);
-            doCallBack(callbackId, callback);
+            doCallBack(callbackId, callback.toJsonEncodedString());
         }
     };
 
-    private void doCallBack(final String id, final SofaDappCallback callback) {
-        if (this.activity == null) return;
-        final String jsonEncodedCallback = SofaAdapters.get().toJson(callback);
-        final String methodCall = String.format("javascript:SOFA.callback(%s,%s)", id, jsonEncodedCallback);
-        this.webView.loadUrl(methodCall);
+    private void doCallBack(final String id, final String encodedCallback) {
+        new Handler(Looper.getMainLooper()).post(() -> {
+            if (activity == null) return;
+            final String methodCall = String.format("SOFA.callback(\"%s\",\"%s\")", id, encodedCallback);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                webView.evaluateJavascript(methodCall, null);
+            } else {
+                webView.loadUrl("javascript:" + methodCall);
+            }
+        });
+
     }
 }
