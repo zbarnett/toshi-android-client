@@ -34,6 +34,7 @@ import com.tokenbrowser.model.sofa.SofaType;
 import com.tokenbrowser.util.LogUtil;
 import com.tokenbrowser.view.BaseApplication;
 import com.tokenbrowser.view.adapter.listeners.OnItemClickListener;
+import com.tokenbrowser.view.adapter.viewholder.FileViewHolder;
 import com.tokenbrowser.view.adapter.viewholder.ImageViewHolder;
 import com.tokenbrowser.view.adapter.viewholder.PaymentRequestViewHolder;
 import com.tokenbrowser.view.adapter.viewholder.PaymentViewHolder;
@@ -127,7 +128,7 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
     @Override
     public int getItemViewType(final int position) {
         final SofaMessage sofaMessage = this.sofaMessages.get(position);
-        final @SofaType.Type int sofaType = sofaMessage.hasAttachment() ? SofaType.IMAGE : sofaMessage.getType();
+        final @SofaType.Type int sofaType = sofaMessage.hasAttachment() ? sofaMessage.getAttachmentType() : sofaMessage.getType();
         return sofaMessage.isSentBy(getCurrentLocalUser()) ? sofaType : sofaType | SENDER_MASK;
     }
 
@@ -165,6 +166,13 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
             case SofaType.TIMESTAMP: {
                 final View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item__timestamp, parent, false);
                 return new TimestampMessageViewHolder(v);
+            }
+
+            case SofaType.FILE: {
+                final View v = isRemote
+                        ? LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item__file_message_remote, parent, false)
+                        : LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item__file_message_local, parent, false);
+                return new FileViewHolder(v);
             }
 
             case SofaType.UNKNOWN:
@@ -223,6 +231,15 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
                         .setSendState(sofaMessage.getSendState())
                         .setAttachmentFilePath(sofaMessage.getAttachmentFilePath())
                         .setClickableImage(this.onImageClickListener, sofaMessage.getAttachmentFilePath())
+                        .draw();
+                break;
+            }
+
+            case SofaType.FILE: {
+                final FileViewHolder vh = (FileViewHolder) holder;
+                vh
+                        .setAttachmentPath(sofaMessage.getAttachmentFilePath())
+                        .setAvatarUri(sofaMessage.getSender() != null ? sofaMessage.getSender().getAvatar() : null)
                         .draw();
                 break;
             }

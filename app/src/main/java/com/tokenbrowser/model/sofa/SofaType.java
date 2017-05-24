@@ -42,6 +42,7 @@ public class SofaType {
     public static final int INIT_REQUEST = 5;
     public static final int IMAGE = 6;
     public static final int TIMESTAMP = 7;
+    public static final int FILE = 8;
 
     public static final String LOCAL_ONLY_PAYLOAD = "custom_local_only_payload";
     public static final String WEB_VIEW = "webview:";

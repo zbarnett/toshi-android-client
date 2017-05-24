@@ -17,7 +17,6 @@
 
 package com.tokenbrowser.util;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -39,6 +38,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.UUID;
 
 import okio.BufferedSink;
@@ -79,12 +80,12 @@ public class FileUtil {
             final SignalServiceMessageReceiver messageReceiver) {
         File file = null;
         try {
-            @SuppressLint("DefaultLocale")
-            final String fileName = String.format("%d.jpg", attachment.getId());
-            file = new File(BaseApplication.get().getCacheDir(), fileName);
-            final InputStream stream = messageReceiver.retrieveAttachment(attachment, file);
-            final File destFile = new File(BaseApplication.get().getFilesDir(), fileName);
-            return writeToFileFromInputStream(destFile, stream);
+            final String tempName = String.format("%d", attachment.getId());
+            file = new File(BaseApplication.get().getCacheDir(), tempName);
+            final InputStream inputStream = messageReceiver.retrieveAttachment(attachment, file);
+
+            final File destFile = constructAttachmentFile(attachment.getContentType());
+            return writeToFileFromInputStream(destFile, inputStream);
         } catch (IOException | InvalidMessageException e) {
             LogUtil.exception(getClass(), "Error during writing attachment to file", e);
             return null;
@@ -93,6 +94,22 @@ public class FileUtil {
                 file.delete();
             }
         }
+    }
+
+    private File constructAttachmentFile(final String contentType) throws IOException {
+        final File baseDirectory = BaseApplication.get().getFilesDir();
+        final String directoryPath = contentType.startsWith("image/") ? "images" : "files";
+        final File outputDirectory = new File(baseDirectory, directoryPath);
+
+        if (!outputDirectory.exists()) {
+            outputDirectory.mkdir();
+        }
+
+        final String extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(contentType);
+        final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd-HHmmss");
+        final String baseName = dateFormatter.format(new Date());
+        final String filename = String.format("%s.%s", baseName, extension);
+        return new File(outputDirectory, filename);
     }
 
     public File createImageFileWithRandomName() {
@@ -143,5 +160,15 @@ public class FileUtil {
         return new Attachment()
                 .setFilename(displayName)
                 .setSize(size);
+    }
+
+    public String getFilenameFromPath(final String path) {
+        final File file = new File(path);
+        return file.exists() ? file.getName() : "";
+    }
+
+    public long getFileSize(final String path) {
+        final File file = new File(path);
+        return file.exists() ? file.length() : 0;
     }
 }
