@@ -30,22 +30,17 @@ import android.webkit.JavascriptInterface;
     }
 
     @JavascriptInterface
-    public String getRcpUrl() {
-        return this.listener.getRcpUrl();
+    public void getAccounts(final String id) {
+        this.listener.getAccounts(id);
     }
 
     @JavascriptInterface
-    public String getAccounts() {
-        return this.listener.getAccounts();
+    public void approveTransaction(final String id, final String unsignedTransaction) {
+        this.listener.approveTransaction(id, unsignedTransaction);
     }
 
     @JavascriptInterface
-    public boolean approveTransaction(final String unsignedTransaction) {
-        return this.listener.approveTransaction(unsignedTransaction);
-    }
-
-    @JavascriptInterface
-    public void signTransaction(final String unsignedTransaction) {
-        this.listener.signTransaction(unsignedTransaction);
+    public void signTransaction(final String id, final String unsignedTransaction) {
+        this.listener.signTransaction(id, unsignedTransaction);
     }
 }

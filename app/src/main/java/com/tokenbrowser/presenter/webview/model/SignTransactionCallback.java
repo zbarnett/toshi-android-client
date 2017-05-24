@@ -15,10 +15,23 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.tokenbrowser.presenter.webview;
+package com.tokenbrowser.presenter.webview.model;
 
-/* package */ interface SofaHostListener {
-    void getAccounts(String id);
-    void approveTransaction(String id, String unsignedTransaction);
-    void signTransaction(String id, String unsignedTransaction);
+
+public class SignTransactionCallback {
+
+    private String result;
+
+    public SignTransactionCallback setResult(final String result) {
+        this.result = result;
+        return this;
+    }
+
+
+    public String toJsonEncodedString() {
+        return String.format(
+                "{\\\"result\\\":\\\"%s\\\"}",
+                result
+        );
+    }
 }

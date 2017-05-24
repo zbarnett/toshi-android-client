@@ -18,6 +18,7 @@
 package com.tokenbrowser.presenter.webview;
 
 import android.os.Build;
+import android.support.multidex.BuildConfig;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -65,7 +66,7 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
     private void initInjectsAndEmbeds() {
         this.webClient = new SofaWebViewClient(this.loadedListener);
         this.sofaInjector = new SofaInjector(this.loadedListener);
-        this.sofaHostWrapper = new SofaHostWrapper(this.activity);
+        this.sofaHostWrapper = new SofaHostWrapper(this.activity, this.activity.getBinding().webview);
     }
 
     private void initWebSettings() {
@@ -76,6 +77,10 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
         webSettings.setDisplayZoomControls(false);
         webSettings.setUseWideViewPort(false);
         webSettings.setDomStorageEnabled(true);
+
+        if (BuildConfig.DEBUG && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            WebView.setWebContentsDebuggingEnabled(true);
+        }
     }
 
     private void injectEverything() {

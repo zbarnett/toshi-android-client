@@ -92,10 +92,13 @@ import rx.subscriptions.CompositeSubscription;
         final InputStream stream = BaseApplication.get().getResources().openRawResource(R.raw.sofa);
         final BufferedReader in = new BufferedReader(new InputStreamReader(stream));
 
+        sb.append(getRcpUrlInjection());
+
         try {
             String str;
             while ((str = in.readLine()) != null) {
                 sb.append(str);
+                sb.append("\n");
             }
         } catch (final IOException ex) {
             return Completable.error(ex);
@@ -108,9 +111,13 @@ import rx.subscriptions.CompositeSubscription;
             }
         }
 
-        this.sofaScript = "<script>" + sb.toString() + "</script>";
+        this.sofaScript = "<script>" + sb.toString() + "</script>\n";
 
         return Completable.complete();
+    }
+
+    private String getRcpUrlInjection() {
+        return String.format("window.SOFA = {config: {rcpUrl: \"%s\"}};", BaseApplication.get().getResources().getString(R.string.rcp_url));
     }
 
     private String injectSofaScript(final String body) {
