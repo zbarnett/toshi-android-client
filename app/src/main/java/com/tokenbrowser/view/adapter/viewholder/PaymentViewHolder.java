@@ -20,6 +20,7 @@ package com.tokenbrowser.view.adapter.viewholder;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.tokenbrowser.R;
@@ -30,9 +31,11 @@ import com.tokenbrowser.view.BaseApplication;
 
 public final class PaymentViewHolder extends RecyclerView.ViewHolder {
 
+    private @NonNull LinearLayout wrapper;
     private @NonNull TextView requestedAmount;
     private @NonNull TextView sender;
     private @NonNull TextView receiver;
+    private @NonNull TextView failedMessge;
 
     private Payment payment;
     private User remoteUser;
@@ -40,9 +43,11 @@ public final class PaymentViewHolder extends RecyclerView.ViewHolder {
 
     public PaymentViewHolder(final View v) {
         super(v);
+        this.wrapper = (LinearLayout) v.findViewById(R.id.payment_wrapper);
         this.requestedAmount = (TextView) v.findViewById(R.id.requested_amount);
         this.sender = (TextView) v.findViewById(R.id.sender);
         this.receiver = (TextView) v.findViewById(R.id.receiver);
+        this.failedMessge = (TextView) v.findViewById(R.id.failed_message);
     }
 
     public PaymentViewHolder setPayment(final Payment payment) {
@@ -83,19 +88,31 @@ public final class PaymentViewHolder extends RecyclerView.ViewHolder {
         this.receiver.setText(receiver);
     }
 
-    //TODO: Add sent status
     private void renderPaymentStatus() {
         switch (this.sendState) {
             case SendState.STATE_FAILED:
+                showFailedMessage();
                 break;
             case SendState.STATE_SENDING:
             case SendState.STATE_SENT:
+                showSuccessMessage();
                 break;
             case SendState.STATE_PENDING:
             case SendState.STATE_RECEIVED:
             case SendState.STATE_LOCAL_ONLY:
             default:
+                showSuccessMessage();
                 break;
         }
+    }
+
+    private void showFailedMessage() {
+        this.wrapper.setVisibility(View.GONE);
+        this.failedMessge.setVisibility(View.VISIBLE);
+    }
+
+    private void showSuccessMessage() {
+        this.wrapper.setVisibility(View.VISIBLE);
+        this.failedMessge.setVisibility(View.GONE);
     }
 }
