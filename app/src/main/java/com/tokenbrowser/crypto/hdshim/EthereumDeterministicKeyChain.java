@@ -30,8 +30,14 @@ import java.util.List;
 
 /* package */ class EthereumDeterministicKeyChain extends DeterministicKeyChain {
 
-    // ETH44_ACCOUNT_ZERO_PATH = m/44'/60'/0'/0
-    // N.B. An extra child had to be added on the end, I don't know why.
+    // IDENTITY_PATH = m/0'/1/0
+    private static final ImmutableList<ChildNumber> IDENTITY_PATH =
+            ImmutableList.of(
+                    ChildNumber.ZERO_HARDENED,
+                    ChildNumber.ONE,
+                    ChildNumber.ZERO);
+
+    // ETH44_ACCOUNT_ZERO_PATH = m/44'/60'/0'/0/0
     private static final ImmutableList<ChildNumber> ETH44_ACCOUNT_ZERO_PATH =
             ImmutableList.of(
                     new ChildNumber(44, true),
@@ -47,7 +53,21 @@ import java.util.List;
     @Override
     public List<DeterministicKey> getKeys(KeyPurpose purpose, int numberOfKeys) {
         final List<DeterministicKey> keys = new ArrayList<>(1);
-        final DeterministicKey key = getKeyByPath(ETH44_ACCOUNT_ZERO_PATH, true);
+
+        final DeterministicKey key;
+        switch (purpose) {
+            case AUTHENTICATION:
+                key = getKeyByPath(IDENTITY_PATH, true);
+                break;
+            case RECEIVE_FUNDS:
+                key = getKeyByPath(ETH44_ACCOUNT_ZERO_PATH, true);
+                break;
+            case CHANGE:
+            case REFUND:
+            default:
+                throw new RuntimeException("unsupported keypurpose");
+        }
+
         keys.add(key);
         return keys;
     }

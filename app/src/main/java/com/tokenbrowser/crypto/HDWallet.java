@@ -35,7 +35,6 @@ import org.bitcoinj.wallet.DeterministicSeed;
 import org.bitcoinj.wallet.KeyChain;
 import org.bitcoinj.wallet.UnreadableWalletException;
 import org.bitcoinj.wallet.Wallet;
-import org.spongycastle.util.encoders.Hex;
 
 import java.io.IOException;
 import java.security.Security;
@@ -53,6 +52,7 @@ public class HDWallet {
     private static final String MASTER_SEED = "ms";
     private SharedPreferences prefs;
     private ECKey identityKey;
+    private ECKey paymentKey;
     private String masterSeed;
 
     public HDWallet() {
@@ -137,13 +137,18 @@ public class HDWallet {
     private void deriveKeysFromWallet(final Wallet wallet) {
         try {
             deriveIdentityKey(wallet);
+            derivePaymentKey(wallet);
         } catch (final UnreadableWalletException | IOException ex) {
             throw new RuntimeException("Error deriving keys: " + ex);
         }
     }
 
     private void deriveIdentityKey(final Wallet wallet) throws IOException, UnreadableWalletException {
-        this.identityKey = deriveKeyFromWallet(wallet, 0, KeyChain.KeyPurpose.RECEIVE_FUNDS);
+        this.identityKey = deriveKeyFromWallet(wallet, 0, KeyChain.KeyPurpose.AUTHENTICATION);
+    }
+
+    private void derivePaymentKey(final Wallet wallet) throws IOException, UnreadableWalletException {
+        this.paymentKey = deriveKeyFromWallet(wallet, 0, KeyChain.KeyPurpose.RECEIVE_FUNDS);
     }
 
     private ECKey deriveKeyFromWallet(final Wallet wallet, final int iteration, final KeyChain.KeyPurpose keyPurpose) throws UnreadableWalletException, IOException {
@@ -198,34 +203,21 @@ public class HDWallet {
         return null;
     }
 
-    private String getPrivateKey() {
-        if(this.identityKey != null) {
-            final byte[] privateKeyByes = this.identityKey.getPrivKeyBytes();
-            return privateKeyByes != null ? Hex.toHexString(privateKeyByes) : null;
-        }
-        return null;
-    }
-
-    private String getPublicKey() {
-        if (this.identityKey == null) return null;
-        return Hex.toHexString(this.identityKey.getPubKey());
-    }
-
     public String getOwnerAddress() {
         if (this.identityKey == null) return null;
         return TypeConverter.toJsonHex(this.identityKey.getAddress());
     }
 
     public String getPaymentAddress() {
-        if(this.identityKey != null) {
-            return TypeConverter.toJsonHex(this.identityKey.getAddress());
+        if(this.paymentKey != null) {
+            return TypeConverter.toJsonHex(this.paymentKey.getAddress());
         }
         return null;
     }
 
     @Override
     public String toString() {
-        return "Private: " + getPrivateKey() + "\nPublic: " + getPublicKey() + "\nAddress: " + getOwnerAddress();
+        return "Identity: " + getOwnerAddress() + "\nPayment: " + getPaymentAddress();
     }
 
     private void saveMasterSeedToStorage(final String masterSeed) {

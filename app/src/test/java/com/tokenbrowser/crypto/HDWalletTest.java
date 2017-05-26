@@ -29,9 +29,12 @@ import static org.hamcrest.Matchers.is;
 
 public class HDWalletTest {
 
-    private final String expectedMasterSeed = "easy cart aunt march drive half winner notice wide wagon move drift";
-    // These are at path `m/44'/60'/0'/0'
-    private final String expectedAddress = "0x0a7dad553f6d31f6e57b51380ebb6fa58ae0af22";
+    private final String expectedMasterSeed = "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about";
+    // Path `m/0'/1/0/0
+    private final String expectedOwnerAddress = "0xa391af6a522436f335b7c6486640153641847ea2";
+
+    // Path `m/44'/60'/0'/0'
+    private final String expectedPaymentAddress = "0x9858effd232b4033e47d90003d41ec34ecaeda94";
 
     // Mocks
     private SharedPreferences sharedPreferencesMock;
@@ -55,12 +58,22 @@ public class HDWalletTest {
     }
 
     @Test
-    public void walletCreatedFromSeedDerivesCorrectAddress() {
+    public void walletCreatedFromSeedDerivesCorrectOwnerAddress() {
         final HDWallet wallet =
                 new HDWallet(this.sharedPreferencesMock)
-                .getExistingWallet()
-                .toBlocking()
-                .value();
-        assertThat(wallet.getOwnerAddress(), is(this.expectedAddress));
+                        .getExistingWallet()
+                        .toBlocking()
+                        .value();
+        assertThat(wallet.getOwnerAddress(), is(this.expectedOwnerAddress));
+    }
+
+    @Test
+    public void walletCreatedFromSeedDerivesCorrectPaymentAddress() {
+        final HDWallet wallet =
+                new HDWallet(this.sharedPreferencesMock)
+                        .getExistingWallet()
+                        .toBlocking()
+                        .value();
+        assertThat(wallet.getPaymentAddress(), is(this.expectedPaymentAddress));
     }
 }
