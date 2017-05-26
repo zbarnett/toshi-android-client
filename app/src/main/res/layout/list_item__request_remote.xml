@@ -21,7 +21,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:columnCount="2">
 
@@ -38,55 +38,29 @@
         app:civ_border_color="@color/divider"/>
 
     <android.support.v7.widget.GridLayout
-        android:layout_width="wrap_content"
+        android:layout_width="261dp"
         android:layout_height="wrap_content"
-        app:columnCount="3"
-        android:background="@drawable/request_background"
+        android:background="@drawable/request_background_remote"
         android:layout_marginTop="@dimen/bubbleMargin"
-        android:layout_marginBottom="@dimen/bubbleMargin"
-        android:paddingTop="@dimen/bubbleMargin"
-        android:paddingBottom="@dimen/bubbleMargin"
-        android:minWidth="50dp">
+        android:padding="16dp"
+        android:minWidth="50dp"
+        app:columnCount="3">
 
         <!-- Row 1 -->
         <TextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginBottom="@dimen/bubbleMargin"
-            android:lineSpacingExtra="2dp"
-            android:text="@string/request_title"
-            android:textColor="@color/textColorSecondary"
-            android:textSize="@dimen/defaultTextSize"
-            android:fontFamily="monospace"
+            android:textColor="@color/colorPrimary"
+            android:textSize="18sp"
+            tools:text="Request for $10.00"
             app:layout_columnSpan="3"/>
 
+        <android.support.v4.widget.Space
+            android:layout_width="0dp"
+            android:layout_height="6dp" />
+
         <!-- Row 2 -->
-        <TextView
-            android:id="@+id/requested_amount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:lineSpacingExtra="2dp"
-            android:textColor="@color/colorPrimary"
-            android:textSize="@dimen/defaultTextSize"
-            style="@style/TextStyleMedium"
-            tools:text="$20.00 USD"/>
-
-        <TextView
-            android:id="@+id/seperator"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp"
-            android:lineSpacingExtra="2dp"
-            android:textColor="@color/textColorSecondary"
-            android:textSize="@dimen/defaultTextSize"
-            android:text="@string/payment_seperator"/>
-
-
         <TextView
             android:id="@+id/eth_amount"
             android:layout_width="wrap_content"
@@ -94,104 +68,69 @@
             android:layout_marginRight="16dp"
             android:lineSpacingExtra="2dp"
             android:textColor="@color/textColorSecondary"
-            android:textSize="@dimen/defaultTextSize"
-            tools:text="0.4534 ETH"/>
+            android:textSize="13sp"
+            tools:text="0.4534 ETH"
+            app:layout_columnSpan="3"/>
 
         <!-- Row 3 -->
         <TextView
             android:id="@+id/body"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:maxWidth="200dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="@dimen/bubbleMargin"
+            android:layout_marginTop="13dp"
             android:lineSpacingExtra="2dp"
+            android:textColor="@color/textColorPaymentBody"
+            android:textSize="13sp"
+            android:visibility="gone"
             tools:text="This is what the money is for. It should wrap over to several lines."
-            android:textColor="@color/textColorPrimary"
-            android:textSize="@dimen/defaultTextSize"
             app:layout_columnSpan="3"/>
 
         <!-- Row 4 -->
-
         <LinearLayout
-            android:id="@+id/container_accept_button"
+            android:id="@+id/button_wrapper"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_columnSpan="3"
             android:orientation="horizontal"
-            android:layout_marginRight="@dimen/bubbleMargin"
-            app:layout_gravity="center_vertical|right">
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                app:srcCompat="@drawable/ic_done"
-                android:tint="@color/colorPrimary"
-                android:layout_gravity="center_vertical"/>
+            android:layout_marginTop="20dp"
+            android:visibility="gone"
+            app:layout_columnSpan="3"
+            app:layout_gravity="right">
 
             <Button
                 android:id="@+id/approve_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/button_accept"
-                style="@style/InChatButton"/>
-        </LinearLayout>
+                style="@style/TextViewButton"
+                android:textSize="13sp"
+                android:text="@string/button_accept"/>
 
-        <!-- Row 5 -->
-
-        <LinearLayout
-            android:id="@+id/container_decline_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_columnSpan="3"
-            android:orientation="horizontal"
-            android:layout_marginRight="@dimen/bubbleMargin"
-            app:layout_gravity="center_vertical|right">
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                app:srcCompat="@drawable/ic_close_black_24dp"
-                android:tint="@color/colorPrimary"
-                android:layout_gravity="center_vertical"/>
+            <android.support.v4.widget.Space
+                android:layout_width="20dp"
+                android:layout_height="0dp" />
 
             <Button
                 android:id="@+id/reject_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/button_decline"
-                style="@style/InChatButton"/>
+                style="@style/TextViewButton"
+                android:textSize="13sp"
+                android:text="@string/button_decline"/>
+
         </LinearLayout>
 
-    </android.support.v7.widget.GridLayout>
-
-    <!-- Row 2 -->
-
-    <android.support.v4.widget.Space/>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical">
-
-        <ImageView
-            android:id="@+id/status_icon"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:layout_gravity="center" />
-
-        <Space
-            android:layout_width="7dp"
-            android:layout_height="0dp" />
-
         <TextView
-            android:id="@+id/status_message"
+            android:id="@+id/remote_payment_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="You approved this request" />
+            android:layout_marginTop="20dp"
+            style="@style/TextStyleMedium"
+            android:textAllCaps="true"
+            android:textColor="@color/textColorSecondary"
+            android:textSize="13sp"
+            android:visibility="gone"
+            app:layout_columnSpan="3"
+            app:layout_gravity="right"
+            tools:text="You accepted" />
 
-    </LinearLayout>
-
+    </android.support.v7.widget.GridLayout>
 </android.support.v7.widget.GridLayout>

@@ -40,13 +40,13 @@ import com.tokenbrowser.R;
 import com.tokenbrowser.crypto.HDWallet;
 import com.tokenbrowser.model.local.ActivityResultHolder;
 import com.tokenbrowser.model.local.Conversation;
-import com.tokenbrowser.model.sofa.SofaMessage;
 import com.tokenbrowser.model.local.User;
 import com.tokenbrowser.model.sofa.Command;
 import com.tokenbrowser.model.sofa.Control;
 import com.tokenbrowser.model.sofa.Message;
 import com.tokenbrowser.model.sofa.PaymentRequest;
 import com.tokenbrowser.model.sofa.SofaAdapters;
+import com.tokenbrowser.model.sofa.SofaMessage;
 import com.tokenbrowser.presenter.AmountPresenter;
 import com.tokenbrowser.presenter.Presenter;
 import com.tokenbrowser.util.FileUtil;
@@ -71,7 +71,6 @@ import com.tokenbrowser.view.notification.ChatNotificationManager;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import rx.Single;
@@ -620,14 +619,12 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     }
 
     private void handleConversationLoaded(final Conversation conversation) {
-        final List<SofaMessage> messages = conversation == null
-                                         ? new ArrayList<>(0)
-                                         : conversation.getAllMessages();
-        if (messages.size() > 0) {
-            this.messageAdapter.addMessages(messages);
+        final boolean shouldAddMessages = conversation != null && conversation.getAllMessages() != null && conversation.getAllMessages().size() > 0;
+        if (shouldAddMessages) {
+            this.messageAdapter.setConversation(conversation);
             scrollToBottom();
 
-            final SofaMessage lastSofaMessage = messages.get(messages.size() - 1);
+            final SofaMessage lastSofaMessage = conversation.getAllMessages().get(conversation.getAllMessages().size() - 1);
             setControlView(lastSofaMessage);
         }
 

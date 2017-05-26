@@ -40,8 +40,8 @@
     <string name="button_pay">Pay</string>
     <string name="button_request">Request</string>
     <string name="request_title">PAYMENT REQUEST</string>
-    <string name="button_decline">DECLINE</string>
-    <string name="button_accept">ACCEPT</string>
+    <string name="button_decline">Decline</string>
+    <string name="button_accept">Accept</string>
     <string name="eth_amount">%1$s ETH</string>
     <string name="payment_request__accepted">You accepted this request</string>
     <string name="payment_request__rejected">You declined this request</string>
@@ -226,4 +226,10 @@
     <string name="start_with_a_new_account">Start with a new account</string>
     <string name="today">Today</string>
     <string name="yesterday">Yesterday</string>
+    <string name="paid">paid</string>
+    <string name="you_uppercase">You</string>
+    <string name="you_lowercase">you</string>
+    <string name="request_for_value">Request for %1$s</string>
+    <string name="you_accepted">You accepted</string>
+    <string name="you_declined">You declined</string>
 </resources>
