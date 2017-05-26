@@ -18,6 +18,8 @@
 package com.tokenbrowser.model.local;
 
 
+import com.tokenbrowser.model.sofa.SofaMessage;
+
 import java.util.List;
 
 import io.realm.RealmList;
@@ -63,7 +65,7 @@ public class Conversation extends RealmObject {
         return this.allMessages != null && this.allMessages.contains(message);
     }
 
-    private void addMessage(final SofaMessage latestMessage) {
+    public void addMessage(final SofaMessage latestMessage) {
         if (this.allMessages == null) {
             this.allMessages = new RealmList<>();
         }
@@ -99,5 +101,9 @@ public class Conversation extends RealmObject {
 
     private String getConversationId() {
         return conversationId;
+    }
+
+    public long getUpdatedTime() {
+        return updatedTime;
     }
 }

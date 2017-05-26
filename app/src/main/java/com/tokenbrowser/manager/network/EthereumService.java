@@ -23,7 +23,7 @@ import com.tokenbrowser.manager.network.interceptor.LoggingInterceptor;
 import com.tokenbrowser.manager.network.interceptor.SigningInterceptor;
 import com.tokenbrowser.manager.network.interceptor.UserAgentInterceptor;
 import com.tokenbrowser.model.adapter.BigIntegerAdapter;
-import com.tokenbrowser.model.local.SofaMessage;
+import com.tokenbrowser.model.sofa.SofaMessage;
 import com.tokenbrowser.model.sofa.Payment;
 import com.tokenbrowser.model.sofa.SofaAdapters;
 import com.tokenbrowser.R;

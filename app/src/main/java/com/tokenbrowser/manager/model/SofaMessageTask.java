@@ -20,7 +20,7 @@ package com.tokenbrowser.manager.model;
 
 import android.support.annotation.IntDef;
 
-import com.tokenbrowser.model.local.SofaMessage;
+import com.tokenbrowser.model.sofa.SofaMessage;
 import com.tokenbrowser.model.local.User;
 
 public class SofaMessageTask {

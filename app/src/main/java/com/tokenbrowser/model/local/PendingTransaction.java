@@ -18,6 +18,8 @@
 package com.tokenbrowser.model.local;
 
 
+import com.tokenbrowser.model.sofa.SofaMessage;
+
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 

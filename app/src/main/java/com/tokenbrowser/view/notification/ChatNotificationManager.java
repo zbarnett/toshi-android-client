@@ -26,7 +26,7 @@ import android.support.v4.content.ContextCompat;
 
 import com.tokenbrowser.R;
 import com.tokenbrowser.crypto.signal.model.DecryptedSignalMessage;
-import com.tokenbrowser.model.local.SofaMessage;
+import com.tokenbrowser.model.sofa.SofaMessage;
 import com.tokenbrowser.model.local.User;
 import com.tokenbrowser.model.sofa.SofaAdapters;
 import com.tokenbrowser.model.sofa.SofaType;

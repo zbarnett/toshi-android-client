@@ -22,14 +22,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.tokenbrowser.model.local.SofaMessage;
+import com.tokenbrowser.model.sofa.SofaMessage;
+import com.tokenbrowser.R;
 import com.tokenbrowser.model.local.User;
 import com.tokenbrowser.model.sofa.Message;
 import com.tokenbrowser.model.sofa.Payment;
 import com.tokenbrowser.model.sofa.PaymentRequest;
 import com.tokenbrowser.model.sofa.SofaAdapters;
 import com.tokenbrowser.model.sofa.SofaType;
-import com.tokenbrowser.R;
 import com.tokenbrowser.util.LogUtil;
 import com.tokenbrowser.view.BaseApplication;
 import com.tokenbrowser.view.adapter.listeners.OnItemClickListener;
@@ -37,6 +37,7 @@ import com.tokenbrowser.view.adapter.viewholder.ImageViewHolder;
 import com.tokenbrowser.view.adapter.viewholder.PaymentRequestViewHolder;
 import com.tokenbrowser.view.adapter.viewholder.PaymentViewHolder;
 import com.tokenbrowser.view.adapter.viewholder.TextViewHolder;
+import com.tokenbrowser.view.adapter.viewholder.TimestampMessageViewHolder;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -149,6 +150,11 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
                 return new ImageViewHolder(v);
             }
 
+            case SofaType.TIMESTAMP: {
+                final View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item__timestamp, parent, false);
+                return new TimestampMessageViewHolder(v);
+            }
+
             case SofaType.UNKNOWN:
             case SofaType.PLAIN_TEXT:
             default: {
@@ -167,10 +173,7 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
 
         final SofaMessage sofaMessage = this.sofaMessages.get(position);
         final String payload = sofaMessage.getPayload();
-
-        if (payload == null) {
-            return;
-        }
+        if (payload == null) return;
 
         try {
             renderChatMessageIntoViewHolder(holder, sofaMessage, payload);
@@ -231,6 +234,11 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
                   .setOnRejectListener(this.handleOnPaymentRequestRejected)
                   .draw();
                 break;
+            }
+
+            case SofaType.TIMESTAMP: {
+                final TimestampMessageViewHolder vh = (TimestampMessageViewHolder) holder;
+                vh.setTime(sofaMessage.getCreationTime());
             }
         }
     }

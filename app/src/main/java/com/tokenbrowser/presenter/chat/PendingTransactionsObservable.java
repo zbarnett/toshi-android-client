@@ -19,7 +19,7 @@ package com.tokenbrowser.presenter.chat;
 
 
 import com.tokenbrowser.model.local.PendingTransaction;
-import com.tokenbrowser.model.local.SofaMessage;
+import com.tokenbrowser.model.sofa.SofaMessage;
 import com.tokenbrowser.model.local.User;
 import com.tokenbrowser.model.sofa.Payment;
 import com.tokenbrowser.model.sofa.SofaAdapters;

@@ -41,7 +41,7 @@ import com.tokenbrowser.crypto.HDWallet;
 import com.tokenbrowser.crypto.signal.model.DecryptedSignalMessage;
 import com.tokenbrowser.crypto.util.TypeConverter;
 import com.tokenbrowser.manager.TokenManager;
-import com.tokenbrowser.model.local.SofaMessage;
+import com.tokenbrowser.model.sofa.SofaMessage;
 import com.tokenbrowser.model.local.User;
 import com.tokenbrowser.model.sofa.Payment;
 import com.tokenbrowser.model.sofa.SofaAdapters;

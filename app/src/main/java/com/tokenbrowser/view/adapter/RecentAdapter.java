@@ -24,7 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.tokenbrowser.model.local.Conversation;
-import com.tokenbrowser.model.local.SofaMessage;
+import com.tokenbrowser.model.sofa.SofaMessage;
 import com.tokenbrowser.model.local.User;
 import com.tokenbrowser.model.sofa.Message;
 import com.tokenbrowser.model.sofa.Payment;

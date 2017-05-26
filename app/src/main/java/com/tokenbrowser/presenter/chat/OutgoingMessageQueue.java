@@ -18,7 +18,7 @@
 package com.tokenbrowser.presenter.chat;
 
 
-import com.tokenbrowser.model.local.SofaMessage;
+import com.tokenbrowser.model.sofa.SofaMessage;
 import com.tokenbrowser.model.local.User;
 import com.tokenbrowser.util.LogUtil;
 import com.tokenbrowser.view.BaseApplication;

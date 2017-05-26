@@ -224,4 +224,6 @@
     <string name="welcome_to_token">Welcome to Token</string>
     <string name="splash_view_info">A browser for the Ethereum network that provides universal access to financial services</string>
     <string name="start_with_a_new_account">Start with a new account</string>
+    <string name="today">Today</string>
+    <string name="yesterday">Yesterday</string>
 </resources>

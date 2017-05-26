@@ -40,7 +40,7 @@ import com.tokenbrowser.R;
 import com.tokenbrowser.crypto.HDWallet;
 import com.tokenbrowser.model.local.ActivityResultHolder;
 import com.tokenbrowser.model.local.Conversation;
-import com.tokenbrowser.model.local.SofaMessage;
+import com.tokenbrowser.model.sofa.SofaMessage;
 import com.tokenbrowser.model.local.User;
 import com.tokenbrowser.model.sofa.Command;
 import com.tokenbrowser.model.sofa.Control;

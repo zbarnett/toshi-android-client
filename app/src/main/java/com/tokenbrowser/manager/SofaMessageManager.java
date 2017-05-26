@@ -38,7 +38,7 @@ import com.tokenbrowser.manager.store.PendingMessageStore;
 import com.tokenbrowser.model.local.Conversation;
 import com.tokenbrowser.model.local.PendingMessage;
 import com.tokenbrowser.model.local.SendState;
-import com.tokenbrowser.model.local.SofaMessage;
+import com.tokenbrowser.model.sofa.SofaMessage;
 import com.tokenbrowser.model.local.User;
 import com.tokenbrowser.model.network.UserSearchResults;
 import com.tokenbrowser.model.sofa.Init;

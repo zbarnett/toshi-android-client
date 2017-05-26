@@ -15,9 +15,10 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.tokenbrowser.model.local;
+package com.tokenbrowser.model.sofa;
 
-import com.tokenbrowser.model.sofa.SofaType;
+import com.tokenbrowser.model.local.SendState;
+import com.tokenbrowser.model.local.User;
 
 import java.util.UUID;
 import java.util.regex.Matcher;
@@ -158,6 +159,14 @@ public class SofaMessage extends RealmObject {
 
         return setType(sofaType)
                 .setPayload(sofaPayload);
+    }
+
+    public SofaMessage makeNewTimeStampMessage() {
+        final String sofaHeader = SofaType.createHeader(SofaType.TIMESTAMP);
+        final @SofaType.Type int sofaType = SofaType.getType(sofaHeader);
+
+        return setType(sofaType)
+                .setPayload("");
     }
 
     // This will set the private key to be the txHash to ensure all

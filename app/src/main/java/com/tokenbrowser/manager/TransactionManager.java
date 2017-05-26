@@ -28,7 +28,7 @@ import com.tokenbrowser.manager.network.EthereumService;
 import com.tokenbrowser.manager.store.PendingTransactionStore;
 import com.tokenbrowser.model.local.PendingTransaction;
 import com.tokenbrowser.model.local.SendState;
-import com.tokenbrowser.model.local.SofaMessage;
+import com.tokenbrowser.model.sofa.SofaMessage;
 import com.tokenbrowser.model.local.User;
 import com.tokenbrowser.model.network.SentTransaction;
 import com.tokenbrowser.model.network.ServerTime;
