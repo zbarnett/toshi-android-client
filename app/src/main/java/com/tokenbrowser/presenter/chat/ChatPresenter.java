@@ -428,9 +428,10 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
 
     private void setPadding(final int height) {
         if (this.activity == null) return;
+        final int paddingBottom = this.activity.getResources().getDimensionPixelSize(R.dimen.chat_button_padding) + height;
         final int paddingRight = this.activity.getBinding().messagesList.getPaddingRight();
         final int paddingLeft = this.activity.getBinding().messagesList.getPaddingLeft();
-        this.activity.getBinding().messagesList.setPadding(paddingLeft, 0 , paddingRight, height);
+        this.activity.getBinding().messagesList.setPadding(paddingLeft, 0, paddingRight, paddingBottom);
         this.activity.getBinding().messagesList.scrollToPosition(this.messageAdapter.getItemCount() - 1);
     }
 
