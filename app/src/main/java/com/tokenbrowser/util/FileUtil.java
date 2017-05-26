@@ -24,8 +24,10 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.v4.content.FileProvider;
 import android.webkit.MimeTypeMap;
 
+import com.tokenbrowser.BuildConfig;
 import com.tokenbrowser.model.local.Attachment;
 import com.tokenbrowser.view.BaseApplication;
 
@@ -170,5 +172,14 @@ public class FileUtil {
     public long getFileSize(final String path) {
         final File file = new File(path);
         return file.exists() ? file.length() : 0;
+    }
+
+    public Uri getUriFromFile(final File file) {
+        return FileProvider
+                .getUriForFile(
+                        BaseApplication.get(),
+                        BuildConfig.APPLICATION_ID + ".fileProvider",
+                        file
+                );
     }
 }

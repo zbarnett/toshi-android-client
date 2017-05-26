@@ -50,12 +50,13 @@ import java.util.List;
 public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final static int SENDER_MASK = 0x1000;
 
+    private Conversation conversation;
     private final List<SofaMessage> sofaMessages;
     private OnItemClickListener<SofaMessage> onPaymentRequestApproveListener;
     private OnItemClickListener<SofaMessage> onPaymentRequestRejectListener;
     private OnItemClickListener<String> onUsernameClickListener;
     private OnItemClickListener<String> onImageClickListener;
-    private Conversation conversation;
+    private OnItemClickListener<String> onFileClickListener;
 
     public MessageAdapter() {
         this.sofaMessages = new ArrayList<>();
@@ -81,6 +82,10 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
         return this;
     }
 
+    public final MessageAdapter addOnFileClickListener(final OnItemClickListener<String> listener) {
+        this.onFileClickListener = listener;
+        return this;
+    }
 
     private boolean shouldShowChatMessage(final SofaMessage sofaMessage) {
         return sofaMessage.getType() != SofaType.UNKNOWN
@@ -240,6 +245,7 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
                 vh
                         .setAttachmentPath(sofaMessage.getAttachmentFilePath())
                         .setAvatarUri(sofaMessage.getSender() != null ? sofaMessage.getSender().getAvatar() : null)
+                        .setOnClickListener(this.onFileClickListener, sofaMessage.getAttachmentFilePath())
                         .draw();
                 break;
             }

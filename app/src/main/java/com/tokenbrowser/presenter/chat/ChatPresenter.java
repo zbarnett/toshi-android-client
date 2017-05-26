@@ -19,6 +19,7 @@ package com.tokenbrowser.presenter.chat;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -26,7 +27,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.v4.content.FileProvider;
 import android.util.Pair;
 import android.view.View;
 import android.view.animation.Animation;
@@ -35,7 +35,6 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.PathInterpolator;
 import android.widget.Toast;
 
-import com.tokenbrowser.BuildConfig;
 import com.tokenbrowser.R;
 import com.tokenbrowser.crypto.HDWallet;
 import com.tokenbrowser.model.local.ActivityResultHolder;
@@ -131,7 +130,37 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
                 .addOnPaymentRequestApproveListener(message -> updatePaymentRequestState(message, PaymentRequest.ACCEPTED))
                 .addOnPaymentRequestRejectListener(message -> updatePaymentRequestState(message, PaymentRequest.REJECTED))
                 .addOnUsernameClickListener(this::searchForUsername)
-                .addOnImageClickListener(this::handleImageClicked);
+                .addOnImageClickListener(this::handleImageClicked)
+                .addOnFileClickListener(this::handleFileClicked);
+    }
+
+    private void handleFileClicked(final String path) {
+        if (this.activity == null) return;
+
+        final File file = new File(path);
+        if (!file.exists()) {
+            Toast.makeText(this.activity, this.activity.getString(R.string.no_file_found), Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        final FileUtil fileUtil = new FileUtil();
+        final String mimeType = fileUtil.getMimeTypeFromFilename(path);
+        final Uri fileUri = fileUtil.getUriFromFile(file);
+
+        startExternalActivity(fileUri, mimeType);
+    }
+
+    private void startExternalActivity(final Uri uri, final String mimeType) {
+        final Intent intent = new Intent(Intent.ACTION_VIEW);
+        PermissionUtil.grantUriPermission(this.activity, intent, uri);
+        intent.setDataAndType(uri, mimeType);
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+        try {
+            this.activity.startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(this.activity, this.activity.getString(R.string.no_app_found), Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void searchForUsername(final String username) {
@@ -329,18 +358,15 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     }
 
     private void startCameraActivity() {
+        final FileUtil fileUtil = new FileUtil();
+        final File photoFile = fileUtil.createImageFileWithRandomName();
+        this.captureImageFilename = photoFile.getName();
+        final Uri photoUri = fileUtil.getUriFromFile(photoFile);
+
         final Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (cameraIntent.resolveActivity(this.activity.getPackageManager()) != null) {
-            final File photoFile = new FileUtil().createImageFileWithRandomName();
-            this.captureImageFilename = photoFile.getName();
-            final Uri photoURI = FileProvider.getUriForFile(
-                    BaseApplication.get(),
-                    BuildConfig.APPLICATION_ID + ".photos",
-                    photoFile);
-            PermissionUtil.grantUriPermission(this.activity, cameraIntent, photoURI);
-            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-            this.activity.startActivityForResult(cameraIntent, CAPTURE_IMAGE);
-        }
+        PermissionUtil.grantUriPermission(this.activity, cameraIntent, photoUri);
+        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
+        this.activity.startActivityForResult(cameraIntent, CAPTURE_IMAGE);
     }
 
     private void startAttachmentPicker() {
