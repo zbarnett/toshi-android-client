@@ -31,8 +31,8 @@ android {
         minSdkVersion 16
         targetSdkVersion 25
 
-        versionCode 41
-        versionName "Beta - 18. May 2017"
+        versionCode 42
+        versionName "Beta - 26. May 2017"
 
         vectorDrawables.useSupportLibrary = true
     }
