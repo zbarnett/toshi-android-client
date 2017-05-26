@@ -20,6 +20,8 @@ package com.tokenbrowser.model.sofa;
 import java.util.List;
 
 public class Control {
+    private final static String WEBVIEW_ACTION = "Webview::";
+
     private String type;
     private String label;
     private String value;
@@ -44,5 +46,15 @@ public class Control {
 
     public List<Control> getControls() {
         return this.controls;
+    }
+
+    public boolean hasAction() {
+        return this.action != null;
+    }
+
+    // This currently is naive and assumed the action is a URL.
+    // This is the only action we currently support.
+    public String getActionUrl() {
+        return this.action.replace(WEBVIEW_ACTION, "");
     }
 }
