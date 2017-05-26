@@ -27,6 +27,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.tokenbrowser.R;
+import com.tokenbrowser.model.local.SendState;
 import com.tokenbrowser.model.local.User;
 import com.tokenbrowser.model.sofa.PaymentRequest;
 import com.tokenbrowser.util.EthUtil;
@@ -45,6 +46,7 @@ public final class PaymentRequestViewHolder extends RecyclerView.ViewHolder {
     private @Nullable Button declineButton;
     private @Nullable ImageView avatar;
     private @Nullable TextView remotePaymentStatus;
+    private @Nullable ImageView sentStatus;
 
     private OnItemClickListener<Integer> onApproveListener;
     private OnItemClickListener<Integer> onRejectListener;
@@ -52,6 +54,7 @@ public final class PaymentRequestViewHolder extends RecyclerView.ViewHolder {
     private PaymentRequest request;
     private String avatarUri;
     private User remoteUser;
+    private @SendState.State int sendState;
 
     public PaymentRequestViewHolder(final View v) {
         super(v);
@@ -63,6 +66,7 @@ public final class PaymentRequestViewHolder extends RecyclerView.ViewHolder {
         this.declineButton = (Button) v.findViewById(R.id.reject_button);
         this.avatar = (ImageView) v.findViewById(R.id.avatar);
         this.remotePaymentStatus = (TextView) v.findViewById(R.id.remote_payment_status);
+        this.sentStatus = (ImageView) v.findViewById(R.id.sent_status);
     }
 
     public PaymentRequestViewHolder setPaymentRequest(final PaymentRequest request) {
@@ -77,6 +81,11 @@ public final class PaymentRequestViewHolder extends RecyclerView.ViewHolder {
 
     public PaymentRequestViewHolder setRemoteUser(final User remoteUser) {
         this.remoteUser = remoteUser;
+        return this;
+    }
+
+    public PaymentRequestViewHolder setSendState(final @SendState.State int sendState) {
+        this.sendState = sendState;
         return this;
     }
 
@@ -95,6 +104,7 @@ public final class PaymentRequestViewHolder extends RecyclerView.ViewHolder {
         renderBody();
         renderAvatar();
         renderStatus();
+        setSendState();
     }
 
     private void renderAmounts() {
@@ -172,5 +182,13 @@ public final class PaymentRequestViewHolder extends RecyclerView.ViewHolder {
     private void handleRejectedClicked() {
         if (this.onRejectListener == null) return;
         this.onRejectListener.onItemClick(getAdapterPosition());
+    }
+
+    private void setSendState() {
+        if (this.sentStatus == null) return;
+        final int visibility = this.sendState == SendState.STATE_FAILED || this.sendState == SendState.STATE_PENDING
+                ? View.VISIBLE
+                : View.GONE;
+        this.sentStatus.setVisibility(visibility);
     }
 }

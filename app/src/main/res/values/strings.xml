@@ -232,4 +232,5 @@
     <string name="request_for_value">Request for %1$s</string>
     <string name="you_accepted">You accepted</string>
     <string name="you_declined">You declined</string>
+    <string name="payment_failed">Payment failed</string>
 </resources>
