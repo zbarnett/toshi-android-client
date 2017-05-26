@@ -64,6 +64,7 @@ import com.tokenbrowser.view.activity.ChatActivity;
 import com.tokenbrowser.view.activity.FullscreenImageActivity;
 import com.tokenbrowser.view.activity.ImageConfirmationActivity;
 import com.tokenbrowser.view.activity.ViewUserActivity;
+import com.tokenbrowser.view.activity.WebViewActivity;
 import com.tokenbrowser.view.adapter.MessageAdapter;
 import com.tokenbrowser.view.custom.SpeedyLinearLayoutManager;
 import com.tokenbrowser.view.fragment.DialogFragment.ChooserDialog;
@@ -392,7 +393,17 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     private void handleControlClicked(final Control control) {
         this.activity.getBinding().controlView.hideView();
         removePadding();
-        sendCommandMessage(control);
+        if (control.hasAction()) {
+            handleControlAction(control);
+        } else {
+            sendCommandMessage(control);
+        }
+    }
+
+    private void handleControlAction(final Control control) {
+        final Intent intent = new Intent(this.activity, WebViewActivity.class)
+                .putExtra(WebViewActivity.EXTRA__ADDRESS, control.getActionUrl());
+        this.activity.startActivity(intent);
     }
 
     private void removePadding() {
