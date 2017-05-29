@@ -60,9 +60,9 @@ import com.tokenbrowser.util.SoundManager;
 import com.tokenbrowser.view.Animation.SlideUpAnimator;
 import com.tokenbrowser.view.BaseApplication;
 import com.tokenbrowser.view.activity.AmountActivity;
+import com.tokenbrowser.view.activity.AttachmentConfirmationActivity;
 import com.tokenbrowser.view.activity.ChatActivity;
 import com.tokenbrowser.view.activity.FullscreenImageActivity;
-import com.tokenbrowser.view.activity.ImageConfirmationActivity;
 import com.tokenbrowser.view.activity.ViewUserActivity;
 import com.tokenbrowser.view.activity.WebViewActivity;
 import com.tokenbrowser.view.adapter.MessageAdapter;
@@ -85,10 +85,9 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
 
     private static final int REQUEST_RESULT_CODE = 1;
     private static final int PAY_RESULT_CODE = 2;
-    private static final int PICK_IMAGE = 3;
+    private static final int PICK_ATTACHMENT = 3;
     private static final int CAPTURE_IMAGE = 4;
-    private static final int CONFIRM_IMAGE = 6;
-
+    private static final int CONFIRM_ATTACHMENT = 5;
     private static final String CAPTURE_FILENAME = "caputureImageFilename";
 
     private ChatActivity activity;
@@ -306,7 +305,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     private void checkExternalStoragePermission() {
         final boolean hasPermission = PermissionUtil.hasPermission(this.activity, Manifest.permission.READ_EXTERNAL_STORAGE);
         if (hasPermission) {
-            startGalleryActivity();
+            startAttachmentPicker();
         } else {
             PermissionUtil.requestPermission(
                     this.activity,
@@ -344,16 +343,16 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         }
     }
 
-    private void startGalleryActivity() {
-        final Intent pickPictureIntent = new Intent()
-                .setType("image/*")
-                .setAction(Intent.ACTION_GET_CONTENT);
+    private void startAttachmentPicker() {
+        final Intent attachmentIntent =  Intent.createChooser(
+                new Intent()
+                        .setType("*/*")
+                        .setAction(Intent.ACTION_GET_CONTENT)
+                        .addCategory(Intent.CATEGORY_OPENABLE),
+                BaseApplication.get().getString(R.string.select_picture)
+        );
 
-        if (pickPictureIntent.resolveActivity(activity.getPackageManager()) != null) {
-            this.activity.startActivityForResult(Intent.createChooser(
-                    pickPictureIntent,
-                    BaseApplication.get().getString(R.string.select_picture)), PICK_IMAGE);
-        }
+        this.activity.startActivityForResult(attachmentIntent, PICK_ATTACHMENT);
     }
 
     private final OnSingleClickListener requestButtonClicked = new OnSingleClickListener() {
@@ -755,13 +754,14 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         } else if(resultHolder.getRequestCode() == PAY_RESULT_CODE) {
             final String value = resultHolder.getIntent().getStringExtra(AmountPresenter.INTENT_EXTRA__ETH_AMOUNT);
             sendPaymentWithValue(value);
-        } else if (resultHolder.getRequestCode() == PICK_IMAGE) {
-            handleGalleryResult(resultHolder);
+        } else if (resultHolder.getRequestCode() == PICK_ATTACHMENT) {
+            handleAttachmentResult(resultHolder);
         } else if (resultHolder.getRequestCode() == CAPTURE_IMAGE) {
             handleCameraResult();
-        } else if (resultHolder.getRequestCode() == CONFIRM_IMAGE) {
-            handleConfirmationResult(resultHolder);
+        } else if (resultHolder.getRequestCode() == CONFIRM_ATTACHMENT) {
+            handleConfirmAttachmentResult(resultHolder);
         }
+
         return true;
     }
 
@@ -777,36 +777,23 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
                 break;
             }
             case PermissionUtil.READ_EXTERNAL_STORAGE_PERMISSION: {
-                startGalleryActivity();
+                startAttachmentPicker();
                 break;
             }
         }
     }
 
-    private void handleGalleryResult(final ActivityResultHolder resultHolder) {
+    private void handleAttachmentResult(final ActivityResultHolder resultHolder) {
         final Uri uri = resultHolder.getIntent().getData();
-        final Intent confirmationIntent = new Intent(this.activity, ImageConfirmationActivity.class)
-                .putExtra(ImageConfirmationActivity.FILE_URI, uri);
-        this.activity.startActivityForResult(confirmationIntent, CONFIRM_IMAGE);
+        final Intent confirmationIntent = new Intent(this.activity, AttachmentConfirmationActivity.class)
+                .putExtra(AttachmentConfirmationActivity.ATTACHMENT_URI, uri);
+        this.activity.startActivityForResult(confirmationIntent, CONFIRM_ATTACHMENT);
     }
 
-    private void handleConfirmationResult(final ActivityResultHolder resultHolder) {
-        final String filePath = resultHolder.getIntent().getStringExtra(ImageConfirmationActivity.FILE_PATH);
-
-        if (filePath == null) {
-            startGalleryActivity();
-            return;
-        }
-
+    private void handleConfirmAttachmentResult(final ActivityResultHolder resultHolder) {
+        final String filePath = resultHolder.getIntent().getStringExtra(AttachmentConfirmationActivity.ATTACHMENT_PATH);
         final File file = new File(filePath);
-        final Subscription sub =
-                new FileUtil().compressImage(FileUtil.MAX_SIZE, file)
-                .subscribe(
-                        compressedFile -> sendMediaMessage(compressedFile.getAbsolutePath()),
-                        this::handleError
-                );
-
-        this.subscriptions.add(sub);
+        sendMediaMessage(file.getAbsolutePath());
     }
 
     private void handleCameraResult() {
