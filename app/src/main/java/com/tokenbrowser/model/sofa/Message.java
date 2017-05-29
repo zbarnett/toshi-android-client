@@ -50,14 +50,14 @@ public class Message {
     }
 
     public String toUserVisibleString(final boolean sentByLocal, final boolean hasAttachment) {
-        if (hasAttachment) return getImageMessage(sentByLocal);
+        if (hasAttachment) return getAttachmentMessage(sentByLocal);
         else return this.body;
     }
 
-    private String getImageMessage(final boolean sentByLocal) {
+    private String getAttachmentMessage(final boolean sentByLocal) {
         final @StringRes int successMessageId = sentByLocal
-                ? R.string.latest_sent_image
-                : R.string.latest_received_image;
+                ? R.string.latest_sent_attachment
+                : R.string.latest_received_attachment;
 
         return BaseApplication.get().getResources().getString(successMessageId);
     }
