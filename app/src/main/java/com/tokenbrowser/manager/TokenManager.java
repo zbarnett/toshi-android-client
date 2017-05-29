@@ -125,6 +125,20 @@ public class TokenManager {
         Realm.setDefaultConfiguration(this.realmConfig);
     }
 
+    public final Single<Realm> getRealm() {
+        return Single.fromCallable(() -> {
+            while (this.realmConfig == null) {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            return Realm.getDefaultInstance();
+        });
+
+    }
+
     public final SofaMessageManager getSofaMessageManager() {
         return this.sofaMessageManager;
     }

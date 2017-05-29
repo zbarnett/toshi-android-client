@@ -20,6 +20,7 @@ package com.tokenbrowser.manager.store;
 
 import com.tokenbrowser.model.local.Contact;
 import com.tokenbrowser.model.local.User;
+import com.tokenbrowser.view.BaseApplication;
 
 import java.util.List;
 
@@ -31,7 +32,7 @@ import rx.Single;
 public class ContactStore {
 
     public boolean userIsAContact(final User user) {
-        final Realm realm = Realm.getDefaultInstance();
+        final Realm realm = BaseApplication.get().getRealm();
         final boolean result = realm
                 .where(Contact.class)
                 .equalTo("owner_address", user.getTokenId())
@@ -41,7 +42,7 @@ public class ContactStore {
     }
 
     public void save(final User user) {
-        final Realm realm = Realm.getDefaultInstance();
+        final Realm realm = BaseApplication.get().getRealm();
         realm.beginTransaction();
         final User storedUser = realm.copyToRealmOrUpdate(user);
         final Contact contact = new Contact(storedUser);
@@ -51,7 +52,7 @@ public class ContactStore {
     }
 
     public void delete(final User user) {
-        final Realm realm = Realm.getDefaultInstance();
+        final Realm realm = BaseApplication.get().getRealm();
         realm.beginTransaction();
         realm
                 .where(Contact.class)
@@ -63,7 +64,7 @@ public class ContactStore {
     }
 
     public Single<List<Contact>> loadAll() {
-        final Realm realm = Realm.getDefaultInstance();
+        final Realm realm = BaseApplication.get().getRealm();
         final RealmQuery<Contact> query = realm.where(Contact.class);
         final RealmResults<Contact> results = query.findAll();
         final List<Contact> retVal = realm.copyFromRealm(results.sort("user.name"));

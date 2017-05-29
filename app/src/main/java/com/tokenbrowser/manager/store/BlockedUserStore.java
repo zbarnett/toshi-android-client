@@ -1,6 +1,7 @@
 package com.tokenbrowser.manager.store;
 
 import com.tokenbrowser.model.local.BlockedUser;
+import com.tokenbrowser.view.BaseApplication;
 
 import io.realm.Realm;
 import rx.Single;
@@ -13,7 +14,7 @@ public class BlockedUserStore {
     }
 
     private BlockedUser loadWhere(final String fieldName, final String value) {
-        final Realm realm = Realm.getDefaultInstance();
+        final Realm realm = BaseApplication.get().getRealm();
         final BlockedUser user =
                 realm.where(BlockedUser.class)
                         .equalTo(fieldName, value)
@@ -24,7 +25,7 @@ public class BlockedUserStore {
     }
 
     public void save(final BlockedUser blockedUser) {
-        final Realm realm = Realm.getDefaultInstance();
+        final Realm realm = BaseApplication.get().getRealm();
         realm.beginTransaction();
         realm.insertOrUpdate(blockedUser);
         realm.commitTransaction();
@@ -32,7 +33,7 @@ public class BlockedUserStore {
     }
 
     public void delete(final String ownerAddress) {
-        final Realm realm = Realm.getDefaultInstance();
+        final Realm realm = BaseApplication.get().getRealm();
         realm.beginTransaction();
         realm
                 .where(BlockedUser.class)
