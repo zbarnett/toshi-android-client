@@ -52,7 +52,7 @@ public class RegistrationIntentService extends IntentService {
 
     public static final String FORCE_UPDATE = "update_token";
     public static final String CHAT_SERVICE_SENT_TOKEN_TO_SERVER = "chatServiceSentTokenToServer";
-    public static final String ETH_SERVICE_SENT_TOKEN_TO_SERVER = "sentTokenToServer";
+    public static final String ETH_SERVICE_SENT_TOKEN_TO_SERVER = "sentTokenToServer_v2";
     public static final String REGISTRATION_COMPLETE = "registrationComplete";
 
     private final SharedPreferences sharedPreferences;

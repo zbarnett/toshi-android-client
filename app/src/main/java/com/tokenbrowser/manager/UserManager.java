@@ -54,7 +54,8 @@ import rx.subjects.BehaviorSubject;
 
 public class UserManager {
 
-    private final static String USER_ID = "uid";
+    private final static String OLD_USER_ID = "uid";
+    private final static String USER_ID = "uid_v2";
     private final static String FORM_DATA_NAME = "Profile-Image-Upload";
 
     private final BehaviorSubject<User> userSubject = BehaviorSubject.create();
@@ -109,17 +110,27 @@ public class UserManager {
     }
 
     private void initUser() {
-        if (!userExistsInPrefs()) {
+        if (userNeedsToRegister()) {
             registerNewUser();
+        } else if (userNeedsToMigrate()) {
+            migrateUser();
         } else {
             getExistingUser();
         }
     }
 
-    private boolean userExistsInPrefs() {
+    private boolean userNeedsToRegister() {
+        final String oldUserId = this.prefs.getString(OLD_USER_ID, null);
+        final String newUserId = this.prefs.getString(USER_ID, null);
+        final String expectedAddress = this.wallet.getOwnerAddress();
+        final String userId = newUserId == null ? oldUserId : newUserId;
+        return userId == null || !userId.equals(expectedAddress);
+    }
+
+    private boolean userNeedsToMigrate() {
         final String userId = this.prefs.getString(USER_ID, null);
-        final String expectedAddress = wallet.getOwnerAddress();
-        return userId != null && userId.equals(expectedAddress);
+        final String expectedAddress = this.wallet.getOwnerAddress();
+        return userId == null || !userId.equals(expectedAddress);
     }
 
     private void registerNewUser() {
@@ -171,6 +182,11 @@ public class UserManager {
             .putString(USER_ID, user.getTokenId())
             .apply();
         this.userSubject.onNext(user);
+    }
+
+    private void migrateUser() {
+        final UserDetails ud = new UserDetails().setPaymentAddress(this.wallet.getPaymentAddress());
+        updateUser(ud).subscribe();
     }
 
     public Single<User> updateUser(final UserDetails userDetails) {
