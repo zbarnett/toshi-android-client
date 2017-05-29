@@ -67,7 +67,6 @@ import com.tokenbrowser.view.activity.ViewUserActivity;
 import com.tokenbrowser.view.activity.WebViewActivity;
 import com.tokenbrowser.view.adapter.MessageAdapter;
 import com.tokenbrowser.view.custom.SpeedyLinearLayoutManager;
-import com.tokenbrowser.view.fragment.DialogFragment.ChooserDialog;
 import com.tokenbrowser.view.notification.ChatNotificationManager;
 
 import java.io.File;
@@ -290,7 +289,8 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     private void initClickListeners() {
         this.activity.getBinding().chatInput
                 .setOnSendMessageClicked(this::sendMessage)
-                .setOnAttachmentClicked(this::handleAddAttachmentsClicked);
+                .setOnAttachmentClicked(__ -> checkExternalStoragePermission())
+                .setOnCameraClickedListener(__ -> checkCameraPermission());
         this.activity.getBinding().balanceBar.setOnRequestClicked(this.requestButtonClicked);
         this.activity.getBinding().balanceBar.setOnPayClicked(this.payButtonClicked);
         this.activity.getBinding().controlView.setOnControlClickedListener(this::handleControlClicked);
@@ -301,22 +301,6 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         final String messageBody = SofaAdapters.get().toJson(message);
         final SofaMessage sofaMessage = new SofaMessage().makeNew(getCurrentLocalUser(), messageBody);
         this.outgoingMessageQueue.send(sofaMessage);
-    }
-
-    private void handleAddAttachmentsClicked() {
-        final ChooserDialog dialog = ChooserDialog.newInstance();
-        dialog.setOnChooserClickListener(new ChooserDialog.OnChooserClickListener() {
-            @Override
-            public void captureImageClicked() {
-                checkCameraPermission();
-            }
-
-            @Override
-            public void importImageFromGalleryClicked() {
-                checkExternalStoragePermission();
-            }
-        });
-        dialog.show(this.activity.getSupportFragmentManager(), ChooserDialog.TAG);
     }
 
     private void checkExternalStoragePermission() {
