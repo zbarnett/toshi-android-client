@@ -23,6 +23,9 @@ public class TransactionRequest {
     private String value;
     private String from;
     private String to;
+    private String data;
+    private String gas;
+    private String gasPrice;
 
     public TransactionRequest setValue(final String value) {
         this.value = value;
@@ -36,6 +39,21 @@ public class TransactionRequest {
 
     public TransactionRequest setFromAddress(final String addressInHex) {
         this.from = addressInHex;
+        return this;
+    }
+
+    public TransactionRequest setData(final String data) {
+        this.data = data;
+        return this;
+    }
+
+    public TransactionRequest setGas(final String gas) {
+        this.gas = gas;
+        return this;
+    }
+
+    public TransactionRequest setGasPrice(final String gasPrice) {
+        this.gasPrice = gasPrice;
         return this;
     }
 }

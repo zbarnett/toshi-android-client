@@ -28,7 +28,7 @@ import com.tokenbrowser.manager.network.EthereumService;
 import com.tokenbrowser.manager.store.PendingTransactionStore;
 import com.tokenbrowser.model.local.PendingTransaction;
 import com.tokenbrowser.model.local.SendState;
-import com.tokenbrowser.model.sofa.SofaMessage;
+import com.tokenbrowser.model.local.UnsignedW3Transaction;
 import com.tokenbrowser.model.local.User;
 import com.tokenbrowser.model.network.SentTransaction;
 import com.tokenbrowser.model.network.ServerTime;
@@ -38,6 +38,7 @@ import com.tokenbrowser.model.network.UnsignedTransaction;
 import com.tokenbrowser.model.sofa.Payment;
 import com.tokenbrowser.model.sofa.PaymentRequest;
 import com.tokenbrowser.model.sofa.SofaAdapters;
+import com.tokenbrowser.model.sofa.SofaMessage;
 import com.tokenbrowser.model.sofa.SofaType;
 import com.tokenbrowser.util.LocaleUtil;
 import com.tokenbrowser.util.LogUtil;
@@ -386,6 +387,14 @@ public class TransactionManager {
         ChatNotificationManager.showChatNotification(null, content);
     }
 
+    public Single<SignedTransaction> signW3Transaction(final UnsignedW3Transaction transaction) {
+        final TransactionRequest transactionRequest = generateTransactionRequest(transaction);
+        return EthereumService
+                .getApi()
+                .createTransaction(transactionRequest)
+                .flatMap(this::signTransaction);
+    }
+
     private Single<UnsignedTransaction> createUnsignedTransaction(final Payment payment) {
         final TransactionRequest transactionRequest = generateTransactionRequest(payment);
         return EthereumService
@@ -398,6 +407,16 @@ public class TransactionManager {
                 .setValue(payment.getValue())
                 .setFromAddress(payment.getFromAddress())
                 .setToAddress(payment.getToAddress());
+    }
+
+    private TransactionRequest generateTransactionRequest(final UnsignedW3Transaction transaction) {
+        return new TransactionRequest()
+                .setValue(transaction.getValue())
+                .setFromAddress(transaction.getFrom())
+                .setToAddress(transaction.getTo())
+                .setData(transaction.getData())
+                .setGas(transaction.getGas())
+                .setGasPrice(transaction.getGas());
     }
 
     private Single<SentTransaction> signAndSendTransaction(final UnsignedTransaction unsignedTransaction) {
