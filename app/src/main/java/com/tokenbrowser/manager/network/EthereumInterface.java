@@ -18,6 +18,7 @@
 package com.tokenbrowser.manager.network;
 
 import com.tokenbrowser.model.network.Balance;
+import com.tokenbrowser.model.network.GcmDeregistration;
 import com.tokenbrowser.model.network.GcmRegistration;
 import com.tokenbrowser.model.network.SentTransaction;
 import com.tokenbrowser.model.network.ServerTime;
@@ -58,5 +59,5 @@ public interface EthereumInterface {
     @POST("/v1/gcm/deregister")
     Completable unregisterGcm(
             @Query("timestamp") long timestamp,
-            @Body GcmRegistration gcmRegistration);
+            @Body GcmDeregistration gcmDeregistration);
 }

@@ -26,6 +26,7 @@ import com.tokenbrowser.manager.network.CurrencyService;
 import com.tokenbrowser.manager.network.EthereumService;
 import com.tokenbrowser.model.network.Balance;
 import com.tokenbrowser.model.network.Currencies;
+import com.tokenbrowser.model.network.GcmDeregistration;
 import com.tokenbrowser.model.network.GcmRegistration;
 import com.tokenbrowser.model.network.MarketRates;
 import com.tokenbrowser.model.network.ServerTime;
@@ -39,8 +40,6 @@ import com.tokenbrowser.view.BaseApplication;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
 
 import rx.Completable;
 import rx.Single;
@@ -205,12 +204,12 @@ public class BalanceManager {
 
     private Completable unregisterGcmWithTimestamp(final String token, final ServerTime serverTime) {
         if (serverTime == null) {
-            throw new IllegalStateException("Unable to fetch server time");
+            return Completable.error(new IllegalStateException("Unable to fetch server time"));
         }
 
         return EthereumService
                 .getApi()
-                .unregisterGcm(serverTime.get(), new GcmRegistration(token, wallet.getPaymentAddress()));
+                .unregisterGcm(serverTime.get(), new GcmDeregistration(token));
     }
 
     /* package */ Single<Payment> getTransactionStatus(final String transactionHash) {

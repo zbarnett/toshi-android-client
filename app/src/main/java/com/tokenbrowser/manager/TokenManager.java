@@ -30,7 +30,6 @@ import java.util.concurrent.Executors;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
-import rx.Completable;
 import rx.Single;
 import rx.schedulers.Schedulers;
 import rx.subjects.BehaviorSubject;
@@ -158,20 +157,18 @@ public class TokenManager {
                 .toSingle();
     }
 
-    public Completable clearUserData() {
-        return Completable.fromAction(() -> {
-            this.sofaMessageManager.clear();
-            this.userManager.clear();
-            this.balanceManager.clear();
-            this.transactionManager.clear();
-            this.wallet.clear();
-            this.areManagersInitialised = false;
-            closeDatabase();
-            SignalPreferences.clear();
-            SharedPrefsUtil.setSignedOut();
-            SharedPrefsUtil.clear();
-            setWallet(null);
-        });
+    public void clearUserData() {
+        this.sofaMessageManager.clear();
+        this.userManager.clear();
+        this.balanceManager.clear();
+        this.transactionManager.clear();
+        this.wallet.clear();
+        this.areManagersInitialised = false;
+        closeDatabase();
+        SignalPreferences.clear();
+        SharedPrefsUtil.setSignedOut();
+        SharedPrefsUtil.clear();
+        setWallet(null);
     }
 
     private void closeDatabase() {
