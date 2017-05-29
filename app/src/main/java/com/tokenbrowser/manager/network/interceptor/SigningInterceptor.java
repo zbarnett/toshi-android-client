@@ -90,6 +90,7 @@ public class SigningInterceptor implements Interceptor {
                     .get()
                     .getTokenManager()
                     .getWallet()
+                    .onErrorReturn(__ -> null)
                     .toBlocking()
                     .value();
     }

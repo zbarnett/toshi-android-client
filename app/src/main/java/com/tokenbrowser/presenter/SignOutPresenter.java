@@ -51,9 +51,11 @@ public class SignOutPresenter implements Presenter<SignOutActivity> {
     }
 
     private Completable clearAndUnregister() {
-        return clearUserDataAndLogOut()
-                .andThen(unregisterChatGcm())
-                .andThen(unregisterEthGcm());
+        return
+                unregisterChatGcm()
+                .andThen(unregisterEthGcm())
+                .doOnError(__ -> clearUserDataAndLogOut())
+                .doOnCompleted(this::clearUserDataAndLogOut);
     }
 
     private Completable unregisterChatGcm() {
@@ -74,8 +76,8 @@ public class SignOutPresenter implements Presenter<SignOutActivity> {
                         .unregisterFromGcm(token));
     }
 
-    private Completable clearUserDataAndLogOut() {
-        return BaseApplication
+    private void clearUserDataAndLogOut() {
+        BaseApplication
                 .get()
                 .getTokenManager()
                 .clearUserData();
