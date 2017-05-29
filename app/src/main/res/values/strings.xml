@@ -235,4 +235,10 @@
     <string name="payment_failed">Payment failed</string>
     <string name="payment_for_value">Payment for %1$s</string>
     <string name="error__reject_transaction" translatable="false">User rejected transaction</string>
+    <string name="pick_file">Pick file</string>
+    <string name="unsupported_file_type">Unsupported file type</string>
+    <string name="mb">MB</string>
+    <string name="no_app_found">Couldn\'t find an app to open the file</string>
+    <string name="no_file_found">Couldn\t find file</string>
+    <string name="invalid_resource">Invalid resource</string>
 </resources>

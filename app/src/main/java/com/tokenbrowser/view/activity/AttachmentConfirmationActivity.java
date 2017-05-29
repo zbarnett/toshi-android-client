@@ -22,19 +22,19 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 
 import com.tokenbrowser.R;
-import com.tokenbrowser.databinding.ActivityImageConfirmationBinding;
-import com.tokenbrowser.presenter.ImageConfirmationPresenter;
+import com.tokenbrowser.databinding.ActivityAttachmentConfirmationBinding;
+import com.tokenbrowser.presenter.AttachmentConfirmationPresenter;
 import com.tokenbrowser.presenter.LoaderIds;
-import com.tokenbrowser.presenter.factory.ImageConfirmationPresenterFactory;
+import com.tokenbrowser.presenter.factory.AttachmentConfirmationPresenterFactory;
 import com.tokenbrowser.presenter.factory.PresenterFactory;
 
-public class ImageConfirmationActivity extends BasePresenterActivity<ImageConfirmationPresenter, ImageConfirmationActivity> {
+public class AttachmentConfirmationActivity extends BasePresenterActivity<AttachmentConfirmationPresenter, AttachmentConfirmationActivity> {
 
-    public static final String FILE_URI = "file_uri";
-    public static final String FILE_PATH = "file_path";
+    public static final String ATTACHMENT_URI = "attachment_uri";
+    public static final String ATTACHMENT_PATH = "attachment_path";
 
-    private ActivityImageConfirmationBinding binding;
-    private ImageConfirmationPresenter presenter;
+    private ActivityAttachmentConfirmationBinding binding;
+    private AttachmentConfirmationPresenter presenter;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -43,21 +43,21 @@ public class ImageConfirmationActivity extends BasePresenterActivity<ImageConfir
     }
 
     private void init() {
-        this.binding = DataBindingUtil.setContentView(this, R.layout.activity_image_confirmation);
+        this.binding = DataBindingUtil.setContentView(this, R.layout.activity_attachment_confirmation);
     }
 
-    public ActivityImageConfirmationBinding getBinding() {
+    public ActivityAttachmentConfirmationBinding getBinding() {
         return this.binding;
     }
 
     @NonNull
     @Override
-    protected PresenterFactory<ImageConfirmationPresenter> getPresenterFactory() {
-        return new ImageConfirmationPresenterFactory();
+    protected PresenterFactory<AttachmentConfirmationPresenter> getPresenterFactory() {
+        return new AttachmentConfirmationPresenterFactory();
     }
 
     @Override
-    protected void onPresenterPrepared(@NonNull ImageConfirmationPresenter presenter) {
+    protected void onPresenterPrepared(@NonNull AttachmentConfirmationPresenter presenter) {
         this.presenter = presenter;
     }
 

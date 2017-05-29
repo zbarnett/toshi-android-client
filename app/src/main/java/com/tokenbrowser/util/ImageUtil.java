@@ -19,6 +19,7 @@ package com.tokenbrowser.util;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.widget.ImageView;
@@ -59,7 +60,6 @@ public class ImageUtil {
                     __ -> {},
                     throwable -> LogUtil.exception(ImageUtil.class, throwable)
             );
-
     }
 
     @Nullable
@@ -98,6 +98,19 @@ public class ImageUtil {
                 .with(imageView.getContext())
                 .load(result)
                 .into(imageView);
+        } catch (final IllegalArgumentException ex) {
+            LogUtil.i(ImageUtil.class, "Tried to render into a now destroyed view.");
+        }
+    }
+
+    public static void renderFileIntoTarget(final Uri uri, final ImageView imageView) {
+        if (imageView == null || imageView.getContext() == null) return;
+
+        try {
+            Glide
+                    .with(imageView.getContext())
+                    .load(uri)
+                    .into(imageView);
         } catch (final IllegalArgumentException ex) {
             LogUtil.i(ImageUtil.class, "Tried to render into a now destroyed view.");
         }

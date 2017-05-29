@@ -27,6 +27,7 @@ import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.webkit.MimeTypeMap;
 
+import com.tokenbrowser.model.local.Attachment;
 import com.tokenbrowser.view.BaseApplication;
 
 import org.whispersystems.libsignal.InvalidMessageException;
@@ -100,7 +101,9 @@ public class FileUtil {
     }
 
     public String getMimeTypeFromFilename(final String filename) {
-        final String fileExtension = MimeTypeMap.getFileExtensionFromUrl(filename);
+        if (filename == null) return null;
+        final String strippedFilename = filename.replaceAll("\\s","");
+        final String fileExtension = MimeTypeMap.getFileExtensionFromUrl(strippedFilename);
         return  MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension);
     }
 
@@ -116,8 +119,8 @@ public class FileUtil {
         .subscribeOn(Schedulers.io());
     }
 
-    public String getDisplayNameFromUri(final Uri uri) {
-        final String [] projection = { MediaStore.Images.Media.DISPLAY_NAME };
+    public Attachment getNameAndSizeFromUri(final Uri uri) {
+        final String [] projection = { MediaStore.Images.Media.DISPLAY_NAME, MediaStore.Images.Media.SIZE };
         final Cursor cursor =
                 BaseApplication.get()
                 .getContentResolver()
@@ -130,10 +133,15 @@ public class FileUtil {
                 );
 
         if (cursor == null) return null;
-        final int column_index = cursor.getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME);
+        final int columnIndexDisplayName = cursor.getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME);
+        final int columnIndexSize = cursor.getColumnIndex(MediaStore.Images.Media.SIZE);
         cursor.moveToFirst();
-        final String displayName = cursor.getString(column_index);
+        final String displayName = cursor.getString(columnIndexDisplayName);
+        final long size = cursor.getLong(columnIndexSize);
         cursor.close();
-        return displayName;
+
+        return new Attachment()
+                .setFilename(displayName)
+                .setSize(size);
     }
 }
