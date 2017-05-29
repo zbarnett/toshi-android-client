@@ -59,6 +59,8 @@ public class TokenManager {
         this.sofaMessageManager = new SofaMessageManager();
         this.transactionManager = new TransactionManager();
         this.walletSubject.onNext(null);
+
+        tryInit().subscribe();
     }
 
     public Single<TokenManager> init() {
