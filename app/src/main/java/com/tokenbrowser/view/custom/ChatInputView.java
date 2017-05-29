@@ -45,12 +45,9 @@ public class ChatInputView extends LinearLayout {
         void onClick(final String userInput);
     }
 
-    public interface OnAttachmentClickedListener {
-        void onClick();
-    }
-
-    private OnAttachmentClickedListener attachmentClickedListener;
+    private OnClickListener attachmentClickedListener;
     private OnSendClickedListener sendClickedListener;
+    private OnClickListener cameraClickedListener;
     private CompositeSubscription subscriptions;
 
     public ChatInputView(Context context) {
@@ -73,8 +70,13 @@ public class ChatInputView extends LinearLayout {
         return this;
     }
 
-    public ChatInputView setOnAttachmentClicked(final OnAttachmentClickedListener listener) {
+    public ChatInputView setOnAttachmentClicked(final OnClickListener listener) {
         this.attachmentClickedListener = listener;
+        return this;
+    }
+
+    public ChatInputView setOnCameraClickedListener(final OnClickListener listener) {
+        this.cameraClickedListener = listener;
         return this;
     }
 
@@ -87,7 +89,8 @@ public class ChatInputView extends LinearLayout {
 
     private void initClickListener() {
         findViewById(R.id.send_button).setOnClickListener(__ -> handleSendClicked());
-        findViewById(R.id.add_attachments_button).setOnClickListener(__ -> this.attachmentClickedListener.onClick());
+        findViewById(R.id.add_attachments_button).setOnClickListener(v -> this.attachmentClickedListener.onClick(v));
+        findViewById(R.id.camera_button).setOnClickListener(v -> this.cameraClickedListener.onClick(v));
     }
 
     private void initEditorActionListener() {
@@ -109,6 +112,8 @@ public class ChatInputView extends LinearLayout {
         final Animator hideAnimation = ObjectAnimator.ofPropertyValuesHolder(PropertyValuesHolder.ofFloat("scaleX", 0, 1));
         final LayoutTransition layoutTransition = new LayoutTransition();
         layoutTransition.setDuration(50);
+        layoutTransition.setStartDelay(LayoutTransition.CHANGE_APPEARING, 0);
+        layoutTransition.setStartDelay(LayoutTransition.CHANGE_DISAPPEARING, 0);
         layoutTransition.setAnimator(LayoutTransition.APPEARING, hideAnimation);
         layoutTransition.setAnimator(LayoutTransition.DISAPPEARING, showAnimation);
         setLayoutTransition(layoutTransition);
@@ -157,8 +162,10 @@ public class ChatInputView extends LinearLayout {
     private void showOrHideSendButton(final CharSequence charSequence) {
         if (charSequence.length() > 0) {
             showSendButton();
+            hideAttachmentButton();
         } else {
             hideSendButton();
+            showAttachmentButton();
         }
     }
 
@@ -176,6 +183,22 @@ public class ChatInputView extends LinearLayout {
                 .alpha(0f)
                 .setDuration(50)
                 .withEndAction(() -> sendButton.setVisibility(View.GONE));
+    }
+
+    private void showAttachmentButton() {
+        final ImageButton attachmentButton = (ImageButton) findViewById(R.id.add_attachments_button);
+        attachmentButton.setVisibility(View.VISIBLE);
+        ViewCompat.animate(attachmentButton)
+                .alpha(1f)
+                .setDuration(50);
+    }
+
+    private void hideAttachmentButton() {
+        final ImageButton attachmentButton = (ImageButton) findViewById(R.id.add_attachments_button);
+        ViewCompat.animate(attachmentButton)
+                .alpha(0f)
+                .setDuration(50)
+                .withEndAction(() -> attachmentButton.setVisibility(View.GONE));
     }
 
     @Override
