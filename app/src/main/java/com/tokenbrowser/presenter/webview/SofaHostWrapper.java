@@ -26,6 +26,7 @@ import android.webkit.WebView;
 
 import com.tokenbrowser.crypto.HDWallet;
 import com.tokenbrowser.model.local.UnsignedW3Transaction;
+import com.tokenbrowser.model.network.SignedTransaction;
 import com.tokenbrowser.model.sofa.SofaAdapters;
 import com.tokenbrowser.presenter.webview.model.ApproveTransactionCallback;
 import com.tokenbrowser.presenter.webview.model.GetAccountsCallback;
@@ -120,10 +121,26 @@ import java.io.IOException;
     private final WebPaymentConfirmationListener confirmationListener = new WebPaymentConfirmationListener() {
         @Override
         public void onWebPaymentApproved(final String callbackId, final String unsignedTransaction) {
-            final String signedTransaction = wallet.signTransaction(unsignedTransaction);
+            final UnsignedW3Transaction transaction;
+            try {
+                transaction = SofaAdapters.get().unsignedW3TransactionFrom(unsignedTransaction);
+            } catch (final IOException e) {
+                LogUtil.exception(getClass(), "Unable to parse unsigned transaction. ", e);
+                return;
+            }
+
+            BaseApplication
+                    .get()
+                    .getTokenManager()
+                    .getTransactionManager()
+                    .signW3Transaction(transaction)
+                    .subscribe(signedTransaction -> handleSignedW3Transaction(callbackId, signedTransaction));
+        }
+
+        private void handleSignedW3Transaction(final String callbackId, final SignedTransaction signedTransaction) {
             final SignTransactionCallback callback =
                     new SignTransactionCallback()
-                            .setResult(signedTransaction);
+                            .setResult(signedTransaction.getSignature());
             doCallBack(callbackId, callback.toJsonEncodedString());
         }
     };

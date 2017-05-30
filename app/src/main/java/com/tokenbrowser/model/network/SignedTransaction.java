@@ -32,4 +32,8 @@ public class SignedTransaction {
         this.signature = signature;
         return this;
     }
+
+    public String getSignature() {
+        return this.signature;
+    }
 }
