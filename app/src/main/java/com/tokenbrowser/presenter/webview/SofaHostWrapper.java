@@ -19,22 +19,24 @@ package com.tokenbrowser.presenter.webview;
 
 
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.webkit.WebView;
 
+import com.tokenbrowser.R;
 import com.tokenbrowser.crypto.HDWallet;
 import com.tokenbrowser.model.local.UnsignedW3Transaction;
 import com.tokenbrowser.model.network.SignedTransaction;
 import com.tokenbrowser.model.sofa.SofaAdapters;
 import com.tokenbrowser.presenter.webview.model.ApproveTransactionCallback;
 import com.tokenbrowser.presenter.webview.model.GetAccountsCallback;
+import com.tokenbrowser.presenter.webview.model.RejectTransactionCallback;
 import com.tokenbrowser.presenter.webview.model.SignTransactionCallback;
 import com.tokenbrowser.util.LogUtil;
 import com.tokenbrowser.view.BaseApplication;
 import com.tokenbrowser.view.fragment.DialogFragment.PaymentConfirmationDialog;
-import com.tokenbrowser.view.fragment.DialogFragment.WebPaymentConfirmationListener;
 
 import java.io.IOException;
 
@@ -118,9 +120,15 @@ import java.io.IOException;
         }
     }
 
-    private final WebPaymentConfirmationListener confirmationListener = new WebPaymentConfirmationListener() {
+    private final PaymentConfirmationDialog.OnPaymentConfirmationListener confirmationListener = new PaymentConfirmationDialog.OnPaymentConfirmationListener() {
         @Override
-        public void onWebPaymentApproved(final String callbackId, final String unsignedTransaction) {
+        public void onPaymentApproved(final Bundle bundle) {
+            final String callbackId = bundle.getString(PaymentConfirmationDialog.CALLBACK_ID);
+            final String unsignedTransaction = bundle.getString(PaymentConfirmationDialog.UNSIGNED_TRANSACTION);
+            handlePaymentApproved(callbackId, unsignedTransaction);
+        }
+
+        private void handlePaymentApproved(final String callbackId, final String unsignedTransaction) {
             final UnsignedW3Transaction transaction;
             try {
                 transaction = SofaAdapters.get().unsignedW3TransactionFrom(unsignedTransaction);
@@ -135,6 +143,15 @@ import java.io.IOException;
                     .getTransactionManager()
                     .signW3Transaction(transaction)
                     .subscribe(signedTransaction -> handleSignedW3Transaction(callbackId, signedTransaction));
+        }
+
+        @Override
+        public void onPaymentRejected(final Bundle bundle) {
+            final String callbackId = bundle.getString(PaymentConfirmationDialog.CALLBACK_ID);
+            final RejectTransactionCallback callback =
+                    new RejectTransactionCallback()
+                            .setError(BaseApplication.get().getString(R.string.error__reject_transaction));
+            doCallBack(callbackId, callback.toJsonEncodedString());
         }
 
         private void handleSignedW3Transaction(final String callbackId, final SignedTransaction signedTransaction) {

@@ -17,13 +17,13 @@
 
 package com.tokenbrowser.presenter;
 
+import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
 import com.tokenbrowser.R;
 import com.tokenbrowser.crypto.util.TypeConverter;
 import com.tokenbrowser.model.local.User;
-import com.tokenbrowser.model.sofa.Payment;
 import com.tokenbrowser.util.EthUtil;
 import com.tokenbrowser.util.ImageUtil;
 import com.tokenbrowser.util.OnSingleClickListener;
@@ -45,12 +45,11 @@ public class PaymentRequestConfirmPresenter implements Presenter<PaymentConfirma
     private boolean firstTimeAttached = true;
 
     private User user;
-    private String callbackId;
+    private Bundle bundle;
     private String encodedEthAmount;
     private String memo;
     private String paymentAddress;
     private String tokenId;
-    private String unsignedTransaction;
     private @PaymentType.Type int paymentType;
 
     @Override
@@ -87,43 +86,23 @@ public class PaymentRequestConfirmPresenter implements Presenter<PaymentConfirma
     }
 
     private void handleApprovedClicked() {
-        final Payment payment = new Payment()
-                .setValue(this.encodedEthAmount);
-
-        if (this.unsignedTransaction != null) {
-            this.view.getPaymentConfirmationListener()
-                     .onWebPaymentApproved(this.callbackId, this.unsignedTransaction);
-            this.view.dismiss();
-            return;
-        }
-        if (this.paymentAddress != null) {
-            payment.setToAddress(this.paymentAddress);
-            this.view.getPaymentConfirmationListener()
-                    .onExternalPaymentApproved(payment);
-            this.view.dismiss();
-            return;
-        }
-
-
-        this.view.getPaymentConfirmationListener()
-                 .onTokenPaymentApproved(this.tokenId, payment);
+        this.view.getPaymentConfirmationListener().onPaymentApproved(this.bundle);
         this.view.dismiss();
     }
 
     private void handleRejectClicked() {
-        this.view.getPaymentConfirmationListener().onPaymentRejected();
+        this.view.getPaymentConfirmationListener().onPaymentRejected(this.bundle);
         this.view.dismiss();
     }
 
     @SuppressWarnings("WrongConstant")
     private void processBundleData() {
-        this.tokenId = this.view.getArguments().getString(PaymentConfirmationDialog.TOKEN_ID);
-        this.unsignedTransaction = this.view.getArguments().getString(PaymentConfirmationDialog.UNSIGNED_TRANSACTION, null);
-        this.paymentAddress = this.view.getArguments().getString(PaymentConfirmationDialog.PAYMENT_ADDRESS);
-        this.encodedEthAmount = this.view.getArguments().getString(PaymentConfirmationDialog.ETH_AMOUNT);
-        this.memo = this.view.getArguments().getString(PaymentConfirmationDialog.MEMO);
-        this.paymentType = this.view.getArguments().getInt(PaymentConfirmationDialog.PAYMENT_TYPE);
-        this.callbackId = this.view.getArguments().getString(PaymentConfirmationDialog.CALLBACK_ID);
+        this.bundle = this.view.getArguments();
+        this.tokenId = this.bundle.getString(PaymentConfirmationDialog.TOKEN_ID);
+        this.paymentAddress = this.bundle.getString(PaymentConfirmationDialog.PAYMENT_ADDRESS);
+        this.encodedEthAmount = this.bundle.getString(PaymentConfirmationDialog.ETH_AMOUNT);
+        this.memo = this.bundle.getString(PaymentConfirmationDialog.MEMO);
+        this.paymentType = this.bundle.getInt(PaymentConfirmationDialog.PAYMENT_TYPE);
     }
 
     private void tryLoadUser() {

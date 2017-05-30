@@ -234,4 +234,5 @@
     <string name="you_declined">You declined</string>
     <string name="payment_failed">Payment failed</string>
     <string name="payment_for_value">Payment for %1$s</string>
+    <string name="error__reject_transaction" translatable="false">User rejected transaction</string>
 </resources>

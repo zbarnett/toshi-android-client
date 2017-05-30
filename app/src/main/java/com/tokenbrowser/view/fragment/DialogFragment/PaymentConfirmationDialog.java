@@ -27,7 +27,6 @@ import android.view.ViewGroup;
 
 import com.tokenbrowser.R;
 import com.tokenbrowser.databinding.FragmentPaymentRequestConfirmationBinding;
-import com.tokenbrowser.model.sofa.Payment;
 import com.tokenbrowser.presenter.LoaderIds;
 import com.tokenbrowser.presenter.PaymentRequestConfirmPresenter;
 import com.tokenbrowser.presenter.factory.PaymentRequestConfirmPresenterFactory;
@@ -37,6 +36,7 @@ import com.tokenbrowser.util.PaymentType;
 public class PaymentConfirmationDialog extends BasePresenterDialogFragment<PaymentRequestConfirmPresenter, PaymentConfirmationDialog> {
 
     public static final String CALLBACK_ID = "callback_id";
+    public static final String CONFIRMATION_TYPE = "confirmation_type";
     public static final String ETH_AMOUNT = "eth_amount";
     public static final String MEMO = "memo";
     public static final String PAYMENT_ADDRESS = "payment_address";
@@ -52,6 +52,7 @@ public class PaymentConfirmationDialog extends BasePresenterDialogFragment<Payme
                                                                     @NonNull final String value,
                                                                     @Nullable final String memo) {
         final Bundle bundle = new Bundle();
+        bundle.putInt(CONFIRMATION_TYPE, PaymentConfirmationType.TOKEN);
         bundle.putString(TOKEN_ID, tokenId);
         return newInstance(bundle, value, memo);
     }
@@ -60,6 +61,7 @@ public class PaymentConfirmationDialog extends BasePresenterDialogFragment<Payme
                                                                        @NonNull final String value,
                                                                        @Nullable final String memo) {
         final Bundle bundle = new Bundle();
+        bundle.putInt(CONFIRMATION_TYPE, PaymentConfirmationType.EXTERNAL);
         bundle.putString(PAYMENT_ADDRESS, paymentAddress);
         return newInstance(bundle, value, memo);
     }
@@ -70,6 +72,7 @@ public class PaymentConfirmationDialog extends BasePresenterDialogFragment<Payme
                                                                   @NonNull final String callbackId,
                                                                   @Nullable final String memo) {
         final Bundle bundle = new Bundle();
+        bundle.putInt(CONFIRMATION_TYPE, PaymentConfirmationType.WEB);
         bundle.putString(UNSIGNED_TRANSACTION, unsignedTransaction);
         bundle.putString(PAYMENT_ADDRESS, paymentAddress);
         bundle.putString(CALLBACK_ID, callbackId);
@@ -88,10 +91,8 @@ public class PaymentConfirmationDialog extends BasePresenterDialogFragment<Payme
     }
 
     public interface OnPaymentConfirmationListener {
-        void onPaymentRejected();
-        void onTokenPaymentApproved(final String tokenId, final Payment payment);
-        void onExternalPaymentApproved(final Payment payment);
-        void onWebPaymentApproved(final String callbackId, final String unsignedTransaction);
+        void onPaymentRejected(final Bundle bundle);
+        void onPaymentApproved(final Bundle bundle);
     }
 
     public void setOnPaymentConfirmationListener(final OnPaymentConfirmationListener listener) {

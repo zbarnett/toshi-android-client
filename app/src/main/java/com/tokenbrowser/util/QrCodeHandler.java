@@ -4,6 +4,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
@@ -17,6 +18,7 @@ import com.tokenbrowser.view.BaseApplication;
 import com.tokenbrowser.view.activity.ChatActivity;
 import com.tokenbrowser.view.activity.ViewUserActivity;
 import com.tokenbrowser.view.fragment.DialogFragment.PaymentConfirmationDialog;
+import com.tokenbrowser.view.fragment.DialogFragment.PaymentConfirmationType;
 
 import rx.Single;
 import rx.Subscription;
@@ -237,19 +239,43 @@ public class QrCodeHandler implements PaymentConfirmationDialog.OnPaymentConfirm
     }
 
     @Override
-    public void onPaymentRejected() {
+    public void onPaymentRejected(final Bundle bundle) {
         this.activity.finish();
     }
 
     @Override
-    public void onExternalPaymentApproved(final Payment payment) {
+    public void onPaymentApproved(final Bundle bundle) {
+        final @PaymentConfirmationType.Type int type = (bundle.getInt(PaymentConfirmationDialog.CONFIRMATION_TYPE));
+
+        final Payment payment = createPayment(bundle);
+        if (type == PaymentConfirmationType.EXTERNAL) {
+            handleExternalPayment(payment);
+            return;
+        }
+
+        if (type == PaymentConfirmationType.TOKEN) {
+            handleTokenPayment(bundle, payment);
+            return;
+        }
+
+        LogUtil.i(getClass(), "Unhandled type in onPaymentApproved.");
+    }
+
+    private Payment createPayment(final Bundle bundle) {
+        final String value = bundle.getString(PaymentConfirmationDialog.ETH_AMOUNT);
+        final String paymentAddress = bundle.getString(PaymentConfirmationDialog.PAYMENT_ADDRESS);
+        return new Payment()
+                .setValue(value)
+                .setToAddress(paymentAddress);
+    }
+
+    private void handleExternalPayment(final Payment payment) {
         try {
             sendExternalPayment(payment);
         } catch (InvalidQrCodePayment invalidQrCodePayment) {
             handleInvalidQrCode();
         }
     }
-
     private void sendExternalPayment(final Payment payment) throws InvalidQrCodePayment {
         BaseApplication
                 .get()
@@ -258,18 +284,13 @@ public class QrCodeHandler implements PaymentConfirmationDialog.OnPaymentConfirm
                 .sendExternalPayment(payment.getToAddress(), payment.getValue());
     }
 
-    @Override
-    public void onTokenPaymentApproved(final String tokenId, final Payment payment) {
+    private void handleTokenPayment(final Bundle bundle, final Payment payment) {
         try {
+            final String tokenId = bundle.getString(PaymentConfirmationDialog.TOKEN_ID);
             goToChatActivityWithPayment(tokenId, payment);
-        } catch (InvalidQrCodePayment e) {
+        } catch (final InvalidQrCodePayment ex) {
             handleInvalidQrCode();
         }
-    }
-
-    @Override
-    public void onWebPaymentApproved(final String callbackId, final String unsignedTransaction) {
-        LogUtil.e(getClass(), "Unexpected onWebPaymentApproved call.");
     }
 
     private void goToChatActivityWithPayment(final String tokenId, final Payment payment) throws InvalidQrCodePayment {
