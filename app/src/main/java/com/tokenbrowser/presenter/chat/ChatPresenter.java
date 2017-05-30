@@ -19,13 +19,10 @@ package com.tokenbrowser.presenter.chat;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.ActivityNotFoundException;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.util.Pair;
 import android.view.View;
@@ -48,6 +45,7 @@ import com.tokenbrowser.model.sofa.SofaAdapters;
 import com.tokenbrowser.model.sofa.SofaMessage;
 import com.tokenbrowser.presenter.AmountPresenter;
 import com.tokenbrowser.presenter.Presenter;
+import com.tokenbrowser.util.ChatNavigation;
 import com.tokenbrowser.util.FileUtil;
 import com.tokenbrowser.util.ImageUtil;
 import com.tokenbrowser.util.KeyboardUtil;
@@ -58,12 +56,8 @@ import com.tokenbrowser.util.PermissionUtil;
 import com.tokenbrowser.util.SoundManager;
 import com.tokenbrowser.view.Animation.SlideUpAnimator;
 import com.tokenbrowser.view.BaseApplication;
-import com.tokenbrowser.view.activity.AmountActivity;
 import com.tokenbrowser.view.activity.AttachmentConfirmationActivity;
 import com.tokenbrowser.view.activity.ChatActivity;
-import com.tokenbrowser.view.activity.FullscreenImageActivity;
-import com.tokenbrowser.view.activity.ViewUserActivity;
-import com.tokenbrowser.view.activity.WebViewActivity;
 import com.tokenbrowser.view.adapter.MessageAdapter;
 import com.tokenbrowser.view.custom.SpeedyLinearLayoutManager;
 import com.tokenbrowser.view.notification.ChatNotificationManager;
@@ -102,6 +96,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     private Subscription updatedMessageSubscription;
     private OutgoingMessageQueue outgoingMessageQueue;
     private PendingTransactionsObservable pendingTransactionsObservable;
+    private ChatNavigation chatNavigation;
 
     private boolean isConversationLoaded = false;
     private String captureImageFilename;
@@ -131,36 +126,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
                 .addOnPaymentRequestRejectListener(message -> updatePaymentRequestState(message, PaymentRequest.REJECTED))
                 .addOnUsernameClickListener(this::searchForUsername)
                 .addOnImageClickListener(this::handleImageClicked)
-                .addOnFileClickListener(this::handleFileClicked);
-    }
-
-    private void handleFileClicked(final String path) {
-        if (this.activity == null) return;
-
-        final File file = new File(path);
-        if (!file.exists()) {
-            Toast.makeText(this.activity, this.activity.getString(R.string.no_file_found), Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        final FileUtil fileUtil = new FileUtil();
-        final String mimeType = fileUtil.getMimeTypeFromFilename(path);
-        final Uri fileUri = fileUtil.getUriFromFile(file);
-
-        startExternalActivity(fileUri, mimeType);
-    }
-
-    private void startExternalActivity(final Uri uri, final String mimeType) {
-        final Intent intent = new Intent(Intent.ACTION_VIEW);
-        PermissionUtil.grantUriPermission(this.activity, intent, uri);
-        intent.setDataAndType(uri, mimeType);
-        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-
-        try {
-            this.activity.startActivity(intent);
-        } catch (ActivityNotFoundException e) {
-            Toast.makeText(this.activity, this.activity.getString(R.string.no_app_found), Toast.LENGTH_SHORT).show();
-        }
+                .addOnFileClickListener(path -> this.chatNavigation.startAttachmentPicker(this.activity, path));
     }
 
     private void searchForUsername(final String username) {
@@ -180,9 +146,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     }
 
     private void handleImageClicked(final String filePath) {
-        final Intent intent = new Intent(this.activity, FullscreenImageActivity.class)
-                .putExtra(FullscreenImageActivity.FILE_PATH, filePath);
-        this.activity.startActivity(intent);
+        this.chatNavigation.startImageActivity(this.activity, filePath);
     }
 
     private void updatePaymentRequestState(
@@ -240,6 +204,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     }
 
     private void initShortLivingObjects() {
+        initChatNavigation();
         getWallet();
         initClickListeners();
         initLayoutManager();
@@ -248,6 +213,10 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         initControlView();
         processIntentData();
         initLoadingSpinner(this.remoteUser);
+    }
+
+    private void initChatNavigation() {
+        this.chatNavigation = new ChatNavigation();
     }
 
     private void getWallet() {
@@ -334,7 +303,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     private void checkExternalStoragePermission() {
         final boolean hasPermission = PermissionUtil.hasPermission(this.activity, Manifest.permission.READ_EXTERNAL_STORAGE);
         if (hasPermission) {
-            startAttachmentPicker();
+            startAttachmentActivity();
         } else {
             PermissionUtil.requestPermission(
                     this.activity,
@@ -363,39 +332,20 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         this.captureImageFilename = photoFile.getName();
         final Uri photoUri = fileUtil.getUriFromFile(photoFile);
 
-        final Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        PermissionUtil.grantUriPermission(this.activity, cameraIntent, photoUri);
-        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
-        this.activity.startActivityForResult(cameraIntent, CAPTURE_IMAGE);
-    }
-
-    private void startAttachmentPicker() {
-        final Intent attachmentIntent =  Intent.createChooser(
-                new Intent()
-                        .setType("*/*")
-                        .setAction(Intent.ACTION_GET_CONTENT)
-                        .addCategory(Intent.CATEGORY_OPENABLE),
-                BaseApplication.get().getString(R.string.select_picture)
-        );
-
-        this.activity.startActivityForResult(attachmentIntent, PICK_ATTACHMENT);
+        this.chatNavigation.startCameraActivity(this.activity, photoUri, CAPTURE_IMAGE);
     }
 
     private final OnSingleClickListener requestButtonClicked = new OnSingleClickListener() {
         @Override
         public void onSingleClick(final View v) {
-            final Intent intent = new Intent(activity, AmountActivity.class)
-                    .putExtra(AmountActivity.VIEW_TYPE, PaymentType.TYPE_REQUEST);
-            activity.startActivityForResult(intent, REQUEST_RESULT_CODE);
+            chatNavigation.startPaymentRequestActivityForResult(activity, REQUEST_RESULT_CODE);
         }
     };
 
     private final OnSingleClickListener payButtonClicked = new OnSingleClickListener() {
         @Override
         public void onSingleClick(final View v) {
-            final Intent intent = new Intent(activity, AmountActivity.class)
-                    .putExtra(AmountActivity.VIEW_TYPE, PaymentType.TYPE_SEND);
-            activity.startActivityForResult(intent, PAY_RESULT_CODE);
+            chatNavigation.startPaymentActivityForResult(activity, PAY_RESULT_CODE);
         }
     };
 
@@ -403,16 +353,10 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         this.activity.getBinding().controlView.hideView();
         removePadding();
         if (control.hasAction()) {
-            handleControlAction(control);
+            this.chatNavigation.startWebViewActivity(this.activity, control.getActionUrl());
         } else {
             sendCommandMessage(control);
         }
-    }
-
-    private void handleControlAction(final Control control) {
-        final Intent intent = new Intent(this.activity, WebViewActivity.class)
-                .putExtra(WebViewActivity.EXTRA__ADDRESS, control.getActionUrl());
-        this.activity.startActivity(intent);
     }
 
     private void removePadding() {
@@ -610,9 +554,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     }
 
     private void viewProfile(final String ownerAddress) {
-        final Intent intent = new Intent(this.activity, ViewUserActivity.class)
-                .putExtra(ViewUserActivity.EXTRA__USER_ADDRESS, ownerAddress);
-        this.activity.startActivity(intent);
+        this.chatNavigation.startProfileActivity(this.activity, ownerAddress);
     }
 
     private void initChatMessageStore(final User remoteUser) {
@@ -803,17 +745,18 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
                 break;
             }
             case PermissionUtil.READ_EXTERNAL_STORAGE_PERMISSION: {
-                startAttachmentPicker();
+                startAttachmentActivity();
                 break;
             }
         }
     }
 
+    private void startAttachmentActivity() {
+        this.chatNavigation.startAttachmentActivity(this.activity, PICK_ATTACHMENT);
+    }
+
     private void handleAttachmentResult(final ActivityResultHolder resultHolder) {
-        final Uri uri = resultHolder.getIntent().getData();
-        final Intent confirmationIntent = new Intent(this.activity, AttachmentConfirmationActivity.class)
-                .putExtra(AttachmentConfirmationActivity.ATTACHMENT_URI, uri);
-        this.activity.startActivityForResult(confirmationIntent, CONFIRM_ATTACHMENT);
+        this.chatNavigation.startAttachmentConfirmationActivity(this.activity, resultHolder.getIntent().getData(), CONFIRM_ATTACHMENT);
     }
 
     private void handleConfirmAttachmentResult(final ActivityResultHolder resultHolder) {
