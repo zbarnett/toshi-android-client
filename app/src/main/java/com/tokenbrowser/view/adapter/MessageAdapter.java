@@ -149,7 +149,7 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
             }
 
             case SofaType.PAYMENT: {
-                final View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item__payment, parent, false);
+                final View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item__request_status, parent, false);
                 return new PaymentViewHolder(v);
             }
 
