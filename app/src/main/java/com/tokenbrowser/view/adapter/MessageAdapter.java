@@ -149,7 +149,9 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
             }
 
             case SofaType.PAYMENT: {
-                final View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item__request_status, parent, false);
+                final View v = isRemote
+                        ? LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item__payment_remote, parent, false)
+                        : LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item__payment_local, parent, false);
                 return new PaymentViewHolder(v);
             }
 
@@ -228,11 +230,11 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
             case SofaType.PAYMENT: {
                 final PaymentViewHolder vh = (PaymentViewHolder) holder;
                 final Payment payment = SofaAdapters.get().paymentFrom(payload);
-                final User remoteUser = this.conversation == null ? null : conversation.getMember();
-                vh.setPayment(payment)
-                  .setRemoteUser(remoteUser)
-                  .setSendState(sofaMessage.getSendState())
-                  .draw();
+                vh
+                        .setPayment(payment)
+                        .setAvatarUri(sofaMessage.getSender() != null ? sofaMessage.getSender().getAvatar() : null)
+                        .setSendState(sofaMessage.getSendState())
+                        .draw();
                 break;
             }
 
