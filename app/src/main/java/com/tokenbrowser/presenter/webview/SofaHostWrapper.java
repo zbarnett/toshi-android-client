@@ -140,7 +140,8 @@ import java.io.IOException;
         private void handleSignedW3Transaction(final String callbackId, final SignedTransaction signedTransaction) {
             final SignTransactionCallback callback =
                     new SignTransactionCallback()
-                            .setResult(signedTransaction.getSignature());
+                            .setSkeleton(signedTransaction.getSkeleton())
+                            .setSignature(signedTransaction.getSignature());
             doCallBack(callbackId, callback.toJsonEncodedString());
         }
     };
