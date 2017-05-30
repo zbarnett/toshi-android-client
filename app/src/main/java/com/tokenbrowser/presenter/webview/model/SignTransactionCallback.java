@@ -20,18 +20,25 @@ package com.tokenbrowser.presenter.webview.model;
 
 public class SignTransactionCallback {
 
-    private String result;
+    private String signature;
+    private String skeleton;
 
-    public SignTransactionCallback setResult(final String result) {
-        this.result = result;
+    public SignTransactionCallback setSkeleton(final String skeleton) {
+        this.skeleton = skeleton;
+        return this;
+    }
+
+    public SignTransactionCallback setSignature(final String signature) {
+        this.signature = signature;
         return this;
     }
 
 
     public String toJsonEncodedString() {
         return String.format(
-                "{\\\"result\\\":\\\"%s\\\"}",
-                result
+                "{\\\"result\\\":[\\\"%s\\\",\\\"%s\\\"]}",
+                skeleton,
+                signature
         );
     }
 }

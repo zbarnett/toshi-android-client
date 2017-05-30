@@ -36,4 +36,8 @@ public class SignedTransaction {
     public String getSignature() {
         return this.signature;
     }
+
+    public String getSkeleton() {
+        return this.tx;
+    }
 }
