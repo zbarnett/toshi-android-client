@@ -20,18 +20,18 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal"
-    android:gravity="center_vertical">
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
 
     <ImageButton
         android:id="@+id/camera_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
         android:scaleType="fitCenter"
         android:paddingLeft="18dp"
-        android:paddingBottom="14dp"
         android:paddingTop="14dp"
+        android:paddingBottom="14dp"
         android:background="@android:color/transparent"
         app:srcCompat="@drawable/ic_camera" />
 
@@ -43,9 +43,10 @@
         android:id="@+id/add_attachments_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
         android:scaleType="fitCenter"
-        android:paddingBottom="14dp"
         android:paddingTop="14dp"
+        android:paddingBottom="14dp"
         android:paddingRight="16dp"
         android:background="@android:color/transparent"
         app:srcCompat="@drawable/ic_photo" />
@@ -53,8 +54,10 @@
     <EditText
         android:id="@+id/user_input"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="36dp"
         android:layout_weight="1"
+        android:layout_gravity="center_vertical"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:paddingLeft="15dp"
@@ -63,16 +66,17 @@
         android:background="@drawable/background_input_chat"
         android:hint="@string/send_message"
         android:imeOptions="actionSend"
-        android:inputType="textCapSentences|textAutoCorrect"
+        android:inputType="textCapSentences|textMultiLine|textAutoCorrect"
         android:maxLength="1500"
-        android:maxLines="1" />
+        android:maxLines="3"/>
 
     <ImageButton
         android:id="@+id/send_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingBottom="14dp"
+        android:layout_gravity="bottom"
         android:paddingTop="14dp"
+        android:paddingBottom="14dp"
         android:paddingRight="18dp"
         android:scaleType="fitCenter"
         android:background="@android:color/transparent"

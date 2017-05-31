@@ -156,7 +156,7 @@
         <com.tokenbrowser.view.custom.ChatInputView
             android:id="@+id/chat_input"
             android:layout_width="match_parent"
-            android:layout_height="52dp"
+            android:layout_height="wrap_content"
             android:background="@color/windowBackground"/>
 
     </LinearLayout>
