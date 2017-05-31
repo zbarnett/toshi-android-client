@@ -19,6 +19,7 @@ package com.tokenbrowser.model.sofa;
 
 import com.tokenbrowser.model.local.SendState;
 import com.tokenbrowser.model.local.User;
+import com.tokenbrowser.util.ImageUtil;
 
 import java.util.UUID;
 import java.util.regex.Matcher;
@@ -178,6 +179,14 @@ public class SofaMessage extends RealmObject {
         final SofaMessage message = makeNew(sender, messageBody);
         if (txHash != null) message.privateKey = txHash;
         return message;
+    }
+
+    public int getAttachmentType() {
+        if (ImageUtil.isImageType(this.attachmentFilePath)) {
+            return SofaType.IMAGE;
+        } else {
+            return SofaType.FILE;
+        }
     }
 
     @Override

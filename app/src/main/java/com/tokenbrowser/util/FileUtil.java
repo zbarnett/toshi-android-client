@@ -17,7 +17,6 @@
 
 package com.tokenbrowser.util;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -25,8 +24,11 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.v4.content.FileProvider;
 import android.webkit.MimeTypeMap;
 
+import com.tokenbrowser.BuildConfig;
+import com.tokenbrowser.model.local.Attachment;
 import com.tokenbrowser.view.BaseApplication;
 
 import org.whispersystems.libsignal.InvalidMessageException;
@@ -38,6 +40,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.UUID;
 
 import okio.BufferedSink;
@@ -78,12 +82,12 @@ public class FileUtil {
             final SignalServiceMessageReceiver messageReceiver) {
         File file = null;
         try {
-            @SuppressLint("DefaultLocale")
-            final String fileName = String.format("%d.jpg", attachment.getId());
-            file = new File(BaseApplication.get().getCacheDir(), fileName);
-            final InputStream stream = messageReceiver.retrieveAttachment(attachment, file);
-            final File destFile = new File(BaseApplication.get().getFilesDir(), fileName);
-            return writeToFileFromInputStream(destFile, stream);
+            final String tempName = String.format("%d", attachment.getId());
+            file = new File(BaseApplication.get().getCacheDir(), tempName);
+            final InputStream inputStream = messageReceiver.retrieveAttachment(attachment, file);
+
+            final File destFile = constructAttachmentFile(attachment.getContentType());
+            return writeToFileFromInputStream(destFile, inputStream);
         } catch (IOException | InvalidMessageException e) {
             LogUtil.exception(getClass(), "Error during writing attachment to file", e);
             return null;
@@ -94,13 +98,31 @@ public class FileUtil {
         }
     }
 
+    private File constructAttachmentFile(final String contentType) throws IOException {
+        final File baseDirectory = BaseApplication.get().getFilesDir();
+        final String directoryPath = contentType.startsWith("image/") ? "images" : "files";
+        final File outputDirectory = new File(baseDirectory, directoryPath);
+
+        if (!outputDirectory.exists()) {
+            outputDirectory.mkdir();
+        }
+
+        final String extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(contentType);
+        final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd-HHmmss");
+        final String baseName = dateFormatter.format(new Date());
+        final String filename = String.format("%s.%s", baseName, extension);
+        return new File(outputDirectory, filename);
+    }
+
     public File createImageFileWithRandomName() {
         final String filename = UUID.randomUUID().toString() + ".jpg";
         return new File(BaseApplication.get().getFilesDir(), filename);
     }
 
     public String getMimeTypeFromFilename(final String filename) {
-        final String fileExtension = MimeTypeMap.getFileExtensionFromUrl(filename);
+        if (filename == null) return null;
+        final String strippedFilename = filename.replaceAll("\\s","");
+        final String fileExtension = MimeTypeMap.getFileExtensionFromUrl(strippedFilename);
         return  MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension);
     }
 
@@ -116,8 +138,8 @@ public class FileUtil {
         .subscribeOn(Schedulers.io());
     }
 
-    public String getDisplayNameFromUri(final Uri uri) {
-        final String [] projection = { MediaStore.Images.Media.DISPLAY_NAME };
+    public Attachment getNameAndSizeFromUri(final Uri uri) {
+        final String [] projection = { MediaStore.Images.Media.DISPLAY_NAME, MediaStore.Images.Media.SIZE };
         final Cursor cursor =
                 BaseApplication.get()
                 .getContentResolver()
@@ -130,10 +152,34 @@ public class FileUtil {
                 );
 
         if (cursor == null) return null;
-        final int column_index = cursor.getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME);
+        final int columnIndexDisplayName = cursor.getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME);
+        final int columnIndexSize = cursor.getColumnIndex(MediaStore.Images.Media.SIZE);
         cursor.moveToFirst();
-        final String displayName = cursor.getString(column_index);
+        final String displayName = cursor.getString(columnIndexDisplayName);
+        final long size = cursor.getLong(columnIndexSize);
         cursor.close();
-        return displayName;
+
+        return new Attachment()
+                .setFilename(displayName)
+                .setSize(size);
+    }
+
+    public String getFilenameFromPath(final String path) {
+        final File file = new File(path);
+        return file.exists() ? file.getName() : "";
+    }
+
+    public long getFileSize(final String path) {
+        final File file = new File(path);
+        return file.exists() ? file.length() : 0;
+    }
+
+    public Uri getUriFromFile(final File file) {
+        return FileProvider
+                .getUriForFile(
+                        BaseApplication.get(),
+                        BuildConfig.APPLICATION_ID + ".fileProvider",
+                        file
+                );
     }
 }

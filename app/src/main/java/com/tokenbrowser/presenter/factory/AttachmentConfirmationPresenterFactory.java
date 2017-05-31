@@ -17,11 +17,11 @@
 
 package com.tokenbrowser.presenter.factory;
 
-import com.tokenbrowser.presenter.ImageConfirmationPresenter;
+import com.tokenbrowser.presenter.AttachmentConfirmationPresenter;
 
-public class ImageConfirmationPresenterFactory implements PresenterFactory<ImageConfirmationPresenter> {
+public class AttachmentConfirmationPresenterFactory implements PresenterFactory<AttachmentConfirmationPresenter> {
     @Override
-    public ImageConfirmationPresenter create() {
-        return new ImageConfirmationPresenter();
+    public AttachmentConfirmationPresenter create() {
+        return new AttachmentConfirmationPresenter();
     }
 }

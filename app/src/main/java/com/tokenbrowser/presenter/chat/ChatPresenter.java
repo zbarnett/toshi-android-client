@@ -19,14 +19,11 @@ package com.tokenbrowser.presenter.chat;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.v4.content.FileProvider;
 import android.util.Pair;
 import android.view.View;
 import android.view.animation.Animation;
@@ -35,7 +32,6 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.PathInterpolator;
 import android.widget.Toast;
 
-import com.tokenbrowser.BuildConfig;
 import com.tokenbrowser.R;
 import com.tokenbrowser.crypto.HDWallet;
 import com.tokenbrowser.model.local.ActivityResultHolder;
@@ -49,6 +45,7 @@ import com.tokenbrowser.model.sofa.SofaAdapters;
 import com.tokenbrowser.model.sofa.SofaMessage;
 import com.tokenbrowser.presenter.AmountPresenter;
 import com.tokenbrowser.presenter.Presenter;
+import com.tokenbrowser.util.ChatNavigation;
 import com.tokenbrowser.util.FileUtil;
 import com.tokenbrowser.util.ImageUtil;
 import com.tokenbrowser.util.KeyboardUtil;
@@ -59,12 +56,8 @@ import com.tokenbrowser.util.PermissionUtil;
 import com.tokenbrowser.util.SoundManager;
 import com.tokenbrowser.view.Animation.SlideUpAnimator;
 import com.tokenbrowser.view.BaseApplication;
-import com.tokenbrowser.view.activity.AmountActivity;
+import com.tokenbrowser.view.activity.AttachmentConfirmationActivity;
 import com.tokenbrowser.view.activity.ChatActivity;
-import com.tokenbrowser.view.activity.FullscreenImageActivity;
-import com.tokenbrowser.view.activity.ImageConfirmationActivity;
-import com.tokenbrowser.view.activity.ViewUserActivity;
-import com.tokenbrowser.view.activity.WebViewActivity;
 import com.tokenbrowser.view.adapter.MessageAdapter;
 import com.tokenbrowser.view.custom.SpeedyLinearLayoutManager;
 import com.tokenbrowser.view.notification.ChatNotificationManager;
@@ -85,10 +78,9 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
 
     private static final int REQUEST_RESULT_CODE = 1;
     private static final int PAY_RESULT_CODE = 2;
-    private static final int PICK_IMAGE = 3;
+    private static final int PICK_ATTACHMENT = 3;
     private static final int CAPTURE_IMAGE = 4;
-    private static final int CONFIRM_IMAGE = 6;
-
+    private static final int CONFIRM_ATTACHMENT = 5;
     private static final String CAPTURE_FILENAME = "caputureImageFilename";
 
     private ChatActivity activity;
@@ -104,6 +96,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     private Subscription updatedMessageSubscription;
     private OutgoingMessageQueue outgoingMessageQueue;
     private PendingTransactionsObservable pendingTransactionsObservable;
+    private ChatNavigation chatNavigation;
 
     private boolean isConversationLoaded = false;
     private String captureImageFilename;
@@ -132,7 +125,8 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
                 .addOnPaymentRequestApproveListener(message -> updatePaymentRequestState(message, PaymentRequest.ACCEPTED))
                 .addOnPaymentRequestRejectListener(message -> updatePaymentRequestState(message, PaymentRequest.REJECTED))
                 .addOnUsernameClickListener(this::searchForUsername)
-                .addOnImageClickListener(this::handleImageClicked);
+                .addOnImageClickListener(this::handleImageClicked)
+                .addOnFileClickListener(path -> this.chatNavigation.startAttachmentPicker(this.activity, path));
     }
 
     private void searchForUsername(final String username) {
@@ -152,9 +146,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     }
 
     private void handleImageClicked(final String filePath) {
-        final Intent intent = new Intent(this.activity, FullscreenImageActivity.class)
-                .putExtra(FullscreenImageActivity.FILE_PATH, filePath);
-        this.activity.startActivity(intent);
+        this.chatNavigation.startImageActivity(this.activity, filePath);
     }
 
     private void updatePaymentRequestState(
@@ -212,6 +204,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     }
 
     private void initShortLivingObjects() {
+        initChatNavigation();
         getWallet();
         initClickListeners();
         initLayoutManager();
@@ -220,6 +213,10 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         initControlView();
         processIntentData();
         initLoadingSpinner(this.remoteUser);
+    }
+
+    private void initChatNavigation() {
+        this.chatNavigation = new ChatNavigation();
     }
 
     private void getWallet() {
@@ -306,7 +303,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     private void checkExternalStoragePermission() {
         final boolean hasPermission = PermissionUtil.hasPermission(this.activity, Manifest.permission.READ_EXTERNAL_STORAGE);
         if (hasPermission) {
-            startGalleryActivity();
+            startAttachmentActivity();
         } else {
             PermissionUtil.requestPermission(
                     this.activity,
@@ -330,47 +327,25 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     }
 
     private void startCameraActivity() {
-        final Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (cameraIntent.resolveActivity(this.activity.getPackageManager()) != null) {
-            final File photoFile = new FileUtil().createImageFileWithRandomName();
-            this.captureImageFilename = photoFile.getName();
-            final Uri photoURI = FileProvider.getUriForFile(
-                    BaseApplication.get(),
-                    BuildConfig.APPLICATION_ID + ".photos",
-                    photoFile);
-            PermissionUtil.grantUriPermission(this.activity, cameraIntent, photoURI);
-            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-            this.activity.startActivityForResult(cameraIntent, CAPTURE_IMAGE);
-        }
-    }
+        final FileUtil fileUtil = new FileUtil();
+        final File photoFile = fileUtil.createImageFileWithRandomName();
+        this.captureImageFilename = photoFile.getName();
+        final Uri photoUri = fileUtil.getUriFromFile(photoFile);
 
-    private void startGalleryActivity() {
-        final Intent pickPictureIntent = new Intent()
-                .setType("image/*")
-                .setAction(Intent.ACTION_GET_CONTENT);
-
-        if (pickPictureIntent.resolveActivity(activity.getPackageManager()) != null) {
-            this.activity.startActivityForResult(Intent.createChooser(
-                    pickPictureIntent,
-                    BaseApplication.get().getString(R.string.select_picture)), PICK_IMAGE);
-        }
+        this.chatNavigation.startCameraActivity(this.activity, photoUri, CAPTURE_IMAGE);
     }
 
     private final OnSingleClickListener requestButtonClicked = new OnSingleClickListener() {
         @Override
         public void onSingleClick(final View v) {
-            final Intent intent = new Intent(activity, AmountActivity.class)
-                    .putExtra(AmountActivity.VIEW_TYPE, PaymentType.TYPE_REQUEST);
-            activity.startActivityForResult(intent, REQUEST_RESULT_CODE);
+            chatNavigation.startPaymentRequestActivityForResult(activity, REQUEST_RESULT_CODE);
         }
     };
 
     private final OnSingleClickListener payButtonClicked = new OnSingleClickListener() {
         @Override
         public void onSingleClick(final View v) {
-            final Intent intent = new Intent(activity, AmountActivity.class)
-                    .putExtra(AmountActivity.VIEW_TYPE, PaymentType.TYPE_SEND);
-            activity.startActivityForResult(intent, PAY_RESULT_CODE);
+            chatNavigation.startPaymentActivityForResult(activity, PAY_RESULT_CODE);
         }
     };
 
@@ -378,16 +353,10 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         this.activity.getBinding().controlView.hideView();
         removePadding();
         if (control.hasAction()) {
-            handleControlAction(control);
+            this.chatNavigation.startWebViewActivity(this.activity, control.getActionUrl());
         } else {
             sendCommandMessage(control);
         }
-    }
-
-    private void handleControlAction(final Control control) {
-        final Intent intent = new Intent(this.activity, WebViewActivity.class)
-                .putExtra(WebViewActivity.EXTRA__ADDRESS, control.getActionUrl());
-        this.activity.startActivity(intent);
     }
 
     private void removePadding() {
@@ -585,9 +554,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     }
 
     private void viewProfile(final String ownerAddress) {
-        final Intent intent = new Intent(this.activity, ViewUserActivity.class)
-                .putExtra(ViewUserActivity.EXTRA__USER_ADDRESS, ownerAddress);
-        this.activity.startActivity(intent);
+        this.chatNavigation.startProfileActivity(this.activity, ownerAddress);
     }
 
     private void initChatMessageStore(final User remoteUser) {
@@ -755,13 +722,14 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         } else if(resultHolder.getRequestCode() == PAY_RESULT_CODE) {
             final String value = resultHolder.getIntent().getStringExtra(AmountPresenter.INTENT_EXTRA__ETH_AMOUNT);
             sendPaymentWithValue(value);
-        } else if (resultHolder.getRequestCode() == PICK_IMAGE) {
-            handleGalleryResult(resultHolder);
+        } else if (resultHolder.getRequestCode() == PICK_ATTACHMENT) {
+            handleAttachmentResult(resultHolder);
         } else if (resultHolder.getRequestCode() == CAPTURE_IMAGE) {
             handleCameraResult();
-        } else if (resultHolder.getRequestCode() == CONFIRM_IMAGE) {
-            handleConfirmationResult(resultHolder);
+        } else if (resultHolder.getRequestCode() == CONFIRM_ATTACHMENT) {
+            handleConfirmAttachmentResult(resultHolder);
         }
+
         return true;
     }
 
@@ -777,36 +745,24 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
                 break;
             }
             case PermissionUtil.READ_EXTERNAL_STORAGE_PERMISSION: {
-                startGalleryActivity();
+                startAttachmentActivity();
                 break;
             }
         }
     }
 
-    private void handleGalleryResult(final ActivityResultHolder resultHolder) {
-        final Uri uri = resultHolder.getIntent().getData();
-        final Intent confirmationIntent = new Intent(this.activity, ImageConfirmationActivity.class)
-                .putExtra(ImageConfirmationActivity.FILE_URI, uri);
-        this.activity.startActivityForResult(confirmationIntent, CONFIRM_IMAGE);
+    private void startAttachmentActivity() {
+        this.chatNavigation.startAttachmentActivity(this.activity, PICK_ATTACHMENT);
     }
 
-    private void handleConfirmationResult(final ActivityResultHolder resultHolder) {
-        final String filePath = resultHolder.getIntent().getStringExtra(ImageConfirmationActivity.FILE_PATH);
+    private void handleAttachmentResult(final ActivityResultHolder resultHolder) {
+        this.chatNavigation.startAttachmentConfirmationActivity(this.activity, resultHolder.getIntent().getData(), CONFIRM_ATTACHMENT);
+    }
 
-        if (filePath == null) {
-            startGalleryActivity();
-            return;
-        }
-
+    private void handleConfirmAttachmentResult(final ActivityResultHolder resultHolder) {
+        final String filePath = resultHolder.getIntent().getStringExtra(AttachmentConfirmationActivity.ATTACHMENT_PATH);
         final File file = new File(filePath);
-        final Subscription sub =
-                new FileUtil().compressImage(FileUtil.MAX_SIZE, file)
-                .subscribe(
-                        compressedFile -> sendMediaMessage(compressedFile.getAbsolutePath()),
-                        this::handleError
-                );
-
-        this.subscriptions.add(sub);
+        sendMediaMessage(file.getAbsolutePath());
     }
 
     private void handleCameraResult() {

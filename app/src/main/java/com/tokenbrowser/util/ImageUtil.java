@@ -19,6 +19,7 @@ package com.tokenbrowser.util;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.widget.ImageView;
@@ -26,6 +27,7 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.Target;
+import com.google.common.io.Files;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.WriterException;
@@ -38,7 +40,9 @@ import com.tokenbrowser.manager.network.image.ForceLoadGlideUrl;
 import com.tokenbrowser.view.BaseApplication;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import rx.Single;
@@ -46,6 +50,8 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 public class ImageUtil {
+
+    private static final List<String> supportedImageTypes = Arrays.asList("jpg", "jpeg", "png", "gif", "bmp", "webp");
 
     public static void load(final String url, final ImageView imageView) {
         if (url == null || imageView == null) return;
@@ -59,7 +65,6 @@ public class ImageUtil {
                     __ -> {},
                     throwable -> LogUtil.exception(ImageUtil.class, throwable)
             );
-
     }
 
     @Nullable
@@ -103,6 +108,19 @@ public class ImageUtil {
         }
     }
 
+    public static void renderFileIntoTarget(final Uri uri, final ImageView imageView) {
+        if (imageView == null || imageView.getContext() == null) return;
+
+        try {
+            Glide
+                    .with(imageView.getContext())
+                    .load(uri)
+                    .into(imageView);
+        } catch (final IllegalArgumentException ex) {
+            LogUtil.i(ImageUtil.class, "Tried to render into a now destroyed view.");
+        }
+    }
+
     public static Single<Bitmap> generateQrCode(final String value) {
         return Single.fromCallable(() -> {
             try {
@@ -131,5 +149,11 @@ public class ImageUtil {
             }
         }
         return bmp;
+    }
+
+    public static boolean isImageType(final String path) {
+        if (path == null) return false;
+        final String fileExtension = Files.getFileExtension(path.toLowerCase());
+        return supportedImageTypes.contains(fileExtension);
     }
 }
