@@ -18,22 +18,12 @@
 package com.tokenbrowser.view.fragment.DialogFragment;
 
 
-import com.tokenbrowser.model.sofa.Payment;
-import com.tokenbrowser.util.LogUtil;
+import android.support.annotation.IntDef;
 
-public abstract class WebPaymentConfirmationListener implements PaymentConfirmationDialog.OnPaymentConfirmationListener {
-    @Override
-    public void onPaymentRejected() {
-        LogUtil.i(getClass(), "Payment rejected");
-    }
-
-    @Override
-    public void onTokenPaymentApproved(final String tokenId, final Payment payment) {
-        LogUtil.e(getClass(), "Token payment approved but it's not expected; nor is it being handled.");
-    }
-
-    @Override
-    public void onExternalPaymentApproved(final Payment payment) {
-        LogUtil.e(getClass(), "External payment approved but it's not expected; nor is it being handled.");
-    }
+public final class PaymentConfirmationType {
+    @IntDef({TOKEN, EXTERNAL, WEB})
+    public @interface Type {}
+    public static final int TOKEN = 1;
+    public static final int EXTERNAL = 2;
+    public static final int WEB = 3;
 }
