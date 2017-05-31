@@ -36,6 +36,7 @@ import com.tokenbrowser.model.network.UserSearchResults;
 import com.tokenbrowser.util.FileNames;
 import com.tokenbrowser.util.FileUtil;
 import com.tokenbrowser.util.LogUtil;
+import com.tokenbrowser.util.SharedPrefsUtil;
 import com.tokenbrowser.view.BaseApplication;
 
 import java.io.File;
@@ -187,6 +188,7 @@ public class UserManager {
     private void migrateUser() {
         final UserDetails ud = new UserDetails().setPaymentAddress(this.wallet.getPaymentAddress());
         updateUser(ud).subscribe();
+        SharedPrefsUtil.setWasMigrated(true);
     }
 
     public Single<User> updateUser(final UserDetails userDetails) {

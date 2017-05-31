@@ -29,6 +29,7 @@ public class SharedPrefsUtil {
     private static final String HAS_BACKED_UP_PHRASE = "hasBackedUpPhrase";
     private static final String HAS_LOADED_APP_FIRST_TIME = "hasLoadedAppFirstTime";
     private static final String LOCAL_CURRENCY_CODE = "localCurrencyCode";
+    private static final String WAS_MIGRATED = "wasMigrated";
 
     public static boolean hasOnboarded() {
         final SharedPreferences prefs = BaseApplication.get().getSharedPreferences(FileNames.USER_PREFS, Context.MODE_PRIVATE);
@@ -75,17 +76,6 @@ public class SharedPrefsUtil {
         return prefs.getBoolean(HAS_BACKED_UP_PHRASE, false);
     }
 
-    //Only clearing HAS_BACKED_UP_PHRASE, STORED_QR_CODE AND LOCAL_CURRENCY_CODE
-    public static void clear() {
-        final SharedPreferences prefs = BaseApplication.get().getSharedPreferences(FileNames.USER_PREFS, Context.MODE_PRIVATE);
-        prefs
-                .edit()
-                .putBoolean(HAS_BACKED_UP_PHRASE, false)
-                .putString(STORED_QR_CODE, null)
-                .putString(LOCAL_CURRENCY_CODE, null)
-                .apply();
-    }
-
     public static void saveCurrency(final String currencyCode) {
         final SharedPreferences prefs = BaseApplication.get().getSharedPreferences(FileNames.USER_PREFS, Context.MODE_PRIVATE);
         prefs.edit()
@@ -106,5 +96,29 @@ public class SharedPrefsUtil {
         final String currency = CurrencyUtil.getCurrencyFromLocale();
         saveCurrency(currency);
         return currency;
+    }
+
+    public static void setWasMigrated(final boolean wasMigrated) {
+        final SharedPreferences prefs = BaseApplication.get().getSharedPreferences(FileNames.USER_PREFS, Context.MODE_PRIVATE);
+        prefs.edit()
+                .putBoolean(WAS_MIGRATED, wasMigrated)
+                .apply();
+    }
+
+    public static boolean wasMigrated() {
+        final SharedPreferences prefs = BaseApplication.get().getSharedPreferences(FileNames.USER_PREFS, Context.MODE_PRIVATE);
+        return prefs.getBoolean(WAS_MIGRATED, false);
+    }
+
+    // INFO: Does not clear all preferences.
+    public static void clear() {
+        final SharedPreferences prefs = BaseApplication.get().getSharedPreferences(FileNames.USER_PREFS, Context.MODE_PRIVATE);
+        prefs
+                .edit()
+                .putBoolean(HAS_BACKED_UP_PHRASE, false)
+                .putString(STORED_QR_CODE, null)
+                .putString(LOCAL_CURRENCY_CODE, null)
+                .putBoolean(WAS_MIGRATED, false)
+                .apply();
     }
 }
