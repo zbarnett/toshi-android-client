@@ -19,9 +19,10 @@ package com.tokenbrowser.crypto;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
 
+import com.tokenbrowser.crypto.hdshim.EthereumKeyChainGroup;
 import com.tokenbrowser.crypto.util.TypeConverter;
-import com.tokenbrowser.R;
 import com.tokenbrowser.exception.InvalidMasterSeedException;
 import com.tokenbrowser.util.FileNames;
 import com.tokenbrowser.util.LogUtil;
@@ -29,13 +30,11 @@ import com.tokenbrowser.view.BaseApplication;
 
 import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.crypto.DeterministicKey;
-import org.bitcoinj.crypto.MnemonicCode;
 import org.bitcoinj.crypto.MnemonicException;
 import org.bitcoinj.wallet.DeterministicSeed;
 import org.bitcoinj.wallet.KeyChain;
 import org.bitcoinj.wallet.UnreadableWalletException;
 import org.bitcoinj.wallet.Wallet;
-import org.spongycastle.util.encoders.Hex;
 
 import java.io.IOException;
 import java.security.Security;
@@ -53,31 +52,19 @@ public class HDWallet {
     private static final String MASTER_SEED = "ms";
     private SharedPreferences prefs;
     private ECKey identityKey;
-    private ECKey receivingKey;
+    private ECKey paymentKey;
     private String masterSeed;
 
-    private void tryInit() {
-        if (this.prefs != null) return;
-        initPreferences();
-        initWordList();
-    }
-
-    private void initPreferences() {
+    public HDWallet() {
         this.prefs = BaseApplication.get().getSharedPreferences(FileNames.WALLET_PREFS, Context.MODE_PRIVATE);
     }
 
-    private void initWordList() {
-        try {
-            MnemonicCode.INSTANCE = new MnemonicCode(BaseApplication.get().getResources().openRawResource(R.raw.bip39_wordlist), null);
-        } catch (final IOException e) {
-            LogUtil.exception(getClass(), "Wordlist not loaded", e);
-            throw new RuntimeException(e);
-        }
+    public HDWallet(@NonNull final SharedPreferences preferences) {
+        this.prefs = preferences;
     }
 
     public Single<HDWallet> getExistingWallet() {
         return Single.fromCallable(() -> {
-            tryInit();
             this.masterSeed = readMasterSeedFromStorage();
             if (this.masterSeed == null) throw new InvalidMasterSeedException(new Throwable("Master seed is null"));
             final Wallet wallet = initFromMasterSeed(this.masterSeed);
@@ -89,7 +76,6 @@ public class HDWallet {
 
     public Single<HDWallet> getOrCreateWallet() {
         return Single.fromCallable(() -> {
-            tryInit();
             this.masterSeed = readMasterSeedFromStorage();
             final Wallet wallet = this.masterSeed == null
                     ? generateNewWallet()
@@ -114,7 +100,7 @@ public class HDWallet {
         try {
             final DeterministicSeed seed = getSeed(masterSeed);
             seed.check();
-            return Wallet.fromSeed(getNetworkParameters(), seed);
+            return constructFromSeed(seed);
         } catch (final UnreadableWalletException | MnemonicException e) {
             throw new RuntimeException("Unable to create wallet. Seed is invalid");
         }
@@ -122,11 +108,10 @@ public class HDWallet {
 
     public Single<HDWallet> createFromMasterSeed(final String masterSeed) {
         return Single.fromCallable(() -> {
-            tryInit();
             try {
                 final DeterministicSeed seed = getSeed(masterSeed);
                 seed.check();
-                final Wallet wallet = Wallet.fromSeed(getNetworkParameters(), seed);
+                final Wallet wallet = constructFromSeed(seed);
                 deriveKeysFromWallet(wallet);
                 saveMasterSeedToStorage(masterSeed);
                 return this;
@@ -134,6 +119,11 @@ public class HDWallet {
                 throw new InvalidMasterSeedException(e);
             }
         });
+    }
+
+    @NonNull
+    private Wallet constructFromSeed(final DeterministicSeed seed) {
+        return new Wallet(getNetworkParameters(),  new EthereumKeyChainGroup(getNetworkParameters(), seed));
     }
 
     private DeterministicSeed getSeed(final String masterSeed) throws UnreadableWalletException {
@@ -147,7 +137,7 @@ public class HDWallet {
     private void deriveKeysFromWallet(final Wallet wallet) {
         try {
             deriveIdentityKey(wallet);
-            deriveReceivingKey(wallet);
+            derivePaymentKey(wallet);
         } catch (final UnreadableWalletException | IOException ex) {
             throw new RuntimeException("Error deriving keys: " + ex);
         }
@@ -157,8 +147,8 @@ public class HDWallet {
         this.identityKey = deriveKeyFromWallet(wallet, 0, KeyChain.KeyPurpose.AUTHENTICATION);
     }
 
-    private void deriveReceivingKey(final Wallet wallet) throws IOException, UnreadableWalletException {
-        this.receivingKey = deriveKeyFromWallet(wallet, 0, KeyChain.KeyPurpose.RECEIVE_FUNDS);
+    private void derivePaymentKey(final Wallet wallet) throws IOException, UnreadableWalletException {
+        this.paymentKey = deriveKeyFromWallet(wallet, 0, KeyChain.KeyPurpose.RECEIVE_FUNDS);
     }
 
     private ECKey deriveKeyFromWallet(final Wallet wallet, final int iteration, final KeyChain.KeyPurpose keyPurpose) throws UnreadableWalletException, IOException {
@@ -181,7 +171,7 @@ public class HDWallet {
     public String signTransaction(final String data) {
         try {
             final byte[] transactionBytes = TypeConverter.StringHexToByteArray(data);
-            return sign(transactionBytes, this.receivingKey);
+            return sign(transactionBytes, this.identityKey);
         } catch (final Exception e) {
             LogUtil.print(getClass(), "Unable to sign transaction. " + e);
             return null;
@@ -213,34 +203,21 @@ public class HDWallet {
         return null;
     }
 
-    private String getPrivateKey() {
-        if(this.identityKey != null) {
-            final byte[] privateKeyByes = this.identityKey.getPrivKeyBytes();
-            return privateKeyByes != null ? Hex.toHexString(privateKeyByes) : null;
-        }
-        return null;
-    }
-
-    private String getPublicKey() {
-        if (this.identityKey == null) return null;
-        return Hex.toHexString(this.identityKey.getPubKey());
-    }
-
     public String getOwnerAddress() {
         if (this.identityKey == null) return null;
         return TypeConverter.toJsonHex(this.identityKey.getAddress());
     }
 
     public String getPaymentAddress() {
-        if(this.receivingKey != null) {
-            return TypeConverter.toJsonHex(this.receivingKey.getAddress());
+        if(this.paymentKey != null) {
+            return TypeConverter.toJsonHex(this.paymentKey.getAddress());
         }
         return null;
     }
 
     @Override
     public String toString() {
-        return "Private: " + getPrivateKey() + "\nPublic: " + getPublicKey() + "\nAddress: " + getOwnerAddress();
+        return "Identity: " + getOwnerAddress() + "\nPayment: " + getPaymentAddress();
     }
 
     private void saveMasterSeedToStorage(final String masterSeed) {

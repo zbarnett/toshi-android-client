@@ -241,4 +241,6 @@
     <string name="no_app_found">Couldn\'t find an app to open the file</string>
     <string name="no_file_found">Couldn\t find file</string>
     <string name="invalid_resource">Invalid resource</string>
+    <string name="dialog__migration_title">Token Wallet Changes</string>
+    <string name="dialog__migration_message">We have made changes to make Token compatible with other services - as a result your balance will appear to be reset. As this is only testnet ETH, you don\'t need to take any action. If you do want to recover your balance for any reason, you can read how to do it here: http://developers.tokenbrowser.com/page/migrating-your-token-wallet</string>
 </resources>
