@@ -67,7 +67,11 @@ public class LogUtil  {
         final String logTag = getLogTag(callingClass);
         final Throwable throwableWithInfo = new Throwable(additionalInfo + ": " + throwable.toString());
         if (!BuildConfig.DEBUG) {
-            Crashlytics.logException(throwableWithInfo);
+            try {
+                Crashlytics.logException(throwableWithInfo);
+            } catch (IllegalStateException ex) {
+                e(logTag, "Crashlytics not initialised.");
+            }
         }
         e(logTag, throwableWithInfo.toString());
     }
