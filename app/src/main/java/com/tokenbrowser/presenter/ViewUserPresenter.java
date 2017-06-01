@@ -47,6 +47,7 @@ import com.tokenbrowser.view.activity.AmountActivity;
 import com.tokenbrowser.view.activity.ChatActivity;
 import com.tokenbrowser.view.activity.ViewUserActivity;
 
+import rx.Completable;
 import rx.Single;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -247,12 +248,13 @@ public final class ViewUserPresenter implements
 
         private void handleAddContact(final boolean isAContact) {
             if (isAContact) {
-                deleteContact(user);
+                deleteContact(user)
+                        .subscribe(() -> updateAddContactState());
             } else {
-                saveContact(user);
-                SoundManager.getInstance().playSound(SoundManager.ADD_CONTACT);
+                saveContact(user)
+                        .doOnCompleted(() -> SoundManager.getInstance().playSound(SoundManager.ADD_CONTACT))
+                        .subscribe(() -> updateAddContactState());
             }
-            updateAddContactState();
         }
     };
 
@@ -269,16 +271,16 @@ public final class ViewUserPresenter implements
         LogUtil.exception(getClass(), "Error while checking if user is a contact", throwable);
     }
 
-    private void deleteContact(final User user) {
-        BaseApplication
+    private Completable deleteContact(final User user) {
+        return BaseApplication
             .get()
             .getTokenManager()
             .getUserManager()
             .deleteContact(user);
     }
 
-    private void saveContact(final User user) {
-        BaseApplication
+    private Completable saveContact(final User user) {
+        return BaseApplication
             .get()
             .getTokenManager()
             .getUserManager()
