@@ -43,6 +43,7 @@ import com.tokenbrowser.view.activity.AmountActivity;
 import com.tokenbrowser.view.activity.ChatActivity;
 import com.tokenbrowser.view.activity.ViewAppActivity;
 
+import rx.Completable;
 import rx.Single;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -214,12 +215,13 @@ public class ViewAppPresenter implements Presenter<ViewAppActivity> {
 
         private void toggleFavorite(final boolean isCurrentlyFavorited) {
             if (isCurrentlyFavorited) {
-                removeFromFavorites();
+                removeFromFavorites()
+                    .subscribe(() -> updateFavoriteButtonState());
             } else {
-                addToFavorites();
-                SoundManager.getInstance().playSound(SoundManager.ADD_CONTACT);
+                addToFavorites()
+                    .doOnCompleted(() -> SoundManager.getInstance().playSound(SoundManager.ADD_CONTACT))
+                    .subscribe(() -> updateFavoriteButtonState());
             }
-            updateFavoriteButtonState();
         }
     };
 
@@ -232,16 +234,16 @@ public class ViewAppPresenter implements Presenter<ViewAppActivity> {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    private void removeFromFavorites() {
-        BaseApplication
+    private Completable removeFromFavorites() {
+        return BaseApplication
                 .get()
                 .getTokenManager()
                 .getUserManager()
                 .deleteContact(this.appAsUser);
     }
 
-    private void addToFavorites() {
-        BaseApplication
+    private Completable addToFavorites() {
+        return BaseApplication
                 .get()
                 .getTokenManager()
                 .getUserManager()

@@ -19,6 +19,7 @@ package com.tokenbrowser.manager.store;
 
 
 import com.tokenbrowser.model.local.PendingTransaction;
+import com.tokenbrowser.view.BaseApplication;
 
 import java.util.List;
 
@@ -40,7 +41,7 @@ public class PendingTransactionStore {
     }
 
     public void save(final PendingTransaction pendingTransaction) {
-        final Realm realm = Realm.getDefaultInstance();
+        final Realm realm = BaseApplication.get().getRealm();
         realm.beginTransaction();
         realm.insertOrUpdate(pendingTransaction);
         realm.commitTransaction();
@@ -57,7 +58,7 @@ public class PendingTransactionStore {
     }
 
     private PendingTransaction loadSingleWhere(final String fieldName, final String value) {
-        final Realm realm = Realm.getDefaultInstance();
+        final Realm realm = BaseApplication.get().getRealm();
         final RealmQuery<PendingTransaction> query = realm
                 .where(PendingTransaction.class)
                 .equalTo(fieldName, value);
@@ -69,7 +70,7 @@ public class PendingTransactionStore {
     }
 
     private List<PendingTransaction> loadAll() {
-        final Realm realm = Realm.getDefaultInstance();
+        final Realm realm = BaseApplication.get().getRealm();
         final RealmQuery<PendingTransaction> query = realm
                 .where(PendingTransaction.class);
 

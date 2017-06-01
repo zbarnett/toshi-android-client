@@ -19,6 +19,7 @@ package com.tokenbrowser.manager.store;
 
 
 import com.tokenbrowser.model.local.User;
+import com.tokenbrowser.view.BaseApplication;
 
 import java.util.List;
 
@@ -43,7 +44,7 @@ public class UserStore {
     }
 
     public void save(final User user) {
-        final Realm realm = Realm.getDefaultInstance();
+        final Realm realm = BaseApplication.get().getRealm();
         realm.beginTransaction();
         realm.insertOrUpdate(user);
         realm.commitTransaction();
@@ -51,7 +52,7 @@ public class UserStore {
     }
 
     private User loadWhere(final String fieldName, final String value) {
-        final Realm realm = Realm.getDefaultInstance();
+        final Realm realm = BaseApplication.get().getRealm();
         final User user =
                 realm.where(User.class)
                 .equalTo(fieldName, value)
@@ -63,7 +64,7 @@ public class UserStore {
     }
 
     private List<User> filter(final String fieldName, final String value) {
-        final Realm realm = Realm.getDefaultInstance();
+        final Realm realm = BaseApplication.get().getRealm();
         final RealmQuery<User> query = realm.where(User.class);
         query.contains(fieldName, value, Case.INSENSITIVE);
         final List<User> result = realm.copyFromRealm(query.findAll());

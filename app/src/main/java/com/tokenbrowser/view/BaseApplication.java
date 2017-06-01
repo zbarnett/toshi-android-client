@@ -25,7 +25,9 @@ import android.support.multidex.MultiDexApplication;
 
 import com.tokenbrowser.manager.TokenManager;
 import com.tokenbrowser.service.NetworkChangeReceiver;
+import com.tokenbrowser.util.LogUtil;
 
+import io.realm.Realm;
 import rx.subjects.BehaviorSubject;
 
 public final class BaseApplication extends MultiDexApplication {
@@ -39,6 +41,13 @@ public final class BaseApplication extends MultiDexApplication {
 
     public final TokenManager getTokenManager() {
         return this.tokenManager;
+    }
+
+    public final Realm getRealm() {
+        if (Thread.currentThread().getId() == 1) {
+            LogUtil.e(getClass(), "DB call done on Main Thread. Move this to a background thread.");
+        }
+        return this.tokenManager.getRealm().toBlocking().value();
     }
 
     @Override

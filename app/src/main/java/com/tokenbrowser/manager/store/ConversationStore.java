@@ -21,9 +21,10 @@ package com.tokenbrowser.manager.store;
 import android.util.Pair;
 
 import com.tokenbrowser.model.local.Conversation;
-import com.tokenbrowser.model.sofa.SofaMessage;
 import com.tokenbrowser.model.local.User;
+import com.tokenbrowser.model.sofa.SofaMessage;
 import com.tokenbrowser.util.LogUtil;
+import com.tokenbrowser.view.BaseApplication;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -91,7 +92,7 @@ public class ConversationStore {
                 broadcastNewChatMessage(user.getTokenId(), timestamMessage);
             }
 
-            final Realm realm = Realm.getDefaultInstance();
+            final Realm realm = BaseApplication.get().getRealm();
             realm.beginTransaction();
             final SofaMessage storedMessage = realm.copyToRealmOrUpdate(message);
             conversationToStore.setLatestMessage(storedMessage);
@@ -136,7 +137,7 @@ public class ConversationStore {
                 return null;
             }
 
-            final Realm realm = Realm.getDefaultInstance();
+            final Realm realm = BaseApplication.get().getRealm();
             realm.beginTransaction();
             storedConversation.setNumberOfUnread(0);
             realm.insertOrUpdate(storedConversation);
@@ -153,7 +154,7 @@ public class ConversationStore {
     }
 
     public List<Conversation> loadAll() {
-        final Realm realm = Realm.getDefaultInstance();
+        final Realm realm = BaseApplication.get().getRealm();
         final RealmQuery<Conversation> query = realm.where(Conversation.class);
         final RealmResults<Conversation> results = query.findAllSorted("updatedTime", Sort.DESCENDING);
         final List<Conversation> retVal = realm.copyFromRealm(results);
@@ -171,7 +172,7 @@ public class ConversationStore {
     }
 
     private Conversation loadWhere(final String fieldName, final String value) {
-        final Realm realm = Realm.getDefaultInstance();
+        final Realm realm = BaseApplication.get().getRealm();
         final Conversation result = realm
                 .where(Conversation.class)
                 .equalTo(fieldName, value)
@@ -183,7 +184,7 @@ public class ConversationStore {
 
     public void updateMessage(final User user, final SofaMessage message) {
         Single.fromCallable(() -> {
-            final Realm realm = Realm.getDefaultInstance();
+            final Realm realm = BaseApplication.get().getRealm();
             realm.beginTransaction();
             realm.insertOrUpdate(message);
             realm.commitTransaction();
@@ -199,14 +200,7 @@ public class ConversationStore {
     }
 
     public boolean areUnreadMessages() {
-        final Realm realm;
-        try {
-            realm = Realm.getDefaultInstance();
-        } catch (final IllegalStateException ex) {
-            LogUtil.exception(getClass(), "RealmConfig unexpectedly null", ex);
-            return false;
-        }
-
+        final Realm realm = BaseApplication.get().getRealm();
         final Conversation result = realm
                 .where(Conversation.class)
                 .greaterThan("numberOfUnread", 0)

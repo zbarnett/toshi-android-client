@@ -20,54 +20,72 @@ package com.tokenbrowser.manager.store;
 
 import com.tokenbrowser.model.local.Contact;
 import com.tokenbrowser.model.local.User;
+import com.tokenbrowser.view.BaseApplication;
 
 import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
+import rx.Completable;
 import rx.Single;
+import rx.schedulers.Schedulers;
 
 public class ContactStore {
 
-    public boolean userIsAContact(final User user) {
-        final Realm realm = Realm.getDefaultInstance();
-        final boolean result = realm
-                .where(Contact.class)
-                .equalTo("owner_address", user.getTokenId())
-                .findFirst() != null;
-        realm.close();
-        return result;
+    public Single<Boolean> userIsAContact(final User user) {
+        return Single.fromCallable(() -> {
+            final Realm realm = BaseApplication.get().getRealm();
+            final boolean result = realm
+                    .where(Contact.class)
+                    .equalTo("owner_address", user.getTokenId())
+                    .findFirst() != null;
+            realm.close();
+            return result;
+        })
+        .subscribeOn(Schedulers.io());
+
     }
 
-    public void save(final User user) {
-        final Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
-        final User storedUser = realm.copyToRealmOrUpdate(user);
-        final Contact contact = new Contact(storedUser);
-        realm.insert(contact);
-        realm.commitTransaction();
-        realm.close();
+    public Completable save(final User user) {
+        return Completable.fromAction(() -> {
+            final Realm realm = BaseApplication.get().getRealm();
+            realm.beginTransaction();
+            final User storedUser = realm.copyToRealmOrUpdate(user);
+            final Contact contact = new Contact(storedUser);
+            realm.insert(contact);
+            realm.commitTransaction();
+            realm.close();
+        })
+        .subscribeOn(Schedulers.io());
     }
 
-    public void delete(final User user) {
-        final Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
-        realm
-                .where(Contact.class)
-                .equalTo("owner_address", user.getTokenId())
-                .findFirst()
-                .deleteFromRealm();
-        realm.commitTransaction();
-        realm.close();
+    public Completable delete(final User user) {
+        return Completable.fromAction(() -> {
+            final Realm realm = BaseApplication.get().getRealm();
+            realm.beginTransaction();
+            realm
+                    .where(Contact.class)
+                    .equalTo("owner_address", user.getTokenId())
+                    .findFirst()
+                    .deleteFromRealm();
+            realm.commitTransaction();
+            realm.close();
+        })
+        .subscribeOn(Schedulers.io());
+
     }
 
     public Single<List<Contact>> loadAll() {
-        final Realm realm = Realm.getDefaultInstance();
-        final RealmQuery<Contact> query = realm.where(Contact.class);
-        final RealmResults<Contact> results = query.findAll();
-        final List<Contact> retVal = realm.copyFromRealm(results.sort("user.name"));
-        realm.close();
-        return Single.just(retVal);
+        return Single.fromCallable(() -> {
+            final Realm realm = BaseApplication.get().getRealm();
+            final RealmQuery<Contact> query = realm.where(Contact.class);
+            final RealmResults<Contact> results = query.findAll();
+            final List<Contact> retVal = realm.copyFromRealm(results.sort("user.name"));
+            realm.close();
+            return retVal;
+        })
+        .subscribeOn(Schedulers.io());
+
     }
 }

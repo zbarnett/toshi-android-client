@@ -19,6 +19,7 @@ package com.tokenbrowser.crypto.signal.store;
 
 import com.tokenbrowser.crypto.signal.SignalPreferences;
 import com.tokenbrowser.crypto.signal.model.SignalIdentity;
+import com.tokenbrowser.view.BaseApplication;
 
 import org.whispersystems.libsignal.IdentityKey;
 import org.whispersystems.libsignal.IdentityKeyPair;
@@ -65,7 +66,7 @@ public class SignalIdentityKeyStore implements IdentityKeyStore {
     }
 
     private void writeObjectToDatabase(final RealmObject object) {
-        final Realm realm = Realm.getDefaultInstance();
+        final Realm realm = BaseApplication.get().getRealm();
         try {
             realm.beginTransaction();
             realm.copyToRealmOrUpdate(object);

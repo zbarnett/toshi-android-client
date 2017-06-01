@@ -303,17 +303,15 @@ public class UserManager {
     }
 
     public Single<Boolean> isUserAContact(final User user) {
-        return Single
-                .fromCallable(() -> contactStore.userIsAContact(user))
-                .subscribeOn(Schedulers.io());
+        return this.contactStore.userIsAContact(user);
     }
 
-    public void deleteContact(final User user) {
-        this.contactStore.delete(user);
+    public Completable deleteContact(final User user) {
+        return this.contactStore.delete(user);
     }
 
-    public void saveContact(final User user) {
-        this.contactStore.save(user);
+    public Completable saveContact(final User user) {
+        return this.contactStore.save(user);
     }
 
     public Single<Boolean> isUserBlocked(final String ownerAddress) {
