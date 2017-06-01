@@ -97,7 +97,7 @@ public class ChatNotification {
     }
 
     public List<String> getLastFewMessages() {
-        return this.lastFewMessages;
+        return new ArrayList<>(lastFewMessages);
     }
 
     public PendingIntent getPendingIntent() {
