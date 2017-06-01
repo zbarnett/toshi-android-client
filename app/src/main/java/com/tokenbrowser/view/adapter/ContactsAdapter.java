@@ -76,11 +76,8 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactViewHolder> imp
 
     @Override
     public void onClick(final int position) {
-        if (this.onItemClickListener == null) {
-            return;
-        }
-
-        final User clickedUser = users.get(position);
+        if (this.onItemClickListener == null && position > 0) return;
+        final User clickedUser = this.users.get(position);
         this.onItemClickListener.onItemClick(clickedUser);
     }
 
