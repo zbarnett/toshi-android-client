@@ -92,7 +92,7 @@ public class RatingHandler {
 
     private void closeDialog() {
         if (this.rateDialog != null) {
-            this.rateDialog.dismiss();
+            this.rateDialog.dismissAllowingStateLoss();
             this.rateDialog = null;
         }
     }
