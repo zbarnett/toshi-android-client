@@ -31,7 +31,6 @@ public class User extends RealmObject {
     private String owner_address;
     private String payment_address;
     private String username;
-    private CustomAppInformation customAppInfo;
     private long cacheTimestamp;
     private Double reputation_score;
     private int review_count;
@@ -39,14 +38,11 @@ public class User extends RealmObject {
     private String avatar;
     private String location;
     private String name;
+    private boolean is_app;
 
     // ctors
     public User() {
         this.cacheTimestamp = System.currentTimeMillis();
-    }
-
-    public void setCustomAppInfo(final CustomAppInformation customAppInfo) {
-        this.customAppInfo = customAppInfo;
     }
 
     // Getters
@@ -104,6 +100,10 @@ public class User extends RealmObject {
 
     public int getReviewCount() {
         return review_count;
+    }
+
+    public boolean isApp() {
+        return is_app;
     }
 
     @Override

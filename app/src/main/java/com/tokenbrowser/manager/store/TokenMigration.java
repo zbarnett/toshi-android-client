@@ -131,6 +131,16 @@ public class TokenMigration implements RealmMigration {
             blockedUserSchema.addField("owner_address", String.class, FieldAttribute.PRIMARY_KEY);
             oldVersion++;
         }
+
+        if (oldVersion == 9) {
+            schema.get("User")
+                    .removeField("customAppInfo")
+                    .addField("is_app", boolean.class);
+            if (schema.contains("CustomAppInformation")) {
+                schema.remove("CustomAppInformation");
+            }
+            oldVersion++;
+        }
     }
 
     @Override

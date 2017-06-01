@@ -582,6 +582,14 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     }
 
     private void handleConversationLoaded(final Conversation conversation) {
+        initConversation(conversation);
+        updateEmptyState();
+        tryClearMessageSubscriptions();
+        initConversationObservables();
+        this.isConversationLoaded = true;
+    }
+
+    private void initConversation(final Conversation conversation) {
         final boolean shouldAddMessages = conversation != null && conversation.getAllMessages() != null && conversation.getAllMessages().size() > 0;
         if (shouldAddMessages) {
             this.messageAdapter.setConversation(conversation);
@@ -589,11 +597,26 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
 
             final SofaMessage lastSofaMessage = conversation.getAllMessages().get(conversation.getAllMessages().size() - 1);
             setControlView(lastSofaMessage);
+        } else {
+            initAppConversation();
         }
+    }
 
-        updateEmptyState();
-        tryClearMessageSubscriptions();
+    private void initAppConversation() {
+        if (!this.remoteUser.isApp()) return;
 
+        final Message message = new Message().setBody("");
+        final String messageBody = SofaAdapters.get().toJson(message);
+        final SofaMessage sofaMessage = new SofaMessage().makeNew(getCurrentLocalUser(), messageBody);
+
+        BaseApplication
+                .get()
+                .getTokenManager()
+                .getSofaMessageManager()
+                .sendMessage(this.remoteUser, sofaMessage);
+    }
+
+    private void initConversationObservables() {
         this.newMessageSubscription =
                 chatObservables.first
                 .subscribeOn(Schedulers.io())
@@ -612,8 +635,10 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
                         this::handleError
                 );
 
-        this.subscriptions.addAll(this.newMessageSubscription, this.updatedMessageSubscription);
-        this.isConversationLoaded = true;
+        this.subscriptions.addAll(
+                this.newMessageSubscription,
+                this.updatedMessageSubscription
+        );
     }
 
     private void tryClearMessageSubscriptions() {
