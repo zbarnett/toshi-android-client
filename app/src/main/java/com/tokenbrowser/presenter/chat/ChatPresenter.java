@@ -59,6 +59,7 @@ import com.tokenbrowser.view.BaseApplication;
 import com.tokenbrowser.view.activity.AttachmentConfirmationActivity;
 import com.tokenbrowser.view.activity.ChatActivity;
 import com.tokenbrowser.view.adapter.MessageAdapter;
+import com.tokenbrowser.view.custom.ChatInputView;
 import com.tokenbrowser.view.custom.SpeedyLinearLayoutManager;
 import com.tokenbrowser.view.notification.ChatNotificationManager;
 
@@ -703,6 +704,9 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     }
 
     private void hideKeyboard() {
+        if (this.activity == null) return;
+        final ChatInputView chatInputView = this.activity.getBinding().chatInput;
+        if (chatInputView != null && chatInputView.getInputView() != null) return;
         KeyboardUtil.hideKeyboard(this.activity.getBinding().chatInput.getInputView());
     }
 
