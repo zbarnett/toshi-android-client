@@ -360,7 +360,7 @@ public class EditProfilePresenter implements Presenter<EditProfileActivity> {
 
     private void closeDialogs() {
         if (this.chooserDialog != null) {
-            this.chooserDialog.dismiss();
+            this.chooserDialog.dismissAllowingStateLoss();
             this.chooserDialog = null;
         }
     }
