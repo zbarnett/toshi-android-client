@@ -37,6 +37,7 @@ import com.tokenbrowser.util.LogUtil;
 import com.tokenbrowser.util.SharedPrefsUtil;
 import com.tokenbrowser.util.SoundManager;
 import com.tokenbrowser.view.BaseApplication;
+import com.tokenbrowser.view.activity.BackupPhraseInfoActivity;
 import com.tokenbrowser.view.activity.MainActivity;
 import com.tokenbrowser.view.activity.ScannerActivity;
 import com.tokenbrowser.view.adapter.NavigationAdapter;
@@ -87,6 +88,7 @@ public class MainPresenter implements Presenter<MainActivity> {
         trySelectTabFromIntent();
         attachUnreadMessagesSubscription();
         attachUserSubscription();
+        handleHasBackedUpPhrase();
         showBetaWarningDialog();
     }
 
@@ -153,6 +155,14 @@ public class MainPresenter implements Presenter<MainActivity> {
         }
     }
 
+    private void showUnreadBadge() {
+        this.activity.getBinding().navBar.setNotification(" ", 1);
+    }
+
+    private void hideUnreadBadge() {
+        this.activity.getBinding().navBar.setNotification("", 1);
+    }
+
     // ToDo:This code can be removed July 31st 2017
     private void attachUserSubscription() {
         final Subscription sub =
@@ -183,7 +193,7 @@ public class MainPresenter implements Presenter<MainActivity> {
             ((TextView) new AlertDialog.Builder(this.activity, R.style.AlertDialogCustom)
                     .setTitle(R.string.dialog__migration_title)
                     .setMessage(clickableMessage)
-                    .setPositiveButton(R.string.continue_, (d, which) -> d.dismiss())
+                    .setPositiveButton(R.string.continue_, (dialog, __) -> dialog.dismiss())
                     .show()
                     .findViewById(android.R.id.message))
                     .setMovementMethod(LinkMovementMethod.getInstance());
@@ -194,25 +204,36 @@ public class MainPresenter implements Presenter<MainActivity> {
         SharedPrefsUtil.setWasMigrated(false);
     }
 
+    private void handleHasBackedUpPhrase() {
+        if (SharedPrefsUtil.hasBackedUpPhrase()) {
+            hideAlertBadge();
+        } else {
+            showAlertBadge();
+        }
+    }
+
     private void showBetaWarningDialog() {
         if (SharedPrefsUtil.hasLoadedApp()) return;
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(this.activity, R.style.AlertDialogCustom);
         builder.setTitle(R.string.beta_warning_title)
                 .setMessage(R.string.beta_warning_message)
-                .setPositiveButton(R.string.continue_, (dialog, which) -> {
-                    dialog.dismiss();
-                });
+                .setPositiveButton(R.string.continue_, (dialog, which) -> dialog.dismiss());
         builder.create().show();
         SharedPrefsUtil.setHasLoadedApp();
     }
 
-    private void showUnreadBadge() {
-        this.activity.getBinding().navBar.setNotification(" ", 1);
+    private void hideAlertBadge() {
+        this.activity.getBinding().navBar.setNotification("", 4);
     }
 
-    private void hideUnreadBadge() {
-        this.activity.getBinding().navBar.setNotification("", 1);
+    private void showAlertBadge() {
+        this.activity.getBinding().navBar.setNotification("!", 4);
+    }
+
+    private void goToBackupPhraseActivity() {
+        final Intent intent = new Intent(this.activity, BackupPhraseInfoActivity.class);
+        this.activity.startActivity(intent);
     }
 
     @Override
