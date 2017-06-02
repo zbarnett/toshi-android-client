@@ -67,7 +67,7 @@ public class TokenManager {
     }
 
     public Single<TokenManager> init() {
-        if (this.wallet != null && areManagersInitialised) {
+        if (this.wallet != null && this.areManagersInitialised) {
             return Single.just(this);
         }
 
@@ -85,7 +85,7 @@ public class TokenManager {
     }
 
     public Single<TokenManager> tryInit() {
-        if (this.wallet != null && areManagersInitialised) {
+        if (this.wallet != null && this.areManagersInitialised) {
             return Single.just(this);
         }
         return new HDWallet()
@@ -102,14 +102,16 @@ public class TokenManager {
 
     private Single<TokenManager> initManagers() {
         return Single.fromCallable(() -> {
-            initRealm();
-            this.appsManager.init();
-            this.balanceManager.init(this.wallet);
-            this.sofaMessageManager.init(this.wallet);
-            this.transactionManager.init(this.wallet);
-            this.userManager.init(this.wallet);
-            this.reputationManager = new ReputationManager();
-            this.areManagersInitialised = true;
+            if (!this.areManagersInitialised) {
+                initRealm();
+                this.appsManager.init();
+                this.balanceManager.init(this.wallet);
+                this.sofaMessageManager.init(this.wallet);
+                this.transactionManager.init(this.wallet);
+                this.userManager.init(this.wallet);
+                this.reputationManager = new ReputationManager();
+                this.areManagersInitialised = true;
+            }
             return this;
         });
     }

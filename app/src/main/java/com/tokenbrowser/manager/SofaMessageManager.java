@@ -114,6 +114,7 @@ public final class SofaMessageManager {
     private String gcmToken;
     private SignalServiceMessageReceiver messageReceiver;
     private CompositeSubscription subscriptions;
+    private Subscription handleMessageSubscription;
 
     /*package*/ SofaMessageManager() {
         this.conversationStore = new ConversationStore();
@@ -311,7 +312,11 @@ public final class SofaMessageManager {
     }
 
     private void attachSubscribers() {
-        final Subscription sub =
+        if (this.handleMessageSubscription != null) {
+            this.handleMessageSubscription.unsubscribe();
+        }
+
+        this.handleMessageSubscription =
                 this.chatMessageQueue
                 .observeOn(Schedulers.io())
                 .subscribeOn(Schedulers.io())
@@ -320,7 +325,7 @@ public final class SofaMessageManager {
                         this::handleMessageError
                 );
 
-        this.subscriptions.add(sub);
+        this.subscriptions.add(this.handleMessageSubscription);
 
         BaseApplication
                 .get()
