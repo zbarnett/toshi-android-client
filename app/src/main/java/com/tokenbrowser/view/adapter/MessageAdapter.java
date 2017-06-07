@@ -269,6 +269,7 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
                   .setAvatarUri(sofaMessage.getSender() != null ? sofaMessage.getSender().getAvatar() : null)
                   .setRemoteUser(remoteUser)
                   .setSendState(sofaMessage.getSendState())
+                  .__setIsFromRemote(isRemote)
                   .setOnApproveListener(this.handleOnPaymentRequestApproved)
                   .setOnRejectListener(this.handleOnPaymentRequestRejected)
                   .draw();
