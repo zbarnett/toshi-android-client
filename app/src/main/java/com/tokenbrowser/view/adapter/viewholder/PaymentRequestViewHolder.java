@@ -104,7 +104,7 @@ public final class PaymentRequestViewHolder extends RecyclerView.ViewHolder {
         renderBody();
         renderAvatar();
         renderStatus();
-        setSendState();
+        renderSendState();
     }
 
     private void renderAmounts() {
@@ -146,7 +146,7 @@ public final class PaymentRequestViewHolder extends RecyclerView.ViewHolder {
     }
 
     private void renderAcceptStatusMessage() {
-        if (!isSendByRemote() || this.remotePaymentStatus == null || this.buttonWrapper == null) return;
+        if (!isSentByRemote() || this.remotePaymentStatus == null || this.buttonWrapper == null) return;
         this.buttonWrapper.setVisibility(View.GONE);
         this.remotePaymentStatus.setVisibility(View.VISIBLE);
         final String acceptMessage = BaseApplication.get().getString(R.string.you_accepted);
@@ -154,7 +154,7 @@ public final class PaymentRequestViewHolder extends RecyclerView.ViewHolder {
     }
 
     private void renderRejectStatusMessage() {
-        if (!this.isSendByRemote() || this.remotePaymentStatus == null || this.buttonWrapper == null) return;
+        if (!this.isSentByRemote() || this.remotePaymentStatus == null || this.buttonWrapper == null) return;
         this.buttonWrapper.setVisibility(View.GONE);
         this.remotePaymentStatus.setVisibility(View.VISIBLE);
         final String rejectMessage = BaseApplication.get().getString(R.string.you_declined);
@@ -162,16 +162,15 @@ public final class PaymentRequestViewHolder extends RecyclerView.ViewHolder {
     }
 
     private void renderPendingStatusMessage() {
-        if (!this.isSendByRemote() || this.buttonWrapper == null || this.remotePaymentStatus == null) return;
+        if (!this.isSentByRemote() || this.buttonWrapper == null || this.remotePaymentStatus == null) return;
         this.remotePaymentStatus.setVisibility(View.GONE);
         this.buttonWrapper.setVisibility(View.VISIBLE);
         this.declineButton.setOnClickListener(__ -> handleRejectedClicked());
         this.acceptButton.setOnClickListener(__ -> handleApprovedClicked());
     }
 
-    private boolean isSendByRemote() {
-        if (this.remoteUser == null || this.request == null) return false;
-        return this.request.getDestinationAddresss().equals(this.remoteUser.getPaymentAddress());
+    private boolean isSentByRemote() {
+        return this.request != null && this.sendState == SendState.STATE_RECEIVED;
     }
 
     private void handleApprovedClicked() {
@@ -184,7 +183,7 @@ public final class PaymentRequestViewHolder extends RecyclerView.ViewHolder {
         this.onRejectListener.onItemClick(getAdapterPosition());
     }
 
-    private void setSendState() {
+    private void renderSendState() {
         if (this.sentStatus == null) return;
         final int visibility = this.sendState == SendState.STATE_FAILED || this.sendState == SendState.STATE_PENDING
                 ? View.VISIBLE

@@ -593,7 +593,8 @@ public final class SofaMessageManager {
     private void saveIncomingMessageFromUserToDatabase(final User user, final DecryptedSignalMessage signalMessage) {
         final SofaMessage remoteMessage = new SofaMessage()
                 .makeNew(user, signalMessage.getBody())
-                .setAttachmentFilePath(signalMessage.getAttachmentFilePath());
+                .setAttachmentFilePath(signalMessage.getAttachmentFilePath())
+                .setSendState(SendState.STATE_RECEIVED);
         if (remoteMessage.getType() == SofaType.PAYMENT) {
             // Don't render incoming SOFA::Payments,
             // but ensure we have the sender cached.
