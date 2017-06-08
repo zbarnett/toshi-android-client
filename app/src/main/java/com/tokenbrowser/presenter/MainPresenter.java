@@ -121,7 +121,7 @@ public class MainPresenter implements Presenter<MainActivity> {
                 .getSofaMessageManager();
 
         final Subscription allChangesSubscription =
-                messageManager.registerForAllConversationChanges()
+                messageManager.registerForAllContactThreadChanges()
                 .flatMap((unused) -> messageManager.areUnreadMessages().toObservable())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

@@ -20,8 +20,8 @@ package com.tokenbrowser.util;
 import android.support.annotation.IntDef;
 
 public class UserSearchType {
-    @IntDef({CONVERSATION, PROFILE})
+    @IntDef({CONTACT_THREAD, PROFILE})
     public @interface Type {}
-    public static final int CONVERSATION = 1;
+    public static final int CONTACT_THREAD = 1;
     public static final int PROFILE = 2;
 }

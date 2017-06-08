@@ -35,7 +35,7 @@ import android.widget.Toast;
 import com.tokenbrowser.R;
 import com.tokenbrowser.crypto.HDWallet;
 import com.tokenbrowser.model.local.ActivityResultHolder;
-import com.tokenbrowser.model.local.Conversation;
+import com.tokenbrowser.model.local.ContactThread;
 import com.tokenbrowser.model.local.User;
 import com.tokenbrowser.model.sofa.Command;
 import com.tokenbrowser.model.sofa.Control;
@@ -99,7 +99,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     private PendingTransactionsObservable pendingTransactionsObservable;
     private ChatNavigation chatNavigation;
 
-    private boolean isConversationLoaded = false;
+    private boolean isThreadLoaded = false;
     private String captureImageFilename;
     private int lastVisibleMessagePosition;
 
@@ -559,51 +559,51 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     }
 
     private void initChatMessageStore(final User remoteUser) {
-        ChatNotificationManager.suppressNotificationsForConversation(remoteUser.getTokenId());
+        ChatNotificationManager.suppressNotificationsForThread(remoteUser.getTokenId());
 
         this.chatObservables =
                 BaseApplication
                 .get()
                 .getTokenManager()
                 .getSofaMessageManager()
-                .registerForConversationChanges(remoteUser.getTokenId());
+                .registerForContactThreadChanges(remoteUser.getTokenId());
 
-        final Subscription subConversationLoaded =
+        final Subscription threadLoadedSub =
                 BaseApplication
                 .get()
                 .getTokenManager()
                 .getSofaMessageManager()
-                .loadConversation(remoteUser.getTokenId())
+                .loadContactThread(remoteUser.getTokenId())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        this::handleConversationLoaded,
+                        this::handleThreadLoaded,
                         this::handleError);
 
-        this.subscriptions.add(subConversationLoaded);
+        this.subscriptions.add(threadLoadedSub);
     }
 
-    private void handleConversationLoaded(final Conversation conversation) {
-        initConversation(conversation);
+    private void handleThreadLoaded(final ContactThread contactThread) {
+        initThread(contactThread);
         updateEmptyState();
         tryClearMessageSubscriptions();
-        initConversationObservables();
-        this.isConversationLoaded = true;
+        initMessageObservables();
+        this.isThreadLoaded = true;
     }
 
-    private void initConversation(final Conversation conversation) {
-        final boolean shouldAddMessages = conversation != null && conversation.getAllMessages() != null && conversation.getAllMessages().size() > 0;
+    private void initThread(final ContactThread contactThread) {
+        final boolean shouldAddMessages = contactThread != null && contactThread.getAllMessages() != null && contactThread.getAllMessages().size() > 0;
         if (shouldAddMessages) {
-            this.messageAdapter.setConversation(conversation);
+            this.messageAdapter.setContactThread(contactThread);
             scrollToBottom();
 
-            final SofaMessage lastSofaMessage = conversation.getAllMessages().get(conversation.getAllMessages().size() - 1);
+            final SofaMessage lastSofaMessage = contactThread.getAllMessages().get(contactThread.getAllMessages().size() - 1);
             setControlView(lastSofaMessage);
         } else {
-            initAppConversation();
+            tryInitAppConversation();
         }
     }
 
-    private void initAppConversation() {
+    private void tryInitAppConversation() {
         if (!this.remoteUser.isApp()) return;
 
         final Message message = new Message().setBody("");
@@ -617,7 +617,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
                 .sendMessage(this.remoteUser, sofaMessage);
     }
 
-    private void initConversationObservables() {
+    private void initMessageObservables() {
         this.newMessageSubscription =
                 chatObservables.first
                 .subscribeOn(Schedulers.io())
@@ -822,7 +822,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
 
     private void sendMediaMessage(final SofaMessage sofaMessage) {
         Single.fromCallable(() -> {
-            while (!this.isConversationLoaded) {
+            while (!this.isThreadLoaded) {
                 Thread.sleep(50);
             }
             return sofaMessage;
@@ -842,14 +842,14 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         this.lastVisibleMessagePosition = this.layoutManager.findLastVisibleItemPosition();
         this.subscriptions.clear();
         this.messageAdapter.clear();
-        this.isConversationLoaded = false;
+        this.isThreadLoaded = false;
         this.activity = null;
     }
 
     @Override
     public void onDestroyed() {
         this.messageAdapter = null;
-        stopListeningForConversationChanges();
+        stopListeningForMessageChanges();
         ChatNotificationManager.stopNotificationSuppression();
         this.subscriptions = null;
         this.chatObservables = null;
@@ -857,12 +857,12 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         this.outgoingMessageQueue = null;
     }
 
-    private void stopListeningForConversationChanges() {
+    private void stopListeningForMessageChanges() {
         BaseApplication
                 .get()
                 .getTokenManager()
                 .getSofaMessageManager()
-                .stopListeningForConversationChanges();
+                .stopListeningForChanges();
     }
 
     public void onSaveInstanceState(final Bundle outState) {
