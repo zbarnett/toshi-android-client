@@ -72,6 +72,10 @@ public class GcmMessageReceiver extends GcmListenerService {
         );
     }
 
+    private void handleIncomingMessageError(final Throwable throwable) {
+        LogUtil.exception(getClass(), "Error during incoming message", throwable);
+    }
+
     private Single<TokenManager> tryInitApp() {
         return BaseApplication
                 .get()
@@ -105,13 +109,16 @@ public class GcmMessageReceiver extends GcmListenerService {
 
     private void checkIfUserIsBlocked(final Payment payment) {
         isUserBlocked(payment.getFromAddress())
-                .toObservable()
-                .filter(isBlocked -> !isBlocked)
-                .toSingle()
                 .subscribe(
-                        __ -> handlePayment(payment),
-                        this::handleIncomingMessageError
+                        isBlocked -> handlePayment(isBlocked, payment),
+                        __ -> handlePayment(payment)
                 );
+    }
+
+    private void handlePayment(final boolean isBlocked,
+                               final Payment payment) {
+        if (isBlocked) return;
+        handlePayment(payment);
     }
 
     private Single<Boolean> isUserBlocked(final String paymentAddress) {
@@ -123,10 +130,6 @@ public class GcmMessageReceiver extends GcmListenerService {
                         .getUserManager()
                         .isUserBlocked(user.getTokenId())
                 );
-    }
-
-    private void handleIncomingMessageError(final Throwable throwable) {
-        LogUtil.exception(getClass(), "Error during incoming message", throwable);
     }
 
     private void handlePayment(final Payment payment) {
@@ -237,7 +240,7 @@ public class GcmMessageReceiver extends GcmListenerService {
         getUserFromPaymentAddress(payment.getFromAddress())
                 .subscribe(
                         (sender) -> ChatNotificationManager.showChatNotification(sender, content),
-                        this::handleError
+                        __ -> ChatNotificationManager.showChatNotification(null, content)
                 );
     }
 
