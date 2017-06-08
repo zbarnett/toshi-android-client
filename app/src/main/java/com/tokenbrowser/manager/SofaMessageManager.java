@@ -522,18 +522,19 @@ public final class SofaMessageManager {
     private DecryptedSignalMessage handleIncomingSofaMessage(final SignalServiceEnvelope envelope) throws InvalidVersionException, InvalidMessageException, InvalidKeyException, DuplicateMessageException, InvalidKeyIdException, org.whispersystems.libsignal.UntrustedIdentityException, LegacyMessageException, NoSessionException {
         final SignalServiceAddress localAddress = new SignalServiceAddress(this.wallet.getOwnerAddress());
         final SignalServiceCipher cipher = new SignalServiceCipher(localAddress, this.protocolStore);
-        final SignalServiceContent message = cipher.decrypt(envelope);
-        final Optional<SignalServiceDataMessage> dataMessage = message.getDataMessage();
-        if (dataMessage.isPresent()) {
-            final String messageSource = envelope.getSource();
-            final Optional<String> messageBody = dataMessage.get().getBody();
-            final Optional<List<SignalServiceAttachment>> attachments = dataMessage.get().getAttachments();
-            final DecryptedSignalMessage decryptedMessage = new DecryptedSignalMessage(messageSource, messageBody.get(), attachments);
+        final SignalServiceContent content = cipher.decrypt(envelope);
+        final String messageSource = envelope.getSource();
 
-            if (isUserBlocked(messageSource)) {
-                LogUtil.i(getClass(), "A blocked user is trying to send a message");
-                return null;
-            }
+        if (isUserBlocked(messageSource)) {
+            LogUtil.i(getClass(), "A blocked user is trying to send a message");
+            return null;
+        }
+
+        if (content.getDataMessage().isPresent()) {
+            final SignalServiceDataMessage dataMessage = content.getDataMessage().get();
+            final Optional<String> messageBody = dataMessage.getBody();
+            final Optional<List<SignalServiceAttachment>> attachments = dataMessage.getAttachments();
+            final DecryptedSignalMessage decryptedMessage = new DecryptedSignalMessage(messageSource, messageBody.get(), attachments);
 
             saveIncomingMessageToDatabase(decryptedMessage);
             return decryptedMessage;
