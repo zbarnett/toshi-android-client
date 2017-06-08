@@ -33,9 +33,9 @@ import com.tokenbrowser.crypto.signal.store.ProtocolStore;
 import com.tokenbrowser.crypto.signal.store.SignalTrustStore;
 import com.tokenbrowser.manager.model.SofaMessageTask;
 import com.tokenbrowser.manager.network.IdService;
-import com.tokenbrowser.manager.store.ConversationStore;
+import com.tokenbrowser.manager.store.ContactThreadStore;
 import com.tokenbrowser.manager.store.PendingMessageStore;
-import com.tokenbrowser.model.local.Conversation;
+import com.tokenbrowser.model.local.ContactThread;
 import com.tokenbrowser.model.local.PendingMessage;
 import com.tokenbrowser.model.local.SendState;
 import com.tokenbrowser.model.sofa.SofaMessage;
@@ -106,7 +106,7 @@ public final class SofaMessageManager {
     private SignalTrustStore trustStore;
     private ProtocolStore protocolStore;
     private SignalServiceMessagePipe messagePipe;
-    private ConversationStore conversationStore;
+    private ContactThreadStore contactThreadStore;
     private PendingMessageStore pendingMessageStore;
     private String userAgent;
     private boolean receiveMessages;
@@ -117,7 +117,7 @@ public final class SofaMessageManager {
     private Subscription handleMessageSubscription;
 
     /*package*/ SofaMessageManager() {
-        this.conversationStore = new ConversationStore();
+        this.contactThreadStore = new ContactThreadStore();
         this.pendingMessageStore = new PendingMessageStore();
         this.userAgent = "Android " + BuildConfig.APPLICATION_ID + " - " + BuildConfig.VERSION_NAME +  ":" + BuildConfig.VERSION_CODE;
         this.signalServiceUrls = new SignalServiceUrl[1];
@@ -219,35 +219,35 @@ public final class SofaMessageManager {
         }
     }
 
-    public final Single<List<Conversation>> loadAllConversations() {
+    public final Single<List<ContactThread>> loadAllContactThreads() {
         return Single
-                .fromCallable(() -> conversationStore.loadAll())
+                .fromCallable(() -> contactThreadStore.loadAll())
                 .subscribeOn(Schedulers.io());
     }
 
-    public final Single<Conversation> loadConversation(final String conversationId) {
+    public final Single<ContactThread> loadContactThread(final String conversationId) {
         return Single
-                .fromCallable(() -> conversationStore.loadByAddress(conversationId))
+                .fromCallable(() -> contactThreadStore.loadByAddress(conversationId))
                 .subscribeOn(Schedulers.io());
     }
 
-    public final Observable<Conversation> registerForAllConversationChanges() {
-        return this.conversationStore.getConversationChangedObservable();
+    public final Observable<ContactThread> registerForAllContactThreadChanges() {
+        return this.contactThreadStore.getThreadChangedObservable();
     }
 
     // Returns a pair of RxSubjects, the first being the observable for new messages
     // the second being the observable for updated messages.
-    public final Pair<PublishSubject<SofaMessage>, PublishSubject<SofaMessage>> registerForConversationChanges(final String conversationId) {
-        return this.conversationStore.registerForChanges(conversationId);
+    public final Pair<PublishSubject<SofaMessage>, PublishSubject<SofaMessage>> registerForContactThreadChanges(final String conversationId) {
+        return this.contactThreadStore.registerForChanges(conversationId);
     }
 
-    public final void stopListeningForConversationChanges() {
-        this.conversationStore.stopListeningForChanges();
+    public final void stopListeningForChanges() {
+        this.contactThreadStore.stopListeningForChanges();
     }
 
     public final Single<Boolean> areUnreadMessages() {
         return Single
-                .fromCallable(() -> conversationStore.areUnreadMessages())
+                .fromCallable(() -> contactThreadStore.areUnreadMessages())
                 .subscribeOn(Schedulers.io());
     }
 
@@ -378,7 +378,7 @@ public final class SofaMessageManager {
         final SofaMessage message = messageTask.getSofaMessage();
 
         if (saveMessageToDatabase) {
-            this.conversationStore.saveNewMessage(receiver, message);
+            this.contactThreadStore.saveNewMessage(receiver, message);
         }
 
         if (!BaseApplication.get().isConnected() && saveMessageToDatabase) {
@@ -450,11 +450,11 @@ public final class SofaMessageManager {
 
     private void storeMessage(final User receiver, final SofaMessage message, final @SendState.State int sendState) {
         message.setSendState(sendState);
-        this.conversationStore.saveNewMessage(receiver, message);
+        this.contactThreadStore.saveNewMessage(receiver, message);
     }
 
     private void updateExistingMessage(final User receiver, final SofaMessage message) {
-        this.conversationStore.updateMessage(receiver, message);
+        this.contactThreadStore.updateMessage(receiver, message);
     }
 
     private void savePendingMessage(final User receiver, final SofaMessage message) {
@@ -605,7 +605,7 @@ public final class SofaMessageManager {
             generatePayloadWithLocalAmountEmbedded(remoteMessage)
                     .subscribe((updatedPayload) -> {
                         remoteMessage.setPayload(updatedPayload);
-                        this.conversationStore.saveNewMessage(user, remoteMessage);
+                        this.contactThreadStore.saveNewMessage(user, remoteMessage);
                     },
                     this::handleError);
             return;
@@ -616,7 +616,7 @@ public final class SofaMessageManager {
             return;
         }
 
-        this.conversationStore.saveNewMessage(user, remoteMessage);
+        this.contactThreadStore.saveNewMessage(user, remoteMessage);
     }
 
     private void handleError(final Throwable throwable) {

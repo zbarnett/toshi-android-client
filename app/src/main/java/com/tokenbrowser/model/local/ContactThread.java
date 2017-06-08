@@ -26,21 +26,21 @@ import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
-public class Conversation extends RealmObject {
+public class ContactThread extends RealmObject {
 
     @PrimaryKey
-    private String conversationId;
+    private String threadId;
     private User member;
     private SofaMessage latestMessage;
     private long updatedTime;
     private RealmList<SofaMessage> allMessages;
     private int numberOfUnread;
 
-    public Conversation() {}
+    public ContactThread() {}
 
-    public Conversation(final User user) {
+    public ContactThread(final User user) {
         this.member = user;
-        this.conversationId = user.getTokenId();
+        this.threadId = user.getTokenId();
     }
 
     public User getMember() {
@@ -51,7 +51,7 @@ public class Conversation extends RealmObject {
         return latestMessage;
     }
 
-    public Conversation setLatestMessage(final SofaMessage latestMessage) {
+    public ContactThread setLatestMessage(final SofaMessage latestMessage) {
         if (isDuplicateMessage(latestMessage)) {
             return this;
         }
@@ -89,18 +89,18 @@ public class Conversation extends RealmObject {
     public boolean equals(Object other){
         if (other == null) return false;
         if (other == this) return true;
-        if (!(other instanceof Conversation))return false;
-        final Conversation otherConversationMessage = (Conversation) other;
-        return otherConversationMessage.getConversationId().equals(this.conversationId);
+        if (!(other instanceof ContactThread))return false;
+        final ContactThread otherContactThreadMessage = (ContactThread) other;
+        return otherContactThreadMessage.getThreadId().equals(this.threadId);
     }
 
     @Override
     public int hashCode() {
-        return conversationId.hashCode();
+        return threadId.hashCode();
     }
 
-    private String getConversationId() {
-        return conversationId;
+    private String getThreadId() {
+        return threadId;
     }
 
     public long getUpdatedTime() {

@@ -44,7 +44,7 @@ public class ChatNotificationManager {
     private static String currentlyOpenConversation;
     private static final Map<String, ChatNotification> activeNotifications = new HashMap<>();
 
-    public static void suppressNotificationsForConversation(final String conversationId) {
+    public static void suppressNotificationsForThread(final String conversationId) {
         currentlyOpenConversation = conversationId;
         final NotificationManager manager = (NotificationManager) BaseApplication.get().getSystemService(Context.NOTIFICATION_SERVICE);
         manager.cancel(conversationId, 1);

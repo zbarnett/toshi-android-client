@@ -22,7 +22,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.tokenbrowser.R;
-import com.tokenbrowser.model.local.Conversation;
+import com.tokenbrowser.model.local.ContactThread;
 import com.tokenbrowser.model.local.User;
 import com.tokenbrowser.util.ImageUtil;
 import com.tokenbrowser.util.LocaleUtil;
@@ -34,7 +34,7 @@ import java.util.Date;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
-public class ConversationViewHolder extends ClickableViewHolder {
+public class ThreadViewHolder extends ClickableViewHolder {
 
     private ImageView avatar;
     private TextView name;
@@ -42,7 +42,7 @@ public class ConversationViewHolder extends ClickableViewHolder {
     private TextView time;
     private TextView unreadCounter;
 
-    public ConversationViewHolder(final View view) {
+    public ThreadViewHolder(final View view) {
         super(view);
         this.name = (TextView) view.findViewById(R.id.name);
         this.avatar = (ImageView) view.findViewById(R.id.avatar);
@@ -51,25 +51,25 @@ public class ConversationViewHolder extends ClickableViewHolder {
         this.unreadCounter = (TextView) view.findViewById(R.id.unread_counter);
     }
 
-    public void setConversation(final Conversation conversation) {
-        final User member = conversation.getMember();
+    public void setThread(final ContactThread contactThread) {
+        final User member = contactThread.getMember();
         this.name.setText(member.getDisplayName());
-        this.unreadCounter.setText(String.valueOf(conversation.getNumberOfUnread()));
-        final String creationTime = getLastMessageCreationTime(conversation);
+        this.unreadCounter.setText(String.valueOf(contactThread.getNumberOfUnread()));
+        final String creationTime = getLastMessageCreationTime(contactThread);
         this.time.setText(creationTime);
 
-        final int visibility = conversation.getNumberOfUnread() > 0 ? VISIBLE : GONE;
+        final int visibility = contactThread.getNumberOfUnread() > 0 ? VISIBLE : GONE;
         this.unreadCounter.setVisibility(visibility);
 
-        ImageUtil.load(conversation.getMember().getAvatar(), this.avatar);
+        ImageUtil.load(contactThread.getMember().getAvatar(), this.avatar);
     }
 
     public void setLatestMessage(final String latestMessage) {
         this.latestMessage.setText(latestMessage);
     }
 
-    private String getLastMessageCreationTime(final Conversation conversation) {
-        final long creationTime = conversation.getLatestMessage().getCreationTime();
+    private String getLastMessageCreationTime(final ContactThread contactThread) {
+        final long creationTime = contactThread.getLatestMessage().getCreationTime();
         final Calendar lastMessageCreationTime = Calendar.getInstance();
         lastMessageCreationTime.setTimeInMillis(creationTime);
         final Calendar now = Calendar.getInstance();

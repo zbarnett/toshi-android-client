@@ -25,7 +25,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 
 import com.tokenbrowser.R;
-import com.tokenbrowser.model.local.Conversation;
+import com.tokenbrowser.model.local.ContactThread;
 import com.tokenbrowser.util.LogUtil;
 import com.tokenbrowser.util.UserSearchType;
 import com.tokenbrowser.view.BaseApplication;
@@ -44,7 +44,7 @@ import rx.subscriptions.CompositeSubscription;
 
 public final class RecentPresenter implements
         Presenter<RecentFragment>,
-        OnItemClickListener<Conversation> {
+        OnItemClickListener<ContactThread> {
 
     private RecentFragment fragment;
     private boolean firstTimeAttaching = true;
@@ -100,23 +100,23 @@ public final class RecentPresenter implements
                 .get()
                 .getTokenManager()
                 .getSofaMessageManager()
-                .loadAllConversations()
+                .loadAllContactThreads()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        this::handleConversations,
-                        this::handleConversationsError
+                        this::handleThreads,
+                        this::handleThreadsError
                 );
 
         this.subscriptions.add(sub);
     }
 
-    private void handleConversations(final List<Conversation> conversations) {
-        this.adapter.setConversations(conversations);
+    private void handleThreads(final List<ContactThread> contactThreads) {
+        this.adapter.setContactThreads(contactThreads);
         updateEmptyState();
     }
 
-    private void handleConversationsError(final Throwable throwable) {
-        LogUtil.exception(getClass(), "Error fetching conversations", throwable);
+    private void handleThreadsError(final Throwable throwable) {
+        LogUtil.exception(getClass(), "Error fetching threads", throwable);
     }
 
     private void attachSubscriber() {
@@ -125,23 +125,23 @@ public final class RecentPresenter implements
                 .get()
                 .getTokenManager()
                 .getSofaMessageManager()
-                .registerForAllConversationChanges()
+                .registerForAllContactThreadChanges()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        this::handleConversation,
-                        this::handleConversationError
+                        this::handleThread,
+                        this::handleThreadError
                 );
 
         this.subscriptions.add(sub);
     }
 
-    private void handleConversation(final Conversation updatedConversation) {
-        this.adapter.updateConversation(updatedConversation);
+    private void handleThread(final ContactThread updatedContactThread) {
+        this.adapter.updateThread(updatedContactThread);
         updateEmptyState();
     }
 
-    private void handleConversationError(final Throwable throwable) {
-        LogUtil.exception(getClass(), "Error during fetching conversation", throwable);
+    private void handleThreadError(final Throwable throwable) {
+        LogUtil.exception(getClass(), "Error during fetching thread", throwable);
     }
 
     private void updateEmptyState() {
@@ -160,10 +160,10 @@ public final class RecentPresenter implements
     }
 
     @Override
-    public void onItemClick(final Conversation clickedConversation) {
+    public void onItemClick(final ContactThread clickedContactThread) {
         if (this.fragment == null) return;
         final Intent intent = new Intent(this.fragment.getActivity(), ChatActivity.class);
-        intent.putExtra(ChatActivity.EXTRA__REMOTE_USER_ADDRESS, clickedConversation.getMember().getTokenId());
+        intent.putExtra(ChatActivity.EXTRA__REMOTE_USER_ADDRESS, clickedContactThread.getMember().getTokenId());
         this.fragment.startActivity(intent);
     }
 
@@ -177,7 +177,7 @@ public final class RecentPresenter implements
 
     private void goToUserSearchActivity() {
         final Intent intent = new Intent(this.fragment.getContext(), UserSearchActivity.class)
-                .putExtra(UserSearchActivity.VIEW_TYPE, UserSearchType.CONVERSATION);
+                .putExtra(UserSearchActivity.VIEW_TYPE, UserSearchType.CONTACT_THREAD);
         this.fragment.startActivity(intent);
     }
 

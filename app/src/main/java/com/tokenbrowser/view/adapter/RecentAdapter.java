@@ -23,7 +23,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.tokenbrowser.model.local.Conversation;
+import com.tokenbrowser.model.local.ContactThread;
 import com.tokenbrowser.model.sofa.SofaMessage;
 import com.tokenbrowser.model.local.User;
 import com.tokenbrowser.model.sofa.Message;
@@ -36,40 +36,40 @@ import com.tokenbrowser.util.LogUtil;
 import com.tokenbrowser.view.BaseApplication;
 import com.tokenbrowser.view.adapter.listeners.OnItemClickListener;
 import com.tokenbrowser.view.adapter.viewholder.ClickableViewHolder;
-import com.tokenbrowser.view.adapter.viewholder.ConversationViewHolder;
+import com.tokenbrowser.view.adapter.viewholder.ThreadViewHolder;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RecentAdapter extends RecyclerView.Adapter<ConversationViewHolder> implements ClickableViewHolder.OnClickListener {
+public class RecentAdapter extends RecyclerView.Adapter<ThreadViewHolder> implements ClickableViewHolder.OnClickListener {
 
-    private List<Conversation> conversations;
-    private OnItemClickListener<Conversation> onItemClickListener;
+    private List<ContactThread> contactThreads;
+    private OnItemClickListener<ContactThread> onItemClickListener;
 
     public RecentAdapter() {
-        this.conversations = new ArrayList<>(0);
+        this.contactThreads = new ArrayList<>(0);
     }
 
     @Override
-    public ConversationViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
+    public ThreadViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
         final View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item__recent, parent, false);
-        return new ConversationViewHolder(itemView);
+        return new ThreadViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(final ConversationViewHolder holder, final int position) {
-        final Conversation conversation = this.conversations.get(position);
-        holder.setConversation(conversation);
+    public void onBindViewHolder(final ThreadViewHolder holder, final int position) {
+        final ContactThread contactThread = this.contactThreads.get(position);
+        holder.setThread(contactThread);
 
-        final String formattedLatestMessage = formatLastMessage(conversation.getLatestMessage());
+        final String formattedLatestMessage = formatLastMessage(contactThread.getLatestMessage());
         holder.setLatestMessage(formattedLatestMessage);
         holder.setOnClickListener(this);
     }
 
     @Override
     public int getItemCount() {
-        return this.conversations.size();
+        return this.contactThreads.size();
     }
 
     @Override
@@ -78,29 +78,29 @@ public class RecentAdapter extends RecyclerView.Adapter<ConversationViewHolder> 
             return;
         }
 
-        final Conversation clickedConversation = conversations.get(position);
-        this.onItemClickListener.onItemClick(clickedConversation);
+        final ContactThread clickedContactThread = contactThreads.get(position);
+        this.onItemClickListener.onItemClick(clickedContactThread);
     }
 
-    public void setConversations(final List<Conversation> conversations) {
-        this.conversations = conversations;
+    public void setContactThreads(final List<ContactThread> contactThreads) {
+        this.contactThreads = contactThreads;
         notifyDataSetChanged();
     }
 
-    public RecentAdapter setOnItemClickListener(final OnItemClickListener<Conversation> onItemClickListener) {
+    public RecentAdapter setOnItemClickListener(final OnItemClickListener<ContactThread> onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
         return this;
     }
 
-    public void updateConversation(final Conversation conversation) {
-        final int position = this.conversations.indexOf(conversation);
+    public void updateThread(final ContactThread contactThread) {
+        final int position = this.contactThreads.indexOf(contactThread);
         if (position == -1) {
-            this.conversations.add(0, conversation);
+            this.contactThreads.add(0, contactThread);
             notifyItemInserted(0);
             return;
         }
 
-        this.conversations.set(position, conversation);
+        this.contactThreads.set(position, contactThread);
         notifyItemChanged(position);
     }
 

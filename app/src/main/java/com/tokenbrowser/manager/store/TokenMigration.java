@@ -133,12 +133,26 @@ public class TokenMigration implements RealmMigration {
         }
 
         if (oldVersion == 9) {
-            schema.get("User")
-                    .removeField("customAppInfo")
-                    .addField("is_app", boolean.class);
+            final RealmObjectSchema userSchema = schema.get("User");
+            if (userSchema.hasField("customAppInfo")) {
+                userSchema.removeField("customAppInfo");
+            }
+
+            if (!userSchema.hasField("is_app")) {
+                userSchema.addField("is_app", boolean.class);
+            }
+
             if (schema.contains("CustomAppInformation")) {
                 schema.remove("CustomAppInformation");
             }
+            oldVersion++;
+        }
+
+        // Rename "Conversation" to "ContactThread"
+        if (oldVersion == 10) {
+            schema.get("Conversation")
+                    .renameField("conversationId", "threadId");
+            schema.rename("Conversation", "ContactThread");
             oldVersion++;
         }
     }
