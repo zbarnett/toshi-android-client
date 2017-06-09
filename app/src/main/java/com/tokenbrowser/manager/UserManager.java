@@ -115,6 +115,8 @@ public class UserManager {
             registerNewUser();
         } else if (userNeedsToMigrate()) {
             migrateUser();
+        } else if (SharedPrefsUtil.shouldForceUserUpdate()) {
+            forceUpdateUser();
         } else {
             getExistingUser();
         }
@@ -158,6 +160,7 @@ public class UserManager {
                     this::updateCurrentUser,
                     this::handleUserRegistrationFailed
             );
+        SharedPrefsUtil.setForceUserUpdate(false);
     }
 
     private void handleUserRegistrationFailed(final Throwable throwable) {
@@ -186,9 +189,14 @@ public class UserManager {
     }
 
     private void migrateUser() {
+        forceUpdateUser();
+        SharedPrefsUtil.setWasMigrated(true);
+    }
+
+    private void forceUpdateUser() {
         final UserDetails ud = new UserDetails().setPaymentAddress(this.wallet.getPaymentAddress());
         updateUser(ud).subscribe();
-        SharedPrefsUtil.setWasMigrated(true);
+        SharedPrefsUtil.setForceUserUpdate(false);
     }
 
     public Single<User> updateUser(final UserDetails userDetails) {

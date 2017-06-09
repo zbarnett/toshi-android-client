@@ -30,6 +30,7 @@ public class SharedPrefsUtil {
     private static final String HAS_LOADED_APP_FIRST_TIME = "hasLoadedAppFirstTime";
     private static final String LOCAL_CURRENCY_CODE = "localCurrencyCode";
     private static final String WAS_MIGRATED = "wasMigrated";
+    private static final String FORCE_USER_UPDATE = "forceUserUpdate";
 
     public static boolean hasOnboarded() {
         final SharedPreferences prefs = BaseApplication.get().getSharedPreferences(FileNames.USER_PREFS, Context.MODE_PRIVATE);
@@ -108,6 +109,18 @@ public class SharedPrefsUtil {
     public static boolean wasMigrated() {
         final SharedPreferences prefs = BaseApplication.get().getSharedPreferences(FileNames.USER_PREFS, Context.MODE_PRIVATE);
         return prefs.getBoolean(WAS_MIGRATED, false);
+    }
+
+    public static void setForceUserUpdate(final boolean forceUpdate) {
+        final SharedPreferences prefs = BaseApplication.get().getSharedPreferences(FileNames.USER_PREFS, Context.MODE_PRIVATE);
+        prefs.edit()
+                .putBoolean(FORCE_USER_UPDATE, forceUpdate)
+                .apply();
+    }
+
+    public static boolean shouldForceUserUpdate() {
+        final SharedPreferences prefs = BaseApplication.get().getSharedPreferences(FileNames.USER_PREFS, Context.MODE_PRIVATE);
+        return prefs.getBoolean(FORCE_USER_UPDATE, true);
     }
 
     // INFO: Does not clear all preferences.
