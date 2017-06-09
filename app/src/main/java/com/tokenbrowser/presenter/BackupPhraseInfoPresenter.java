@@ -34,6 +34,7 @@ public class BackupPhraseInfoPresenter implements Presenter<BackupPhraseInfoActi
     public void onViewAttached(BackupPhraseInfoActivity view) {
         this.activity = view;
         initClickListeners();
+        initContinueButton();
     }
 
     private void initClickListeners() {
@@ -41,6 +42,10 @@ public class BackupPhraseInfoPresenter implements Presenter<BackupPhraseInfoActi
         this.activity.getBinding().understandContainer.setOnClickListener(this::handleContainerChecked);
         this.activity.getBinding().radioButtonUnderstand.setOnCheckedChangeListener(this::handleCheckboxChecked);
         this.activity.getBinding().continueBtn.setOnClickListener(this::handleContinueClicked);
+    }
+
+    private void initContinueButton() {
+        this.activity.getBinding().continueBtn.setClickable(false);
     }
 
     private void handleContainerChecked(final View view) {
