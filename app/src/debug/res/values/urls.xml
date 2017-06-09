@@ -16,7 +16,7 @@
   -->
 
 <resources>
-    <string name="app_name">Token - Staging</string>
+    <string name="app_name">Toshi - Staging</string>
     <string name="chat_url">https://token-chat-service-development.herokuapp.com</string>
     <string name="directory_url">https://token-id-service-development.herokuapp.com</string>
     <string name="balance_url">https://token-eth-service-development.herokuapp.com</string>

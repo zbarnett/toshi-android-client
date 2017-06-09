@@ -68,7 +68,7 @@ public class RegistrationIntentService extends IntentService {
             final InstanceID instanceID = InstanceID.getInstance(this);
             final String token = instanceID.getToken(getString(R.string.gcm_defaultSenderId),
                     GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
-            LogUtil.i(getClass(), "GCM Registration Token: " + token);
+            LogUtil.i(getClass(), "GCM Registration token: " + token);
 
             final boolean forceUpdate = intent.getBooleanExtra(FORCE_UPDATE, false);
             registerEthereumServiceGcmToken(token, forceUpdate);

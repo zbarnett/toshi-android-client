@@ -16,7 +16,7 @@
   -->
 
 <resources>
-    <string name="app_name">Token</string>
+    <string name="app_name">Toshi</string>
     <string name="eth_currency_code">ETH</string>
     <!-- Dialog errors -->
     <string name="dollar">$</string>
@@ -81,9 +81,9 @@
     <string name="store_backup_phrase">Store backup phrase</string>
     <string name="trusted_friends">Trusted friends</string>
     <string name="coming_soon">Coming soon</string>
-    <string name="coming_soon_message">Your friends will be able to identify you when you lose your phone or need to sign in on a new device. Make sure to get your friends on Token.</string>
+    <string name="coming_soon_message">Your friends will be able to identify you when you lose your phone or need to sign in on a new device. Make sure to get your friends on Toshi.</string>
     <string name="invite_friends">Invite friends</string>
-    <string name="invite_friends_intent_message">I’m using Token to access an open financial system. Join me: http://www.tokenbrowser.com/</string>
+    <string name="invite_friends_intent_message">I’m using Toshi to access an open financial system. Join me: http://www.tokenbrowser.com/</string>
     <string name="let_s_secure_your_account">Let’s secure your account</string>
     <string name="backup_phrase_info_message">Storing a backup phrase will allow you to recover your funds if your phone is ever lost or stolen.\n\nIt’s important to store this backup phrase securely where nobody else can access it, such as on a piece of paper or in a password manager.</string>
     <string name="backup_phrase_understand_message">I understand that if I lose my backup phrase, I will be unable to recover access to my account.</string>
@@ -156,7 +156,7 @@
     <string name="sign_out_cancelled_message">You need to complete at least one of the security steps before you sign out.</string>
     <string name="sign_out_confirmation_title">Are you sure you want to sign out?</string>
     <string name="beta_warning_title">Be aware!</string>
-    <string name="beta_warning_message">This is a beta version of Token running on Testnet. Do not send Ethereum from Mainnet. It can be unstable, and there is the possibility to lose money.</string>
+    <string name="beta_warning_message">This is a beta version of Toshi running on Testnet. Do not send Ethereum from Mainnet. It can be unstable, and there is the possibility to lose money.</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="ok">Ok</string>
@@ -183,7 +183,7 @@
     <string name="invalid_payment">Invalid payment</string>
     <string name="payment_address_with_value">Payment address: %1$s</string>
     <string name="copied_payment_address_to_clipboard">Copied %1$s to clipboard</string>
-    <string name="eth_deposit_testnet_warning">Do not send ETH from Mainnet. Token is currently using Ropsten revival Testnet.</string>
+    <string name="eth_deposit_testnet_warning">Do not send ETH from Mainnet. Toshi is currently using Ropsten revival Testnet.</string>
     <string name="error__dapp_loading">Unable to launch web app</string>
     <string name="move_and_scale">Move and scale</string>
     <string name="crop_error">Unable to crop the image. Please try again</string>
@@ -193,9 +193,9 @@
     <string name="report">Report</string>
     <string name="dismiss">Dismiss</string>
     <string name="block_user_dialog_title">Block username</string>
-    <string name="block_user_dialog_message">They won\'t be able to find your profile, or message you on Token. Users won\'t know that you\'ve blocked them.</string>
+    <string name="block_user_dialog_message">They won\'t be able to find your profile, or message you on Toshi. Users won\'t know that you\'ve blocked them.</string>
     <string name="unblock_user_dialog_title">Unblock username</string>
-    <string name="unblock_user_dialog_message">They will be able to find your profile and message you on Token. Users won\'t know that you\'ve blocked them.</string>
+    <string name="unblock_user_dialog_message">They will be able to find your profile and message you on Toshi. Users won\'t know that you\'ve blocked them.</string>
     <string name="block_user_confirmation_dialog_title">Username blocked</string>
     <string name="block_user_confirmation_dialog_message">You can unblock them any time from their profile</string>
     <string name="unblock_user_confirmation_dialog_title">Username unblocked</string>
@@ -203,7 +203,7 @@
     <string name="report_message_inappropriate">It\'s inappropriate</string>
     <string name="report_message_spam">It\'s spam</string>
     <string name="report_confirmation_title">Thanks</string>
-    <string name="report_confirmation_message">Your feedback is important in helping us keep the Token community safe.</string>
+    <string name="report_confirmation_message">Your feedback is important in helping us keep the Toshi community safe.</string>
     <string name="report_spam">Spam</string>
     <string name="report_inappropriate">Inappropriate behavior</string>
     <string name="report_error">Error during sending report</string>
@@ -219,9 +219,9 @@
     <string name="no_chats_yet">No Chats yet</string>
     <string name="empty_state_recent_message">Once you start a new conversation, you’ll see it here.</string>
     <string name="start_a_chat">Start a chat</string>
-    <string name="empty_state_contact_message">Your favorites will be listed here. You can invite friends to join Token.</string>
+    <string name="empty_state_contact_message">Your favorites will be listed here. You can invite friends to join Toshi.</string>
     <string name="no_favorites_yet">No Favorites yet</string>
-    <string name="welcome_to_token">Welcome to Token</string>
+    <string name="welcome_to_toshi">Welcome to Toshi</string>
     <string name="splash_view_info">A browser for the Ethereum network that provides universal access to financial services</string>
     <string name="start_with_a_new_account">Start with a new account</string>
     <string name="today">Today</string>
@@ -241,8 +241,6 @@
     <string name="no_app_found">Couldn\'t find an app to open the file</string>
     <string name="no_file_found">Couldn\t find file</string>
     <string name="invalid_resource">Invalid resource</string>
-    <string name="dialog__migration_title">Token Wallet Changes</string>
-    <string name="dialog__migration_message">We have made changes to make Token compatible with other services - as a result your balance will appear to be reset. As this is only testnet ETH, you don\'t need to take any action. If you do want to recover your balance for any reason, you can read how to do it here: http://developers.tokenbrowser.com/page/migrating-your-token-wallet</string>
     <string name="unsupported_currency_message">Unsupported currency</string>
     <string name="unsupported_format">That address is invalid</string>
     <string name="new_group">New Group</string>
@@ -261,4 +259,6 @@
     <string name="top_rated_apps">Top Rated Apps</string>
     <string name="latest_apps">Latest Apps</string>
     <string name="latest_public_users">Latest Public Users</string>
+    <string name="dialog__migration_title">Toshi Wallet Changes</string>
+    <string name="dialog__migration_message">We have made changes to make Toshi compatible with other services - as a result your balance will appear to be reset. As this is only testnet ETH, you don\'t need to take any action. If you do want to recover your balance for any reason, you can read how to do it here: http://developers.tokenbrowser.com/page/migrating-your-token-wallet</string>
 </resources>

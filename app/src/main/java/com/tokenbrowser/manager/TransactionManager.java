@@ -551,7 +551,7 @@ public class TransactionManager {
 
     private SofaMessage updateStatusFromPendingTransaction(final PendingTransaction pendingTransaction, final Payment updatedPayment) throws IOException, UnknownTransactionException {
         if (pendingTransaction == null) {
-            throw new UnknownTransactionException("PendingTransaction could not be found. This transaction probably came from outside of Token.");
+            throw new UnknownTransactionException("PendingTransaction could not be found. This transaction probably came from outside of Toshi.");
         }
 
         final SofaMessage sofaMessage = pendingTransaction.getSofaMessage();
