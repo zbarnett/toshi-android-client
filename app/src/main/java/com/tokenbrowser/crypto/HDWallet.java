@@ -88,11 +88,11 @@ public class HDWallet {
     }
 
     private Wallet generateNewWallet() {
-        final Wallet wallet = new Wallet(NetworkParameters.fromID(NetworkParameters.ID_MAINNET));
-        final DeterministicSeed seed = wallet.getKeyChainSeed();
+        final Wallet walletForSeed = new Wallet(getNetworkParameters());
+        final DeterministicSeed seed = walletForSeed.getKeyChainSeed();
+        final Wallet wallet = new Wallet(getNetworkParameters(),  new EthereumKeyChainGroup(getNetworkParameters(), seed));
         final String masterSeed = seedToString(seed);
         saveMasterSeedToStorage(masterSeed);
-
         return wallet;
     }
 
