@@ -96,6 +96,7 @@ public final class ScannerPresenter implements Presenter<ScannerActivity> {
     private final BarcodeCallback onScanSuccess = new BarcodeCallback() {
         @Override
         public void barcodeResult(final BarcodeResult result) {
+            if (qrCodeHandler == null) return;
             final ScanResult scanResult = new ScanResult(result);
             qrCodeHandler.handleResult(scanResult.getText());
         }
