@@ -47,6 +47,7 @@ public interface IdInterface {
     Single<User> registerUser(@Body UserDetails details,
                               @Query("timestamp") long timestamp);
 
+    // Works for username or tokenid
     @GET("/v1/user/{id}")
     Single<User> getUser(@Path("id") String userId);
 

@@ -109,7 +109,7 @@ public class ViewAppPresenter implements Presenter<ViewAppActivity> {
                 .getUserFromAddress(this.appTokenId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnCompleted(this::updateFavoriteButtonState)
+                .doOnSuccess(__ -> this.updateFavoriteButtonState())
                 .subscribe(
                         user -> this.appAsUser = user,
                         this::handleAppLoadingFailed
