@@ -25,6 +25,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.tokenbrowser.R;
+import com.tokenbrowser.exception.CurrencyException;
 import com.tokenbrowser.util.SharedPrefsUtil;
 import com.tokenbrowser.view.BaseApplication;
 import com.tokenbrowser.view.adapter.listeners.OnItemClickListener;
@@ -61,11 +62,19 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.ViewHo
         //Add the currency in parentheses
         final String localCurrency = BaseApplication.get().getString(R.string.local_currency);
         if (label.equals(localCurrency)) {
-            label = String.format("%s (%s)", label, SharedPrefsUtil.getCurrency());
+            label = String.format("%s (%s)", label, getCurrency());
         }
 
         holder.label.setText(label);
         holder.bind(position, listener);
+    }
+
+    private String getCurrency() {
+        try {
+            return SharedPrefsUtil.getCurrency();
+        } catch (CurrencyException e) {
+            return "";
+        }
     }
 
     @Override
@@ -83,10 +92,7 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.ViewHo
 
         public void bind(final int position, final OnItemClickListener<Integer> listener) {
             this.itemView.setOnClickListener(view -> {
-                if (listener == null) {
-                    return;
-                }
-
+                if (listener == null) return;
                 listener.onItemClick(position);
             });
         }

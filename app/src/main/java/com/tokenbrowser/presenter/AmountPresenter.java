@@ -21,9 +21,11 @@ import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.view.View;
+import android.widget.Toast;
 
 import com.tokenbrowser.R;
 import com.tokenbrowser.crypto.util.TypeConverter;
+import com.tokenbrowser.exception.CurrencyException;
 import com.tokenbrowser.util.CurrencyUtil;
 import com.tokenbrowser.util.EthUtil;
 import com.tokenbrowser.util.LocaleUtil;
@@ -90,11 +92,19 @@ public class AmountPresenter implements Presenter<AmountActivity> {
     }
 
     private void setCurrency() {
-        final String currency = SharedPrefsUtil.getCurrency();
-        final String currencyCode = CurrencyUtil.getCode(currency);
-        final String currencySymbol = CurrencyUtil.getSymbol(currency);
-        this.activity.getBinding().localCurrencySymbol.setText(currencySymbol);
-        this.activity.getBinding().localCurrencyCode.setText(currencyCode);
+        try {
+            final String currency = SharedPrefsUtil.getCurrency();
+            final String currencyCode = CurrencyUtil.getCode(currency);
+            final String currencySymbol = CurrencyUtil.getSymbol(currency);
+            this.activity.getBinding().localCurrencySymbol.setText(currencySymbol);
+            this.activity.getBinding().localCurrencyCode.setText(currencyCode);
+        } catch (CurrencyException e) {
+            Toast.makeText(
+                    this.activity,
+                    this.activity.getString(R.string.unsupported_currency_message),
+                    Toast.LENGTH_SHORT
+            ).show();
+        }
     }
 
     private void initSeparator() {

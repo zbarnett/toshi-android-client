@@ -20,6 +20,7 @@ package com.tokenbrowser.util;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.tokenbrowser.exception.CurrencyException;
 import com.tokenbrowser.view.BaseApplication;
 
 public class SharedPrefsUtil {
@@ -84,7 +85,7 @@ public class SharedPrefsUtil {
                 .apply();
     }
 
-    public static String getCurrency() {
+    public static String getCurrency() throws CurrencyException {
         final SharedPreferences prefs = BaseApplication.get().getSharedPreferences(FileNames.USER_PREFS, Context.MODE_PRIVATE);
         final String currencyCode = prefs.getString(LOCAL_CURRENCY_CODE, null);
 
@@ -93,7 +94,7 @@ public class SharedPrefsUtil {
                 : currencyCode;
     }
 
-    private static String getCurrencyFromLocaleAndSave() {
+    private static String getCurrencyFromLocaleAndSave() throws CurrencyException {
         final String currency = CurrencyUtil.getCurrencyFromLocale();
         saveCurrency(currency);
         return currency;
