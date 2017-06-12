@@ -249,7 +249,7 @@ public class EditProfilePresenter implements Presenter<EditProfileActivity> {
             this.capturedImagePath = photoFile.getAbsolutePath();
             final Uri photoURI = FileProvider.getUriForFile(
                     BaseApplication.get(),
-                    BuildConfig.APPLICATION_ID + ".photos",
+                    BuildConfig.APPLICATION_ID + FileUtil.FILE_PROVIDER_NAME,
                     photoFile);
             PermissionUtil.grantUriPermission(this.activity, cameraIntent, photoURI);
             cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
