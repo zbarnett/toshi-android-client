@@ -175,9 +175,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     }
 
     private void handleSearchResult(final String searchedForUsername, final List<User> userResult) {
-        if (this.activity == null) {
-            return;
-        }
+        if (this.activity == null) return;
 
         final boolean usersFound = userResult.size() > 0;
         if (!usersFound) {
@@ -241,12 +239,9 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     }
 
     private void initAdapterAnimation() {
-        final SlideUpAnimator anim;
-        if (Build.VERSION.SDK_INT >= 21) {
-            anim = new SlideUpAnimator(new PathInterpolator(0.33f, 0.78f, 0.3f, 1));
-        } else {
-            anim = new SlideUpAnimator(new DecelerateInterpolator());
-        }
+        final SlideUpAnimator anim = Build.VERSION.SDK_INT >= 21
+                ? new SlideUpAnimator(new PathInterpolator(0.33f, 0.78f, 0.3f, 1))
+                : new SlideUpAnimator(new DecelerateInterpolator());
         anim.setAddDuration(400);
         this.activity.getBinding().messagesList.setItemAnimator(anim);
     }
@@ -257,13 +252,18 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
 
         // Hack to scroll to bottom when keyboard rendered
         this.activity.getBinding().messagesList.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
-            if (this.activity == null) return;
-            if (bottom < oldBottom) {
-                this.activity.getBinding().messagesList.postDelayed(this::smoothScrollToBottom, 100);
-            }
+            handleLayoutChanged(bottom, oldBottom);
         });
 
         this.activity.getBinding().messagesList.getLayoutManager().scrollToPosition(this.lastVisibleMessagePosition);
+    }
+
+    private void handleLayoutChanged(final int bottom,
+                                     final int oldBottom) {
+        if (this.activity == null) return;
+        if (bottom < oldBottom) {
+            this.activity.getBinding().messagesList.postDelayed(this::smoothScrollToBottom, 100);
+        }
     }
 
     private void attachMessageAdapter() {
@@ -462,9 +462,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     }
 
     private void processPaymentFromIntent() {
-        if (this.remoteUser == null) {
-            return;
-        }
+        if (this.remoteUser == null) return;
 
         final String value = this.activity.getIntent().getStringExtra(ChatActivity.EXTRA__ETH_AMOUNT);
         final int paymentAction = this.activity.getIntent().getIntExtra(ChatActivity.EXTRA__PAYMENT_ACTION, 0);
@@ -662,14 +660,9 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     }
 
     private void tryScrollToBottom(final boolean animate) {
-        if (this.activity == null || this.layoutManager == null || this.messageAdapter.getItemCount() == 0) {
-            return;
-        }
-
+        if (this.activity == null || this.layoutManager == null || this.messageAdapter.getItemCount() == 0) return;
         // Only animate if we're already near the bottom
-        if (this.layoutManager.findLastVisibleItemPosition() < this.messageAdapter.getItemCount() - 3) {
-            return;
-        }
+        if (this.layoutManager.findLastVisibleItemPosition() < this.messageAdapter.getItemCount() - 3) return;
 
         if (animate) {
             smoothScrollToBottom();
@@ -688,9 +681,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
 
     private void handleKeyboardVisibility(final SofaMessage sofaMessage) {
         final boolean viewIsNull = this.activity == null || this.activity.getBinding().chatInput == null;
-        if (viewIsNull || sofaMessage.isSentBy(getCurrentLocalUser())) {
-            return;
-        }
+        if (viewIsNull || sofaMessage.isSentBy(getCurrentLocalUser())) return;
 
         try {
             final Message message = SofaAdapters.get().messageFrom(sofaMessage.getPayload());
@@ -828,9 +819,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
             return sofaMessage;
         })
         .subscribeOn(Schedulers.io())
-        .subscribe(message -> {
-            this.outgoingMessageQueue.send(message);
-        });
+        .subscribe(outgoingMessageQueue::send);
     }
 
     private void handleError(final Throwable throwable) {
