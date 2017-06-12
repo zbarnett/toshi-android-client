@@ -39,7 +39,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/ic_token_icon"/>
+                app:srcCompat="@drawable/ic_toshi_icon"/>
 
             <android.support.v4.widget.Space
                 android:layout_width="0dp"
