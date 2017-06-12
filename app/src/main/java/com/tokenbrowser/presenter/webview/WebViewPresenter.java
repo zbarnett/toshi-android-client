@@ -96,7 +96,17 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
     private void initToolbar() {
         final String address = getAddress();
         this.activity.getBinding().title.setText(address);
-        this.activity.getBinding().closeButton.setOnClickListener(__ -> this.activity.onBackPressed());
+        this.activity.getBinding().closeButton.setOnClickListener(__ -> handleBackButtonClicked());
+    }
+
+    private void handleBackButtonClicked() {
+        if (this.activity == null) return;
+        final WebView webView = this.activity.getBinding().webview;
+        if (webView.canGoBack()) {
+            webView.goBack();
+        } else {
+            this.activity.onBackPressed();
+        }
     }
 
     private void animateLoadingSpinner() {
