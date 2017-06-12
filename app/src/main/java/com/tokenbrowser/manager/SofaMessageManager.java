@@ -31,28 +31,24 @@ import com.tokenbrowser.crypto.signal.SignalPreferences;
 import com.tokenbrowser.crypto.signal.model.DecryptedSignalMessage;
 import com.tokenbrowser.crypto.signal.store.ProtocolStore;
 import com.tokenbrowser.crypto.signal.store.SignalTrustStore;
+import com.tokenbrowser.manager.chat.SofaMessageRegistration;
 import com.tokenbrowser.manager.model.SofaMessageTask;
-import com.tokenbrowser.manager.network.IdService;
 import com.tokenbrowser.manager.store.ContactThreadStore;
 import com.tokenbrowser.manager.store.PendingMessageStore;
 import com.tokenbrowser.model.local.ContactThread;
 import com.tokenbrowser.model.local.PendingMessage;
 import com.tokenbrowser.model.local.SendState;
-import com.tokenbrowser.model.sofa.SofaMessage;
 import com.tokenbrowser.model.local.User;
-import com.tokenbrowser.model.network.UserSearchResults;
 import com.tokenbrowser.model.sofa.Init;
 import com.tokenbrowser.model.sofa.InitRequest;
-import com.tokenbrowser.model.sofa.Message;
 import com.tokenbrowser.model.sofa.OutgoingAttachment;
 import com.tokenbrowser.model.sofa.PaymentRequest;
 import com.tokenbrowser.model.sofa.SofaAdapters;
+import com.tokenbrowser.model.sofa.SofaMessage;
 import com.tokenbrowser.model.sofa.SofaType;
-import com.tokenbrowser.service.RegistrationIntentService;
 import com.tokenbrowser.util.FileNames;
 import com.tokenbrowser.util.FileUtil;
 import com.tokenbrowser.util.LogUtil;
-import com.tokenbrowser.util.SharedPrefsUtil;
 import com.tokenbrowser.view.BaseApplication;
 import com.tokenbrowser.view.notification.ChatNotificationManager;
 
@@ -89,32 +85,28 @@ import java.util.concurrent.TimeoutException;
 import rx.Completable;
 import rx.Observable;
 import rx.Single;
-import rx.SingleSubscriber;
 import rx.Subscription;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 import rx.subscriptions.CompositeSubscription;
 
 public final class SofaMessageManager {
-
-    private static final String ONBOARDING_BOT_NAME = "TokenBot";
     private final PublishSubject<SofaMessageTask> chatMessageQueue = PublishSubject.create();
+    private final ContactThreadStore contactThreadStore;
+    private final PendingMessageStore pendingMessageStore;
+    private final SharedPreferences sharedPreferences;
+    private final SignalServiceUrl[] signalServiceUrls;
+    private final CompositeSubscription subscriptions;
+    private final String userAgent;
 
-    private SharedPreferences sharedPreferences;
     private ChatService chatService;
-    private HDWallet wallet;
-    private SignalTrustStore trustStore;
-    private ProtocolStore protocolStore;
-    private SignalServiceMessagePipe messagePipe;
-    private ContactThreadStore contactThreadStore;
-    private PendingMessageStore pendingMessageStore;
-    private String userAgent;
-    private boolean receiveMessages;
-    private SignalServiceUrl[] signalServiceUrls;
-    private String gcmToken;
-    private SignalServiceMessageReceiver messageReceiver;
-    private CompositeSubscription subscriptions;
     private Subscription handleMessageSubscription;
+    private SignalServiceMessagePipe messagePipe;
+    private SignalServiceMessageReceiver messageReceiver;
+    private ProtocolStore protocolStore;
+    private boolean receiveMessages;
+    private SofaMessageRegistration sofaGcmRegister;
+    private HDWallet wallet;
 
     /*package*/ SofaMessageManager() {
         this.contactThreadStore = new ContactThreadStore();
@@ -129,46 +121,6 @@ public final class SofaMessageManager {
         this.wallet = wallet;
         new Thread(this::initEverything).start();
         return this;
-    }
-
-    public void setGcmToken(final String token) {
-        this.gcmToken = token;
-        tryRegisterGcm();
-    }
-
-    private void tryRegisterGcm() {
-        if (this.gcmToken == null) {
-            return;
-        }
-
-        if (this.sharedPreferences.getBoolean(RegistrationIntentService.CHAT_SERVICE_SENT_TOKEN_TO_SERVER, false)) {
-            // Already registered
-            return;
-        }
-        try {
-            final Optional<String> optional = Optional.of(this.gcmToken);
-            this.chatService.setGcmId(optional);
-            this.sharedPreferences.edit().putBoolean
-                    (RegistrationIntentService.CHAT_SERVICE_SENT_TOKEN_TO_SERVER, true).apply();
-            this.gcmToken = null;
-        } catch (IOException e) {
-            this.sharedPreferences.edit().putBoolean
-                    (RegistrationIntentService.CHAT_SERVICE_SENT_TOKEN_TO_SERVER, false).apply();
-            LogUtil.d(getClass(), "Error during registering of GCM " + e.getMessage());
-        }
-    }
-
-    public Completable tryUnregisterGcm() {
-        return Completable.fromAction(() -> {
-            try {
-                this.chatService.setGcmId(Optional.absent());
-                this.sharedPreferences.edit().putBoolean
-                        (RegistrationIntentService.CHAT_SERVICE_SENT_TOKEN_TO_SERVER, false).apply();
-            } catch (IOException e) {
-                LogUtil.d(getClass(), "Error during unregistering of GCM " + e.getMessage());
-            }
-        })
-        .subscribeOn(Schedulers.io());
     }
 
     // Will send the message to a remote peer
@@ -209,6 +161,10 @@ public final class SofaMessageManager {
         if (haveRegisteredWithServer() && this.wallet != null) {
             receiveMessagesAsync();
         }
+    }
+
+    private boolean haveRegisteredWithServer() {
+        return SignalPreferences.getRegisteredWithServer();
     }
 
     public final void disconnect() {
@@ -254,19 +210,20 @@ public final class SofaMessageManager {
     private void initEverything() {
         generateStores();
         initSignalMessageReceiver();
-        registerIfNeeded();
+        initRegistrationTask();
         attachSubscribers();
     }
 
     private void generateStores() {
         this.protocolStore = new ProtocolStore().init();
-        this.trustStore = new SignalTrustStore();
+        final SignalTrustStore trustStore = new SignalTrustStore();
 
         final SignalServiceUrl signalServiceUrl = new SignalServiceUrl(
                 BaseApplication.get().getResources().getString(R.string.chat_url),
-                this.trustStore);
+                trustStore);
         this.signalServiceUrls[0] = signalServiceUrl;
         this.chatService = new ChatService(this.signalServiceUrls, this.wallet, this.protocolStore, this.userAgent);
+
     }
 
     private void initSignalMessageReceiver() {
@@ -278,37 +235,28 @@ public final class SofaMessageManager {
                 this.userAgent);
     }
 
-    private void registerIfNeeded() {
-        if (!haveRegisteredWithServer()) {
-            registerWithServer();
-        } else {
-            receiveMessagesAsync();
-            tryRegisterGcm();
-            tryTriggerOnboarding();
+    private void initRegistrationTask() {
+        this.sofaGcmRegister = new SofaMessageRegistration(this.sharedPreferences, this.chatService, this.protocolStore);
+        this.sofaGcmRegister
+                .registerIfNeeded()
+                .subscribe(
+                        this::receiveMessagesAsync,
+                        ex -> LogUtil.e(getClass(), "Error during registration: " + ex)
+                );
+    }
+
+    public Completable tryUnregisterGcm() {
+        if (this.sofaGcmRegister == null) {
+            return Completable.error(new NullPointerException("Unable to register as class hasn't been initialised yet."));
         }
+        return this.sofaGcmRegister.tryUnregisterGcm();
     }
 
-    private void registerWithServer() {
-        this.chatService.registerKeys(
-                this.protocolStore,
-                new SingleSubscriber<Void>() {
-                    @Override
-                    public void onSuccess(final Void aVoid) {
-                        SignalPreferences.setRegisteredWithServer();
-                        receiveMessagesAsync();
-                        tryRegisterGcm();
-                        tryTriggerOnboarding();
-                    }
-
-                    @Override
-                    public void onError(final Throwable throwable) {
-                        LogUtil.exception(getClass(), "Error during key registration", throwable);
-                    }
-                });
-    }
-
-    private boolean haveRegisteredWithServer() {
-        return SignalPreferences.getRegisteredWithServer();
+    public void setGcmToken(final String token) {
+        if (this.sofaGcmRegister == null) {
+            LogUtil.e(getClass(), "Unable to setGcmToken as class hasn't been initialised yet.");
+        }
+        this.sofaGcmRegister.setGcmToken(token);
     }
 
     private void attachSubscribers() {
@@ -568,7 +516,7 @@ public final class SofaMessageManager {
             .toSingle()
             .subscribe(
                     (user) -> this.saveIncomingMessageFromUserToDatabase(user, signalMessage),
-                    this::handleUserError
+                    ex -> LogUtil.e(getClass(), "Error getting user. " + ex)
             );
     }
 
@@ -658,66 +606,6 @@ public final class SofaMessageManager {
         }
 
         return Single.just(remoteMessage.getPayloadWithHeaders());
-    }
-
-
-    private void tryTriggerOnboarding() {
-        if (SharedPrefsUtil.hasOnboarded()) return;
-
-        IdService.getApi()
-        .searchByUsername(ONBOARDING_BOT_NAME)
-        .subscribeOn(Schedulers.io())
-        .observeOn(Schedulers.io())
-        .subscribe(
-                this::handleOnboardingBotFound,
-                this::handleOnboardingBotError
-        );
-    }
-
-    private void handleOnboardingBotError(final Throwable throwable) {
-        LogUtil.exception(getClass(), "Onboarding bot not found", throwable);
-    }
-
-    private void handleOnboardingBotFound(final UserSearchResults results) {
-        final List<User> users = results.getResults();
-        for (final User user : users) {
-            if (user.getUsernameForEditing().equals(ONBOARDING_BOT_NAME)) {
-                sendOnboardMessageToOnboardingBot(user);
-                break;
-            }
-        }
-    }
-
-    private void sendOnboardMessageToOnboardingBot(final User onboardingBot) {
-        BaseApplication
-            .get()
-            .getTokenManager()
-            .getUserManager()
-            .getCurrentUser()
-            .map(this::generateOnboardingMessage)
-            .doOnSuccess(__ -> SharedPrefsUtil.setHasOnboarded())
-            .subscribe(
-                    onboardingMessage -> this.sendOnboardingMessage(onboardingMessage, onboardingBot),
-                    this::handleUserError
-            );
-    }
-
-    private void handleUserError(final Throwable throwable) {
-        LogUtil.exception(getClass(), "Error while fetching current user", throwable);
-    }
-
-    private void sendOnboardingMessage(final SofaMessage onboardingMessage, final User onboardingBot) {
-        BaseApplication
-            .get()
-            .getTokenManager()
-            .getSofaMessageManager()
-            .sendMessage(onboardingBot, onboardingMessage);
-    }
-
-    private SofaMessage generateOnboardingMessage(final User localUser) {
-        final Message sofaMessage = new Message().setBody("");
-        final String messageBody = SofaAdapters.get().toJson(sofaMessage);
-        return new SofaMessage().makeNew(localUser, messageBody);
     }
 
     public void clear() {
