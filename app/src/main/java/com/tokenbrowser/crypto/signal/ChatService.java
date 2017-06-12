@@ -22,11 +22,11 @@ import com.tokenbrowser.crypto.HDWallet;
 import com.tokenbrowser.crypto.signal.model.SignalBootstrap;
 import com.tokenbrowser.crypto.signal.network.ChatInterface;
 import com.tokenbrowser.crypto.signal.store.ProtocolStore;
-import com.tokenbrowser.model.network.ServerTime;
 import com.tokenbrowser.manager.network.interceptor.LoggingInterceptor;
 import com.tokenbrowser.manager.network.interceptor.SigningInterceptor;
 import com.tokenbrowser.manager.network.interceptor.UserAgentInterceptor;
 import com.squareup.moshi.Moshi;
+import com.tokenbrowser.util.LogUtil;
 
 import org.whispersystems.libsignal.IdentityKey;
 import org.whispersystems.libsignal.InvalidKeyException;
@@ -49,7 +49,7 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.moshi.MoshiConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
-import rx.SingleSubscriber;
+import rx.Completable;
 import rx.schedulers.Schedulers;
 
 public final class ChatService extends SignalServiceAccountManager {
@@ -114,63 +114,50 @@ public final class ChatService extends SignalServiceAccountManager {
         this.client.addInterceptor(interceptor);
     }
 
-    public void registerKeys(final ProtocolStore protocolStore, final SingleSubscriber<Void> registrationSubscriber) {
+    public Completable registerKeys(final ProtocolStore protocolStore) {
         try {
-            registerKeys(
+            return registerKeys(
                     protocolStore.getIdentityKeyPair().getPublicKey(),
                     protocolStore.getLastResortKey(),
                     protocolStore.getPassword(),
                     protocolStore.getLocalRegistrationId(),
                     protocolStore.getSignalingKey(),
                     protocolStore.getSignedPreKey(),
-                    protocolStore.getPreKeys(),
-                    registrationSubscriber
+                    protocolStore.getPreKeys()
             );
         } catch (final IOException | InvalidKeyIdException | InvalidKeyException ex) {
-            registrationSubscriber.onError(ex);
+            LogUtil.e(getClass(), "ERROR!" + ex.toString());
+            return Completable.error(ex);
         }
     }
 
-    private void registerKeys(
+    private Completable registerKeys(
             final IdentityKey identityKey,
             final PreKeyRecord lastResortKey,
             final String password,
             final int registrationId,
             final String signalingKey,
             final SignedPreKeyRecord signedPreKey,
-            final List<PreKeyRecord> preKeys,
-            final SingleSubscriber<Void> registrationSubscriber) {
+            final List<PreKeyRecord> preKeys) {
 
-        this.chatInterface.getTimestamp()
-                .observeOn(Schedulers.io())
+        return this.chatInterface
+                .getTimestamp()
                 .subscribeOn(Schedulers.io())
-                .subscribe(new SingleSubscriber<ServerTime>() {
-                    @Override
-                    public void onSuccess(final ServerTime serverTime) {
-                        try {
-                            registerKeysWithTimestamp(
-                                    serverTime.get(),
-                                    identityKey,
-                                    lastResortKey,
-                                    password,
-                                    registrationId,
-                                    signalingKey,
-                                    signedPreKey,
-                                    preKeys,
-                                    registrationSubscriber);
-                        } catch (final IOException ex) {
-                            registrationSubscriber.onError(ex);
-                        }
-                    }
-
-                    @Override
-                    public void onError(final Throwable throwable) {
-                        registrationSubscriber.onError(throwable);
-                    }
-                });
+                .observeOn(Schedulers.io())
+                .flatMapCompletable(
+                        serverTime -> registerKeysWithTimestamp(
+                                serverTime.get(),
+                                identityKey,
+                                lastResortKey,
+                                password,
+                                registrationId,
+                                signalingKey,
+                                signedPreKey,
+                                preKeys)
+                );
     }
 
-    private void registerKeysWithTimestamp(
+    private Completable registerKeysWithTimestamp(
             final long timestamp,
             final IdentityKey identityKey,
             final PreKeyRecord lastResortKey,
@@ -178,8 +165,7 @@ public final class ChatService extends SignalServiceAccountManager {
             final int registrationId,
             final String signalingKey,
             final SignedPreKeyRecord signedPreKey,
-            final List<PreKeyRecord> preKeys,
-            final SingleSubscriber<Void> registrationSubscriber) throws IOException {
+            final List<PreKeyRecord> preKeys) {
 
         final long startTime = System.currentTimeMillis();
 
@@ -215,19 +201,9 @@ public final class ChatService extends SignalServiceAccountManager {
 
         final String payloadForSigning = JsonUtil.toJson(payload);
 
-        this.chatInterface.register(payloadForSigning, amendedTimestamp)
+        return this.chatInterface
+                .register(payloadForSigning, amendedTimestamp)
                 .observeOn(Schedulers.io())
-                .subscribeOn(Schedulers.io())
-                .subscribe(new SingleSubscriber<Void>() {
-                    @Override
-                    public void onSuccess(final Void unused) {
-                        registrationSubscriber.onSuccess(unused);
-                    }
-
-                    @Override
-                    public void onError(final Throwable throwable) {
-                        registrationSubscriber.onError(throwable);
-                    }
-                });
+                .subscribeOn(Schedulers.io());
     }
 }
