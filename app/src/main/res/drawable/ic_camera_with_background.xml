@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="44dp"
+    android:height="44dp"
+    android:viewportWidth="44"
+    android:viewportHeight="44">
+
+    <group
+        android:translateX="-7.000000"
+        android:translateY="-15.000000">
+        <group
+            android:translateX="6.000000"
+            android:translateY="15.000000">
+            <path
+                android:fillColor="#CBCBCC"
+                android:strokeWidth="1"
+                android:pathData="M 23 0 C 35.1502644963 0 45 9.84973550372 45 22 C 45 34.1502644963 35.1502644963 44 23 44 C 10.8497355037 44 1 34.1502644963 1 22 C 1 9.84973550372 10.8497355037 0 23 0 Z" />
+            <group
+                android:translateX="11.000000"
+                android:translateY="10.000000">
+                <path
+                    android:fillColor="#FFFFFF"
+                    android:strokeWidth="1"
+                    android:pathData="M 12 8.8 C 13.7673111995 8.8 15.2 10.2326888005 15.2 12 C 15.2 13.7673111995 13.7673111995 15.2 12 15.2 C 10.2326888005 15.2 8.8 13.7673111995 8.8 12 C 8.8 10.2326888005 10.2326888005 8.8 12 8.8 Z" />
+                <path
+                    android:strokeWidth="1"
+                    android:pathData="M 0 0 L 24 0 L 24 24 L 0 24 Z" />
+                <path
+                    android:fillColor="#FFFFFF"
+                    android:strokeWidth="1"
+                    android:pathData="M9,2 L7.17,4 L4,4 C2.9,4 2,4.9 2,6 L2,18 C2,19.1 2.9,20 4,20 L20,20 C21.1,20
+22,19.1 22,18 L22,6 C22,4.9 21.1,4 20,4 L16.83,4 L15,2 L9,2 Z M12,17 C9.24,17
+7,14.76 7,12 C7,9.24 9.24,7 12,7 C14.76,7 17,9.24 17,12 C17,14.76 14.76,17 12,17
+Z" />
+            </group>
+        </group>
+    </group>
+</vector>
