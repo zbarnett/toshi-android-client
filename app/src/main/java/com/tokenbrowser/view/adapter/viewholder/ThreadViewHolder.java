@@ -52,7 +52,7 @@ public class ThreadViewHolder extends ClickableViewHolder {
     }
 
     public void setThread(final ContactThread contactThread) {
-        final User member = contactThread.getMember();
+        final User member = contactThread.getUserRecipient();
         this.name.setText(member.getDisplayName());
         this.unreadCounter.setText(String.valueOf(contactThread.getNumberOfUnread()));
         final String creationTime = getLastMessageCreationTime(contactThread);
@@ -61,7 +61,7 @@ public class ThreadViewHolder extends ClickableViewHolder {
         final int visibility = contactThread.getNumberOfUnread() > 0 ? VISIBLE : GONE;
         this.unreadCounter.setVisibility(visibility);
 
-        ImageUtil.load(contactThread.getMember().getAvatar(), this.avatar);
+        ImageUtil.load(contactThread.getUserRecipient().getAvatar(), this.avatar);
     }
 
     public void setLatestMessage(final String latestMessage) {

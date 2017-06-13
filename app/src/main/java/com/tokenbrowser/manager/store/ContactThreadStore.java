@@ -122,9 +122,7 @@ public class ContactThreadStore {
     private int calculateNumberOfUnread(final ContactThread contactThreadToStore) {
         // If we are watching the current thread the message is automatically read.
         if (   contactThreadToStore == null
-            || contactThreadToStore.getMember() == null
-            || contactThreadToStore.getMember().getTokenId() == null
-            || contactThreadToStore.getMember().getTokenId().equals(watchedThreadId)) {
+            || contactThreadToStore.getThreadId().equals(watchedThreadId)) {
             return 0;
         }
         final int currentNumberOfUnread = contactThreadToStore.getNumberOfUnread();
