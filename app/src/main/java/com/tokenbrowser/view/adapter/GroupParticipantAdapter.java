@@ -47,7 +47,6 @@ public class GroupParticipantAdapter extends RecyclerView.Adapter<GroupParticipa
         notifyDataSetChanged();
         return this;
     }
-
     public GroupParticipantAdapter setOnItemClickListener(final OnItemClickListener<User> listener) {
         this.onItemClickListener = listener;
         return this;
