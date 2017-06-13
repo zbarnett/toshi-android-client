@@ -28,7 +28,7 @@ import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
-public class ContactThread extends RealmObject {
+public class Conversation extends RealmObject {
 
     @PrimaryKey
     private String threadId;
@@ -38,14 +38,14 @@ public class ContactThread extends RealmObject {
     private RealmList<SofaMessage> allMessages;
     private int numberOfUnread;
 
-    public ContactThread() {}
+    public Conversation() {}
 
-    public ContactThread(final User user) {
+    public Conversation(final User user) {
         this.recipient = new Recipient(user);
         this.threadId = user.getTokenId();
     }
 
-    public ContactThread(final Group group) {
+    public Conversation(final Group group) {
         this.recipient = new Recipient(group);
         this.threadId = group.getId();
     }
@@ -62,7 +62,7 @@ public class ContactThread extends RealmObject {
         return latestMessage;
     }
 
-    public ContactThread setLatestMessage(final SofaMessage latestMessage) {
+    public Conversation setLatestMessage(final SofaMessage latestMessage) {
         if (isDuplicateMessage(latestMessage)) {
             return this;
         }
@@ -120,8 +120,8 @@ public class ContactThread extends RealmObject {
     public boolean equals(Object other){
         if (other == null) return false;
         if (other == this) return true;
-        if (!(other instanceof ContactThread))return false;
-        final ContactThread otherContactThreadMessage = (ContactThread) other;
-        return otherContactThreadMessage.getThreadId().equals(this.threadId);
+        if (!(other instanceof Conversation))return false;
+        final Conversation otherConversationMessage = (Conversation) other;
+        return otherConversationMessage.getThreadId().equals(this.threadId);
     }
 }

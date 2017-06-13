@@ -40,7 +40,7 @@ public final class SofaMessageTask {
     private final SofaMessage sofaMessage;
     private final @Action int action;
 
-    // Create a task for sending to a single contact (ContactThread)
+    // Create a task for sending to a single contact (Conversation)
     public SofaMessageTask(
             final User receiver,
             final SofaMessage sofaMessage,

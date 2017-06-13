@@ -23,7 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.tokenbrowser.R;
-import com.tokenbrowser.model.local.ContactThread;
+import com.tokenbrowser.model.local.Conversation;
 import com.tokenbrowser.model.local.User;
 import com.tokenbrowser.model.sofa.Message;
 import com.tokenbrowser.model.sofa.Payment;
@@ -50,7 +50,7 @@ import java.util.List;
 public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final static int SENDER_MASK = 0x1000;
 
-    private ContactThread contactThread;
+    private Conversation conversation;
     private final List<SofaMessage> sofaMessages;
     private OnItemClickListener<SofaMessage> onPaymentRequestApproveListener;
     private OnItemClickListener<SofaMessage> onPaymentRequestRejectListener;
@@ -93,11 +93,11 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
                 && sofaMessage.getType() != SofaType.INIT_REQUEST;
     }
 
-    public void setContactThread(final ContactThread contactThread) {
-        this.contactThread = contactThread;
-        final List<SofaMessage> messages = contactThread == null
+    public void setConversation(final Conversation conversation) {
+        this.conversation = conversation;
+        final List<SofaMessage> messages = conversation == null
                 ? new ArrayList<>(0)
-                : contactThread.getAllMessages();
+                : conversation.getAllMessages();
         addMessages(messages);
         notifyItemInserted(this.sofaMessages.size() - 1);
     }
@@ -264,7 +264,7 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
             case SofaType.PAYMENT_REQUEST: {
                 final PaymentRequestViewHolder vh = (PaymentRequestViewHolder) holder;
                 final PaymentRequest request = SofaAdapters.get().txRequestFrom(payload);
-                final User remoteUser = this.contactThread == null ? null : contactThread.getUserRecipient();
+                final User remoteUser = this.conversation == null ? null : conversation.getUserRecipient();
                 vh.setPaymentRequest(request)
                   .setAvatarUri(sofaMessage.getSender() != null ? sofaMessage.getSender().getAvatar() : null)
                   .setRemoteUser(remoteUser)

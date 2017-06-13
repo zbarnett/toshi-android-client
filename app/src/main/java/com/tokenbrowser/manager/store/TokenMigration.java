@@ -148,11 +148,11 @@ public class TokenMigration implements RealmMigration {
             oldVersion++;
         }
 
-        // Rename "Conversation" to "ContactThread"
+        // Rename "Conversation" to "Conversation"
         if (oldVersion == 10) {
             schema.get("Conversation")
                     .renameField("conversationId", "threadId");
-            schema.rename("Conversation", "ContactThread");
+            schema.rename("Conversation", "Conversation");
             oldVersion++;
         }
     }
