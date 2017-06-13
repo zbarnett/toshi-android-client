@@ -18,6 +18,7 @@
 package com.tokenbrowser.presenter.webview;
 
 import android.os.Build;
+import android.support.annotation.StringRes;
 import android.support.multidex.BuildConfig;
 import android.view.View;
 import android.view.animation.Animation;
@@ -34,8 +35,10 @@ import com.tokenbrowser.view.custom.listener.OnLoadListener;
 
 import java.net.URI;
 
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+import rx.subscriptions.CompositeSubscription;
 
 public class WebViewPresenter implements Presenter<WebViewActivity> {
 
@@ -43,14 +46,26 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
     private SofaWebViewClient webClient;
     private SofaInjector sofaInjector;
     private SofaHostWrapper sofaHostWrapper;
+    private CompositeSubscription subscriptions;
 
+    private boolean firstTimeAttaching = true;
     private boolean isLoaded = false;
 
     @Override
     public void onViewAttached(final WebViewActivity view) {
         this.activity = view;
+
+        if (this.firstTimeAttaching) {
+            this.firstTimeAttaching = false;
+            initLongLivingObjects();
+        }
+
         initWebClient();
         initView();
+    }
+
+    private void initLongLivingObjects() {
+        this.subscriptions = new CompositeSubscription();
     }
 
     private void initWebClient() {
@@ -119,15 +134,28 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
         @Override
         public void onReady() {
             if (activity == null) return;
-            final String address = getAddress();
+            handleOnReady();
+        }
 
-            sofaInjector.loadUrl(address)
+        private void handleOnReady() {
+            try {
+                final String address = getAddress();
+                loadUrlFromAddress(address);
+            } catch (IllegalArgumentException e) {
+                showToast(R.string.unsupported_format);
+            }
+        }
+
+        private void loadUrlFromAddress(final String address) {
+            final Subscription sub = sofaInjector.loadUrl(address)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
                             this::handleWebResourceResponse,
                             this::onError
                     );
+
+            subscriptions.add(sub);
         }
 
         private void handleWebResourceResponse(final SofaInjectResponse response) {
@@ -153,7 +181,7 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
         public void onError(final Throwable t) {
             LogUtil.exception(getClass(), "Unable to load Dapp", t);
             if (activity == null) return;
-            Toast.makeText(activity, R.string.error__dapp_loading, Toast.LENGTH_SHORT).show();
+            showToast(R.string.error__dapp_loading);
             activity.finish();
         }
     };
@@ -164,7 +192,7 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
         activity.getBinding().webview.setVisibility(View.VISIBLE);
     }
 
-    private String getAddress() {
+    private String getAddress() throws IllegalArgumentException {
         final String url = this.activity.getIntent().getStringExtra(WebViewActivity.EXTRA__ADDRESS).trim();
         final URI uri = URI.create(url);
         return uri.getScheme() == null
@@ -172,8 +200,17 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
                 : uri.toASCIIString();
     }
 
+    private void showToast(final @StringRes int stringRes) {
+        Toast.makeText(
+                this.activity,
+                stringRes,
+                Toast.LENGTH_SHORT
+        ).show();
+    }
+
     @Override
     public void onViewDetached() {
+        this.subscriptions.clear();
         this.activity = null;
         // WebView doesn't handle orientation change so
         // we can destroy it. This seems to be an Android issue.
@@ -183,6 +220,7 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
 
     @Override
     public void onDestroyed() {
+        this.subscriptions = null;
         this.activity = null;
     }
 

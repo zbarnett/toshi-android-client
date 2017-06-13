@@ -133,26 +133,38 @@ public class BalanceManager {
     }
 
     public Single<String> convertEthToLocalCurrencyString(final BigDecimal ethAmount) {
-         return getRates().map((marketRates) -> {
-             final String currency = SharedPrefsUtil.getCurrency();
-             final BigDecimal marketRate = marketRates.getRate(currency);
-             final BigDecimal localAmount = marketRate.multiply(ethAmount);
+         return getRates()
+                 .flatMap((marketRates) -> mapToString(marketRates, ethAmount));
+    }
 
-             final DecimalFormat numberFormat = CurrencyUtil.getNumberFormat();
-             numberFormat.setGroupingUsed(true);
-             numberFormat.setMaximumFractionDigits(2);
-             numberFormat.setMinimumFractionDigits(2);
+    private Single<String> mapToString(final MarketRates marketRates,
+                               final BigDecimal ethAmount) {
+        return Single.fromCallable(() -> {
+            final String currency = SharedPrefsUtil.getCurrency();
+            final BigDecimal marketRate = marketRates.getRate(currency);
+            final BigDecimal localAmount = marketRate.multiply(ethAmount);
 
-             final String amount = numberFormat.format(localAmount);
-             final String currencyCode = CurrencyUtil.getCode(currency);
-             final String currencySymbol = CurrencyUtil.getSymbol(currency);
+            final DecimalFormat numberFormat = CurrencyUtil.getNumberFormat();
+            numberFormat.setGroupingUsed(true);
+            numberFormat.setMaximumFractionDigits(2);
+            numberFormat.setMinimumFractionDigits(2);
 
-             return String.format("%s%s %s", currencySymbol, amount, currencyCode);
-         });
+            final String amount = numberFormat.format(localAmount);
+            final String currencyCode = CurrencyUtil.getCode(currency);
+            final String currencySymbol = CurrencyUtil.getSymbol(currency);
+
+            return String.format("%s%s %s", currencySymbol, amount, currencyCode);
+        });
     }
 
     public Single<BigDecimal> convertEthToLocalCurrency(final BigDecimal ethAmount) {
-        return getRates().map((marketRates) -> {
+        return getRates()
+                .flatMap((marketRates) -> mapToLocalCurrency(marketRates, ethAmount));
+    }
+
+    private Single<BigDecimal> mapToLocalCurrency(final MarketRates marketRates,
+                                                  final BigDecimal ethAmount) {
+        return Single.fromCallable(() -> {
             final String currency = SharedPrefsUtil.getCurrency();
             final BigDecimal marketRate = marketRates.getRate(currency);
             return marketRate.multiply(ethAmount);
@@ -160,7 +172,13 @@ public class BalanceManager {
     }
 
     public Single<BigDecimal> convertLocalCurrencyToEth(final BigDecimal localAmount) {
-        return getRates().map((marketRates) -> {
+        return getRates()
+                .flatMap((marketRates) -> mapToEth(marketRates, localAmount));
+    }
+
+    private Single<BigDecimal> mapToEth(final MarketRates marketRates,
+                                        final BigDecimal localAmount) {
+        return Single.fromCallable(() -> {
             if (localAmount.compareTo(BigDecimal.ZERO) == 0) {
                 return BigDecimal.ZERO;
             }
@@ -173,7 +191,6 @@ public class BalanceManager {
             return localAmount.divide(marketRate, 8, RoundingMode.HALF_DOWN);
         });
     }
-
 
     public Single<Void> registerForGcm(final String token) {
         return EthereumService

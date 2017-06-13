@@ -115,7 +115,7 @@ import java.io.IOException;
 
     /* package */ void destroy() {
         if (this.paymentConfirmationDialog != null) {
-            this.paymentConfirmationDialog.dismiss();
+            this.paymentConfirmationDialog.dismissAllowingStateLoss();
             this.paymentConfirmationDialog = null;
         }
     }

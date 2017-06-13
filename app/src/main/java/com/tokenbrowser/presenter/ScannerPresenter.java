@@ -73,18 +73,15 @@ public final class ScannerPresenter implements Presenter<ScannerActivity> {
         this.activity.getBinding().closeButton.setOnClickListener(__ -> activity.finish());
     }
 
-    private void initScanner() {
-        if (this.capture == null) {
-            this.capture = new CaptureManager(this.activity, this.activity.getBinding().scanner);
-        }
-
-        decodeQrCode();
-        this.capture.onResume();
-    }
-
     private void initQrCodeHandler() {
         this.qrCodeHandler = new QrCodeHandler(this.activity);
         this.qrCodeHandler.setOnQrCodeHandlerListener(this::handleInvalidQrCode);
+    }
+
+    private void initScanner() {
+        this.capture = new CaptureManager(this.activity, this.activity.getBinding().scanner);
+        decodeQrCode();
+        this.capture.onResume();
     }
 
     private void handleInvalidQrCode() {
@@ -99,6 +96,7 @@ public final class ScannerPresenter implements Presenter<ScannerActivity> {
     private final BarcodeCallback onScanSuccess = new BarcodeCallback() {
         @Override
         public void barcodeResult(final BarcodeResult result) {
+            if (qrCodeHandler == null) return;
             final ScanResult scanResult = new ScanResult(result);
             qrCodeHandler.handleResult(scanResult.getText());
         }

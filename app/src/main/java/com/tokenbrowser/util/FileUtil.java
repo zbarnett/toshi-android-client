@@ -53,6 +53,7 @@ import rx.schedulers.Schedulers;
 public class FileUtil {
 
     public static final int MAX_SIZE = 1024 * 1024;
+    public static final String FILE_PROVIDER_NAME = ".fileProvider";
 
     public Single<File> saveFileFromUri(final Context context, final Uri uri) {
         return Single.fromCallable(() -> {
@@ -178,7 +179,7 @@ public class FileUtil {
         return FileProvider
                 .getUriForFile(
                         BaseApplication.get(),
-                        BuildConfig.APPLICATION_ID + ".fileProvider",
+                        BuildConfig.APPLICATION_ID + FILE_PROVIDER_NAME,
                         file
                 );
     }

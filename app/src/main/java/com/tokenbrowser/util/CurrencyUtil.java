@@ -17,6 +17,8 @@
 
 package com.tokenbrowser.util;
 
+import com.tokenbrowser.exception.CurrencyException;
+
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
@@ -32,9 +34,13 @@ public class CurrencyUtil {
         return numberFormat;
     }
 
-    public static String getCurrencyFromLocale() {
-        final Currency currency = Currency.getInstance(LocaleUtil.getLocale());
-        return currency.getCurrencyCode();
+    public static String getCurrencyFromLocale() throws CurrencyException {
+        try {
+            final Currency currency = Currency.getInstance(LocaleUtil.getLocale());
+            return currency.getCurrencyCode();
+        } catch (NullPointerException | IllegalArgumentException e) {
+            throw new CurrencyException(new Throwable("Unsupported currency"));
+        }
     }
 
     public static String getCode(final String currency) {

@@ -176,6 +176,7 @@ public final class RecentPresenter implements
     }
 
     private void goToUserSearchActivity() {
+        if (this.fragment == null || this.fragment.getContext() == null) return;
         final Intent intent = new Intent(this.fragment.getContext(), UserSearchActivity.class)
                 .putExtra(UserSearchActivity.VIEW_TYPE, UserSearchType.CONTACT_THREAD);
         this.fragment.startActivity(intent);
