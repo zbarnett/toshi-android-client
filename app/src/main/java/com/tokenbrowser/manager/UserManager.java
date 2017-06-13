@@ -217,14 +217,21 @@ public class UserManager {
                 .doOnSuccess(this::updateCurrentUser);
     }
 
-    public Observable<User> getUserFromAddress(final String userAddress) {
+    public Single<User> getUserFromUsername(final String username) {
+        // It's the same endpoint
+        return getUserFromAddress(username);
+    }
+
+    public Single<User> getUserFromAddress(final String userAddress) {
         return Observable
                 .concat(
                         this.userStore.loadForAddress(userAddress),
                         this.fetchAndCacheFromNetworkByTokenId(userAddress))
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
-                .first(user -> user != null && !user.needsRefresh());
+                .first(user -> user != null && !user.needsRefresh())
+                .doOnError(t -> LogUtil.exception(getClass(), "getUserFromAddress", t))
+                .toSingle();
     }
 
     public Single<User> getUserFromPaymentAddress(final String paymentAddress) {
@@ -292,21 +299,6 @@ public class UserManager {
                 .searchByUsername(query)
                 .subscribeOn(Schedulers.io())
                 .map(UserSearchResults::getResults);
-    }
-
-    public Single<User> getUserByUsername(final String username) {
-        return Single
-                .concat(
-                        searchOfflineUsers(username),
-                        searchOnlineUsers(username)
-                )
-                .subscribeOn(Schedulers.io())
-                .flatMapIterable(users -> users)
-                .filter(user -> user != null && user.getUsernameForEditing().equals(username))
-                .first(user -> !user.needsRefresh())
-                .doOnError(t -> LogUtil.exception(getClass(), "getUSerByUsername", t))
-                .onErrorReturn(t -> null)
-                .toSingle();
     }
 
     public Single<Void> webLogin(final String loginToken) {

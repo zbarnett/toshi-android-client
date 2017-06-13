@@ -181,7 +181,7 @@ public class QrCodeHandler implements PaymentConfirmationDialog.OnPaymentConfirm
                 .get()
                 .getTokenManager()
                 .getUserManager()
-                .getUserByUsername(username)
+                .getUserFromUsername(username)
                 .observeOn(AndroidSchedulers.mainThread());
     }
 

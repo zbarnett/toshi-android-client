@@ -513,7 +513,6 @@ public final class SofaMessageManager {
             .getTokenManager()
             .getUserManager()
             .getUserFromAddress(signalMessage.getSource())
-            .toSingle()
             .subscribe(
                     (user) -> this.saveIncomingMessageFromUserToDatabase(user, signalMessage),
                     ex -> LogUtil.e(getClass(), "Error getting user. " + ex)

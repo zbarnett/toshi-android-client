@@ -65,7 +65,6 @@ import com.tokenbrowser.view.notification.ChatNotificationManager;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 import rx.Single;
 import rx.Subscription;
@@ -125,22 +124,22 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         this.messageAdapter = new MessageAdapter()
                 .addOnPaymentRequestApproveListener(message -> updatePaymentRequestState(message, PaymentRequest.ACCEPTED))
                 .addOnPaymentRequestRejectListener(message -> updatePaymentRequestState(message, PaymentRequest.REJECTED))
-                .addOnUsernameClickListener(this::searchForUsername)
+                .addOnUsernameClickListener(this::handleUsernameClicked)
                 .addOnImageClickListener(this::handleImageClicked)
                 .addOnFileClickListener(path -> this.chatNavigation.startAttachmentPicker(this.activity, path));
     }
 
-    private void searchForUsername(final String username) {
+    private void handleUsernameClicked(final String username) {
         final Subscription sub =
                 BaseApplication
                 .get()
                 .getTokenManager()
                 .getUserManager()
-                .searchOnlineUsers(username)
+                .getUserFromUsername(username)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        users -> handleSearchResult(username, users),
-                        this::handleSearchError
+                        user -> handleUsernameClicked(username, user),
+                        ex   -> handleUsernameClicked(username, null)
                 );
 
         this.subscriptions.add(sub);
@@ -173,17 +172,14 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
                 .getTransactionManager()
                 .updatePaymentRequestState(remoteUser, existingMessage, newState);
     }
-
-    private void handleSearchResult(final String searchedForUsername, final List<User> userResult) {
+    
+    private void handleUsernameClicked(final String searchedForUsername, final User user) {
         if (this.activity == null) return;
-
-        final boolean usersFound = userResult.size() > 0;
-        if (!usersFound) {
+        if (user == null) {
             Toast.makeText(this.activity, this.activity.getString(R.string.username_search_response_no_match), Toast.LENGTH_SHORT).show();
             return;
         }
 
-        final User user = userResult.get(0);
         final boolean isSameUser = user.getUsernameForEditing().equals(searchedForUsername);
 
         if (!isSameUser) {
@@ -192,10 +188,6 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         }
 
         viewProfile(user.getTokenId());
-    }
-
-    private void handleSearchError(final Throwable throwable) {
-        LogUtil.exception(getClass(), "Couldn't find a user with this username", throwable);
     }
 
     private void handleUpdatedMessage(final SofaMessage sofaMessage) {

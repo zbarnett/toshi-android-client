@@ -132,8 +132,7 @@ public final class ViewUserPresenter implements
                 .get()
                 .getTokenManager()
                 .getUserManager()
-                .getUserFromAddress(userAddress)
-                .toSingle();
+                .getUserFromAddress(userAddress);
     }
 
     private void fetchUserReputation() {
