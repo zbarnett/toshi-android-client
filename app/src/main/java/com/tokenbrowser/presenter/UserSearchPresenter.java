@@ -33,6 +33,7 @@ import com.tokenbrowser.util.OnSingleClickListener;
 import com.tokenbrowser.util.UserSearchType;
 import com.tokenbrowser.view.BaseApplication;
 import com.tokenbrowser.view.activity.ChatActivity;
+import com.tokenbrowser.view.activity.GroupParticipantsActivity;
 import com.tokenbrowser.view.activity.UserSearchActivity;
 import com.tokenbrowser.view.activity.ViewUserActivity;
 import com.tokenbrowser.view.adapter.ContactsAdapter;
@@ -74,6 +75,7 @@ public final class UserSearchPresenter
     private void initShortLivingObjects() {
         processIntentData();
         initToolbar();
+        initClickListeners();
         initSearch();
         initRecyclerView();
     }
@@ -84,11 +86,24 @@ public final class UserSearchPresenter
     }
 
     private void initToolbar() {
-        final String title = this.viewType == UserSearchType.PROFILE
+        final boolean isProfileType = this.viewType == UserSearchType.PROFILE;
+        final String title = isProfileType
                 ? this.activity.getString(R.string.search)
                 : this.activity.getString(R.string.new_chat);
         this.activity.getBinding().title.setText(title);
         this.activity.getBinding().closeButton.setOnClickListener(this.handleCloseClicked);
+        this.activity.getBinding().newGroup.setVisibility(isProfileType ? View.GONE : View.VISIBLE);
+    }
+
+    private void initClickListeners() {
+        if (this.viewType == UserSearchType.CONTACT_THREAD) {
+            this.activity.getBinding().newGroup.setOnClickListener(__ -> handleNewGroupClicked());
+        }
+    }
+
+    private void handleNewGroupClicked() {
+        final Intent intent = new Intent(this.activity, GroupParticipantsActivity.class);
+        this.activity.startActivity(intent);
     }
 
     private void initSearch() {
@@ -144,7 +159,8 @@ public final class UserSearchPresenter
                 + this.activity.getResources().getDimensionPixelSize(R.dimen.activity_horizontal_margin);
         final HorizontalLineDivider lineDivider =
                 new HorizontalLineDivider(ContextCompat.getColor(this.activity, R.color.divider))
-                        .setLeftPadding(dividerLeftPadding);
+                        .setLeftPadding(dividerLeftPadding)
+                        .setIsTopDivider(true);
         recyclerView.addItemDecoration(lineDivider);
     }
 

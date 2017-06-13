@@ -103,6 +103,7 @@
         <activity android:name="com.tokenbrowser.view.activity.CurrencyActivity" />
         <activity android:name="com.tokenbrowser.view.activity.LandingActivity"
             android:theme="@style/DarkTheme"/>
+        <activity android:name="com.tokenbrowser.view.activity.GroupParticipantsActivity"/>
 
         <meta-data
             android:name="io.fabric.ApiKey"

@@ -245,4 +245,8 @@
     <string name="dialog__migration_message">We have made changes to make Token compatible with other services - as a result your balance will appear to be reset. As this is only testnet ETH, you don\'t need to take any action. If you do want to recover your balance for any reason, you can read how to do it here: http://developers.tokenbrowser.com/page/migrating-your-token-wallet</string>
     <string name="unsupported_currency_message">Unsupported currency</string>
     <string name="unsupported_format">That address is invalid</string>
+    <string name="new_group">New Group</string>
+    <string name="add_participants">Add participants</string>
+    <string name="next">Next</string>
+    <string name="participants_prefix">To: </string>
 </resources>
