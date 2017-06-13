@@ -28,6 +28,7 @@ public class HorizontalLineDivider extends RecyclerView.ItemDecoration {
     private final Paint paint;
     private int leftPadding;
     private int dividerHeight = 6;
+    private boolean isTopDivider = false;
 
     public HorizontalLineDivider(final int color) {
         this.paint = new Paint();
@@ -36,6 +37,11 @@ public class HorizontalLineDivider extends RecyclerView.ItemDecoration {
 
     public HorizontalLineDivider setLeftPadding(final int padding) {
         this.leftPadding = padding;
+        return this;
+    }
+
+    public HorizontalLineDivider setIsTopDivider(final boolean isTopDivider) {
+        this.isTopDivider = isTopDivider;
         return this;
     }
 
@@ -53,11 +59,13 @@ public class HorizontalLineDivider extends RecyclerView.ItemDecoration {
         final int dividerRight = parent.getWidth() - parent.getPaddingRight();
         final int childCount = parent.getChildCount();
 
-        for (int i = 0; i < childCount - 1; i++) {
+        for (int i = 0; i < childCount - (isTopDivider ? 0 : 1); i++) {
             final View child = parent.getChildAt(i);
             final RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) child.getLayoutParams();
 
-            final int dividerTop = child.getBottom() + params.bottomMargin - (this.dividerHeight / 2);
+            final int dividerTop = isTopDivider
+                    ? child.getTop() - params.topMargin
+                    : child.getBottom() + params.bottomMargin - (this.dividerHeight / 2);
             final int dividerBottom = dividerTop + (this.dividerHeight / 2);
 
             canvas.drawRect(dividerLeft, dividerTop, dividerRight, dividerBottom, paint);
