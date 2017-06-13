@@ -84,11 +84,13 @@ public final class UserSearchPresenter
     }
 
     private void initToolbar() {
-        final String title = this.viewType == UserSearchType.PROFILE
+        final boolean isProfileType = this.viewType == UserSearchType.PROFILE;
+        final String title = isProfileType
                 ? this.activity.getString(R.string.search)
                 : this.activity.getString(R.string.new_chat);
         this.activity.getBinding().title.setText(title);
         this.activity.getBinding().closeButton.setOnClickListener(this.handleCloseClicked);
+        this.activity.getBinding().newGroup.setVisibility(isProfileType ? View.GONE : View.VISIBLE);
     }
 
     private void initSearch() {
@@ -144,7 +146,8 @@ public final class UserSearchPresenter
                 + this.activity.getResources().getDimensionPixelSize(R.dimen.activity_horizontal_margin);
         final HorizontalLineDivider lineDivider =
                 new HorizontalLineDivider(ContextCompat.getColor(this.activity, R.color.divider))
-                        .setLeftPadding(dividerLeftPadding);
+                        .setLeftPadding(dividerLeftPadding)
+                        .setIsTopDivider(true);
         recyclerView.addItemDecoration(lineDivider);
     }
 
