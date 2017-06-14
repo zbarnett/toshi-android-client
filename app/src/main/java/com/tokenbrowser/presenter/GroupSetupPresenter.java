@@ -12,6 +12,7 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.TypedValue;
 import android.widget.TextView;
 
 import com.jakewharton.rxbinding.widget.RxTextView;
@@ -124,13 +125,20 @@ public class GroupSetupPresenter implements Presenter<GroupSetupActivity> {
 
     private void handleName(final String groupName) {
         final TextView next =  this.activity.getBinding().create;
-        if (groupName.length() > 0) {
-            next.setAlpha(1f);
-            next.setClickable(true);
-        } else {
-            next.setAlpha(0.5f);
-            next.setClickable(false);
-        }
+        next.setClickable(groupName.length() > 0);
+        next.setAlpha(groupName.length() > 0 ? getEnabledAlphaValue() : getDisabledAlphaValue());
+    }
+
+    private float getEnabledAlphaValue() {
+        final TypedValue typedValue = new TypedValue();
+        this.activity.getResources().getValue(R.dimen.create_button_enabled, typedValue, true);
+        return typedValue.getFloat();
+    }
+
+    private float getDisabledAlphaValue() {
+        final TypedValue typedValue = new TypedValue();
+        this.activity.getResources().getValue(R.dimen.create_button_disabled, typedValue, true);
+        return typedValue.getFloat();
     }
 
     private void fetchUsers() {
