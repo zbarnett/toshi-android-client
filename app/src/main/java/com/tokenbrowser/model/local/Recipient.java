@@ -15,13 +15,41 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.tokenbrowser.util;
+package com.tokenbrowser.model.local;
 
-import android.support.annotation.IntDef;
+import java.util.UUID;
 
-public class UserSearchType {
-    @IntDef({CONVERSATION, PROFILE})
-    public @interface Type {}
-    public static final int CONVERSATION = 1;
-    public static final int PROFILE = 2;
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
+
+public class Recipient extends RealmObject {
+
+    @PrimaryKey
+    private String id;
+    private User user;
+    private Group group;
+
+    public Recipient() {}
+
+    public Recipient(final User user) {
+        this.id = UUID.randomUUID().toString();
+        this.user = user;
+    }
+
+    public Recipient(final Group group) {
+        this.id = UUID.randomUUID().toString();
+        this.group = group;
+    }
+
+    public boolean isGroup() {
+        return this.group != null;
+    }
+
+    public User getUser() {
+        return this.user;
+    }
+
+    public Group getGroup() {
+        return this.group;
+    }
 }

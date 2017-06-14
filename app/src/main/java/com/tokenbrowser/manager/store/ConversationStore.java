@@ -20,7 +20,7 @@ package com.tokenbrowser.manager.store;
 
 import android.util.Pair;
 
-import com.tokenbrowser.model.local.ContactThread;
+import com.tokenbrowser.model.local.Conversation;
 import com.tokenbrowser.model.local.User;
 import com.tokenbrowser.model.sofa.SofaMessage;
 import com.tokenbrowser.util.LogUtil;
@@ -39,30 +39,30 @@ import rx.Single;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
-public class ContactThreadStore {
+public class ConversationStore {
 
     private static final int FIFTEEN_MINUTES = 1000 * 60 * 15;
     private static final String THREAD_ID_FIELD = "threadId";
 
     private static String watchedThreadId;
-    private final static PublishSubject<SofaMessage> newMessageObservable = PublishSubject.create();
-    private final static PublishSubject<SofaMessage> updatedMessageObservable = PublishSubject.create();
-    private final static PublishSubject<ContactThread> threadChangedObservable = PublishSubject.create();
+    private final static PublishSubject<SofaMessage> NEW_MESSAGE_SUBJECT = PublishSubject.create();
+    private final static PublishSubject<SofaMessage> UPDATED_MESSAGE_SUBJECT = PublishSubject.create();
+    private final static PublishSubject<Conversation> CONVERSATION_CHANGED_SUBJECT = PublishSubject.create();
     private final static ExecutorService dbThread = Executors.newSingleThreadExecutor();
 
     // Returns a pair of RxSubjects, the first being the observable for new messages
     // the second being the observable for updated messages.
     public Pair<PublishSubject<SofaMessage>, PublishSubject<SofaMessage>> registerForChanges(final String threadId) {
         watchedThreadId = threadId;
-        return new Pair<>(newMessageObservable, updatedMessageObservable);
+        return new Pair<>(NEW_MESSAGE_SUBJECT, UPDATED_MESSAGE_SUBJECT);
     }
 
     public void stopListeningForChanges() {
         watchedThreadId = null;
     }
 
-    public Observable<ContactThread> getThreadChangedObservable() {
-        return threadChangedObservable
+    public Observable<Conversation> getConversationChangedObservable() {
+        return CONVERSATION_CHANGED_SUBJECT
                 .filter(thread -> thread != null);
     }
 
@@ -71,40 +71,40 @@ public class ContactThreadStore {
         .observeOn(Schedulers.immediate())
         .subscribeOn(Schedulers.from(dbThread))
         .subscribe(
-                threadForBroadcast -> {
+                conversationForBroadcast -> {
                     broadcastNewChatMessage(user.getTokenId(), message);
-                    broadcastThreadChanged(threadForBroadcast);
+                    broadcastConversationChanged(conversationForBroadcast);
                 },
                 this::handleError
         );
     }
 
-    private Single<ContactThread> saveMessage(final User user, final SofaMessage message) {
+    private Single<Conversation> saveMessage(final User user, final SofaMessage message) {
         return Single.fromCallable(() -> {
-            final ContactThread existingContactThread = loadWhere(THREAD_ID_FIELD, user.getTokenId());
-            final ContactThread contactThreadToStore = existingContactThread == null
-                    ? new ContactThread(user)
-                    : existingContactThread;
+            final Conversation existingConversation = loadWhere(THREAD_ID_FIELD, user.getTokenId());
+            final Conversation conversationToStore = existingConversation == null
+                    ? new Conversation(user)
+                    : existingConversation;
 
-            if (shouldSaveTimestampMessage(message, contactThreadToStore)) {
+            if (shouldSaveTimestampMessage(message, conversationToStore)) {
                 final SofaMessage timestamMessage =
                         generateTimestampMessage();
-                contactThreadToStore.addMessage(timestamMessage);
+                conversationToStore.addMessage(timestamMessage);
                 broadcastNewChatMessage(user.getTokenId(), timestamMessage);
             }
 
             final Realm realm = BaseApplication.get().getRealm();
             realm.beginTransaction();
             final SofaMessage storedMessage = realm.copyToRealmOrUpdate(message);
-            contactThreadToStore.setLatestMessage(storedMessage);
+            conversationToStore.setLatestMessage(storedMessage);
 
-            contactThreadToStore.setNumberOfUnread(calculateNumberOfUnread(contactThreadToStore));
-            final ContactThread storedContactThread = realm.copyToRealmOrUpdate(contactThreadToStore);
+            conversationToStore.setNumberOfUnread(calculateNumberOfUnread(conversationToStore));
+            final Conversation storedConversation = realm.copyToRealmOrUpdate(conversationToStore);
             realm.commitTransaction();
-            final ContactThread contactThreadForBroadcast = realm.copyFromRealm(storedContactThread);
+            final Conversation conversationForBroadcast = realm.copyFromRealm(storedConversation);
             realm.close();
 
-            return contactThreadForBroadcast;
+            return conversationForBroadcast;
         });
     }
 
@@ -113,72 +113,70 @@ public class ContactThreadStore {
     }
 
     private boolean shouldSaveTimestampMessage(final SofaMessage message,
-                                               final ContactThread contactThread) {
+                                               final Conversation conversation) {
         final long newMessageTimestamp = message.getCreationTime();
-        final long latestMessageTimestamp = contactThread.getUpdatedTime();
+        final long latestMessageTimestamp = conversation.getUpdatedTime();
         return newMessageTimestamp - latestMessageTimestamp > FIFTEEN_MINUTES;
     }
 
-    private int calculateNumberOfUnread(final ContactThread contactThreadToStore) {
+    private int calculateNumberOfUnread(final Conversation conversationToStore) {
         // If we are watching the current thread the message is automatically read.
-        if (   contactThreadToStore == null
-            || contactThreadToStore.getMember() == null
-            || contactThreadToStore.getMember().getTokenId() == null
-            || contactThreadToStore.getMember().getTokenId().equals(watchedThreadId)) {
+        if (   conversationToStore == null
+            || conversationToStore.getThreadId().equals(watchedThreadId)) {
             return 0;
         }
-        final int currentNumberOfUnread = contactThreadToStore.getNumberOfUnread();
+        final int currentNumberOfUnread = conversationToStore.getNumberOfUnread();
         return currentNumberOfUnread + 1;
     }
 
     private void resetUnreadMessageCounter(final String threadId) {
         Single.fromCallable(() -> {
-            final ContactThread storedContactThread = loadWhere(THREAD_ID_FIELD, threadId);
-            if (storedContactThread == null) {
+            final Conversation storedConversation = loadWhere(THREAD_ID_FIELD, threadId);
+            if (storedConversation == null) {
                 return null;
             }
 
             final Realm realm = BaseApplication.get().getRealm();
             realm.beginTransaction();
-            storedContactThread.setNumberOfUnread(0);
-            realm.insertOrUpdate(storedContactThread);
+            storedConversation.setNumberOfUnread(0);
+            realm.insertOrUpdate(storedConversation);
             realm.commitTransaction();
             realm.close();
-            return storedContactThread;
+            return storedConversation;
         })
         .observeOn(Schedulers.immediate())
         .subscribeOn(Schedulers.from(dbThread))
         .subscribe(
-                this::broadcastThreadChanged,
+                this::broadcastConversationChanged,
                 this::handleError
         );
     }
 
-    public List<ContactThread> loadAll() {
+    public List<Conversation> loadAll() {
         final Realm realm = BaseApplication.get().getRealm();
-        final RealmQuery<ContactThread> query = realm.where(ContactThread.class);
-        final RealmResults<ContactThread> results = query.findAllSorted("updatedTime", Sort.DESCENDING);
-        final List<ContactThread> retVal = realm.copyFromRealm(results);
+        final RealmQuery<Conversation> query = realm.where(Conversation.class);
+        final RealmResults<Conversation> results = query.findAllSorted("updatedTime", Sort.DESCENDING);
+        final List<Conversation> retVal = realm.copyFromRealm(results);
         realm.close();
         return retVal;
     }
 
-    private void broadcastThreadChanged(final ContactThread contactThread) {
-        threadChangedObservable.onNext(contactThread);
+    private void broadcastConversationChanged(final Conversation conversation) {
+        CONVERSATION_CHANGED_SUBJECT.onNext(conversation);
     }
 
-    public ContactThread loadByAddress(final String address) {
-        resetUnreadMessageCounter(address);
-        return loadWhere(THREAD_ID_FIELD, address);
+    public Conversation loadByThreadId(final String threadId) {
+        resetUnreadMessageCounter(threadId);
+        return loadWhere(THREAD_ID_FIELD, threadId);
     }
 
-    private ContactThread loadWhere(final String fieldName, final String value) {
+    private Conversation loadWhere(final String fieldName, final String value) {
         final Realm realm = BaseApplication.get().getRealm();
-        final ContactThread result = realm
-                .where(ContactThread.class)
+        final Conversation result = realm
+                .where(Conversation.class)
                 .equalTo(fieldName, value)
                 .findFirst();
-        final ContactThread retVal = result == null ? null : realm.copyFromRealm(result);
+        final Conversation retVal = result == null ? null : realm.copyFromRealm(result);
         realm.close();
         return retVal;
     }
@@ -202,8 +200,8 @@ public class ContactThreadStore {
 
     public boolean areUnreadMessages() {
         final Realm realm = BaseApplication.get().getRealm();
-        final ContactThread result = realm
-                .where(ContactThread.class)
+        final Conversation result = realm
+                .where(Conversation.class)
                 .greaterThan("numberOfUnread", 0)
                 .findFirst();
         final boolean areUnreadMessages = result != null;
@@ -215,14 +213,14 @@ public class ContactThreadStore {
         if (watchedThreadId == null || !watchedThreadId.equals(threadId)) {
             return;
         }
-        newMessageObservable.onNext(newMessage);
+        NEW_MESSAGE_SUBJECT.onNext(newMessage);
     }
 
     private void broadcastUpdatedChatMessage(final String threadId, final SofaMessage updatedMessage) {
         if (watchedThreadId == null || !watchedThreadId.equals(threadId)) {
             return;
         }
-        updatedMessageObservable.onNext(updatedMessage);
+        UPDATED_MESSAGE_SUBJECT.onNext(updatedMessage);
     }
 
     private void handleError(final Throwable throwable) {

@@ -21,6 +21,7 @@ package com.tokenbrowser.manager.store;
 import com.tokenbrowser.crypto.HDWallet;
 
 import java.io.File;
+import java.util.UUID;
 
 import io.realm.DynamicRealm;
 import io.realm.DynamicRealmObject;
@@ -150,9 +151,43 @@ public class TokenMigration implements RealmMigration {
 
         // Rename "Conversation" to "ContactThread"
         if (oldVersion == 10) {
-            schema.get("Conversation")
-                    .renameField("conversationId", "threadId");
-            schema.rename("Conversation", "ContactThread");
+            final RealmObjectSchema conversationSchema = schema.get("Conversation");
+            if (conversationSchema != null) {
+                conversationSchema.renameField("conversationId", "threadId");
+                schema.rename("Conversation", "ContactThread");
+            }
+            oldVersion++;
+        }
+
+        // Add Group table
+        // Add Recipient table
+        // Rename "ContactThread" to "Conversation"
+        // Split out recipient into seperate table
+        if (oldVersion == 11) {
+            if (schema.get("Group") == null) {
+                schema.create("Group")
+                        .addField("id", String.class, FieldAttribute.PRIMARY_KEY)
+                        .addField("title", String.class)
+                        .addRealmListField("members", schema.get("User"));
+            }
+
+            if (schema.get("Recipient") == null) {
+                schema.create("Recipient")
+                        .addField("id", String.class, FieldAttribute.PRIMARY_KEY)
+                        .addRealmObjectField("user", schema.get("User"))
+                        .addRealmObjectField("group", schema.get("Group"));
+            }
+
+            schema
+                    .rename("ContactThread", "Conversation")
+                    .addRealmObjectField("recipient", schema.get("Recipient"))
+                    .transform(obj -> {
+                        final String primaryKey = UUID.randomUUID().toString();
+                        final DynamicRealmObject newRecipient = realm.createObject("Recipient", primaryKey);
+                        newRecipient.setObject("user", obj.getObject("member"));
+                        obj.set("recipient", newRecipient);
+                    })
+                    .removeField("member");
             oldVersion++;
         }
     }

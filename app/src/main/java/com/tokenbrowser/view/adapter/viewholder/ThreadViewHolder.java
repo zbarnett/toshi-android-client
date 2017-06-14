@@ -22,7 +22,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.tokenbrowser.R;
-import com.tokenbrowser.model.local.ContactThread;
+import com.tokenbrowser.model.local.Conversation;
 import com.tokenbrowser.model.local.User;
 import com.tokenbrowser.util.ImageUtil;
 import com.tokenbrowser.util.LocaleUtil;
@@ -51,25 +51,25 @@ public class ThreadViewHolder extends ClickableViewHolder {
         this.unreadCounter = (TextView) view.findViewById(R.id.unread_counter);
     }
 
-    public void setThread(final ContactThread contactThread) {
-        final User member = contactThread.getMember();
+    public void setThread(final Conversation conversation) {
+        final User member = conversation.getUserRecipient();
         this.name.setText(member.getDisplayName());
-        this.unreadCounter.setText(String.valueOf(contactThread.getNumberOfUnread()));
-        final String creationTime = getLastMessageCreationTime(contactThread);
+        this.unreadCounter.setText(String.valueOf(conversation.getNumberOfUnread()));
+        final String creationTime = getLastMessageCreationTime(conversation);
         this.time.setText(creationTime);
 
-        final int visibility = contactThread.getNumberOfUnread() > 0 ? VISIBLE : GONE;
+        final int visibility = conversation.getNumberOfUnread() > 0 ? VISIBLE : GONE;
         this.unreadCounter.setVisibility(visibility);
 
-        ImageUtil.load(contactThread.getMember().getAvatar(), this.avatar);
+        ImageUtil.load(conversation.getUserRecipient().getAvatar(), this.avatar);
     }
 
     public void setLatestMessage(final String latestMessage) {
         this.latestMessage.setText(latestMessage);
     }
 
-    private String getLastMessageCreationTime(final ContactThread contactThread) {
-        final long creationTime = contactThread.getLatestMessage().getCreationTime();
+    private String getLastMessageCreationTime(final Conversation conversation) {
+        final long creationTime = conversation.getLatestMessage().getCreationTime();
         final Calendar lastMessageCreationTime = Calendar.getInstance();
         lastMessageCreationTime.setTimeInMillis(creationTime);
         final Calendar now = Calendar.getInstance();

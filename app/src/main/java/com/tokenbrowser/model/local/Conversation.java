@@ -18,6 +18,8 @@
 package com.tokenbrowser.model.local;
 
 
+import android.support.annotation.Nullable;
+
 import com.tokenbrowser.model.sofa.SofaMessage;
 
 import java.util.List;
@@ -26,32 +28,41 @@ import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
-public class ContactThread extends RealmObject {
+public class Conversation extends RealmObject {
 
     @PrimaryKey
     private String threadId;
-    private User member;
+    private Recipient recipient;
     private SofaMessage latestMessage;
     private long updatedTime;
     private RealmList<SofaMessage> allMessages;
     private int numberOfUnread;
 
-    public ContactThread() {}
+    public Conversation() {}
 
-    public ContactThread(final User user) {
-        this.member = user;
+    public Conversation(final User user) {
+        this.recipient = new Recipient(user);
         this.threadId = user.getTokenId();
     }
 
-    public User getMember() {
-        return member;
+    public Conversation(final Group group) {
+        this.recipient = new Recipient(group);
+        this.threadId = group.getId();
+    }
+
+    public String getThreadId() {
+        return threadId;
+    }
+
+    public long getUpdatedTime() {
+        return updatedTime;
     }
 
     public SofaMessage getLatestMessage() {
         return latestMessage;
     }
 
-    public ContactThread setLatestMessage(final SofaMessage latestMessage) {
+    public Conversation setLatestMessage(final SofaMessage latestMessage) {
         if (isDuplicateMessage(latestMessage)) {
             return this;
         }
@@ -85,13 +96,19 @@ public class ContactThread extends RealmObject {
         this.numberOfUnread = numberOfUnread;
     }
 
-    @Override
-    public boolean equals(Object other){
-        if (other == null) return false;
-        if (other == this) return true;
-        if (!(other instanceof ContactThread))return false;
-        final ContactThread otherContactThreadMessage = (ContactThread) other;
-        return otherContactThreadMessage.getThreadId().equals(this.threadId);
+    // Helper functions
+    public final boolean isGroup() {
+        return this.recipient.isGroup();
+    }
+
+    @Nullable
+    public final User getUserRecipient() {
+        return this.recipient.getUser();
+    }
+
+    @Nullable
+    public final Group getGroupRecipient() {
+        return this.recipient.getGroup();
     }
 
     @Override
@@ -99,11 +116,12 @@ public class ContactThread extends RealmObject {
         return threadId.hashCode();
     }
 
-    private String getThreadId() {
-        return threadId;
-    }
-
-    public long getUpdatedTime() {
-        return updatedTime;
+    @Override
+    public boolean equals(Object other){
+        if (other == null) return false;
+        if (other == this) return true;
+        if (!(other instanceof Conversation))return false;
+        final Conversation otherConversationMessage = (Conversation) other;
+        return otherConversationMessage.getThreadId().equals(this.threadId);
     }
 }
