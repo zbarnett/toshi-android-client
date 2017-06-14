@@ -18,6 +18,7 @@
 package com.tokenbrowser.presenter;
 
 import android.content.Intent;
+import android.support.multidex.BuildConfig;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -92,7 +93,9 @@ public final class UserSearchPresenter
                 : this.activity.getString(R.string.new_chat);
         this.activity.getBinding().title.setText(title);
         this.activity.getBinding().closeButton.setOnClickListener(this.handleCloseClicked);
-        this.activity.getBinding().newGroup.setVisibility(isProfileType ? View.GONE : View.VISIBLE);
+        if (BuildConfig.DEBUG) {
+            this.activity.getBinding().newGroup.setVisibility(isProfileType ? View.GONE : View.VISIBLE);
+        }
     }
 
     private void initClickListeners() {
