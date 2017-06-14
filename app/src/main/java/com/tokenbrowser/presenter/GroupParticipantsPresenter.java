@@ -31,7 +31,7 @@ import com.tokenbrowser.util.LogUtil;
 import com.tokenbrowser.view.BaseApplication;
 import com.tokenbrowser.view.activity.GroupParticipantsActivity;
 import com.tokenbrowser.view.activity.GroupSetupActivity;
-import com.tokenbrowser.view.adapter.GroupParticipantAdapter;
+import com.tokenbrowser.view.adapter.SelectGroupParticipantAdapter;
 import com.tokenbrowser.view.custom.HorizontalLineDivider;
 
 import java.util.ArrayList;
@@ -97,7 +97,7 @@ public class GroupParticipantsPresenter implements Presenter<GroupParticipantsAc
         final RecyclerView recyclerView = this.activity.getBinding().searchResults;
         recyclerView.setLayoutManager(new LinearLayoutManager(this.activity));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        final GroupParticipantAdapter adapter = new GroupParticipantAdapter()
+        final SelectGroupParticipantAdapter adapter = new SelectGroupParticipantAdapter()
                 .setSelectedUsers(this.participants)
                 .setOnItemClickListener(this::handleUserClicked);
         recyclerView.setAdapter(adapter);
@@ -197,8 +197,8 @@ public class GroupParticipantsPresenter implements Presenter<GroupParticipantsAc
         LogUtil.exception(getClass(), "Error while searching for user", throwable);
     }
 
-    private GroupParticipantAdapter getParticipantsAdapter() {
-        return (GroupParticipantAdapter) this.activity.getBinding().searchResults.getAdapter();
+    private SelectGroupParticipantAdapter getParticipantsAdapter() {
+        return (SelectGroupParticipantAdapter) this.activity.getBinding().searchResults.getAdapter();
     }
 
     @Override

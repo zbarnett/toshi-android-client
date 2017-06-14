@@ -29,14 +29,14 @@ import com.tokenbrowser.model.local.User;
 import com.tokenbrowser.util.ImageUtil;
 import com.tokenbrowser.view.adapter.listeners.OnItemClickListener;
 
-public class GroupParticipantViewHolder extends RecyclerView.ViewHolder {
+public class SelectGroupParticipantViewHolder extends RecyclerView.ViewHolder {
 
     private @NonNull ImageView avatar;
     private @NonNull TextView name;
     private @NonNull TextView username;
     private @NonNull CheckBox checkBox;
 
-    public GroupParticipantViewHolder(final View view) {
+    public SelectGroupParticipantViewHolder(final View view) {
         super(view);
         this.name = (TextView) view.findViewById(R.id.name);
         this.username = (TextView) view.findViewById(R.id.username);
@@ -44,15 +44,15 @@ public class GroupParticipantViewHolder extends RecyclerView.ViewHolder {
         this.checkBox = (CheckBox) view.findViewById(R.id.checkbox);
     }
 
-    public GroupParticipantViewHolder setUser(final User user) {
+    public SelectGroupParticipantViewHolder setUser(final User user) {
         this.name.setText(user.getDisplayName());
         this.username.setText(user.getUsername());
         ImageUtil.load(user.getAvatar(), this.avatar);
         return this;
     }
 
-    public GroupParticipantViewHolder setOnClickListener(final OnItemClickListener<User> listener,
-                                                         final User user) {
+    public SelectGroupParticipantViewHolder setOnClickListener(final OnItemClickListener<User> listener,
+                                                               final User user) {
         this.itemView.setOnClickListener(__ -> handleUserClicked(listener, user));
         return this;
     }
@@ -63,7 +63,7 @@ public class GroupParticipantViewHolder extends RecyclerView.ViewHolder {
         listener.onItemClick(user);
     }
 
-    public GroupParticipantViewHolder setIsSelected(final boolean isSelected) {
+    public SelectGroupParticipantViewHolder setIsSelected(final boolean isSelected) {
         this.checkBox.setChecked(isSelected);
         return this;
     }

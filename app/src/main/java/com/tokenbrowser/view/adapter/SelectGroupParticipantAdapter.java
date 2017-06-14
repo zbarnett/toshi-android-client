@@ -25,46 +25,46 @@ import android.view.ViewGroup;
 import com.tokenbrowser.R;
 import com.tokenbrowser.model.local.User;
 import com.tokenbrowser.view.adapter.listeners.OnItemClickListener;
-import com.tokenbrowser.view.adapter.viewholder.GroupParticipantViewHolder;
+import com.tokenbrowser.view.adapter.viewholder.SelectGroupParticipantViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class GroupParticipantAdapter extends RecyclerView.Adapter<GroupParticipantViewHolder> {
+public class SelectGroupParticipantAdapter extends RecyclerView.Adapter<SelectGroupParticipantViewHolder> {
 
     private List<User> users;
     private List<User> selectedUsers;
     private OnItemClickListener<User> onItemClickListener;
 
-    public GroupParticipantAdapter() {
+    public SelectGroupParticipantAdapter() {
         this.users = new ArrayList<>();
         this.selectedUsers = new ArrayList<>();
     }
 
-    public GroupParticipantAdapter setUsers(final List<User> users) {
+    public SelectGroupParticipantAdapter setUsers(final List<User> users) {
         this.users.clear();
         this.users.addAll(users);
         notifyDataSetChanged();
         return this;
     }
-    public GroupParticipantAdapter setOnItemClickListener(final OnItemClickListener<User> listener) {
+    public SelectGroupParticipantAdapter setOnItemClickListener(final OnItemClickListener<User> listener) {
         this.onItemClickListener = listener;
         return this;
     }
 
-    public GroupParticipantAdapter setSelectedUsers(final List<User> selectedUsers) {
+    public SelectGroupParticipantAdapter setSelectedUsers(final List<User> selectedUsers) {
         this.selectedUsers.addAll(selectedUsers);
         return this;
     }
 
     @Override
-    public GroupParticipantViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        final View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item__group_participant, parent, false);
-        return new GroupParticipantViewHolder(v);
+    public SelectGroupParticipantViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        final View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item__select_group_participant, parent, false);
+        return new SelectGroupParticipantViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(GroupParticipantViewHolder holder, int position) {
+    public void onBindViewHolder(SelectGroupParticipantViewHolder holder, int position) {
         final User user = this.users.get(position);
         final boolean isSelected = this.selectedUsers.contains(user);
         holder.setUser(user)
