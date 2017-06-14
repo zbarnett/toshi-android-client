@@ -243,18 +243,16 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         attachMessageAdapter();
 
         // Hack to scroll to bottom when keyboard rendered
-        this.activity.getBinding().messagesList.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
-            handleLayoutChanged(bottom, oldBottom);
-        });
-
+        this.activity.getBinding().messagesList.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> handleLayoutChanged(bottom, oldBottom));
         this.activity.getBinding().messagesList.getLayoutManager().scrollToPosition(this.lastVisibleMessagePosition);
     }
 
     private void handleLayoutChanged(final int bottom,
                                      final int oldBottom) {
-        if (this.activity == null) return;
+        if (this.activity == null || this.messageAdapter.getItemCount() <= 0) return;
         if (bottom < oldBottom) {
-            this.activity.getBinding().messagesList.postDelayed(this::smoothScrollToBottom, 100);
+            final int bottomPosition = this.messageAdapter.getItemCount() - 1;
+            this.activity.getBinding().messagesList.postDelayed(() -> this.smoothScrollToPosition(bottomPosition), 100);
         }
     }
 
@@ -585,7 +583,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         final boolean shouldAddMessages = conversation != null && conversation.getAllMessages() != null && conversation.getAllMessages().size() > 0;
         if (shouldAddMessages) {
             this.messageAdapter.setConversation(conversation);
-            scrollToBottom();
+            scrollToPosition(getSafePosition());
 
             final SofaMessage lastSofaMessage = conversation.getAllMessages().get(conversation.getAllMessages().size() - 1);
             setControlView(lastSofaMessage);
@@ -657,10 +655,11 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         // Only animate if we're already near the bottom
         if (this.layoutManager.findLastVisibleItemPosition() < this.messageAdapter.getItemCount() - 3) return;
 
+        final int bottomPosition = this.messageAdapter.getItemCount() - 1;
         if (animate) {
-            smoothScrollToBottom();
+            smoothScrollToPosition(bottomPosition);
         } else {
-            scrollToBottom();
+            scrollToPosition(bottomPosition);
         }
     }
 
@@ -714,14 +713,21 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         }
     }
 
-    private void smoothScrollToBottom() {
-        if (this.activity == null) return;
-        this.activity.getBinding().messagesList.smoothScrollToPosition(this.messageAdapter.getItemCount() - 1);
+    // Returns last known scroll position, or last position if unknown
+    private int getSafePosition() {
+        if (this.lastVisibleMessagePosition > 0) return this.lastVisibleMessagePosition;
+        if (this.messageAdapter.getItemCount() - 1 > 0) return this.messageAdapter.getItemCount() - 1;
+        return 0;
     }
 
-    private void scrollToBottom() {
+    private void smoothScrollToPosition(final int position) {
         if (this.activity == null) return;
-        this.activity.getBinding().messagesList.scrollToPosition(this.messageAdapter.getItemCount() - 1);
+        this.activity.getBinding().messagesList.smoothScrollToPosition(position);
+    }
+
+    private void scrollToPosition(final int position) {
+        if (this.activity == null) return;
+        this.activity.getBinding().messagesList.scrollToPosition(position);
     }
 
     public boolean handleActivityResult(final ActivityResultHolder resultHolder) {
@@ -821,7 +827,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
 
     @Override
     public void onViewDetached() {
-        this.lastVisibleMessagePosition = this.layoutManager.findLastVisibleItemPosition();
+        this.lastVisibleMessagePosition = this.layoutManager.findLastCompletelyVisibleItemPosition();
         this.subscriptions.clear();
         this.messageAdapter.clear();
         this.isConversationLoaded = false;
