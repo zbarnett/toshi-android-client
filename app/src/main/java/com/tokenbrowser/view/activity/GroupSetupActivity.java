@@ -13,6 +13,8 @@ import com.tokenbrowser.presenter.factory.PresenterFactory;
 
 public class GroupSetupActivity extends BasePresenterActivity<GroupSetupPresenter, GroupSetupActivity> {
 
+    public static final String PARTICIPANTS = "PARTICIPANTS";
+
     private ActivityGroupSetupBinding binding;
 
     @Override
