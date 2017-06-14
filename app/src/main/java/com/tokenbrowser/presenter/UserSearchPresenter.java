@@ -96,7 +96,7 @@ public final class UserSearchPresenter
     }
 
     private void initClickListeners() {
-        if (this.viewType == UserSearchType.CONTACT_THREAD) {
+        if (this.viewType == UserSearchType.CONVERSATION) {
             this.activity.getBinding().newGroup.setOnClickListener(__ -> handleNewGroupClicked());
         }
     }
