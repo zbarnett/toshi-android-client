@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.jakewharton.rxbinding.widget.RxTextView;
 import com.tokenbrowser.BuildConfig;
 import com.tokenbrowser.R;
+import com.tokenbrowser.exception.PermissionException;
 import com.tokenbrowser.model.local.ActivityResultHolder;
 import com.tokenbrowser.model.local.PermissionResultHolder;
 import com.tokenbrowser.model.local.User;
@@ -106,10 +107,7 @@ public class GroupSetupPresenter implements Presenter<GroupSetupActivity> {
     }
 
     private void initAvatarPlaceholder() {
-        ImageUtil.renderResourceIntoTarget(
-                R.drawable.ic_camera_with_background,
-                this.activity.getBinding().avatar
-        );
+        this.activity.getBinding().avatar.setImageResource(R.drawable.ic_camera_with_background);
     }
 
     private void initNameListener() {
@@ -253,11 +251,18 @@ public class GroupSetupPresenter implements Presenter<GroupSetupActivity> {
         return true;
     }
 
-    public boolean handlePermissionResult(final PermissionResultHolder permissionResultHolder) {
+    /**
+     *
+     * @param permissionResultHolder Object containing info about the permission action
+     * @return a boolean that tells if the method has handled the permission result
+     * @throws PermissionException
+     */
+    public boolean tryHandlePermissionResult(final PermissionResultHolder permissionResultHolder) throws PermissionException {
         if (permissionResultHolder == null || this.activity == null) return false;
         final int[] grantResults = permissionResultHolder.getGrantResults();
-        if (grantResults.length == 0) return true;
-        if (grantResults[0] != PackageManager.PERMISSION_GRANTED) return true;
+
+        // Return true so the calling class knows the permission is handled
+        if (grantResults.length == 0 || grantResults[0] != PackageManager.PERMISSION_GRANTED) return true;
 
         if (permissionResultHolder.getRequestCode() == PermissionUtil.CAMERA_PERMISSION) {
             startCameraActivity();
@@ -265,9 +270,9 @@ public class GroupSetupPresenter implements Presenter<GroupSetupActivity> {
         } else if (permissionResultHolder.getRequestCode() == PermissionUtil.READ_EXTERNAL_STORAGE_PERMISSION) {
             startGalleryActivity();
             return true;
+        } else {
+            throw new PermissionException("This permission doesn't belong in this context");
         }
-
-        return false;
     }
 
     public void onSaveInstanceState(final Bundle outState) {

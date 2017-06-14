@@ -20,7 +20,6 @@ package com.tokenbrowser.util;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
-import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.widget.ImageView;
@@ -120,11 +119,6 @@ public class ImageUtil {
         } catch (final IllegalArgumentException ex) {
             LogUtil.i(ImageUtil.class, "Tried to render into a now destroyed view.");
         }
-    }
-
-    public static void renderResourceIntoTarget(final @DrawableRes int drawableRes, final ImageView imageView) {
-        if (imageView == null) return;
-        imageView.setImageResource(drawableRes);
     }
 
     public static Single<Bitmap> generateQrCode(final String value) {
