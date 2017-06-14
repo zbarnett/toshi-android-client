@@ -66,11 +66,11 @@
                 android:gravity="center"
                 android:padding="@dimen/activity_horizontal_margin"
                 style="@style/TextStyleMedium"
-                android:visibility="gone"
-                tools:visibility="visible"
                 android:textColor="@color/textColorContrast"
                 android:textSize="14sp"
                 android:textAllCaps="true"
+                android:clickable="false"
+                android:alpha="0.5"
                 android:text="@string/create"/>
 
         </LinearLayout>

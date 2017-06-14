@@ -12,7 +12,9 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.TextView;
 
+import com.jakewharton.rxbinding.widget.RxTextView;
 import com.tokenbrowser.BuildConfig;
 import com.tokenbrowser.R;
 import com.tokenbrowser.model.local.ActivityResultHolder;
@@ -70,13 +72,17 @@ public class GroupSetupPresenter implements Presenter<GroupSetupActivity> {
         initRecyclerView();
         initNumberOfParticipantsView();
         initAvatarPlaceholder();
+        initNameListener();
         fetchUsers();
     }
 
     private void initClickListeners() {
+        this.activity.getBinding().create.setOnClickListener(__ -> handleCreateClicked());
         this.activity.getBinding().closeButton.setOnClickListener(__ -> this.activity.finish());
         this.activity.getBinding().avatar.setOnClickListener(__ -> handleAvatarClicked());
     }
+
+    private void handleCreateClicked() {}
 
     private void initRecyclerView() {
         final RecyclerView recyclerView = this.activity.getBinding().participants;
@@ -103,6 +109,29 @@ public class GroupSetupPresenter implements Presenter<GroupSetupActivity> {
                 R.drawable.ic_camera_with_background,
                 this.activity.getBinding().avatar
         );
+    }
+
+    private void initNameListener() {
+        final Subscription sub =
+                RxTextView.textChanges(this.activity.getBinding().groupName)
+                .map(CharSequence::toString)
+                .subscribe(
+                        this::handleName,
+                        throwable -> LogUtil.exception(getClass(), throwable)
+                );
+
+        this.subscriptions.add(sub);
+    }
+
+    private void handleName(final String groupName) {
+        final TextView next =  this.activity.getBinding().create;
+        if (groupName.length() > 0) {
+            next.setAlpha(1f);
+            next.setClickable(true);
+        } else {
+            next.setAlpha(0.5f);
+            next.setClickable(false);
+        }
     }
 
     private void fetchUsers() {
