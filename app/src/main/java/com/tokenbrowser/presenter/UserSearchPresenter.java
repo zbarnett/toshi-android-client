@@ -18,7 +18,6 @@
 package com.tokenbrowser.presenter;
 
 import android.content.Intent;
-import android.support.multidex.BuildConfig;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -26,6 +25,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.jakewharton.rxbinding.widget.RxTextView;
+import com.tokenbrowser.BuildConfig;
 import com.tokenbrowser.R;
 import com.tokenbrowser.model.local.User;
 import com.tokenbrowser.util.KeyboardUtil;
