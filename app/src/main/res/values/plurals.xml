@@ -21,4 +21,8 @@
         <item quantity="one">%d rating</item>
         <item quantity="other">%d ratings</item>
     </plurals>
+    <plurals name="participants">
+        <item quantity="one">%s Participant</item>
+        <item quantity="other">%s Participants</item>
+    </plurals>
 </resources>

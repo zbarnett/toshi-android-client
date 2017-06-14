@@ -100,7 +100,8 @@ public class GroupSetupPresenter implements Presenter<GroupSetupActivity> {
     }
 
     private void initNumberOfParticipantsView() {
-        final String participants = this.activity.getString(R.string.number_of_participants, String.format("%d", getParticipantList().size()));
+        final int numberOfparticipants = getParticipantList().size();
+        final String participants = this.activity.getResources().getQuantityString(R.plurals.participants, numberOfparticipants, numberOfparticipants);
         this.activity.getBinding().numberOfParticipants.setText(participants);
     }
 
@@ -141,7 +142,7 @@ public class GroupSetupPresenter implements Presenter<GroupSetupActivity> {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         user -> getGroupParticipantAdapter().addUser(user),
-                        this::HandleError
+                        throwable -> LogUtil.exception(getClass(), "Error during fetching group participants", throwable)
                 );
 
         this.subscriptions.add(sub);
@@ -162,10 +163,6 @@ public class GroupSetupPresenter implements Presenter<GroupSetupActivity> {
 
     private GroupParticipantAdapter getGroupParticipantAdapter() {
         return (GroupParticipantAdapter)this.activity.getBinding().participants.getAdapter();
-    }
-
-    private void HandleError(final Throwable throwable) {
-        LogUtil.exception(getClass(), "Error during fetching group participants", throwable);
     }
 
     private void handleAvatarClicked() {
