@@ -292,29 +292,21 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     }
 
     private void checkExternalStoragePermission() {
-        final boolean hasPermission = PermissionUtil.hasPermission(this.activity, Manifest.permission.READ_EXTERNAL_STORAGE);
-        if (hasPermission) {
-            startAttachmentActivity();
-        } else {
-            PermissionUtil.requestPermission(
-                    this.activity,
-                    Manifest.permission.READ_EXTERNAL_STORAGE,
-                    PermissionUtil.READ_EXTERNAL_STORAGE_PERMISSION
-            );
-        }
+        PermissionUtil.hasPermission(
+                this.activity,
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                PermissionUtil.READ_EXTERNAL_STORAGE_PERMISSION,
+                this::startAttachmentActivity
+        );
     }
 
     private void checkCameraPermission() {
-        final boolean hasPermission = PermissionUtil.hasPermission(this.activity, Manifest.permission.CAMERA);
-        if (hasPermission) {
-            startCameraActivity();
-        } else {
-            PermissionUtil.requestPermission(
-                    this.activity,
-                    Manifest.permission.CAMERA,
-                    PermissionUtil.CAMERA_PERMISSION
-            );
-        }
+        PermissionUtil.hasPermission(
+                this.activity,
+                Manifest.permission.CAMERA,
+                PermissionUtil.CAMERA_PERMISSION,
+                this::startCameraActivity
+        );
     }
 
     private void startCameraActivity() {

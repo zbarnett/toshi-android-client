@@ -77,9 +77,13 @@ public class EditProfilePresenter implements Presenter<EditProfileActivity> {
         this.activity = view;
         if (this.firstTimeAttaching) {
             this.firstTimeAttaching = false;
-            this.subscriptions = new CompositeSubscription();
+            initLongLivingObjects();
         }
         initShortLivingObjects();
+    }
+
+    private void initLongLivingObjects() {
+        this.subscriptions = new CompositeSubscription();
     }
 
     private void initShortLivingObjects() {
@@ -217,29 +221,21 @@ public class EditProfilePresenter implements Presenter<EditProfileActivity> {
     }
 
     private void checkExternalStoragePermission() {
-        final boolean hasPermission = PermissionUtil.hasPermission(this.activity, Manifest.permission.READ_EXTERNAL_STORAGE);
-        if (hasPermission) {
-            startGalleryActivity();
-        } else {
-            PermissionUtil.requestPermission(
-                    this.activity,
-                    Manifest.permission.READ_EXTERNAL_STORAGE,
-                    PermissionUtil.READ_EXTERNAL_STORAGE_PERMISSION
-            );
-        }
+        PermissionUtil.hasPermission(
+                this.activity,
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                PermissionUtil.READ_EXTERNAL_STORAGE_PERMISSION,
+                this::startGalleryActivity
+        );
     }
 
     private void checkCameraPermission() {
-        final boolean hasPermission = PermissionUtil.hasPermission(this.activity, Manifest.permission.CAMERA);
-        if (hasPermission) {
-            startCameraActivity();
-        } else {
-            PermissionUtil.requestPermission(
-                    this.activity,
-                    Manifest.permission.CAMERA,
-                    PermissionUtil.CAMERA_PERMISSION
-            );
-        }
+        PermissionUtil.hasPermission(
+                this.activity,
+                Manifest.permission.CAMERA,
+                PermissionUtil.CAMERA_PERMISSION,
+                this::startCameraActivity
+        );
     }
 
     private void startCameraActivity() {
