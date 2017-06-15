@@ -23,7 +23,6 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.util.Pair;
 import android.view.View;
 import android.view.animation.Animation;
@@ -34,8 +33,10 @@ import android.widget.Toast;
 
 import com.tokenbrowser.R;
 import com.tokenbrowser.crypto.HDWallet;
+import com.tokenbrowser.exception.PermissionException;
 import com.tokenbrowser.model.local.ActivityResultHolder;
 import com.tokenbrowser.model.local.Conversation;
+import com.tokenbrowser.model.local.PermissionResultHolder;
 import com.tokenbrowser.model.local.User;
 import com.tokenbrowser.model.sofa.Command;
 import com.tokenbrowser.model.sofa.Control;
@@ -292,29 +293,21 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     }
 
     private void checkExternalStoragePermission() {
-        final boolean hasPermission = PermissionUtil.hasPermission(this.activity, Manifest.permission.READ_EXTERNAL_STORAGE);
-        if (hasPermission) {
-            startAttachmentActivity();
-        } else {
-            PermissionUtil.requestPermission(
-                    this.activity,
-                    Manifest.permission.READ_EXTERNAL_STORAGE,
-                    PermissionUtil.READ_EXTERNAL_STORAGE_PERMISSION
-            );
-        }
+        PermissionUtil.hasPermission(
+                this.activity,
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                PermissionUtil.READ_EXTERNAL_STORAGE_PERMISSION,
+                this::startAttachmentActivity
+        );
     }
 
     private void checkCameraPermission() {
-        final boolean hasPermission = PermissionUtil.hasPermission(this.activity, Manifest.permission.CAMERA);
-        if (hasPermission) {
-            startCameraActivity();
-        } else {
-            PermissionUtil.requestPermission(
-                    this.activity,
-                    Manifest.permission.CAMERA,
-                    PermissionUtil.CAMERA_PERMISSION
-            );
-        }
+        PermissionUtil.hasPermission(
+                this.activity,
+                Manifest.permission.CAMERA,
+                PermissionUtil.CAMERA_PERMISSION,
+                this::startCameraActivity
+        );
     }
 
     private void startCameraActivity() {
@@ -752,21 +745,27 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         return true;
     }
 
-    public void handlePermission(final int requestCode,
-                                  @NonNull final String permissions[],
-                                  @NonNull final int[] grantResults) {
-        if (grantResults.length == 0) return;
-        if (grantResults[0] != PackageManager.PERMISSION_GRANTED) return;
+    /**
+     *
+     * @param permissionResultHolder Object containing info about the permission action
+     * @return a boolean that tells if the method has handled the permission result
+     * @throws PermissionException
+     */
+    public boolean tryHandlePermissionResult(final PermissionResultHolder permissionResultHolder) throws PermissionException {
+        if (permissionResultHolder == null || this.activity == null) return false;
+        final int[] grantResults = permissionResultHolder.getGrantResults();
 
-        switch (requestCode) {
-            case PermissionUtil.CAMERA_PERMISSION: {
-                startCameraActivity();
-                break;
-            }
-            case PermissionUtil.READ_EXTERNAL_STORAGE_PERMISSION: {
-                startAttachmentActivity();
-                break;
-            }
+        // Return true so the calling class knows the permission is handled
+        if (grantResults.length == 0 || grantResults[0] != PackageManager.PERMISSION_GRANTED) return true;
+
+        if (permissionResultHolder.getRequestCode() == PermissionUtil.CAMERA_PERMISSION) {
+            startCameraActivity();
+            return true;
+        } else if (permissionResultHolder.getRequestCode() == PermissionUtil.READ_EXTERNAL_STORAGE_PERMISSION) {
+            startAttachmentActivity();
+            return true;
+        } else {
+            throw new PermissionException("This permission doesn't belong in this context");
         }
     }
 

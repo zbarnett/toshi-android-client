@@ -31,6 +31,7 @@ import android.widget.Toast;
 
 import com.tokenbrowser.BuildConfig;
 import com.tokenbrowser.R;
+import com.tokenbrowser.exception.PermissionException;
 import com.tokenbrowser.model.local.ActivityResultHolder;
 import com.tokenbrowser.model.local.PermissionResultHolder;
 import com.tokenbrowser.model.local.User;
@@ -77,9 +78,13 @@ public class EditProfilePresenter implements Presenter<EditProfileActivity> {
         this.activity = view;
         if (this.firstTimeAttaching) {
             this.firstTimeAttaching = false;
-            this.subscriptions = new CompositeSubscription();
+            initLongLivingObjects();
         }
         initShortLivingObjects();
+    }
+
+    private void initLongLivingObjects() {
+        this.subscriptions = new CompositeSubscription();
     }
 
     private void initShortLivingObjects() {
@@ -217,29 +222,21 @@ public class EditProfilePresenter implements Presenter<EditProfileActivity> {
     }
 
     private void checkExternalStoragePermission() {
-        final boolean hasPermission = PermissionUtil.hasPermission(this.activity, Manifest.permission.READ_EXTERNAL_STORAGE);
-        if (hasPermission) {
-            startGalleryActivity();
-        } else {
-            PermissionUtil.requestPermission(
-                    this.activity,
-                    Manifest.permission.READ_EXTERNAL_STORAGE,
-                    PermissionUtil.READ_EXTERNAL_STORAGE_PERMISSION
-            );
-        }
+        PermissionUtil.hasPermission(
+                this.activity,
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                PermissionUtil.READ_EXTERNAL_STORAGE_PERMISSION,
+                this::startGalleryActivity
+        );
     }
 
     private void checkCameraPermission() {
-        final boolean hasPermission = PermissionUtil.hasPermission(this.activity, Manifest.permission.CAMERA);
-        if (hasPermission) {
-            startCameraActivity();
-        } else {
-            PermissionUtil.requestPermission(
-                    this.activity,
-                    Manifest.permission.CAMERA,
-                    PermissionUtil.CAMERA_PERMISSION
-            );
-        }
+        PermissionUtil.hasPermission(
+                this.activity,
+                Manifest.permission.CAMERA,
+                PermissionUtil.CAMERA_PERMISSION,
+                this::startCameraActivity
+        );
     }
 
     private void startCameraActivity() {
@@ -325,11 +322,18 @@ public class EditProfilePresenter implements Presenter<EditProfileActivity> {
         this.activity.startActivity(intent);
     }
 
-    public boolean handlePermissionResult(final PermissionResultHolder permissionResultHolder) {
+    /**
+     *
+     * @param permissionResultHolder Object containing info about the permission action
+     * @return a boolean that tells if the method has handled the permission result
+     * @throws PermissionException
+     */
+    public boolean tryHandlePermissionResult(final PermissionResultHolder permissionResultHolder) throws PermissionException {
         if (permissionResultHolder == null || this.activity == null) return false;
         final int[] grantResults = permissionResultHolder.getGrantResults();
-        if (grantResults.length == 0) return true;
-        if (grantResults[0] != PackageManager.PERMISSION_GRANTED) return true;
+
+        // Return true so the calling class knows the permission is handled
+        if (grantResults.length == 0 || grantResults[0] != PackageManager.PERMISSION_GRANTED) return true;
 
         if (permissionResultHolder.getRequestCode() == PermissionUtil.CAMERA_PERMISSION) {
             startCameraActivity();
@@ -337,9 +341,9 @@ public class EditProfilePresenter implements Presenter<EditProfileActivity> {
         } else if (permissionResultHolder.getRequestCode() == PermissionUtil.READ_EXTERNAL_STORAGE_PERMISSION) {
             startGalleryActivity();
             return true;
+        } else {
+            throw new PermissionException("This permission doesn't belong in this context");
         }
-
-        return false;
     }
 
     public void onSaveInstanceState(final Bundle outState) {

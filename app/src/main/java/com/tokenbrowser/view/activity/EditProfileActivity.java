@@ -25,12 +25,14 @@ import android.support.annotation.NonNull;
 
 import com.tokenbrowser.R;
 import com.tokenbrowser.databinding.ActivityEditProfileBinding;
+import com.tokenbrowser.exception.PermissionException;
 import com.tokenbrowser.model.local.ActivityResultHolder;
 import com.tokenbrowser.model.local.PermissionResultHolder;
 import com.tokenbrowser.presenter.EditProfilePresenter;
 import com.tokenbrowser.presenter.LoaderIds;
 import com.tokenbrowser.presenter.factory.EditProfilePresenterFactory;
 import com.tokenbrowser.presenter.factory.PresenterFactory;
+import com.tokenbrowser.util.LogUtil;
 
 public class EditProfileActivity extends BasePresenterActivity<EditProfilePresenter, EditProfileActivity> {
 
@@ -84,8 +86,13 @@ public class EditProfileActivity extends BasePresenterActivity<EditProfilePresen
     private void tryProcessPermissionResultHolder() {
         if (this.presenter == null || this.permissionResultHolder == null) return;
 
-        if (this.presenter.handlePermissionResult(this.permissionResultHolder)) {
-            this.permissionResultHolder = null;
+        try {
+            final boolean isPermissionHandled = this.presenter.tryHandlePermissionResult(this.permissionResultHolder);
+            if (isPermissionHandled) {
+                this.permissionResultHolder = null;
+            }
+        } catch (PermissionException e) {
+            LogUtil.e(getClass(), "Error during permission request");
         }
     }
 

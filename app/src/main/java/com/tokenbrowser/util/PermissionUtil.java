@@ -14,14 +14,13 @@ public class PermissionUtil {
     public static final int CAMERA_PERMISSION = 1;
     public static final int READ_EXTERNAL_STORAGE_PERMISSION = 2;
 
-    public static boolean hasPermission(@NonNull final AppCompatActivity activity,
-                                        @NonNull final String permission) {
-        return ContextCompat.checkSelfPermission(activity, permission) == PackageManager.PERMISSION_GRANTED;
+    public interface HasPermissionListener {
+        void onHasPermission();
     }
 
     public static void requestPermission(@NonNull final AppCompatActivity activity,
-                                                 @NonNull final String permission,
-                                                 final int requestCode) {
+                                         @NonNull final String permission,
+                                         final int requestCode) {
         ActivityCompat
                 .requestPermissions(
                         activity,
@@ -30,9 +29,9 @@ public class PermissionUtil {
                 );
     }
 
-    public static void grantUriPermission(final AppCompatActivity activity,
-                                          final Intent intent,
-                                          final Uri uri) {
+    public static void grantUriPermission(@NonNull final AppCompatActivity activity,
+                                          @NonNull final Intent intent,
+                                          @NonNull final Uri uri) {
         if (Build.VERSION.SDK_INT >= 21) return;
         final PackageManager pm = activity.getPackageManager();
         final String packageName = intent.resolveActivity(pm).getPackageName();
@@ -43,5 +42,21 @@ public class PermissionUtil {
                         Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                                 | Intent.FLAG_GRANT_READ_URI_PERMISSION
         );
+    }
+
+    public static void hasPermission(@NonNull final AppCompatActivity activity,
+                                     @NonNull final String permission,
+                                     final int requestCode,
+                                     @NonNull final HasPermissionListener listener) {
+        final boolean hasPermission = ContextCompat.checkSelfPermission(activity, permission) == PackageManager.PERMISSION_GRANTED;
+        if (hasPermission) {
+            listener.onHasPermission();
+        } else {
+            requestPermission(
+                    activity,
+                    permission,
+                    requestCode
+            );
+        }
     }
 }
