@@ -23,6 +23,7 @@ import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
 import android.util.Pair;
 
+import com.google.protobuf.ByteString;
 import com.tokenbrowser.BuildConfig;
 import com.tokenbrowser.R;
 import com.tokenbrowser.crypto.HDWallet;
@@ -36,6 +37,7 @@ import com.tokenbrowser.manager.model.SofaMessageTask;
 import com.tokenbrowser.manager.store.ConversationStore;
 import com.tokenbrowser.manager.store.PendingMessageStore;
 import com.tokenbrowser.model.local.Conversation;
+import com.tokenbrowser.model.local.Group;
 import com.tokenbrowser.model.local.PendingMessage;
 import com.tokenbrowser.model.local.SendState;
 import com.tokenbrowser.model.local.User;
@@ -71,7 +73,10 @@ import org.whispersystems.signalservice.api.messages.SignalServiceAttachmentPoin
 import org.whispersystems.signalservice.api.messages.SignalServiceContent;
 import org.whispersystems.signalservice.api.messages.SignalServiceDataMessage;
 import org.whispersystems.signalservice.api.messages.SignalServiceEnvelope;
+import org.whispersystems.signalservice.api.messages.SignalServiceGroup;
 import org.whispersystems.signalservice.api.push.SignalServiceAddress;
+import org.whispersystems.signalservice.api.push.exceptions.EncapsulatedExceptions;
+import org.whispersystems.signalservice.internal.push.SignalServiceProtos;
 import org.whispersystems.signalservice.internal.push.SignalServiceUrl;
 
 import java.io.File;
@@ -142,6 +147,11 @@ public final class SofaMessageManager {
     public final void saveMessage(final User receiver, final SofaMessage message) {
         final SofaMessageTask messageTask = new SofaMessageTask(receiver, message, SofaMessageTask.SAVE_ONLY);
         this.chatMessageQueue.onNext(messageTask);
+    }
+
+    // Create a new group
+    public final Completable createGroup(final Group group) {
+        return sendMessageToGroup(group);
     }
 
     // Will store a tranasaction in the local database
@@ -354,6 +364,29 @@ public final class SofaMessageManager {
                 message.setSendState(SendState.STATE_FAILED);
                 updateExistingMessage(receiver, message);
             }
+        }
+    }
+
+    private Completable sendMessageToGroup(final Group group) {
+        try {
+            final SignalServiceProtos.GroupContext groupContext =
+                    SignalServiceProtos.GroupContext.newBuilder()
+                    .setId(ByteString.copyFromUtf8(group.getId()))
+                    .setType(SignalServiceProtos.GroupContext.Type.UPDATE)
+                    .addAllMembers(group.getMemberIds())
+                    .setName(group.getTitle())
+                    .build();
+
+            // Todo - Add avatar support
+            final SignalServiceGroup.Type type = SignalServiceGroup.Type.UPDATE;
+            final SignalServiceGroup signalGroup = new SignalServiceGroup(type, group.getIdBytes(), groupContext.getName(), groupContext.getMembersList(), null);
+            final SignalServiceDataMessage groupDataMessage = new SignalServiceDataMessage(System.currentTimeMillis(), signalGroup, null, null);
+
+            generateMessageSender().sendMessage(group.getMemberAddresses(), groupDataMessage);
+            return Completable.complete();
+        } catch (final IOException | EncapsulatedExceptions ex) {
+            LogUtil.error(getClass(), ex.toString());
+            return Completable.error(ex);
         }
     }
 

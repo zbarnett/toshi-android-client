@@ -19,13 +19,14 @@ package com.tokenbrowser.model.local;
 
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import org.spongycastle.util.encoders.Hex;
+import org.whispersystems.signalservice.api.push.SignalServiceAddress;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import io.realm.RealmList;
@@ -51,9 +52,14 @@ public class Group extends RealmObject {
         return this.id;
     }
 
-    @Nullable
+    @NonNull
+    public byte[] getIdBytes() {
+        return Hex.decode(this.id);
+    }
+
+    @NonNull
     public String getTitle() {
-        return this.title;
+        return this.title == null ? "" : this.title;
     }
 
     @NonNull
@@ -77,5 +83,28 @@ public class Group extends RealmObject {
         } catch (final NoSuchAlgorithmException e) {
             throw new AssertionError(e);
         }
+    }
+
+    // Helper functions
+    public List<String> getMemberIds() {
+        if (this.members == null) {
+            return Collections.emptyList();
+        }
+        final List<String> ids = new LinkedList<>();
+        for (final User member : this.members) {
+            ids.add(member.getTokenId());
+        }
+        return ids;
+    }
+
+    public List<SignalServiceAddress> getMemberAddresses() {
+        if (this.members == null) {
+            return Collections.emptyList();
+        }
+        final List<SignalServiceAddress> ids = new LinkedList<>();
+        for (final User member : this.members) {
+            ids.add(new SignalServiceAddress(member.getTokenId()));
+        }
+        return ids;
     }
 }
