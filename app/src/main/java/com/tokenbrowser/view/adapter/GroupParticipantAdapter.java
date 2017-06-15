@@ -29,7 +29,7 @@ import com.tokenbrowser.view.adapter.viewholder.GroupParticipantViewHolder;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GroupParticipantAdapter extends RecyclerView.Adapter<GroupParticipantViewHolder> {
+public final class GroupParticipantAdapter extends RecyclerView.Adapter<GroupParticipantViewHolder> {
 
     private List<User> users;
 
@@ -41,6 +41,10 @@ public class GroupParticipantAdapter extends RecyclerView.Adapter<GroupParticipa
         this.users.add(user);
         notifyDataSetChanged();
         return this;
+    }
+
+    public List<User> getUsers() {
+        return this.users;
     }
 
     @Override

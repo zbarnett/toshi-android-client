@@ -368,26 +368,29 @@ public final class SofaMessageManager {
     }
 
     private Completable sendMessageToGroup(final Group group) {
-        try {
-            final SignalServiceProtos.GroupContext groupContext =
-                    SignalServiceProtos.GroupContext.newBuilder()
-                    .setId(ByteString.copyFromUtf8(group.getId()))
-                    .setType(SignalServiceProtos.GroupContext.Type.UPDATE)
-                    .addAllMembers(group.getMemberIds())
-                    .setName(group.getTitle())
-                    .build();
+        return Completable.fromCallable(() -> {
+                try {
+                    final SignalServiceProtos.GroupContext groupContext =
+                            SignalServiceProtos.GroupContext.newBuilder()
+                                    .setId(ByteString.copyFromUtf8(group.getId()))
+                                    .setType(SignalServiceProtos.GroupContext.Type.UPDATE)
+                                    .addAllMembers(group.getMemberIds())
+                                    .setName(group.getTitle())
+                                    .build();
 
-            // Todo - Add avatar support
-            final SignalServiceGroup.Type type = SignalServiceGroup.Type.UPDATE;
-            final SignalServiceGroup signalGroup = new SignalServiceGroup(type, group.getIdBytes(), groupContext.getName(), groupContext.getMembersList(), null);
-            final SignalServiceDataMessage groupDataMessage = new SignalServiceDataMessage(System.currentTimeMillis(), signalGroup, null, null);
+                    // Todo - Add avatar support
+                    final SignalServiceGroup.Type type = SignalServiceGroup.Type.UPDATE;
+                    final SignalServiceGroup signalGroup = new SignalServiceGroup(type, group.getIdBytes(), groupContext.getName(), groupContext.getMembersList(), null);
+                    final SignalServiceDataMessage groupDataMessage = new SignalServiceDataMessage(System.currentTimeMillis(), signalGroup, null, null);
 
-            generateMessageSender().sendMessage(group.getMemberAddresses(), groupDataMessage);
-            return Completable.complete();
-        } catch (final IOException | EncapsulatedExceptions ex) {
-            LogUtil.error(getClass(), ex.toString());
-            return Completable.error(ex);
-        }
+                    generateMessageSender().sendMessage(group.getMemberAddresses(), groupDataMessage);
+                    return Completable.complete();
+                } catch (final IOException | EncapsulatedExceptions ex) {
+                    return Completable.error(ex);
+                }
+            })
+            .subscribeOn(Schedulers.io())
+            .observeOn(Schedulers.io());
     }
 
     private void sendToSignal(final SofaMessageTask messageTask) throws UntrustedIdentityException, IOException {
@@ -513,12 +516,15 @@ public final class SofaMessageManager {
 
         if (content.getDataMessage().isPresent()) {
             final SignalServiceDataMessage dataMessage = content.getDataMessage().get();
-            final Optional<String> messageBody = dataMessage.getBody();
-            final Optional<List<SignalServiceAttachment>> attachments = dataMessage.getAttachments();
-            final DecryptedSignalMessage decryptedMessage = new DecryptedSignalMessage(messageSource, messageBody.get(), attachments);
+            if (dataMessage.isGroupUpdate()) { LogUtil.i(getClass(), "Current unhandled group message."); }
+            else {
+                final Optional<String> messageBody = dataMessage.getBody();
+                final Optional<List<SignalServiceAttachment>> attachments = dataMessage.getAttachments();
+                final DecryptedSignalMessage decryptedMessage = new DecryptedSignalMessage(messageSource, messageBody.get(), attachments);
 
-            saveIncomingMessageToDatabase(decryptedMessage);
-            return decryptedMessage;
+                saveIncomingMessageToDatabase(decryptedMessage);
+                return decryptedMessage;
+            }
         }
         return null;
     }
