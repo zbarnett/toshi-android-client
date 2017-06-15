@@ -20,6 +20,7 @@ import com.tokenbrowser.BuildConfig;
 import com.tokenbrowser.R;
 import com.tokenbrowser.exception.PermissionException;
 import com.tokenbrowser.model.local.ActivityResultHolder;
+import com.tokenbrowser.model.local.Group;
 import com.tokenbrowser.model.local.PermissionResultHolder;
 import com.tokenbrowser.model.local.User;
 import com.tokenbrowser.util.FileUtil;
@@ -84,7 +85,19 @@ public class GroupSetupPresenter implements Presenter<GroupSetupActivity> {
         this.activity.getBinding().avatar.setOnClickListener(__ -> handleAvatarClicked());
     }
 
-    private void handleCreateClicked() {}
+    private void handleCreateClicked() {
+        final Group group = new Group(this.getGroupParticipantAdapter().getUsers());
+        final Subscription subscription = BaseApplication
+            .get()
+            .getTokenManager()
+            .getSofaMessageManager()
+            .createGroup(group)
+            .subscribe(
+                    () -> LogUtil.i(getClass(), "Group created."),
+                    ex -> LogUtil.e(getClass(), "Group creation failed: " + ex)
+            );
+        this.subscriptions.add(subscription);
+    }
 
     private void initRecyclerView() {
         final RecyclerView recyclerView = this.activity.getBinding().participants;
@@ -102,8 +115,8 @@ public class GroupSetupPresenter implements Presenter<GroupSetupActivity> {
     }
 
     private void initNumberOfParticipantsView() {
-        final int numberOfparticipants = getParticipantList().size();
-        final String participants = this.activity.getResources().getQuantityString(R.plurals.participants, numberOfparticipants, numberOfparticipants);
+        final int numberOfParticipants = getParticipantList().size();
+        final String participants = this.activity.getResources().getQuantityString(R.plurals.participants, numberOfParticipants, numberOfParticipants);
         this.activity.getBinding().numberOfParticipants.setText(participants);
     }
 
@@ -147,7 +160,7 @@ public class GroupSetupPresenter implements Presenter<GroupSetupActivity> {
                 .flatMap(this::fetchUser)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        user -> getGroupParticipantAdapter().addUser(user),
+                        this.getGroupParticipantAdapter()::addUser,
                         throwable -> LogUtil.exception(getClass(), "Error during fetching group participants", throwable)
                 );
 
