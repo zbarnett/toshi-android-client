@@ -24,11 +24,14 @@ import android.support.annotation.NonNull;
 
 import com.tokenbrowser.R;
 import com.tokenbrowser.databinding.ActivityChatBinding;
+import com.tokenbrowser.exception.PermissionException;
 import com.tokenbrowser.model.local.ActivityResultHolder;
+import com.tokenbrowser.model.local.PermissionResultHolder;
 import com.tokenbrowser.presenter.LoaderIds;
 import com.tokenbrowser.presenter.chat.ChatPresenter;
 import com.tokenbrowser.presenter.factory.ChatPresenterFactory;
 import com.tokenbrowser.presenter.factory.PresenterFactory;
+import com.tokenbrowser.util.LogUtil;
 
 public final class ChatActivity extends BasePresenterActivity<ChatPresenter, ChatActivity> {
 
@@ -39,6 +42,7 @@ public final class ChatActivity extends BasePresenterActivity<ChatPresenter, Cha
 
     private ActivityChatBinding binding;
     private ActivityResultHolder resultHolder;
+    private PermissionResultHolder permissionResultHolder;
     private ChatPresenter presenter;
 
     @Override
@@ -51,6 +55,7 @@ public final class ChatActivity extends BasePresenterActivity<ChatPresenter, Cha
     public void onResume() {
         super.onResume();
         tryProcessResultHolder();
+        tryProcessPermissionResultHolder();
     }
 
     private void init() {
@@ -80,12 +85,23 @@ public final class ChatActivity extends BasePresenterActivity<ChatPresenter, Cha
     }
 
     private void tryProcessResultHolder() {
-        if (this.presenter == null || this.resultHolder == null) {
-            return;
-        }
+        if (this.presenter == null || this.resultHolder == null) return;
 
         if (this.presenter.handleActivityResult(this.resultHolder)) {
             this.resultHolder = null;
+        }
+    }
+
+    private void tryProcessPermissionResultHolder() {
+        if (this.presenter == null || this.permissionResultHolder == null) return;
+
+        try {
+            final boolean isPermissionHandled = this.presenter.tryHandlePermissionResult(this.permissionResultHolder);
+            if (isPermissionHandled) {
+                this.permissionResultHolder = null;
+            }
+        } catch (PermissionException e) {
+            LogUtil.e(getClass(), "Error during permission request");
         }
     }
 
@@ -93,11 +109,8 @@ public final class ChatActivity extends BasePresenterActivity<ChatPresenter, Cha
     public void onRequestPermissionsResult(final int requestCode,
                                            @NonNull final String permissions[],
                                            @NonNull final int[] grantResults) {
-        if (this.presenter == null) {
-            return;
-        }
-
-        this.presenter.handlePermission(requestCode, permissions, grantResults);
+        this.permissionResultHolder = new PermissionResultHolder(requestCode, permissions, grantResults);
+        tryProcessPermissionResultHolder();
     }
 
     @Override
