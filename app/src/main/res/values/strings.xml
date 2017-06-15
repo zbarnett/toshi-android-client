@@ -249,4 +249,9 @@
     <string name="add_participants">Add participants</string>
     <string name="next">Next</string>
     <string name="participants_prefix">To: </string>
+    <string name="create">Create</string>
+    <string name="group_name">Group name</string>
+    <string name="group_settings">Group settings</string>
+    <string name="public_">Public</string>
+    <string name="group_chat_info">If your group is Public it will be listed in the search results and other users are able to join this group.</string>
 </resources>

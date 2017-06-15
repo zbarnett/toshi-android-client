@@ -166,4 +166,7 @@
         <item name="android:src">@drawable/ic_dotted_menu</item>
     </style>
 
+    <style name="SwitchStyle" parent="Base.Widget.AppCompat.CompoundButton.Switch">
+        <item name="colorControlActivated">@color/colorPrimary</item>
+    </style>
 </resources>

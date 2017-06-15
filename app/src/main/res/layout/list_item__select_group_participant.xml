@@ -63,4 +63,22 @@
             tools:text="username"/>
 
     </LinearLayout>
+
+    <CheckBox
+        android:id="@+id/checkbox"
+        android:layout_width="22dp"
+        android:layout_height="22dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:button="@drawable/checkbox"
+        android:clickable="false"
+        android:layout_gravity="right|center_vertical"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginLeft="56dp"
+        android:layout_gravity="bottom"
+        android:background="@color/divider"/>
+
 </FrameLayout>

@@ -17,6 +17,7 @@
 
 package com.tokenbrowser.presenter;
 
+import android.content.Intent;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -29,7 +30,8 @@ import com.tokenbrowser.model.local.User;
 import com.tokenbrowser.util.LogUtil;
 import com.tokenbrowser.view.BaseApplication;
 import com.tokenbrowser.view.activity.GroupParticipantsActivity;
-import com.tokenbrowser.view.adapter.GroupParticipantAdapter;
+import com.tokenbrowser.view.activity.GroupSetupActivity;
+import com.tokenbrowser.view.adapter.SelectGroupParticipantAdapter;
 import com.tokenbrowser.view.custom.HorizontalLineDivider;
 
 import java.util.ArrayList;
@@ -76,13 +78,26 @@ public class GroupParticipantsPresenter implements Presenter<GroupParticipantsAc
         this.activity.getBinding().next.setOnClickListener(__ -> handleNextClicked());
     }
 
-    private void handleNextClicked() {}
+    private void handleNextClicked() {
+        final ArrayList<String> idList = transformsUserListToIdList(this.participants);
+        final Intent intent = new Intent(this.activity, GroupSetupActivity.class)
+                .putStringArrayListExtra(GroupSetupActivity.PARTICIPANTS, idList);
+        this.activity.startActivity(intent);
+    }
+
+    private ArrayList<String> transformsUserListToIdList(final List<User> participants) {
+        final ArrayList<String> idList = new ArrayList<>();
+        for (final User user : participants) {
+            idList.add(user.getTokenId());
+        }
+        return idList;
+    }
 
     private void initRecyclerView() {
         final RecyclerView recyclerView = this.activity.getBinding().searchResults;
         recyclerView.setLayoutManager(new LinearLayoutManager(this.activity));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        final GroupParticipantAdapter adapter = new GroupParticipantAdapter()
+        final SelectGroupParticipantAdapter adapter = new SelectGroupParticipantAdapter()
                 .setSelectedUsers(this.participants)
                 .setOnItemClickListener(this::handleUserClicked);
         recyclerView.setAdapter(adapter);
@@ -182,8 +197,8 @@ public class GroupParticipantsPresenter implements Presenter<GroupParticipantsAc
         LogUtil.exception(getClass(), "Error while searching for user", throwable);
     }
 
-    private GroupParticipantAdapter getParticipantsAdapter() {
-        return (GroupParticipantAdapter) this.activity.getBinding().searchResults.getAdapter();
+    private SelectGroupParticipantAdapter getParticipantsAdapter() {
+        return (SelectGroupParticipantAdapter) this.activity.getBinding().searchResults.getAdapter();
     }
 
     @Override

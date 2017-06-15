@@ -24,7 +24,6 @@ import android.view.ViewGroup;
 
 import com.tokenbrowser.R;
 import com.tokenbrowser.model.local.User;
-import com.tokenbrowser.view.adapter.listeners.OnItemClickListener;
 import com.tokenbrowser.view.adapter.viewholder.GroupParticipantViewHolder;
 
 import java.util.ArrayList;
@@ -33,27 +32,14 @@ import java.util.List;
 public class GroupParticipantAdapter extends RecyclerView.Adapter<GroupParticipantViewHolder> {
 
     private List<User> users;
-    private List<User> selectedUsers;
-    private OnItemClickListener<User> onItemClickListener;
 
     public GroupParticipantAdapter() {
         this.users = new ArrayList<>();
-        this.selectedUsers = new ArrayList<>();
     }
 
-    public GroupParticipantAdapter setUsers(final List<User> users) {
-        this.users.clear();
-        this.users.addAll(users);
+    public GroupParticipantAdapter addUser(final User user) {
+        this.users.add(user);
         notifyDataSetChanged();
-        return this;
-    }
-    public GroupParticipantAdapter setOnItemClickListener(final OnItemClickListener<User> listener) {
-        this.onItemClickListener = listener;
-        return this;
-    }
-
-    public GroupParticipantAdapter setSelectedUsers(final List<User> selectedUsers) {
-        this.selectedUsers.addAll(selectedUsers);
         return this;
     }
 
@@ -66,19 +52,11 @@ public class GroupParticipantAdapter extends RecyclerView.Adapter<GroupParticipa
     @Override
     public void onBindViewHolder(GroupParticipantViewHolder holder, int position) {
         final User user = this.users.get(position);
-        final boolean isSelected = this.selectedUsers.contains(user);
-        holder.setUser(user)
-                .setIsSelected(isSelected)
-                .setOnClickListener(this.onItemClickListener, user);
+        holder.setUser(user);
     }
 
     @Override
     public int getItemCount() {
         return this.users.size();
-    }
-
-    public void clear() {
-        this.users.clear();
-        notifyDataSetChanged();
     }
 }
