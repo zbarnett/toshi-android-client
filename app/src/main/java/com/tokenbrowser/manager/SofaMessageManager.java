@@ -31,6 +31,7 @@ import com.tokenbrowser.crypto.signal.SignalPreferences;
 import com.tokenbrowser.crypto.signal.model.DecryptedSignalMessage;
 import com.tokenbrowser.crypto.signal.store.ProtocolStore;
 import com.tokenbrowser.crypto.signal.store.SignalTrustStore;
+import com.tokenbrowser.exception.GroupCreationException;
 import com.tokenbrowser.manager.chat.SofaMessageReceiver;
 import com.tokenbrowser.manager.chat.SofaMessageRegistration;
 import com.tokenbrowser.manager.model.SofaMessageTask;
@@ -126,7 +127,7 @@ public final class SofaMessageManager {
     }
 
     // Create a new group
-    public final Completable createGroup(final Group group) {
+    public final Single<Group> createGroup(final Group group) {
         return sendMessageToGroup(group);
     }
 
@@ -341,8 +342,8 @@ public final class SofaMessageManager {
         }
     }
 
-    private Completable sendMessageToGroup(final Group group) {
-        return Completable.fromCallable(() -> {
+    private Single<Group> sendMessageToGroup(final Group group) {
+        return Single.fromCallable(() -> {
                 try {
                     final SignalServiceProtos.GroupContext groupContext =
                             SignalServiceProtos.GroupContext.newBuilder()
@@ -358,13 +359,14 @@ public final class SofaMessageManager {
                     final SignalServiceDataMessage groupDataMessage = new SignalServiceDataMessage(System.currentTimeMillis(), signalGroup, null, null);
 
                     generateMessageSender().sendMessage(group.getMemberAddresses(), groupDataMessage);
-                    return Completable.complete();
+                    return group;
                 } catch (final IOException | EncapsulatedExceptions ex) {
-                    return Completable.error(ex);
+                    throw new GroupCreationException(ex);
                 }
             })
             .subscribeOn(Schedulers.io())
-            .observeOn(Schedulers.io());
+            .observeOn(Schedulers.io())
+            .doOnSuccess(this.conversationStore::saveNewGroup);
     }
 
     private void sendToSignal(final SofaMessageTask messageTask) throws UntrustedIdentityException, IOException {

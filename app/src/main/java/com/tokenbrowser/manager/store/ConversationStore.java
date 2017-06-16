@@ -18,9 +18,13 @@
 package com.tokenbrowser.manager.store;
 
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Pair;
 
 import com.tokenbrowser.model.local.Conversation;
+import com.tokenbrowser.model.local.Group;
+import com.tokenbrowser.model.local.Recipient;
 import com.tokenbrowser.model.local.User;
 import com.tokenbrowser.model.sofa.SofaMessage;
 import com.tokenbrowser.util.LogUtil;
@@ -66,8 +70,22 @@ public class ConversationStore {
                 .filter(thread -> thread != null);
     }
 
-    public void saveNewMessage(final User user, final SofaMessage message) {
-        saveMessage(user, message)
+    public void saveNewGroup(@NonNull final Group group) {
+        final Recipient recipient = new Recipient(group);
+        saveMessage(recipient)
+                .observeOn(Schedulers.immediate())
+                .subscribeOn(Schedulers.from(dbThread))
+                .subscribe(
+                        this::broadcastConversationChanged,
+                        this::handleError
+                );
+    }
+
+    public void saveNewMessage(
+            @NonNull final User user,
+            @NonNull final SofaMessage message) {
+        final Recipient recipient = new Recipient(user);
+        saveMessage(recipient, message)
         .observeOn(Schedulers.immediate())
         .subscribeOn(Schedulers.from(dbThread))
         .subscribe(
@@ -79,26 +97,32 @@ public class ConversationStore {
         );
     }
 
-    private Single<Conversation> saveMessage(final User user, final SofaMessage message) {
-        return Single.fromCallable(() -> {
-            final Conversation existingConversation = loadWhere(THREAD_ID_FIELD, user.getTokenId());
-            final Conversation conversationToStore = existingConversation == null
-                    ? new Conversation(user)
-                    : existingConversation;
+    private Single<Conversation> saveMessage(@NonNull final Recipient recipient) {
+        return saveMessage(recipient, null);
+    }
 
-            if (shouldSaveTimestampMessage(message, conversationToStore)) {
-                final SofaMessage timestamMessage =
+    private Single<Conversation> saveMessage(
+            @NonNull final Recipient recipient,
+            @Nullable final SofaMessage message) {
+        return Single.fromCallable(() -> {
+            final Conversation conversationToStore = getOrCreateConversation(recipient);
+
+            if (message != null && shouldSaveTimestampMessage(message, conversationToStore)) {
+                final SofaMessage timestampMessage =
                         generateTimestampMessage();
-                conversationToStore.addMessage(timestamMessage);
-                broadcastNewChatMessage(user.getTokenId(), timestamMessage);
+                conversationToStore.addMessage(timestampMessage);
+                broadcastNewChatMessage(recipient.getThreadId(), timestampMessage);
             }
 
             final Realm realm = BaseApplication.get().getRealm();
             realm.beginTransaction();
-            final SofaMessage storedMessage = realm.copyToRealmOrUpdate(message);
-            conversationToStore.setLatestMessage(storedMessage);
 
-            conversationToStore.setNumberOfUnread(calculateNumberOfUnread(conversationToStore));
+            if (message != null) {
+                final SofaMessage storedMessage = realm.copyToRealmOrUpdate(message);
+                conversationToStore.setLatestMessage(storedMessage);
+                conversationToStore.setNumberOfUnread(calculateNumberOfUnread(conversationToStore));
+            }
+
             final Conversation storedConversation = realm.copyToRealmOrUpdate(conversationToStore);
             realm.commitTransaction();
             final Conversation conversationForBroadcast = realm.copyFromRealm(storedConversation);
@@ -106,6 +130,14 @@ public class ConversationStore {
 
             return conversationForBroadcast;
         });
+    }
+
+    @NonNull
+    private Conversation getOrCreateConversation(final Recipient recipient) {
+        final Conversation existingConversation = loadWhere(THREAD_ID_FIELD, recipient.getThreadId());
+        return existingConversation == null
+                ? new Conversation(recipient)
+                : existingConversation;
     }
 
     private SofaMessage generateTimestampMessage() {

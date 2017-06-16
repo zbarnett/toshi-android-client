@@ -52,4 +52,9 @@ public class Recipient extends RealmObject {
     public Group getGroup() {
         return this.group;
     }
+
+    // Helper functions
+    public String getThreadId() {
+        return isGroup() ? this.group.getId() : this.user.getTokenId();
+    }
 }

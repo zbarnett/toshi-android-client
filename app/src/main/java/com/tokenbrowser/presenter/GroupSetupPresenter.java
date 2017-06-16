@@ -93,7 +93,7 @@ public class GroupSetupPresenter implements Presenter<GroupSetupActivity> {
             .getSofaMessageManager()
             .createGroup(group)
             .subscribe(
-                    () -> LogUtil.i(getClass(), "Group created."),
+                    __ -> LogUtil.i(getClass(), "Group created."),
                     ex -> LogUtil.e(getClass(), "Group creation failed: " + ex)
             );
         this.subscriptions.add(subscription);

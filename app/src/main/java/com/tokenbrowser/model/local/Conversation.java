@@ -40,14 +40,9 @@ public class Conversation extends RealmObject {
 
     public Conversation() {}
 
-    public Conversation(final User user) {
-        this.recipient = new Recipient(user);
-        this.threadId = user.getTokenId();
-    }
-
-    public Conversation(final Group group) {
-        this.recipient = new Recipient(group);
-        this.threadId = group.getId();
+    public Conversation(final Recipient recipient) {
+        this.recipient = recipient;
+        this.threadId = recipient.getThreadId();
     }
 
     public String getThreadId() {
