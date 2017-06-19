@@ -149,7 +149,7 @@
                         android:layout_gravity="center_vertical"
                         android:textColor="@color/textColorPrimary"
                         android:textSize="16sp"
-                        android:text="@string/public_"/>
+                        android:text="@string/public_profile"/>
 
                     <android.support.v7.widget.SwitchCompat
                         android:id="@+id/public_switch"

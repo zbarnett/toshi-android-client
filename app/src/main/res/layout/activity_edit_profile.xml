@@ -188,7 +188,52 @@
 
                 <android.support.v4.widget.Space
                     android:layout_width="0dp"
-                    android:layout_height="16dp"/>
+                    android:layout_height="28dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/TextStyleMedium"
+                    android:textSize="14sp"
+                    android:textColor="@color/subTitleTextColor"
+                    android:text="@string/visibility_settings"/>
+
+                <android.support.v4.widget.Space
+                    android:layout_width="0dp"
+                    android:layout_height="18dp"/>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        style="@style/TextStyleMedium"
+                        android:textSize="16sp"
+                        android:textColor="@color/textColorPrimary"
+                        android:text="@string/public_profile"/>
+
+                    <android.support.v7.widget.SwitchCompat
+                        android:id="@+id/public_switch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:theme="@style/SwitchStyle"
+                        android:layout_gravity="right|center_vertical"/>
+
+                </FrameLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/textColorSecondaryTransparent"
+                    android:textSize="14sp"
+                    android:text="@string/public_profile_message"/>
+
+                <android.support.v4.widget.Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="40sp" />
 
             </LinearLayout>
         </ScrollView>

@@ -252,6 +252,8 @@
     <string name="create">Create</string>
     <string name="group_name">Group name</string>
     <string name="group_settings">Group settings</string>
-    <string name="public_">Public</string>
+    <string name="public_profile">Public</string>
     <string name="group_chat_info">If your group is Public it will be listed in the search results and other users are able to join this group.</string>
+    <string name="visibility_settings">Visibility settings</string>
+    <string name="public_profile_message">Setting your profile to public will allow it to show up on the Browse page. Others will be able to message you from there.</string>
 </resources>
