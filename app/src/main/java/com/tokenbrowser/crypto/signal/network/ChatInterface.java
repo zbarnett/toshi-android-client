@@ -25,7 +25,6 @@ import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.PUT;
 import retrofit2.http.Query;
-import rx.Completable;
 import rx.Single;
 
 public interface ChatInterface {
@@ -36,6 +35,6 @@ public interface ChatInterface {
 
     @Headers({"Content-Type: application/json", "Cache-control: no-store"})
     @PUT("/v1/accounts/bootstrap")
-    Completable register(@Body String body,
-                         @Query("timestamp") long timestamp);
+    Single<Void> register(@Body String body,
+                          @Query("timestamp") long timestamp);
 }

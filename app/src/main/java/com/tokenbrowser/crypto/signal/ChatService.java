@@ -204,6 +204,7 @@ public final class ChatService extends SignalServiceAccountManager {
         return this.chatInterface
                 .register(payloadForSigning, amendedTimestamp)
                 .observeOn(Schedulers.io())
-                .subscribeOn(Schedulers.io());
+                .subscribeOn(Schedulers.io())
+                .toCompletable();
     }
 }

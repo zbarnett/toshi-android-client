@@ -226,7 +226,8 @@ public class BalanceManager {
 
         return EthereumService
                 .getApi()
-                .unregisterGcm(serverTime.get(), new GcmDeregistration(token));
+                .unregisterGcm(serverTime.get(), new GcmDeregistration(token))
+                .toCompletable();
     }
 
     /* package */ Single<Payment> getTransactionStatus(final String transactionHash) {
