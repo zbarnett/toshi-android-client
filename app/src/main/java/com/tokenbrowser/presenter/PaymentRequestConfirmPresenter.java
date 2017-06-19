@@ -26,6 +26,7 @@ import com.tokenbrowser.crypto.util.TypeConverter;
 import com.tokenbrowser.model.local.User;
 import com.tokenbrowser.util.EthUtil;
 import com.tokenbrowser.util.ImageUtil;
+import com.tokenbrowser.util.LogUtil;
 import com.tokenbrowser.util.OnSingleClickListener;
 import com.tokenbrowser.util.PaymentType;
 import com.tokenbrowser.view.BaseApplication;
@@ -184,7 +185,9 @@ public class PaymentRequestConfirmPresenter implements Presenter<PaymentConfirma
                 .subscribe((localCurrency) -> {
                     final String usdEth = this.view.getString(R.string.eth_usd, localCurrency, getEthValue());
                     this.view.getBinding().ethUsd.setText(usdEth);
-                });
+                },
+                        throwable -> LogUtil.exception(getClass(), throwable)
+                );
 
         this.subscriptions.add(sub);
     }

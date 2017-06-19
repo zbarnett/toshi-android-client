@@ -142,7 +142,10 @@ import java.io.IOException;
                     .getTokenManager()
                     .getTransactionManager()
                     .signW3Transaction(transaction)
-                    .subscribe(signedTransaction -> handleSignedW3Transaction(callbackId, signedTransaction));
+                    .subscribe(
+                            signedTransaction -> handleSignedW3Transaction(callbackId, signedTransaction),
+                            throwable -> LogUtil.exception(getClass(), throwable)
+                    );
         }
 
         @Override

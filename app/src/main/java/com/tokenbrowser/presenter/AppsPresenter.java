@@ -132,7 +132,10 @@ public class AppsPresenter implements Presenter<AppsFragment>{
                 .skip(1)
                 .debounce(400, TimeUnit.MILLISECONDS)
                 .map(CharSequence::toString)
-                .subscribe(this::runSearchQuery);
+                .subscribe(
+                        this::runSearchQuery,
+                        throwable -> LogUtil.exception(getClass(), throwable)
+                );
 
         final Subscription enterSub =
                 RxTextView.editorActions(this.fragment.getBinding().search)
@@ -144,8 +147,7 @@ public class AppsPresenter implements Presenter<AppsFragment>{
 
         updateViewState();
 
-        this.subscriptions.add(searchSub);
-        this.subscriptions.add(enterSub);
+        this.subscriptions.addAll(searchSub, enterSub);
     }
 
     private void runSearchQuery(final String query) {

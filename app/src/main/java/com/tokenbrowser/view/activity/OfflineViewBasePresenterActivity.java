@@ -53,7 +53,10 @@ public abstract class OfflineViewBasePresenterActivity<P extends Presenter<V>, V
                 BaseApplication
                 .get()
                 .isConnectedSubject()
-                .subscribe(this::handleConnectionChange);
+                .subscribe(
+                        this::handleConnectionChange,
+                        throwable -> LogUtil.exception(getClass(), throwable)
+                );
     }
 
     private void handleConnectionChange(final Boolean isConnected) {

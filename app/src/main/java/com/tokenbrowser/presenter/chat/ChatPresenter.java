@@ -818,7 +818,10 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
             return sofaMessage;
         })
         .subscribeOn(Schedulers.io())
-        .subscribe(outgoingMessageQueue::send);
+        .subscribe(
+                this.outgoingMessageQueue::send,
+                this::handleError
+        );
     }
 
     private void handleError(final Throwable throwable) {
