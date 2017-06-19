@@ -57,4 +57,13 @@ public class Recipient extends RealmObject {
     public String getThreadId() {
         return isGroup() ? this.group.getId() : this.user.getTokenId();
     }
+
+    public String getDisplayName() {
+        return isGroup() ? this.group.getTitle() : this.user.getDisplayName();
+    }
+
+    public String getAvatar() {
+        // Todo - support group avatar
+        return isGroup() ? null : this.user.getAvatar();
+    }
 }

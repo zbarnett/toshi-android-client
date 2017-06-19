@@ -86,7 +86,9 @@ public class GroupSetupPresenter implements Presenter<GroupSetupActivity> {
     }
 
     private void handleCreateClicked() {
-        final Group group = new Group(this.getGroupParticipantAdapter().getUsers());
+        final Group group =
+                new Group(this.getGroupParticipantAdapter().getUsers())
+                .setTitle(this.activity.getBinding().groupName.getText().toString());
         final Subscription subscription = BaseApplication
             .get()
             .getTokenManager()

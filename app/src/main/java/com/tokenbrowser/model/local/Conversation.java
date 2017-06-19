@@ -18,7 +18,7 @@
 package com.tokenbrowser.model.local;
 
 
-import android.support.annotation.Nullable;
+import android.support.annotation.NonNull;
 
 import com.tokenbrowser.model.sofa.SofaMessage;
 
@@ -96,14 +96,9 @@ public class Conversation extends RealmObject {
         return this.recipient.isGroup();
     }
 
-    @Nullable
-    public final User getUserRecipient() {
-        return this.recipient.getUser();
-    }
-
-    @Nullable
-    public final Group getGroupRecipient() {
-        return this.recipient.getGroup();
+    @NonNull
+    public Recipient getRecipient() {
+        return this.recipient;
     }
 
     @Override

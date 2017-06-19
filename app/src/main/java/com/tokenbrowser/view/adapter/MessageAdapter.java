@@ -24,6 +24,7 @@ import android.view.ViewGroup;
 
 import com.tokenbrowser.R;
 import com.tokenbrowser.model.local.Conversation;
+import com.tokenbrowser.model.local.Recipient;
 import com.tokenbrowser.model.local.User;
 import com.tokenbrowser.model.sofa.Message;
 import com.tokenbrowser.model.sofa.Payment;
@@ -264,10 +265,16 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
             case SofaType.PAYMENT_REQUEST: {
                 final PaymentRequestViewHolder vh = (PaymentRequestViewHolder) holder;
                 final PaymentRequest request = SofaAdapters.get().txRequestFrom(payload);
-                final User remoteUser = this.conversation == null ? null : conversation.getUserRecipient();
+                final Recipient recipient = this.conversation == null ? null : conversation.getRecipient();
+                if (recipient != null && recipient.isGroup()) {
+                    // Todo - support group payment requests
+                    LogUtil.i(getClass(), "Payment requests to groups currently not supported.");
+                    return;
+                }
+
                 vh.setPaymentRequest(request)
                   .setAvatarUri(sofaMessage.getSender() != null ? sofaMessage.getSender().getAvatar() : null)
-                  .setRemoteUser(remoteUser)
+                  .setRemoteUser(recipient.getUser())
                   .setSendState(sofaMessage.getSendState())
                   .__setIsFromRemote(isRemote)
                   .setOnApproveListener(this.handleOnPaymentRequestApproved)

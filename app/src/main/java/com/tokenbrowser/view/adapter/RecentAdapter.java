@@ -105,6 +105,12 @@ public class RecentAdapter extends RecyclerView.Adapter<ThreadViewHolder> implem
     }
 
     private String formatLastMessage(final SofaMessage sofaMessage) {
+        if (sofaMessage == null) {
+            // Todo - this is only null because of group creation not containing a message
+            // should it?
+            return "";
+        }
+
         final User localUser = getCurrentLocalUser();
         final boolean sentByLocal = sofaMessage.isSentBy(localUser);
 

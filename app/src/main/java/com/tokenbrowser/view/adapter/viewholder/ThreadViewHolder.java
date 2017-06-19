@@ -23,7 +23,7 @@ import android.widget.TextView;
 
 import com.tokenbrowser.R;
 import com.tokenbrowser.model.local.Conversation;
-import com.tokenbrowser.model.local.User;
+import com.tokenbrowser.model.local.Recipient;
 import com.tokenbrowser.util.ImageUtil;
 import com.tokenbrowser.util.LocaleUtil;
 
@@ -52,8 +52,8 @@ public class ThreadViewHolder extends ClickableViewHolder {
     }
 
     public void setThread(final Conversation conversation) {
-        final User member = conversation.getUserRecipient();
-        this.name.setText(member.getDisplayName());
+        final Recipient recipient = conversation.getRecipient();
+        this.name.setText(recipient.getDisplayName());
         this.unreadCounter.setText(String.valueOf(conversation.getNumberOfUnread()));
         final String creationTime = getLastMessageCreationTime(conversation);
         this.time.setText(creationTime);
@@ -61,7 +61,7 @@ public class ThreadViewHolder extends ClickableViewHolder {
         final int visibility = conversation.getNumberOfUnread() > 0 ? VISIBLE : GONE;
         this.unreadCounter.setVisibility(visibility);
 
-        ImageUtil.load(conversation.getUserRecipient().getAvatar(), this.avatar);
+        ImageUtil.load(recipient.getAvatar(), this.avatar);
     }
 
     public void setLatestMessage(final String latestMessage) {
@@ -69,6 +69,11 @@ public class ThreadViewHolder extends ClickableViewHolder {
     }
 
     private String getLastMessageCreationTime(final Conversation conversation) {
+        if (conversation.getLatestMessage() == null) {
+            // Todo calculate time when group has been created
+            return "Todo";
+        }
+
         final long creationTime = conversation.getLatestMessage().getCreationTime();
         final Calendar lastMessageCreationTime = Calendar.getInstance();
         lastMessageCreationTime.setTimeInMillis(creationTime);
