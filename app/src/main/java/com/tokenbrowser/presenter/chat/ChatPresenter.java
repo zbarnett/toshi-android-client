@@ -23,6 +23,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Pair;
 import android.view.View;
 import android.view.animation.Animation;
@@ -687,7 +688,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     }
 
     private void setControlView(final SofaMessage sofaMessage) {
-        if (sofaMessage == null || this.activity == null) {
+        if (sofaMessage == null || TextUtils.isEmpty(sofaMessage.getPayload()) || this.activity == null) {
             return;
         }
 
