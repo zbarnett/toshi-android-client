@@ -190,6 +190,14 @@ public class TokenMigration implements RealmMigration {
                     .removeField("member");
             oldVersion++;
         }
+
+        if (oldVersion == 12) {
+            final RealmObjectSchema userSchema = schema.get("User");
+            if (!userSchema.hasField("is_public")) {
+                userSchema.addField("is_public", boolean.class);
+            }
+            oldVersion++;
+        }
     }
 
     @Override

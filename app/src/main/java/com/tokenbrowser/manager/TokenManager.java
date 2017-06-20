@@ -123,7 +123,7 @@ public class TokenManager {
         Realm.init(BaseApplication.get());
         this.realmConfig = new RealmConfiguration
                 .Builder()
-                .schemaVersion(12)
+                .schemaVersion(13)
                 .migration(new TokenMigration(this.wallet))
                 .name(this.wallet.getOwnerAddress())
                 .encryptionKey(key)

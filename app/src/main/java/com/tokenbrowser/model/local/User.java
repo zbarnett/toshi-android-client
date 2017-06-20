@@ -39,6 +39,8 @@ public class User extends RealmObject {
     private String location;
     private String name;
     private boolean is_app;
+    @Json(name = "public")
+    private boolean is_public;
 
     // ctors
     public User() {
@@ -104,6 +106,10 @@ public class User extends RealmObject {
 
     public boolean isApp() {
         return is_app;
+    }
+
+    public boolean isPublic() {
+        return is_public;
     }
 
     @Override

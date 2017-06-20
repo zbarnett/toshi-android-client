@@ -137,13 +137,11 @@ public class UserManager {
     }
 
     private void registerNewUser() {
-        IdService
-            .getApi()
-            .getTimestamp()
-            .subscribe(
-                    this::registerNewUserWithTimestamp,
-                    this::handleUserError
-            );
+        getTimestamp()
+        .subscribe(
+                this::registerNewUserWithTimestamp,
+                this::handleUserError
+        );
     }
 
     private void handleUserError(final Throwable throwable) {
@@ -203,9 +201,7 @@ public class UserManager {
     }
 
     public Single<User> updateUser(final UserDetails userDetails) {
-        return IdService
-                .getApi()
-                .getTimestamp()
+        return getTimestamp()
                 .subscribeOn(Schedulers.io())
                 .flatMap(serverTime -> updateUserWithTimestamp(userDetails, serverTime));
     }
@@ -305,12 +301,10 @@ public class UserManager {
     }
 
     public Single<Void> webLogin(final String loginToken) {
-        return IdService
-            .getApi()
-            .getTimestamp()
-            .subscribeOn(Schedulers.io())
-            .observeOn(Schedulers.io())
-            .flatMap((serverTime) -> webLoginWithTimestamp(loginToken, serverTime));
+        return getTimestamp()
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .flatMap((serverTime) -> webLoginWithTimestamp(loginToken, serverTime));
     }
 
     private Single<Void> webLoginWithTimestamp(final String loginToken, final ServerTime serverTime) {
@@ -356,21 +350,13 @@ public class UserManager {
     }
 
     public Single<Void> reportUser(final Report report) {
-        return IdService
-                .getApi()
-                .getTimestamp()
+        return getTimestamp()
                 .flatMap(serverTime ->
                         IdService
                         .getApi()
                         .reportUser(report, serverTime.get())
                 )
                 .subscribeOn(Schedulers.io());
-    }
-
-    public Single<ServerTime> getTimestamp() {
-        return IdService
-                .getApi()
-                .getTimestamp();
     }
 
     public Single<User> uploadAvatar(final File file) {
@@ -383,14 +369,18 @@ public class UserManager {
         final RequestBody requestFile = RequestBody.create(mediaType, file);
         final MultipartBody.Part body = MultipartBody.Part.createFormData(FORM_DATA_NAME, file.getName(), requestFile);
 
-        return IdService
-                .getApi()
-                .getTimestamp()
+        return getTimestamp()
                 .subscribeOn(Schedulers.io())
                 .flatMap(serverTime -> IdService
                         .getApi()
                         .uploadFile(body, serverTime.get()))
                 .doOnSuccess(this.userSubject::onNext);
+    }
+
+    public Single<ServerTime> getTimestamp() {
+        return IdService
+                .getApi()
+                .getTimestamp();
     }
 
     public void clear() {

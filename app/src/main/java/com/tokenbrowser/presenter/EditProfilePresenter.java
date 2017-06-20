@@ -72,6 +72,7 @@ public class EditProfilePresenter implements Presenter<EditProfileActivity> {
     private String aboutFieldContents;
     private String locationFieldContents;
     private String avatarUrl;
+    private Boolean isProfilePublic;
 
     @Override
     public void onViewAttached(final EditProfileActivity view) {
@@ -111,6 +112,7 @@ public class EditProfilePresenter implements Presenter<EditProfileActivity> {
         this.activity.getBinding().inputUsername.setText(this.userNameFieldContents);
         this.activity.getBinding().inputAbout.setText(this.aboutFieldContents);
         this.activity.getBinding().inputLocation.setText(this.locationFieldContents);
+        this.activity.getBinding().publicSwitch.setChecked(this.isProfilePublic == null ? false : this.isProfilePublic);
     }
 
     private void loadAvatar() {
@@ -164,10 +166,12 @@ public class EditProfilePresenter implements Presenter<EditProfileActivity> {
                     .setDisplayName(activity.getBinding().inputName.getText().toString().trim())
                     .setUsername(activity.getBinding().inputUsername.getText().toString().trim())
                     .setAbout(activity.getBinding().inputAbout.getText().toString().trim())
-                    .setLocation(activity.getBinding().inputLocation.getText().toString().trim());
+                    .setLocation(activity.getBinding().inputLocation.getText().toString().trim())
+                    .setIsPublic(activity.getBinding().publicSwitch.isChecked());
 
             final Subscription sub =
-                    BaseApplication.get()
+                    BaseApplication
+                    .get()
                     .getTokenManager()
                     .getUserManager()
                     .updateUser(userDetails)
@@ -272,6 +276,7 @@ public class EditProfilePresenter implements Presenter<EditProfileActivity> {
         if (this.userNameFieldContents == null) this.userNameFieldContents = user.getUsernameForEditing();
         if (this.aboutFieldContents == null) this.aboutFieldContents = user.getAbout();
         if (this.locationFieldContents == null) this.locationFieldContents = user.getLocation();
+        if (this.isProfilePublic == null) this.isProfilePublic = user.isPublic();
         this.avatarUrl = user.getAvatar();
     }
 
@@ -296,6 +301,7 @@ public class EditProfilePresenter implements Presenter<EditProfileActivity> {
         this.userNameFieldContents = this.activity.getBinding().inputUsername.getText().toString();
         this.aboutFieldContents = this.activity.getBinding().inputAbout.getText().toString();
         this.locationFieldContents = this.activity.getBinding().inputLocation.getText().toString();
+        this.isProfilePublic = this.activity.getBinding().publicSwitch.isChecked();
     }
 
     public boolean handleActivityResult(final ActivityResultHolder resultHolder) {

@@ -20,6 +20,7 @@ package com.tokenbrowser.model.network;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.squareup.moshi.Json;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserDetails {
@@ -38,6 +39,9 @@ public class UserDetails {
 
     @JsonProperty
     private String name;
+
+    @Json(name = "public")
+    private boolean is_public;
 
     public UserDetails setUsername(final String username) {
         this.username = username;
@@ -61,6 +65,11 @@ public class UserDetails {
 
     public UserDetails setDisplayName(final String name) {
         this.name = name;
+        return this;
+    }
+
+    public UserDetails setIsPublic(final boolean isPublic) {
+        this.is_public = isPublic;
         return this;
     }
 }
