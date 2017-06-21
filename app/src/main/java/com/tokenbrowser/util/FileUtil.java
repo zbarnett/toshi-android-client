@@ -29,13 +29,19 @@ import android.webkit.MimeTypeMap;
 
 import com.tokenbrowser.BuildConfig;
 import com.tokenbrowser.model.local.Attachment;
+import com.tokenbrowser.model.sofa.OutgoingAttachment;
 import com.tokenbrowser.view.BaseApplication;
 
 import org.whispersystems.libsignal.InvalidMessageException;
 import org.whispersystems.signalservice.api.SignalServiceMessageReceiver;
+import org.whispersystems.signalservice.api.messages.SignalServiceAttachment;
 import org.whispersystems.signalservice.api.messages.SignalServiceAttachmentPointer;
+import org.whispersystems.signalservice.api.messages.SignalServiceAttachmentStream;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -49,6 +55,8 @@ import okio.Okio;
 import okio.Source;
 import rx.Single;
 import rx.schedulers.Schedulers;
+
+import static org.whispersystems.signalservice.api.messages.SignalServiceAttachment.newStreamBuilder;
 
 public class FileUtil {
 
@@ -183,5 +191,25 @@ public class FileUtil {
                         BuildConfig.APPLICATION_ID + FILE_PROVIDER_NAME,
                         file
                 );
+    }
+
+    public static SignalServiceAttachment buildSignalServiceAttachment(final OutgoingAttachment attachment) throws FileNotFoundException, IllegalStateException {
+        final File attachmentFile = attachment.getOutgoingAttachment();
+        final FileInputStream attachmentStream = new FileInputStream(attachmentFile);
+        return newStreamBuilder()
+                .withStream(attachmentStream)
+                .withContentType(attachment.getMimeType())
+                .withLength(attachmentFile.length())
+                .build();
+    }
+
+    public static SignalServiceAttachmentStream buildSignalServiceAttachment(final Bitmap bitmap) {
+        final Bitmap.CompressFormat format = Bitmap.CompressFormat.PNG;
+        final byte[] bytes = ImageUtil.toByteArray(bitmap, format);
+        return SignalServiceAttachmentStream.newStreamBuilder()
+                .withContentType("image/png")
+                .withStream(new ByteArrayInputStream(bytes))
+                .withLength(bytes.length)
+                .build();
     }
 }
