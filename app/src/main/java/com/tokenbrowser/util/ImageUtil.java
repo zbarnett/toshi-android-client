@@ -17,6 +17,7 @@
 
 package com.tokenbrowser.util;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
@@ -39,11 +40,13 @@ import com.tokenbrowser.manager.network.image.CachedGlideUrl;
 import com.tokenbrowser.manager.network.image.ForceLoadGlideUrl;
 import com.tokenbrowser.view.BaseApplication;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
@@ -121,6 +124,26 @@ public class ImageUtil {
         }
     }
 
+    public static Single<Bitmap> loadAsBitmap(final Uri uri, final Context context) {
+        return Single.fromCallable(() -> {
+            if (uri == null || context == null) return null;
+
+            try {
+                return Glide
+                        .with(context)
+                        .load(uri)
+                        .asBitmap()
+                        .into(300, 300)
+                        .get();
+            } catch (final InterruptedException | ExecutionException ex) {
+                LogUtil.i(ImageUtil.class, "Error fetching bitmap. " + ex);
+            }
+            return null;
+        })
+        .subscribeOn(Schedulers.io());
+
+    }
+
     public static Single<Bitmap> generateQrCode(final String value) {
         return Single.fromCallable(() -> {
             try {
@@ -155,5 +178,12 @@ public class ImageUtil {
         if (path == null) return false;
         final String fileExtension = Files.getFileExtension(path.toLowerCase());
         return supportedImageTypes.contains(fileExtension);
+    }
+
+    public static @Nullable byte[] toByteArray(@Nullable Bitmap bitmap, final Bitmap.CompressFormat format) {
+        if (bitmap == null) return null;
+        final ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(format, 100, stream);
+        return stream.toByteArray();
     }
 }
