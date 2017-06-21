@@ -174,10 +174,10 @@ public class ViewAppPresenter implements Presenter<ViewAppActivity> {
             return;
         }
         final ActivityViewAppBinding binding = this.activity.getBinding();
-        binding.title.setText(this.app.getCustom().getName());
-        binding.name.setText(this.app.getCustom().getName());
-        binding.username.setText(this.app.getCustom().getName());
-        ImageUtil.load(this.app.getCustom().getAvatar(), binding.avatar);
+        binding.title.setText(this.app.getName());
+        binding.name.setText(this.app.getName());
+        binding.username.setText(this.app.getUsername());
+        ImageUtil.load(this.app.getAvatar(), binding.avatar);
     }
 
     private void initClickListeners() {

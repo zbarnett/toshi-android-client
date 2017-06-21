@@ -47,17 +47,14 @@ public class SearchAppViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void setApp(final App app) {
-        this.appLabel.setText(app.getCustom().getName());
+        this.appLabel.setText(app.getName());
         this.ratingView.setStars(app.getReputationScore());
         final String reviewCount = BaseApplication.get().getString(R.string.parentheses, app.getReviewCount());
         this.reviewCount.setText(reviewCount);
-
-        ImageUtil.load(app.getCustom().getAvatar(), this.appImage);
+        ImageUtil.load(app.getAvatar(), this.appImage);
     }
 
     public void bind(final App app, final OnItemClickListener<App> listener) {
-        this.itemView.setOnClickListener(view -> {
-            listener.onItemClick(app);
-        });
+        this.itemView.setOnClickListener(view -> listener.onItemClick(app));
     }
 }

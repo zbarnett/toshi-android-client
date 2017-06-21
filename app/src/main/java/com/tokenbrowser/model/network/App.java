@@ -17,14 +17,21 @@
 
 package com.tokenbrowser.model.network;
 
+import com.squareup.moshi.Json;
 import com.tokenbrowser.view.adapter.SearchAppAdapter;
 
 public class App {
-    private int review_count;
-    private Double reputation_score;
-    private String token_id;
-    private Custom custom;
+    private String about;
+    private String name;
+    private String avatar;
     private String payment_address;
+    private String location;
+    @Json(name = "public")
+    private boolean is_public;
+    private String username;
+    private String token_id;
+    private Double reputation_score;
+    private int review_count;
     private boolean is_app;
 
     public int getReviewCount() {
@@ -40,16 +47,28 @@ public class App {
         return token_id;
     }
 
-    public Custom getCustom() {
-        return custom;
-    }
-
     public String getPaymentAddress() {
         return payment_address;
     }
 
     public boolean isApp() {
         return is_app;
+    }
+
+    public String getAbout() {
+        return about;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public String getUsername() {
+        return username;
     }
 
     public @SearchAppAdapter.ViewType int getViewType() {

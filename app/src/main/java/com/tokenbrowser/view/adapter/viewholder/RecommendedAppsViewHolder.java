@@ -45,13 +45,13 @@ public class RecommendedAppsViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void setApp(final App app) {
-        this.appLabel.setText(app.getCustom().getName());
+        this.appLabel.setText(app.getName());
     }
 
     public void setCategory(final App app) {
         if (app == null) return;
         this.ratingView.setStars(app.getReputationScore());
-        ImageUtil.load(app.getCustom().getAvatar(), this.appImage);
+        ImageUtil.load(app.getAvatar(), this.appImage);
     }
 
     public void bind(final App app, OnItemClickListener<App> listener) {
