@@ -18,6 +18,7 @@
 package com.tokenbrowser.model.local;
 
 
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 
 import org.spongycastle.util.encoders.Hex;
@@ -31,6 +32,7 @@ import java.util.List;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;
+import io.realm.annotations.Ignore;
 import io.realm.annotations.PrimaryKey;
 
 public class Group extends RealmObject {
@@ -38,6 +40,9 @@ public class Group extends RealmObject {
     private String id;
     private String title;
     private RealmList<User> members;
+
+    @Ignore
+    private Avatar avatar;
 
     public Group(){}
 
@@ -72,6 +77,15 @@ public class Group extends RealmObject {
 
     public Group setTitle(final String title) {
         this.title = title;
+        return this;
+    }
+
+    public Avatar getAvatar() {
+        return this.avatar;
+    }
+
+    public Group setAvatar(final Bitmap avatar) {
+        this.avatar = new Avatar(avatar);
         return this;
     }
 
