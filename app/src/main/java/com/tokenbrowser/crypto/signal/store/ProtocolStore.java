@@ -127,13 +127,13 @@ public class ProtocolStore implements SignalProtocolStore {
     }
 
     @Override
-    public void saveIdentity(SignalProtocolAddress address, IdentityKey identityKey) {
-        identityKeyStore.saveIdentity(address, identityKey);
+    public boolean saveIdentity(SignalProtocolAddress address, IdentityKey identityKey) {
+        return identityKeyStore.saveIdentity(address, identityKey);
     }
 
     @Override
-    public boolean isTrustedIdentity(SignalProtocolAddress address, IdentityKey identityKey) {
-        return identityKeyStore.isTrustedIdentity(address, identityKey);
+    public boolean isTrustedIdentity(final SignalProtocolAddress address, final IdentityKey identityKey, final Direction direction) {
+        return identityKeyStore.isTrustedIdentity(address, identityKey, direction);
     }
 
     public List<PreKeyRecord> getPreKeys() throws InvalidKeyIdException {

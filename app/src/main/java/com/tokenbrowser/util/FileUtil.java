@@ -85,7 +85,8 @@ public class FileUtil {
         try {
             final String tempName = String.format("%d", attachment.getId());
             file = new File(BaseApplication.get().getCacheDir(), tempName);
-            final InputStream inputStream = messageReceiver.retrieveAttachment(attachment, file);
+            final int maxFileSize = 20 * 1024 * 1024;
+            final InputStream inputStream = messageReceiver.retrieveAttachment(attachment, file, maxFileSize);
 
             final File destFile = constructAttachmentFile(attachment.getContentType());
             return writeToFileFromInputStream(destFile, inputStream);

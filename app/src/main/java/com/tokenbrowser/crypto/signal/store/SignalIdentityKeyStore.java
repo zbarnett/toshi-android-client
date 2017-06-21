@@ -28,7 +28,6 @@ import org.whispersystems.libsignal.SignalProtocolAddress;
 import org.whispersystems.libsignal.state.IdentityKeyStore;
 
 import io.realm.Realm;
-import io.realm.RealmObject;
 
 public class SignalIdentityKeyStore implements IdentityKeyStore {
 
@@ -51,25 +50,25 @@ public class SignalIdentityKeyStore implements IdentityKeyStore {
     }
 
     @Override
-    public void saveIdentity(final SignalProtocolAddress address, final IdentityKey identityKey) {
+    public boolean saveIdentity(final SignalProtocolAddress address, final IdentityKey identityKey) {
         final SignalIdentity identity =
             new SignalIdentity()
                 .setSignalProtocolAddress(address)
                 .setIdentityKey(identityKey);
         writeObjectToDatabase(identity);
-    }
-
-    @Override
-    public boolean isTrustedIdentity(final SignalProtocolAddress address, final IdentityKey identityKey) {
-        saveIdentity(address, identityKey);
         return true;
     }
 
-    private void writeObjectToDatabase(final RealmObject object) {
+    @Override
+    public boolean isTrustedIdentity(final SignalProtocolAddress address, final IdentityKey identityKey, final Direction direction) {
+        return saveIdentity(address, identityKey);
+    }
+
+    private void writeObjectToDatabase(final SignalIdentity object) {
         final Realm realm = BaseApplication.get().getRealm();
         try {
             realm.beginTransaction();
-            realm.copyToRealmOrUpdate(object);
+            realm.insertOrUpdate(object);
             realm.commitTransaction();
         } finally {
             realm.close();
