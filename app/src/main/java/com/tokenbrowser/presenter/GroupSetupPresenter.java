@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -37,6 +38,7 @@ import java.io.File;
 import java.util.List;
 
 import rx.Observable;
+import rx.Single;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.subscriptions.CompositeSubscription;
@@ -53,6 +55,7 @@ public class GroupSetupPresenter implements Presenter<GroupSetupActivity> {
 
     private boolean firstTimeAttaching = true;
     private String capturedImagePath;
+    private Uri avatarUri;
     private ChooserDialog chooserDialog;
 
     @Override
@@ -86,19 +89,30 @@ public class GroupSetupPresenter implements Presenter<GroupSetupActivity> {
     }
 
     private void handleCreateClicked() {
-        final Group group =
-                new Group(this.getGroupParticipantAdapter().getUsers())
-                .setTitle(this.activity.getBinding().groupName.getText().toString());
-        final Subscription subscription = BaseApplication
-            .get()
-            .getTokenManager()
-            .getSofaMessageManager()
-            .createGroup(group)
-            .subscribe(
-                    __ -> LogUtil.i(getClass(), "Group created."),
-                    ex -> LogUtil.e(getClass(), "Group creation failed: " + ex)
-            );
+        final Subscription subscription =
+                generateAvatar()
+                .map(this::createGroup)
+                .flatMap(
+                    BaseApplication
+                    .get()
+                    .getTokenManager()
+                    .getSofaMessageManager()
+                    ::createGroup
+                ).subscribe(
+                        __ -> LogUtil.i(getClass(), "Group created."),
+                        ex -> LogUtil.e(getClass(), "Group creation failed: " + ex)
+                );
         this.subscriptions.add(subscription);
+    }
+
+    private Group createGroup(final Bitmap avatar) {
+        return new Group(this.getGroupParticipantAdapter().getUsers())
+                        .setTitle(this.activity.getBinding().groupName.getText().toString())
+                        .setAvatar(avatar);
+    }
+
+    private Single<Bitmap> generateAvatar() {
+        return ImageUtil.loadAsBitmap(this.avatarUri, this.activity);
     }
 
     private void initRecyclerView() {
@@ -255,12 +269,12 @@ public class GroupSetupPresenter implements Presenter<GroupSetupActivity> {
         }
 
         if (resultHolder.getRequestCode() == PICK_IMAGE) {
-            final Uri imageUri = resultHolder.getIntent().getData();
-            ImageUtil.renderFileIntoTarget(imageUri, this.activity.getBinding().avatar);
+            this.avatarUri = resultHolder.getIntent().getData();
+            ImageUtil.renderFileIntoTarget(this.avatarUri, this.activity.getBinding().avatar);
         } else if (resultHolder.getRequestCode() == CAPTURE_IMAGE) {
             final File file = new File(this.capturedImagePath);
-            final Uri imageUri = Uri.fromFile(file);
-            ImageUtil.renderFileIntoTarget(imageUri, this.activity.getBinding().avatar);
+            this.avatarUri = Uri.fromFile(file);
+            ImageUtil.renderFileIntoTarget(this.avatarUri, this.activity.getBinding().avatar);
         }
 
         return true;

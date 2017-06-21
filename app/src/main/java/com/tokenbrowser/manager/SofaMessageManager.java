@@ -22,7 +22,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Pair;
 
-import com.google.protobuf.ByteString;
 import com.tokenbrowser.BuildConfig;
 import com.tokenbrowser.R;
 import com.tokenbrowser.crypto.HDWallet;
@@ -49,6 +48,7 @@ import com.tokenbrowser.util.LogUtil;
 import com.tokenbrowser.view.BaseApplication;
 
 import org.whispersystems.libsignal.SignalProtocolAddress;
+import org.whispersystems.libsignal.util.Hex;
 import org.whispersystems.libsignal.util.guava.Optional;
 import org.whispersystems.signalservice.api.SignalServiceMessageSender;
 import org.whispersystems.signalservice.api.crypto.UntrustedIdentityException;
@@ -57,10 +57,8 @@ import org.whispersystems.signalservice.api.messages.SignalServiceDataMessage;
 import org.whispersystems.signalservice.api.messages.SignalServiceGroup;
 import org.whispersystems.signalservice.api.push.SignalServiceAddress;
 import org.whispersystems.signalservice.api.push.exceptions.EncapsulatedExceptions;
-import org.whispersystems.signalservice.internal.push.SignalServiceProtos;
 import org.whispersystems.signalservice.internal.push.SignalServiceUrl;
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
@@ -73,6 +71,8 @@ import rx.Subscription;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 import rx.subscriptions.CompositeSubscription;
+
+import static com.tokenbrowser.util.FileUtil.buildSignalServiceAttachment;
 
 public final class SofaMessageManager {
     private final PublishSubject<SofaMessageTask> chatMessageQueue = PublishSubject.create();
@@ -345,17 +345,12 @@ public final class SofaMessageManager {
     private Single<Group> sendMessageToGroup(final Group group) {
         return Single.fromCallable(() -> {
                 try {
-                    final SignalServiceProtos.GroupContext groupContext =
-                            SignalServiceProtos.GroupContext.newBuilder()
-                                    .setId(ByteString.copyFromUtf8(group.getId()))
-                                    .setType(SignalServiceProtos.GroupContext.Type.UPDATE)
-                                    .addAllMembers(group.getMemberIds())
-                                    .setName(group.getTitle())
-                                    .build();
-
-                    // Todo - Add avatar support
-                    final SignalServiceGroup.Type type = SignalServiceGroup.Type.UPDATE;
-                    final SignalServiceGroup signalGroup = new SignalServiceGroup(type, group.getIdBytes(), groupContext.getName(), groupContext.getMembersList(), null);
+                    final SignalServiceGroup signalGroup = new SignalServiceGroup(
+                            SignalServiceGroup.Type.UPDATE,
+                            Hex.fromStringCondensed(group.getId()),
+                            group.getTitle(),
+                            group.getMemberIds(),
+                            group.getAvatar().getStream());
                     final SignalServiceDataMessage groupDataMessage = new SignalServiceDataMessage(System.currentTimeMillis(), signalGroup, null, null);
 
                     generateMessageSender().sendMessage(group.getMemberAddresses(), groupDataMessage);
@@ -391,22 +386,20 @@ public final class SofaMessageManager {
         final SignalServiceDataMessage.Builder messageBuilder = SignalServiceDataMessage.newBuilder();
         messageBuilder.withBody(messageTask.getSofaMessage().getAsSofaMessage());
         final OutgoingAttachment outgoingAttachment = new OutgoingAttachment(messageTask.getSofaMessage());
-        if (outgoingAttachment.isValid()) {
-            final SignalServiceAttachment signalAttachment = buildOutgoingAttachment(outgoingAttachment);
-            messageBuilder.withAttachment(signalAttachment);
+
+        try {
+            if (outgoingAttachment.isValid()) {
+                final SignalServiceAttachment signalAttachment = buildSignalServiceAttachment(outgoingAttachment);
+                messageBuilder.withAttachment(signalAttachment);
+            }
+        } catch (final FileNotFoundException | IllegalStateException ex) {
+            LogUtil.i(getClass(), "Tried and failed to attach attachment." + ex);
         }
 
         return messageBuilder.build();
     }
 
-    private SignalServiceAttachment buildOutgoingAttachment(final OutgoingAttachment attachment) throws FileNotFoundException {
-        final FileInputStream attachmentStream = new FileInputStream(attachment.getOutgoingAttachment());
-        return SignalServiceAttachment.newStreamBuilder()
-                .withStream(attachmentStream)
-                .withContentType(attachment.getMimeType())
-                .withLength(attachment.getOutgoingAttachment().length())
-                .build();
-    }
+
 
     private void storeMessage(final User receiver, final SofaMessage message, final @SendState.State int sendState) {
         message.setSendState(sendState);
