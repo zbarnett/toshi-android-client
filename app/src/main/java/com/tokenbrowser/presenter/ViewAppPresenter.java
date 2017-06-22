@@ -106,7 +106,7 @@ public class ViewAppPresenter implements Presenter<ViewAppActivity> {
                 .get()
                 .getTokenManager()
                 .getUserManager()
-                .getUserFromAddress(this.appTokenId)
+                .getUserFromTokenId(this.appTokenId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSuccess(__ -> this.updateFavoriteButtonState())

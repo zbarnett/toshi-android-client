@@ -406,7 +406,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
                 .get()
                 .getTokenManager()
                 .getUserManager()
-                .getUserFromAddress(remoteUserAddress)
+                .getUserFromTokenId(remoteUserAddress)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

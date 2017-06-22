@@ -218,18 +218,18 @@ public class UserManager {
 
     public Single<User> getUserFromUsername(final String username) {
         // It's the same endpoint
-        return getUserFromAddress(username);
+        return getUserFromTokenId(username);
     }
 
-    public Single<User> getUserFromAddress(final String userAddress) {
+    public Single<User> getUserFromTokenId(final String tokenId) {
         return Observable
                 .concat(
-                        this.userStore.loadForAddress(userAddress),
-                        this.fetchAndCacheFromNetworkByTokenId(userAddress))
+                        this.userStore.loadForTokenId(tokenId),
+                        this.fetchAndCacheFromNetworkByTokenId(tokenId))
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .first(user -> user != null && !user.needsRefresh())
-                .doOnError(t -> LogUtil.exception(getClass(), "getUserFromAddress", t))
+                .doOnError(t -> LogUtil.exception(getClass(), "getUserFromTokenId", t))
                 .toSingle();
     }
 
