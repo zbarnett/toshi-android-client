@@ -376,8 +376,8 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
 
     private void processIntentData() {
         if (this.remoteUser == null) {
-            final String remoteUserAddress = this.activity.getIntent().getStringExtra(ChatActivity.EXTRA__REMOTE_USER_ADDRESS);
-            fetchUserFromAddress(remoteUserAddress);
+            final String threadId = this.activity.getIntent().getStringExtra(ChatActivity.EXTRA__THREAD_ID);
+            fetchUserFromAddress(threadId);
             return;
         }
 

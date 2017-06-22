@@ -112,7 +112,7 @@ public class ChatNotification {
         }
 
         final Intent chatIntent = new Intent(BaseApplication.get(), ChatActivity.class);
-        chatIntent.putExtra(ChatActivity.EXTRA__REMOTE_USER_ADDRESS, this.sender.getTokenId());
+        chatIntent.putExtra(ChatActivity.EXTRA__THREAD_ID, this.sender.getTokenId());
 
         final PendingIntent nextIntent = TaskStackBuilder.create(BaseApplication.get())
                 .addParentStack(MainActivity.class)

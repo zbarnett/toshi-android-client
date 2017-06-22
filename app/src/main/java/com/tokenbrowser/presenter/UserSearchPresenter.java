@@ -196,7 +196,7 @@ public final class UserSearchPresenter
 
     private void goToChatActivity(final User user) {
         final Intent intent = new Intent(this.activity, ChatActivity.class)
-                .putExtra(ChatActivity.EXTRA__REMOTE_USER_ADDRESS, user.getTokenId());
+                .putExtra(ChatActivity.EXTRA__THREAD_ID, user.getTokenId());
         goToActivity(intent);
     }
 

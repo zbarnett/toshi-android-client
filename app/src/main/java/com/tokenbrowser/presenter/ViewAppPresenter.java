@@ -196,7 +196,7 @@ public class ViewAppPresenter implements Presenter<ViewAppActivity> {
             return;
         }
         final Intent intent = new Intent(this.activity, ChatActivity.class);
-        intent.putExtra(ChatActivity.EXTRA__REMOTE_USER_ADDRESS, this.app.getTokenId());
+        intent.putExtra(ChatActivity.EXTRA__THREAD_ID, this.app.getTokenId());
         this.activity.startActivity(intent);
     }
 
@@ -270,7 +270,7 @@ public class ViewAppPresenter implements Presenter<ViewAppActivity> {
         final String ethAmount = payResultIntent.getStringExtra(AmountPresenter.INTENT_EXTRA__ETH_AMOUNT);
         final String appId = this.activity.getIntent().getStringExtra(ViewAppActivity.APP_OWNER_ADDRESS);
         final Intent intent = new Intent(this.activity, ChatActivity.class)
-                .putExtra(ChatActivity.EXTRA__REMOTE_USER_ADDRESS, appId)
+                .putExtra(ChatActivity.EXTRA__THREAD_ID, appId)
                 .putExtra(ChatActivity.EXTRA__ETH_AMOUNT, ethAmount)
                 .putExtra(ChatActivity.EXTRA__PAYMENT_ACTION, PaymentType.TYPE_SEND);
         this.activity.startActivity(intent);

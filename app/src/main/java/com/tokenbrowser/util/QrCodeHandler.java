@@ -295,7 +295,7 @@ public class QrCodeHandler implements PaymentConfirmationDialog.OnPaymentConfirm
 
     private void goToChatActivityWithPayment(final String tokenId, final Payment payment) throws InvalidQrCodePayment {
         final Intent intent = new Intent(this.activity, ChatActivity.class)
-                .putExtra(ChatActivity.EXTRA__REMOTE_USER_ADDRESS, tokenId)
+                .putExtra(ChatActivity.EXTRA__THREAD_ID, tokenId)
                 .putExtra(ChatActivity.EXTRA__PAYMENT_ACTION, PaymentType.TYPE_SEND)
                 .putExtra(ChatActivity.EXTRA__ETH_AMOUNT, payment.getValue())
                 .putExtra(ChatActivity.EXTRA__PLAY_SCAN_SOUNDS, true);

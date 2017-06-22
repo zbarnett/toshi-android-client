@@ -163,7 +163,7 @@ public final class RecentPresenter implements
     public void onItemClick(final Conversation clickedConversation) {
         if (this.fragment == null) return;
         final Intent intent = new Intent(this.fragment.getActivity(), ChatActivity.class);
-        intent.putExtra(ChatActivity.EXTRA__REMOTE_USER_ADDRESS, clickedConversation.getThreadId());
+        intent.putExtra(ChatActivity.EXTRA__THREAD_ID, clickedConversation.getThreadId());
         this.fragment.startActivity(intent);
     }
 

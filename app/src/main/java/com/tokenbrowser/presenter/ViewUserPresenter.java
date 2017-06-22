@@ -288,7 +288,7 @@ public final class ViewUserPresenter implements
 
     private void handleMessageContactButton(final View view) {
         final Intent intent = new Intent(this.activity, ChatActivity.class);
-        intent.putExtra(ChatActivity.EXTRA__REMOTE_USER_ADDRESS, this.user.getTokenId());
+        intent.putExtra(ChatActivity.EXTRA__THREAD_ID, this.user.getTokenId());
         this.activity.startActivity(intent);
         this.activity.finish();
     }
@@ -314,7 +314,7 @@ public final class ViewUserPresenter implements
         final String ethAmount = payResultIntent.getStringExtra(AmountPresenter.INTENT_EXTRA__ETH_AMOUNT);
         final String userAddress = this.activity.getIntent().getStringExtra(ViewUserActivity.EXTRA__USER_ADDRESS);
         final Intent intent = new Intent(this.activity, ChatActivity.class)
-                .putExtra(ChatActivity.EXTRA__REMOTE_USER_ADDRESS, userAddress)
+                .putExtra(ChatActivity.EXTRA__THREAD_ID, userAddress)
                 .putExtra(ChatActivity.EXTRA__ETH_AMOUNT, ethAmount)
                 .putExtra(ChatActivity.EXTRA__PAYMENT_ACTION, PaymentType.TYPE_SEND);
         this.activity.startActivity(intent);
