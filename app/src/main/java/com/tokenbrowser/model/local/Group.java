@@ -21,7 +21,10 @@ package com.tokenbrowser.model.local;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 
+import com.tokenbrowser.view.BaseApplication;
+
 import org.spongycastle.util.encoders.Hex;
+import org.whispersystems.signalservice.api.messages.SignalServiceGroup;
 import org.whispersystems.signalservice.api.push.SignalServiceAddress;
 
 import java.security.NoSuchAlgorithmException;
@@ -34,6 +37,9 @@ import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.Ignore;
 import io.realm.annotations.PrimaryKey;
+import rx.Observable;
+import rx.Single;
+import rx.schedulers.Schedulers;
 
 public class Group extends RealmObject {
     @PrimaryKey
@@ -50,6 +56,34 @@ public class Group extends RealmObject {
         this.id = generateId();
         this.members = new RealmList<>();
         this.members.addAll(members);
+    }
+
+    public Single<Group> initFromSignalGroup(final SignalServiceGroup group) {
+
+        this.id = Hex.toHexString(group.getGroupId());
+        this.title = group.getName().get();
+        this.members = new RealmList<>();
+
+        return lookupUsers(group.getMembers().get())
+                .map(this.members::addAll)
+                .map(__ -> this);
+
+    }
+
+    private Single<List<User>> lookupUsers(final List<String> userIds) {
+        return Observable
+                .from(userIds)
+                .map(uid -> uid)
+                .switchMap( uid -> BaseApplication
+                            .get()
+                            .getTokenManager()
+                            .getUserManager()
+                            .getUserFromTokenId(uid)
+                            .toObservable()
+                )
+                .toList()
+                .toSingle()
+                .subscribeOn(Schedulers.io());
     }
 
     @NonNull

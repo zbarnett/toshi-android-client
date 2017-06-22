@@ -26,6 +26,7 @@ import com.tokenbrowser.crypto.HDWallet;
 import com.tokenbrowser.crypto.signal.model.DecryptedSignalMessage;
 import com.tokenbrowser.crypto.signal.store.ProtocolStore;
 import com.tokenbrowser.manager.store.ConversationStore;
+import com.tokenbrowser.model.local.Group;
 import com.tokenbrowser.model.local.SendState;
 import com.tokenbrowser.model.local.User;
 import com.tokenbrowser.model.sofa.Init;
@@ -55,6 +56,7 @@ import org.whispersystems.signalservice.api.messages.SignalServiceAttachmentPoin
 import org.whispersystems.signalservice.api.messages.SignalServiceContent;
 import org.whispersystems.signalservice.api.messages.SignalServiceDataMessage;
 import org.whispersystems.signalservice.api.messages.SignalServiceEnvelope;
+import org.whispersystems.signalservice.api.messages.SignalServiceGroup;
 import org.whispersystems.signalservice.api.push.SignalServiceAddress;
 import org.whispersystems.signalservice.internal.push.SignalServiceUrl;
 
@@ -153,16 +155,30 @@ public class SofaMessageReceiver {
 
         if (content.getDataMessage().isPresent()) {
             final SignalServiceDataMessage dataMessage = content.getDataMessage().get();
-            if (dataMessage.isGroupUpdate()) { LogUtil.i(getClass(), "Current unhandled group message."); }
-            else {
-                final Optional<String> messageBody = dataMessage.getBody();
-                final Optional<List<SignalServiceAttachment>> attachments = dataMessage.getAttachments();
-                final DecryptedSignalMessage decryptedMessage = new DecryptedSignalMessage(messageSource, messageBody.get(), attachments);
-
-                saveIncomingMessageToDatabase(decryptedMessage);
-                return decryptedMessage;
-            }
+            if (dataMessage.isGroupUpdate()) return handleGroupMessage(dataMessage);
+            else return handleTextMessage(messageSource, dataMessage);
         }
+        return null;
+    }
+
+    @NonNull
+    private DecryptedSignalMessage handleTextMessage(final String messageSource, final SignalServiceDataMessage dataMessage) {
+        final Optional<String> messageBody = dataMessage.getBody();
+        final Optional<List<SignalServiceAttachment>> attachments = dataMessage.getAttachments();
+        final DecryptedSignalMessage decryptedMessage = new DecryptedSignalMessage(messageSource, messageBody.get(), attachments);
+
+        saveIncomingMessageToDatabase(decryptedMessage);
+        return decryptedMessage;
+    }
+
+    private DecryptedSignalMessage handleGroupMessage(final SignalServiceDataMessage dataMessage) {
+        final SignalServiceGroup signalGroup = dataMessage.getGroupInfo().get();
+        new Group()
+                .initFromSignalGroup(signalGroup)
+                .subscribe(
+                        this.conversationStore::saveNewGroup,
+                        ex -> LogUtil.e(getClass(), "Error creating incoming group. " + ex)
+                );
         return null;
     }
 
