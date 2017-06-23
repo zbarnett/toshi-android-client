@@ -105,6 +105,7 @@
             android:theme="@style/DarkTheme"/>
         <activity android:name="com.tokenbrowser.view.activity.GroupParticipantsActivity"/>
         <activity android:name="com.tokenbrowser.view.activity.GroupSetupActivity"/>
+        <activity android:name="com.tokenbrowser.view.activity.BrowseActivity"/>
 
         <meta-data
             android:name="io.fabric.ApiKey"
