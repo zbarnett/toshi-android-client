@@ -127,7 +127,7 @@ public class GcmMessageReceiver extends GcmListenerService {
                         BaseApplication
                         .get()
                         .getTokenManager()
-                        .getUserManager()
+                        .getRecipientManager()
                         .isUserBlocked(user.getTokenId())
                 );
     }
@@ -248,7 +248,7 @@ public class GcmMessageReceiver extends GcmListenerService {
         return BaseApplication
                 .get()
                 .getTokenManager()
-                .getUserManager()
+                .getRecipientManager()
                 .getUserFromPaymentAddress(paymentAddress);
     }
 

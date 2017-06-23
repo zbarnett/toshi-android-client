@@ -137,7 +137,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
                 BaseApplication
                 .get()
                 .getTokenManager()
-                .getUserManager()
+                .getRecipientManager()
                 .getUserFromUsername(username)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -406,7 +406,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
                 BaseApplication
                 .get()
                 .getTokenManager()
-                .getUserManager()
+                .getRecipientManager()
                 .getUserFromTokenId(remoteUserAddress)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

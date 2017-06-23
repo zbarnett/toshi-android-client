@@ -46,6 +46,7 @@ public class TokenManager {
     private SofaMessageManager sofaMessageManager;
     private TransactionManager transactionManager;
     private UserManager userManager;
+    private RecipientManager recipientManager;
     private ReputationManager reputationManager;
     private ExecutorService singleExecutor;
     private boolean areManagersInitialised = false;
@@ -56,8 +57,10 @@ public class TokenManager {
         this.appsManager = new AppsManager();
         this.balanceManager = new BalanceManager();
         this.userManager = new UserManager();
+        this.reputationManager = new ReputationManager();
         this.sofaMessageManager = new SofaMessageManager();
         this.transactionManager = new TransactionManager();
+        this.recipientManager = new RecipientManager();
         this.walletSubject.onNext(null);
 
         tryInit()
@@ -104,7 +107,6 @@ public class TokenManager {
         return Single.fromCallable(() -> {
             if (!this.areManagersInitialised) {
                 initRealm();
-                this.appsManager.init();
                 this.balanceManager.init(this.wallet);
                 this.sofaMessageManager.init(this.wallet);
                 this.transactionManager.init(this.wallet);
@@ -157,6 +159,10 @@ public class TokenManager {
         return this.userManager;
     }
 
+    public final RecipientManager getRecipientManager() {
+        return this.recipientManager;
+    }
+
     public final BalanceManager getBalanceManager() {
         return this.balanceManager;
     }
@@ -182,6 +188,7 @@ public class TokenManager {
     public void clearUserData() {
         this.sofaMessageManager.clear();
         this.userManager.clear();
+        this.recipientManager.clear();
         this.balanceManager.clear();
         this.transactionManager.clear();
         this.wallet.clear();

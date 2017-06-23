@@ -191,7 +191,7 @@ public class GroupSetupPresenter implements Presenter<GroupSetupActivity> {
         return BaseApplication
                 .get()
                 .getTokenManager()
-                .getUserManager()
+                .getRecipientManager()
                 .getUserFromTokenId(tokenId)
                 .toObservable();
     }

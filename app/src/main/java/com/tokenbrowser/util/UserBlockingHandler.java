@@ -77,7 +77,7 @@ public class UserBlockingHandler {
         return BaseApplication
                 .get()
                 .getTokenManager()
-                .getUserManager()
+                .getRecipientManager()
                 .isUserBlocked(ownerAddress)
                 .subscribeOn(Schedulers.io());
     }
@@ -138,7 +138,7 @@ public class UserBlockingHandler {
                 BaseApplication
                 .get()
                 .getTokenManager()
-                .getUserManager()
+                .getRecipientManager()
                 .unblockUser(this.userAddress)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -163,7 +163,7 @@ public class UserBlockingHandler {
                 BaseApplication
                 .get()
                 .getTokenManager()
-                .getUserManager()
+                .getRecipientManager()
                 .blockUser(this.userAddress)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

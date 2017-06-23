@@ -131,7 +131,7 @@ public final class ViewUserPresenter implements
         return BaseApplication
                 .get()
                 .getTokenManager()
-                .getUserManager()
+                .getRecipientManager()
                 .getUserFromTokenId(userAddress);
     }
 
@@ -261,7 +261,7 @@ public final class ViewUserPresenter implements
         return BaseApplication
                 .get()
                 .getTokenManager()
-                .getUserManager()
+                .getRecipientManager()
                 .isUserAContact(user)
                 .observeOn(AndroidSchedulers.mainThread());
     }
@@ -274,7 +274,7 @@ public final class ViewUserPresenter implements
         return BaseApplication
             .get()
             .getTokenManager()
-            .getUserManager()
+            .getRecipientManager()
             .deleteContact(user);
     }
 
@@ -282,7 +282,7 @@ public final class ViewUserPresenter implements
         return BaseApplication
             .get()
             .getTokenManager()
-            .getUserManager()
+            .getRecipientManager()
             .saveContact(user);
     }
 
@@ -360,7 +360,7 @@ public final class ViewUserPresenter implements
                 BaseApplication
                 .get()
                 .getTokenManager()
-                .getUserManager()
+                .getRecipientManager()
                 .isUserBlocked(this.userAddress)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

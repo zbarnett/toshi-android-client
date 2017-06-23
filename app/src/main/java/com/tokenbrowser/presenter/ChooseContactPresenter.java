@@ -128,7 +128,7 @@ public class ChooseContactPresenter implements Presenter<ChooseContactsActivity>
         final Subscription sub = BaseApplication
                 .get()
                 .getTokenManager()
-                .getUserManager()
+                .getRecipientManager()
                 .loadAllContacts()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -230,7 +230,7 @@ public class ChooseContactPresenter implements Presenter<ChooseContactsActivity>
         return BaseApplication
                 .get()
                 .getTokenManager()
-                .getUserManager()
+                .getRecipientManager()
                 .searchOfflineUsers(searchString)
                 .toObservable();
     }

@@ -225,7 +225,7 @@ public class TransactionManager {
         BaseApplication
                 .get()
                 .getTokenManager()
-                .getUserManager()
+                .getRecipientManager()
                 .getUserFromPaymentAddress(payment.getFromAddress())
                 .subscribe(
                         (sender) -> createNewPayment(sender, payment),

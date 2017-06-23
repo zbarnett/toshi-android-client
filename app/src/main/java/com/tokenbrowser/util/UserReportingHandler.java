@@ -80,7 +80,7 @@ public class UserReportingHandler {
                 BaseApplication
                 .get()
                 .getTokenManager()
-                .getUserManager()
+                .getRecipientManager()
                 .reportUser(report)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

@@ -186,7 +186,7 @@ public class SofaMessageReceiver {
         return BaseApplication
                 .get()
                 .getTokenManager()
-                .getUserManager()
+                .getRecipientManager()
                 .isUserBlocked(address)
                 .toBlocking()
                 .value();
@@ -203,7 +203,7 @@ public class SofaMessageReceiver {
         BaseApplication
                 .get()
                 .getTokenManager()
-                .getUserManager()
+                .getRecipientManager()
                 .getUserFromTokenId(signalMessage.getSource())
                 .subscribe(
                         (user) -> this.saveIncomingMessageFromUserToDatabase(user, signalMessage),
@@ -283,7 +283,7 @@ public class SofaMessageReceiver {
         BaseApplication
                 .get()
                 .getTokenManager()
-                .getUserManager()
+                .getRecipientManager()
                 .getUserFromTokenId(sender.getTokenId());
     }
 

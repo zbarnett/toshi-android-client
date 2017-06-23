@@ -86,7 +86,7 @@ public class QrCodeHandler implements PaymentConfirmationDialog.OnPaymentConfirm
         return BaseApplication
                 .get()
                 .getTokenManager()
-                .getUserManager()
+                .getRecipientManager()
                 .getUserFromPaymentAddress(paymentAddress)
                 .observeOn(AndroidSchedulers.mainThread());
     }
@@ -180,7 +180,7 @@ public class QrCodeHandler implements PaymentConfirmationDialog.OnPaymentConfirm
         return BaseApplication
                 .get()
                 .getTokenManager()
-                .getUserManager()
+                .getRecipientManager()
                 .getUserFromUsername(username)
                 .observeOn(AndroidSchedulers.mainThread());
     }

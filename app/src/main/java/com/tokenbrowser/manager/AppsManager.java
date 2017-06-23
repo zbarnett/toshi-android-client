@@ -32,10 +32,6 @@ import rx.schedulers.Schedulers;
 
 public class AppsManager {
 
-    public AppsManager init() {
-        return this;
-    }
-
     public Observable<List<App>> getRecommendedApps() {
         return DirectoryService
                 .getApi()

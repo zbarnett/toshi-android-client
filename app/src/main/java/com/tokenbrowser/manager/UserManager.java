@@ -23,16 +23,9 @@ import android.content.SharedPreferences;
 
 import com.tokenbrowser.crypto.HDWallet;
 import com.tokenbrowser.manager.network.IdService;
-import com.tokenbrowser.manager.store.BlockedUserStore;
-import com.tokenbrowser.manager.store.ContactStore;
-import com.tokenbrowser.manager.store.UserStore;
-import com.tokenbrowser.model.local.BlockedUser;
-import com.tokenbrowser.model.local.Contact;
-import com.tokenbrowser.model.local.Report;
 import com.tokenbrowser.model.local.User;
 import com.tokenbrowser.model.network.ServerTime;
 import com.tokenbrowser.model.network.UserDetails;
-import com.tokenbrowser.model.network.UserSearchResults;
 import com.tokenbrowser.util.FileNames;
 import com.tokenbrowser.util.FileUtil;
 import com.tokenbrowser.util.LogUtil;
@@ -40,35 +33,27 @@ import com.tokenbrowser.util.SharedPrefsUtil;
 import com.tokenbrowser.view.BaseApplication;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.List;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.adapter.rxjava.HttpException;
-import rx.Completable;
-import rx.Observable;
 import rx.Single;
 import rx.schedulers.Schedulers;
 import rx.subjects.BehaviorSubject;
 
 public class UserManager {
 
+    private final static String FORM_DATA_NAME = "Profile-Image-Upload";
     private final static String OLD_USER_ID = "uid";
     private final static String USER_ID = "uid_v2";
-    private final static String FORM_DATA_NAME = "Profile-Image-Upload";
+
 
     private final BehaviorSubject<User> userSubject = BehaviorSubject.create();
     private SharedPreferences prefs;
     private HDWallet wallet;
-    private ContactStore contactStore;
-    private UserStore userStore;
-    private BlockedUserStore blockedUserStore;
 
-    /* package */ UserManager() {
-        initDatabases();
-    }
+    /* package */ UserManager() {}
 
     public final BehaviorSubject<User> getUserObservable() {
         return this.userSubject;
@@ -89,12 +74,6 @@ public class UserManager {
         this.prefs = BaseApplication.get().getSharedPreferences(FileNames.USER_PREFS, Context.MODE_PRIVATE);
         attachConnectivityListener();
         return this;
-    }
-
-    private void initDatabases() {
-        this.contactStore = new ContactStore();
-        this.userStore = new UserStore();
-        this.blockedUserStore = new BlockedUserStore();
     }
 
     private void attachConnectivityListener() {
@@ -216,88 +195,29 @@ public class UserManager {
                 .doOnSuccess(this::updateCurrentUser);
     }
 
-    public Single<User> getUserFromUsername(final String username) {
-        // It's the same endpoint
-        return getUserFromTokenId(username);
-    }
-
-    public Single<User> getUserFromTokenId(final String tokenId) {
-        return Observable
-                .concat(
-                        this.userStore.loadForTokenId(tokenId),
-                        this.fetchAndCacheFromNetworkByTokenId(tokenId))
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .first(user -> user != null && !user.needsRefresh())
-                .doOnError(t -> LogUtil.exception(getClass(), "getUserFromTokenId", t))
-                .toSingle();
-    }
-
-    public Single<User> getUserFromPaymentAddress(final String paymentAddress) {
-        return Single
-                .concat(
-                        Single.just(userStore.loadForPaymentAddress(paymentAddress)),
-                        this.fetchAndCacheFromNetworkByPaymentAddress(paymentAddress).toSingle()
-                )
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .first(user -> user != null && !user.needsRefresh())
-                .doOnError(t -> LogUtil.exception(getClass(), "getUserFromPaymentAddress", t))
-                .toSingle();
-
-    }
-
-    private Observable<User> fetchAndCacheFromNetworkByTokenId(final String userAddress) {
-        return IdService
-                .getApi()
-                .getUser(userAddress)
-                .toObservable()
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .doOnNext(this::cacheUser);
-    }
-
-    private Observable<User> fetchAndCacheFromNetworkByPaymentAddress(final String paymentAddress) {
-        return IdService
-                .getApi()
-                .searchByPaymentAddress(paymentAddress)
-                .toObservable()
-                .filter(userSearchResults -> userSearchResults.getResults().size() > 0)
-                .map(userSearchResults -> userSearchResults.getResults().get(0))
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .doOnNext(this::cacheUser)
-                .doOnError(t -> LogUtil.exception(getClass(), "fetchAndCacheFromNetworkByPaymentAddress", t));
-    }
-
-    private void cacheUser(final User user) {
-        if (this.userStore == null) {
-            return;
+    public Single<User> uploadAvatar(final File file) {
+        final FileUtil fileUtil = new FileUtil();
+        final String mimeType = fileUtil.getMimeTypeFromFilename(file.getName());
+        if (mimeType == null) {
+            return Single.error(new IllegalArgumentException("Unable to determine file type from file."));
         }
+        final MediaType mediaType = MediaType.parse(mimeType);
+        final RequestBody requestFile = RequestBody.create(mediaType, file);
+        final MultipartBody.Part body = MultipartBody.Part.createFormData(FORM_DATA_NAME, file.getName(), requestFile);
 
-        this.userStore.save(user);
-    }
-
-    public Single<List<Contact>> loadAllContacts() {
-        return this.contactStore
-                .loadAll()
+        return getTimestamp()
                 .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io());
+                .flatMap(serverTime ->
+                        IdService
+                        .getApi()
+                        .uploadFile(body, serverTime.get()))
+                .doOnSuccess(this.userSubject::onNext);
     }
 
-    public Single<List<User>> searchOfflineUsers(final String query) {
-        return this.userStore
-                .queryUsername(query)
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io());
-    }
-
-    public Single<List<User>> searchOnlineUsers(final String query) {
+    private Single<ServerTime> getTimestamp() {
         return IdService
                 .getApi()
-                .searchByUsername(query)
-                .subscribeOn(Schedulers.io())
-                .map(UserSearchResults::getResults);
+                .getTimestamp();
     }
 
     public Single<List<User>> getTopRatedPublicUsers(final int limit) {
@@ -345,92 +265,11 @@ public class UserManager {
                 .webLogin(loginToken, serverTime.get());
     }
 
-    public Single<Boolean> isUserAContact(final User user) {
-        return this.contactStore.userIsAContact(user);
-    }
-
-    public Completable deleteContact(final User user) {
-        return this.contactStore.delete(user);
-    }
-
-    public Completable saveContact(final User user) {
-        return this.contactStore.save(user);
-    }
-
-    public Single<Boolean> isUserBlocked(final String ownerAddress) {
-        return this.blockedUserStore
-                .isBlocked(ownerAddress)
-                .subscribeOn(Schedulers.io());
-    }
-
-    public Completable blockUser(final String ownerAddress) {
-        final BlockedUser blockedUser = new BlockedUser()
-                .setOwnerAddress(ownerAddress);
-        return Completable.fromAction(() ->
-                this.blockedUserStore.save(blockedUser))
-                .subscribeOn(Schedulers.io());
-    }
-
-    public Completable unblockUser(final String ownerAddress) {
-        return Completable.fromAction(() ->
-                this.blockedUserStore.delete(ownerAddress))
-                .subscribeOn(Schedulers.io());
-    }
-
-    public Single<Void> reportUser(final Report report) {
-        return getTimestamp()
-                .flatMap(serverTime ->
-                        IdService
-                        .getApi()
-                        .reportUser(report, serverTime.get())
-                )
-                .subscribeOn(Schedulers.io());
-    }
-
-    public Single<User> uploadAvatar(final File file) {
-        final FileUtil fileUtil = new FileUtil();
-        final String mimeType = fileUtil.getMimeTypeFromFilename(file.getName());
-        if (mimeType == null) {
-            return Single.error(new IllegalArgumentException("Unable to determine file type from file."));
-        }
-        final MediaType mediaType = MediaType.parse(mimeType);
-        final RequestBody requestFile = RequestBody.create(mediaType, file);
-        final MultipartBody.Part body = MultipartBody.Part.createFormData(FORM_DATA_NAME, file.getName(), requestFile);
-
-        return getTimestamp()
-                .subscribeOn(Schedulers.io())
-                .flatMap(serverTime -> IdService
-                        .getApi()
-                        .uploadFile(body, serverTime.get()))
-                .doOnSuccess(this.userSubject::onNext);
-    }
-
-    public Single<ServerTime> getTimestamp() {
-        return IdService
-                .getApi()
-                .getTimestamp();
-    }
-
     public void clear() {
-        clearCache();
-        clearUserId();
-    }
-
-    private void clearUserId() {
         this.prefs
                 .edit()
                 .putString(USER_ID, null)
                 .apply();
         this.userSubject.onNext(null);
-    }
-
-    private void clearCache() {
-        try {
-            IdService
-                    .get()
-                    .clearCache();
-        } catch (IOException e) {
-            LogUtil.exception(getClass(), "Error while clearing network cache", e);
-        }
     }
 }

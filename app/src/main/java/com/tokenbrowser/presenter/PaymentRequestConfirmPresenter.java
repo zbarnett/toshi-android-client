@@ -112,7 +112,7 @@ public class PaymentRequestConfirmPresenter implements Presenter<PaymentConfirma
                 BaseApplication
                 .get()
                 .getTokenManager()
-                .getUserManager()
+                .getRecipientManager()
                 .getUserFromTokenId(this.tokenId)
                 .doOnSuccess(user -> this.user = user)
                 .observeOn(AndroidSchedulers.mainThread())

@@ -105,7 +105,7 @@ public class ViewAppPresenter implements Presenter<ViewAppActivity> {
                 BaseApplication
                 .get()
                 .getTokenManager()
-                .getUserManager()
+                .getRecipientManager()
                 .getUserFromTokenId(this.appTokenId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -229,7 +229,7 @@ public class ViewAppPresenter implements Presenter<ViewAppActivity> {
         return BaseApplication
                 .get()
                 .getTokenManager()
-                .getUserManager()
+                .getRecipientManager()
                 .isUserAContact(this.appAsUser)
                 .observeOn(AndroidSchedulers.mainThread());
     }
@@ -238,7 +238,7 @@ public class ViewAppPresenter implements Presenter<ViewAppActivity> {
         return BaseApplication
                 .get()
                 .getTokenManager()
-                .getUserManager()
+                .getRecipientManager()
                 .deleteContact(this.appAsUser);
     }
 
@@ -246,7 +246,7 @@ public class ViewAppPresenter implements Presenter<ViewAppActivity> {
         return BaseApplication
                 .get()
                 .getTokenManager()
-                .getUserManager()
+                .getRecipientManager()
                 .saveContact(this.appAsUser);
     }
 

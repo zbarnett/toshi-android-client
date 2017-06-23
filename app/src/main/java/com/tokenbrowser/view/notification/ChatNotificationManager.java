@@ -65,7 +65,7 @@ public class ChatNotificationManager {
         BaseApplication
             .get()
             .getTokenManager()
-            .getUserManager()
+            .getRecipientManager()
             .getUserFromTokenId(signalMessage.getSource())
             .subscribe(
                     (user) -> handleUserLookup(user, signalMessage),

@@ -183,7 +183,7 @@ public class GroupParticipantsPresenter implements Presenter<GroupParticipantsAc
                 BaseApplication
                 .get()
                 .getTokenManager()
-                .getUserManager()
+                .getRecipientManager()
                 .searchOnlineUsers(query)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

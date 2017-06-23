@@ -134,7 +134,7 @@ public final class UserSearchPresenter
                 BaseApplication
                 .get()
                 .getTokenManager()
-                .getUserManager()
+                .getRecipientManager()
                 .searchOnlineUsers(query)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

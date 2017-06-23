@@ -58,7 +58,7 @@ public class RatingHandler {
         return BaseApplication
                 .get()
                 .getTokenManager()
-                .getUserManager()
+                .getRecipientManager()
                 .getTimestamp()
                 .flatMap(serverTime -> submitReview(review, serverTime));
     }

@@ -77,7 +77,7 @@ public class Group extends RealmObject {
                 .switchMap( uid -> BaseApplication
                             .get()
                             .getTokenManager()
-                            .getUserManager()
+                            .getRecipientManager()
                             .getUserFromTokenId(uid)
                             .toObservable()
                 )
