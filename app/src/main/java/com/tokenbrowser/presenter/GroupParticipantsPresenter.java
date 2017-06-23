@@ -75,6 +75,7 @@ public class GroupParticipantsPresenter implements Presenter<GroupParticipantsAc
     }
 
     private void initClickListeners() {
+        this.activity.getBinding().closeButton.setOnClickListener(__ -> this.activity.finish());
         this.activity.getBinding().next.setOnClickListener(__ -> handleNextClicked());
     }
 
