@@ -302,56 +302,60 @@ public class UserManager {
                 .map(UserSearchResults::getResults);
     }
 
-    public Single<List<App>> getTopRatedApps() {
+    public Single<List<App>> getTopRatedApps(final int limit) {
         return getTimestamp()
-                .flatMap(this::getTopRatedApps)
+                .flatMap(serverTime -> getTopRatedApps(serverTime, limit))
                 .map(AppSearchResult::getResults)
                 .subscribeOn(Schedulers.io());
     }
 
-    public Single<List<App>> getRecentApps() {
+    public Single<List<App>> getLatestApps(final int limit) {
         return getTimestamp()
-                .flatMap(this::getRecentApps)
+                .flatMap(serverTime -> getLatestApps(serverTime, limit))
                 .map(AppSearchResult::getResults)
                 .subscribeOn(Schedulers.io());
     }
 
-    public Single<List<User>> getTopRatedPublicUsers() {
+    public Single<List<User>> getTopRatedPublicUsers(final int limit) {
         return getTimestamp()
-                .flatMap(this::getTopRatedPublicUsers)
+                .flatMap(serverTime -> getTopRatedPublicUsers(serverTime, limit))
                 .map(UserSearchResults::getResults)
                 .subscribeOn(Schedulers.io());
     }
 
-    public Single<List<User>> getRecentPublicUsers() {
+    public Single<List<User>> getLatestPublicUsers(final int limit) {
         return getTimestamp()
-                .flatMap(this::getRecentPublicUsers)
+                .flatMap(serverTime -> getLatestPublicUsers(serverTime, limit))
                 .map(UserSearchResults::getResults)
                 .subscribeOn(Schedulers.io());
     }
 
-    private Single<AppSearchResult> getTopRatedApps(final ServerTime serverTime) {
+    private Single<AppSearchResult> getTopRatedApps(final ServerTime serverTime,
+                                                    final int limit) {
         return IdService
                 .getApi()
-                .getApps(true, false, 10, serverTime.get());
+                .getApps(true, false, limit, serverTime.get());
     }
 
-    private Single<AppSearchResult> getRecentApps(final ServerTime serverTime) {
+    private Single<AppSearchResult> getLatestApps(final ServerTime serverTime,
+                                                  final int limit) {
         return IdService
                 .getApi()
-                .getApps(false, true, 10, serverTime.get());
+                .getApps(false, true, limit, serverTime.get());
     }
 
-    private Single<UserSearchResults> getTopRatedPublicUsers(final ServerTime serverTime) {
+    private Single<UserSearchResults> getTopRatedPublicUsers(final ServerTime serverTime,
+                                                             final int limit) {
         return IdService
                 .getApi()
-                .getUsers(true, true, false, 10, serverTime.get());
+                .getUsers(true, true, false, limit, serverTime.get());
     }
 
-    private Single<UserSearchResults> getRecentPublicUsers(final ServerTime serverTime) {
+    private Single<UserSearchResults> getLatestPublicUsers(final ServerTime serverTime,
+                                                           final int limit) {
         return IdService
                 .getApi()
-                .getUsers(true, false, true, 10, serverTime.get());
+                .getUsers(true, false, true, limit, serverTime.get());
     }
 
     public Single<Void> webLogin(final String loginToken) {

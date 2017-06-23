@@ -256,7 +256,7 @@ public class AppsPresenter implements Presenter<AppsFragment>{
     private void fetchTopRatedApps() {
         final Subscription sub =
                 getUserManager()
-                .getTopRatedApps()
+                .getTopRatedApps(10)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         this::handleTopRatedApps,
@@ -274,7 +274,7 @@ public class AppsPresenter implements Presenter<AppsFragment>{
     private void fetchLatestApps() {
         final Subscription sub =
                 getUserManager()
-                .getRecentApps()
+                .getLatestApps(10)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         this::handleLatestApps,
@@ -292,7 +292,7 @@ public class AppsPresenter implements Presenter<AppsFragment>{
     private void fetchTopRatedPublicUsers() {
         final Subscription sub =
                 getUserManager()
-                .getTopRatedPublicUsers()
+                .getTopRatedPublicUsers(10)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         this::handleTopRatedPublicUser,
@@ -310,7 +310,7 @@ public class AppsPresenter implements Presenter<AppsFragment>{
     private void fetchLatestPublicUsers() {
         final Subscription sub =
                 getUserManager()
-                .getRecentPublicUsers()
+                .getLatestPublicUsers(10)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         this::handleLatestPublicUser,
