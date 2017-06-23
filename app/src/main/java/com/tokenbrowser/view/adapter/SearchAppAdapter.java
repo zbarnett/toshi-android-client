@@ -115,7 +115,7 @@ public class SearchAppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             }
             case ITEM:
             default: {
-                final View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item__search_app, parent, false);
+                final View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item__token_entity, parent, false);
                 return new TokenEntityViewHolder(v);
             }
         }
