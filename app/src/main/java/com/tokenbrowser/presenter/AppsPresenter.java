@@ -29,8 +29,10 @@ import com.tokenbrowser.model.local.Dapp;
 import com.tokenbrowser.model.local.TokenEntity;
 import com.tokenbrowser.model.local.User;
 import com.tokenbrowser.model.network.App;
+import com.tokenbrowser.util.BrowseType;
 import com.tokenbrowser.util.LogUtil;
 import com.tokenbrowser.view.BaseApplication;
+import com.tokenbrowser.view.activity.BrowseActivity;
 import com.tokenbrowser.view.activity.ViewUserActivity;
 import com.tokenbrowser.view.activity.WebViewActivity;
 import com.tokenbrowser.view.adapter.HorizontalAdapter;
@@ -48,6 +50,10 @@ import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 
 import static android.view.inputmethod.EditorInfo.IME_ACTION_DONE;
+import static com.tokenbrowser.util.BrowseType.VIEW_TYPE_LATEST_APPS;
+import static com.tokenbrowser.util.BrowseType.VIEW_TYPE_LATEST_PUBLIC_USERS;
+import static com.tokenbrowser.util.BrowseType.VIEW_TYPE_TOP_RATED_APPS;
+import static com.tokenbrowser.util.BrowseType.VIEW_TYPE_TOP_RATED_PUBLIC_USERS;
 
 public class AppsPresenter implements Presenter<AppsFragment>{
 
@@ -81,12 +87,26 @@ public class AppsPresenter implements Presenter<AppsFragment>{
     }
 
     private void initView() {
+        initClickListeners();
         initSearchAppsRecyclerView();
         iniTopRatedAppsRecycleView();
         initLatestAppsRecycleView();
         initTopRatedPublicUsersRecyclerView();
         initLatestPublicUsersRecyclerView();
         initSearchView();
+    }
+
+    private void initClickListeners() {
+        this.fragment.getBinding().moreTopRatedApps.setOnClickListener(__ -> startBrowseActivity(VIEW_TYPE_TOP_RATED_APPS));
+        this.fragment.getBinding().moreLatestApps.setOnClickListener(__ -> startBrowseActivity(VIEW_TYPE_LATEST_APPS));
+        this.fragment.getBinding().moreTopRatedPublicUsers.setOnClickListener(__ -> startBrowseActivity(VIEW_TYPE_TOP_RATED_PUBLIC_USERS));
+        this.fragment.getBinding().moreLatestPublicUsers.setOnClickListener(__ -> startBrowseActivity(VIEW_TYPE_LATEST_PUBLIC_USERS));
+    }
+
+    private void startBrowseActivity(final @BrowseType.Type int viewType) {
+        final Intent intent = new Intent(this.fragment.getActivity(), BrowseActivity.class)
+                .putExtra(BrowseActivity.VIEW_TYPE, viewType);
+        this.fragment.startActivity(intent);
     }
 
     private void initSearchAppsRecyclerView() {
