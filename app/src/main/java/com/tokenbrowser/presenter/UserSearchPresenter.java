@@ -133,7 +133,6 @@ public final class UserSearchPresenter
         final Subscription sub =
                 BaseApplication
                 .get()
-                .getTokenManager()
                 .getRecipientManager()
                 .searchOnlineUsers(query)
                 .observeOn(AndroidSchedulers.mainThread())

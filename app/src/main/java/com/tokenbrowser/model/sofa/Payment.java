@@ -131,7 +131,6 @@ public class Payment {
         final BigDecimal ethAmount = EthUtil.weiToEth(weiAmount);
         return BaseApplication
                 .get()
-                .getTokenManager()
                 .getBalanceManager()
                 .convertEthToLocalCurrencyString(ethAmount)
                 .map(this::setLocalPrice);

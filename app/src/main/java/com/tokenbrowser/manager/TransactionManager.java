@@ -136,7 +136,6 @@ public class TransactionManager {
             sofaMessage.setPayload(updatedPayload);
             BaseApplication
                     .get()
-                    .getTokenManager()
                     .getSofaMessageManager()
                     .updateMessage(remoteUser, sofaMessage);
 
@@ -178,7 +177,6 @@ public class TransactionManager {
     private Observable<Payment> getTransactionStatus(final PendingTransaction pendingTransaction) {
         return BaseApplication
                 .get()
-                .getTokenManager()
                 .getBalanceManager()
                 .getTransactionStatus(pendingTransaction.getTxHash())
                 .toObservable();
@@ -224,7 +222,6 @@ public class TransactionManager {
     private void createNewPayment(final Payment payment) {
         BaseApplication
                 .get()
-                .getTokenManager()
                 .getRecipientManager()
                 .getUserFromPaymentAddress(payment.getFromAddress())
                 .subscribe(
@@ -337,7 +334,6 @@ public class TransactionManager {
 
         BaseApplication
                 .get()
-                .getTokenManager()
                 .getSofaMessageManager()
                 .sendMessage(receiver, storedSofaMessage);
     }
@@ -458,7 +454,6 @@ public class TransactionManager {
     private void updateMessage(final User user, final SofaMessage message) {
         BaseApplication
                 .get()
-                .getTokenManager()
                 .getSofaMessageManager()
                 .updateMessage(user, message);
     }
@@ -510,7 +505,6 @@ public class TransactionManager {
         message.setSendState(SendState.STATE_SENDING);
         BaseApplication
                 .get()
-                .getTokenManager()
                 .getSofaMessageManager()
                 .saveTransaction(receiver, message);
     }
@@ -567,7 +561,6 @@ public class TransactionManager {
         // Yes, this blocks. But realistically, a value should be always ready for returning.
         return BaseApplication
                 .get()
-                .getTokenManager()
                 .getUserManager()
                 .getCurrentUser()
                 .toBlocking()

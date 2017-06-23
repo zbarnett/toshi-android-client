@@ -111,7 +111,6 @@ public class PaymentRequestConfirmPresenter implements Presenter<PaymentConfirma
         final Subscription sub =
                 BaseApplication
                 .get()
-                .getTokenManager()
                 .getRecipientManager()
                 .getUserFromTokenId(this.tokenId)
                 .doOnSuccess(user -> this.user = user)
@@ -179,7 +178,6 @@ public class PaymentRequestConfirmPresenter implements Presenter<PaymentConfirma
         final Subscription sub =
                 BaseApplication
                 .get()
-                .getTokenManager()
                 .getBalanceManager()
                 .convertEthToLocalCurrencyString(ethAmount)
                 .subscribe((localCurrency) -> {

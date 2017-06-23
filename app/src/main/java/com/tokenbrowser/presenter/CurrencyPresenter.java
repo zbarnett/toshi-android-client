@@ -99,7 +99,6 @@ public class CurrencyPresenter implements Presenter<CurrencyActivity> {
         final Subscription sub =
                 BaseApplication
                 .get()
-                .getTokenManager()
                 .getBalanceManager()
                 .getCurrencies()
                 .map(Currencies::getData)

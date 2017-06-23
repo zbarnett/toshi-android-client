@@ -185,7 +185,6 @@ public class SofaMessageReceiver {
     private boolean isUserBlocked(final String address) {
         return BaseApplication
                 .get()
-                .getTokenManager()
                 .getRecipientManager()
                 .isUserBlocked(address)
                 .toBlocking()
@@ -202,7 +201,6 @@ public class SofaMessageReceiver {
 
         BaseApplication
                 .get()
-                .getTokenManager()
                 .getRecipientManager()
                 .getUserFromTokenId(signalMessage.getSource())
                 .subscribe(
@@ -270,8 +268,8 @@ public class SofaMessageReceiver {
             final String payload = SofaAdapters.get().toJson(initMessage);
             final SofaMessage newSofaMessage = new SofaMessage().makeNew(sender, payload);
 
-            BaseApplication.get()
-                    .getTokenManager()
+            BaseApplication
+                    .get()
                     .getSofaMessageManager()
                     .sendMessage(sender, newSofaMessage);
         } catch (final IOException e) {
@@ -282,7 +280,6 @@ public class SofaMessageReceiver {
     private void fetchAndCacheIncomingPaymentSender(final User sender) {
         BaseApplication
                 .get()
-                .getTokenManager()
                 .getRecipientManager()
                 .getUserFromTokenId(sender.getTokenId());
     }

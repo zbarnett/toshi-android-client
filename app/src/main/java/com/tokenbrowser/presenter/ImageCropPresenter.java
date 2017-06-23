@@ -162,7 +162,6 @@ public class ImageCropPresenter implements Presenter<ImageCropActivity> {
         final Subscription sub =
                 BaseApplication
                 .get()
-                .getTokenManager()
                 .getUserManager()
                 .uploadAvatar(file)
                 .observeOn(AndroidSchedulers.mainThread())

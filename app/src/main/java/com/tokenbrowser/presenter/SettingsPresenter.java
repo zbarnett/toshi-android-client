@@ -89,7 +89,6 @@ public final class SettingsPresenter implements
         final Subscription sub =
                 BaseApplication
                 .get()
-                .getTokenManager()
                 .getUserManager()
                 .getUserObservable()
                 .subscribeOn(Schedulers.io())
@@ -100,7 +99,6 @@ public final class SettingsPresenter implements
                 );
 
         if (!BaseApplication.get()
-                .getTokenManager()
                 .getUserManager()
                 .getUserObservable()
                 .hasValue()) {
@@ -181,7 +179,6 @@ public final class SettingsPresenter implements
         final Subscription sub =
                 BaseApplication
                 .get()
-                .getTokenManager()
                 .getBalanceManager()
                 .getBalanceObservable()
                 .first()
@@ -281,7 +278,6 @@ public final class SettingsPresenter implements
         final Subscription sub =
                 BaseApplication
                 .get()
-                .getTokenManager()
                 .getBalanceManager()
                 .getBalanceObservable()
                 .observeOn(AndroidSchedulers.mainThread())

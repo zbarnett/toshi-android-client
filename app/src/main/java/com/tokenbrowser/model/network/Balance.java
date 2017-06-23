@@ -65,7 +65,6 @@ public class Balance {
 
         return BaseApplication
                 .get()
-                .getTokenManager()
                 .getBalanceManager()
                 .convertEthToLocalCurrencyString(EthUtil.weiToEth(getUnconfirmedBalance()))
                 .subscribeOn(Schedulers.io());

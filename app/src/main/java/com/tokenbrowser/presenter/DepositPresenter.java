@@ -80,7 +80,6 @@ public class DepositPresenter implements Presenter<DepositActivity> {
     private void attachListeners() {
         final Subscription sub =
                 BaseApplication.get()
-                .getTokenManager()
                 .getUserManager()
                 .getCurrentUser()
                 .subscribeOn(Schedulers.io())

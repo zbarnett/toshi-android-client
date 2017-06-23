@@ -98,7 +98,6 @@ public final class RecentPresenter implements
         final Subscription sub =
                 BaseApplication
                 .get()
-                .getTokenManager()
                 .getSofaMessageManager()
                 .loadAllConversations()
                 .observeOn(AndroidSchedulers.mainThread())
@@ -123,7 +122,6 @@ public final class RecentPresenter implements
         final Subscription sub =
                 BaseApplication
                 .get()
-                .getTokenManager()
                 .getSofaMessageManager()
                 .registerForAllConversationChanges()
                 .observeOn(AndroidSchedulers.mainThread())

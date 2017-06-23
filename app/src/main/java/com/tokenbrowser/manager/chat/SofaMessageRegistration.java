@@ -147,7 +147,6 @@ public class SofaMessageRegistration {
     private void sendOnboardMessageToOnboardingBot(final User onboardingBot) {
         BaseApplication
                 .get()
-                .getTokenManager()
                 .getUserManager()
                 .getCurrentUser()
                 .map(this::generateOnboardingMessage)
@@ -165,7 +164,6 @@ public class SofaMessageRegistration {
     private void sendOnboardingMessage(final SofaMessage onboardingMessage, final User onboardingBot) {
         BaseApplication
                 .get()
-                .getTokenManager()
                 .getSofaMessageManager()
                 .sendMessage(onboardingBot, onboardingMessage);
     }

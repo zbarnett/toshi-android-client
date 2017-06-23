@@ -130,7 +130,6 @@ public final class ViewUserPresenter implements
     private Single<User> getUserById(final String userAddress) {
         return BaseApplication
                 .get()
-                .getTokenManager()
                 .getRecipientManager()
                 .getUserFromTokenId(userAddress);
     }
@@ -150,7 +149,6 @@ public final class ViewUserPresenter implements
     private Single<ReputationScore> getReputationScoreById(final String userAddress) {
          return BaseApplication
                 .get()
-                .getTokenManager()
                 .getReputationManager()
                 .getReputationScore(userAddress);
     }
@@ -260,7 +258,6 @@ public final class ViewUserPresenter implements
     private Single<Boolean> isAContact(final User user) {
         return BaseApplication
                 .get()
-                .getTokenManager()
                 .getRecipientManager()
                 .isUserAContact(user)
                 .observeOn(AndroidSchedulers.mainThread());
@@ -273,7 +270,6 @@ public final class ViewUserPresenter implements
     private Completable deleteContact(final User user) {
         return BaseApplication
             .get()
-            .getTokenManager()
             .getRecipientManager()
             .deleteContact(user);
     }
@@ -281,7 +277,6 @@ public final class ViewUserPresenter implements
     private Completable saveContact(final User user) {
         return BaseApplication
             .get()
-            .getTokenManager()
             .getRecipientManager()
             .saveContact(user);
     }
@@ -359,7 +354,6 @@ public final class ViewUserPresenter implements
         final Subscription sub =
                 BaseApplication
                 .get()
-                .getTokenManager()
                 .getRecipientManager()
                 .isUserBlocked(this.userAddress)
                 .observeOn(AndroidSchedulers.mainThread())

@@ -89,7 +89,6 @@ public class TransactionOverviewPresenter implements Presenter<TransactionOvervi
         final Subscription sub =
                 BaseApplication
                 .get()
-                .getTokenManager()
                 .getTransactionManager()
                 .getAllTransactions()
                 .doOnSubscribe(() -> this.adapter.clear())

@@ -126,7 +126,6 @@ public class GcmMessageReceiver extends GcmListenerService {
                 .flatMap(user ->
                         BaseApplication
                         .get()
-                        .getTokenManager()
                         .getRecipientManager()
                         .isUserBlocked(user.getTokenId())
                 );
@@ -166,7 +165,6 @@ public class GcmMessageReceiver extends GcmListenerService {
         try {
             signalMessage = BaseApplication
                 .get()
-                .getTokenManager()
                 .getSofaMessageManager()
                 .fetchLatestMessage();
         } catch (final TimeoutException e) {
@@ -183,7 +181,6 @@ public class GcmMessageReceiver extends GcmListenerService {
     private void updatePayment(final Payment payment) {
         BaseApplication
                 .get()
-                .getTokenManager()
                 .getTransactionManager()
                 .updatePayment(payment);
     }
@@ -191,7 +188,6 @@ public class GcmMessageReceiver extends GcmListenerService {
     private void refreshBalance() {
         BaseApplication
                 .get()
-                .getTokenManager()
                 .getBalanceManager()
                 .refreshBalance();
     }
@@ -226,7 +222,6 @@ public class GcmMessageReceiver extends GcmListenerService {
 
         BaseApplication
                 .get()
-                .getTokenManager()
                 .getBalanceManager()
                 .convertEthToLocalCurrencyString(ethAmount)
                 .subscribe(
@@ -247,7 +242,6 @@ public class GcmMessageReceiver extends GcmListenerService {
     private Single<User> getUserFromPaymentAddress(final String paymentAddress) {
         return BaseApplication
                 .get()
-                .getTokenManager()
                 .getRecipientManager()
                 .getUserFromPaymentAddress(paymentAddress);
     }

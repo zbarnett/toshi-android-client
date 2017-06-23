@@ -229,7 +229,6 @@ public class AppsPresenter implements Presenter<AppsFragment>{
     private Observable<List<App>> searchApps(final String searchString) {
         return BaseApplication
                 .get()
-                .getTokenManager()
                 .getAppsManager()
                 .searchApps(searchString);
     }

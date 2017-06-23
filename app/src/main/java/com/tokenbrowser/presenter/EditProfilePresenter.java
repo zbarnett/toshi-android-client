@@ -133,7 +133,6 @@ public class EditProfilePresenter implements Presenter<EditProfileActivity> {
         final Subscription sub =
                 BaseApplication
                 .get()
-                .getTokenManager()
                 .getUserManager()
                 .getUserObservable()
                 .filter(user -> user != null)
@@ -172,7 +171,6 @@ public class EditProfilePresenter implements Presenter<EditProfileActivity> {
             final Subscription sub =
                     BaseApplication
                     .get()
-                    .getTokenManager()
                     .getUserManager()
                     .updateUser(userDetails)
                     .observeOn(AndroidSchedulers.mainThread())

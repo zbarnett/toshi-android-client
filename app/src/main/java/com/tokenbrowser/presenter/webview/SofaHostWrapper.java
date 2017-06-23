@@ -139,7 +139,6 @@ import java.io.IOException;
 
             BaseApplication
                     .get()
-                    .getTokenManager()
                     .getTransactionManager()
                     .signW3Transaction(transaction)
                     .subscribe(

@@ -64,7 +64,6 @@ public class ChatNotificationManager {
 
         BaseApplication
             .get()
-            .getTokenManager()
             .getRecipientManager()
             .getUserFromTokenId(signalMessage.getSource())
             .subscribe(

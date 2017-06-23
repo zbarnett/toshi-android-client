@@ -73,7 +73,6 @@ public class QrCodePresenter implements Presenter<QrCodeActivity> {
     private Single<User> getCurrentUser() {
         return BaseApplication
                 .get()
-                .getTokenManager()
                 .getUserManager()
                 .getCurrentUser();
     }

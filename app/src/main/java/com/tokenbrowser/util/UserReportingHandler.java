@@ -79,7 +79,6 @@ public class UserReportingHandler {
         final Subscription sub =
                 BaseApplication
                 .get()
-                .getTokenManager()
                 .getRecipientManager()
                 .reportUser(report)
                 .observeOn(AndroidSchedulers.mainThread())

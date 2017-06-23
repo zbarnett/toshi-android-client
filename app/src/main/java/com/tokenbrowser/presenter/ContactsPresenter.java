@@ -95,7 +95,6 @@ public final class ContactsPresenter implements
     private void loadContacts() {
         final Subscription sub = BaseApplication
                 .get()
-                .getTokenManager()
                 .getRecipientManager()
                 .loadAllContacts()
                 .observeOn(AndroidSchedulers.mainThread())

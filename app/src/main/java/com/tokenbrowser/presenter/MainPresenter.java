@@ -117,7 +117,6 @@ public class MainPresenter implements Presenter<MainActivity> {
         final SofaMessageManager messageManager =
                 BaseApplication
                 .get()
-                .getTokenManager()
                 .getSofaMessageManager();
 
         final Subscription allChangesSubscription =
@@ -168,7 +167,6 @@ public class MainPresenter implements Presenter<MainActivity> {
         final Subscription sub =
                 BaseApplication
                         .get()
-                        .getTokenManager()
                         .getUserManager()
                         .getUserObservable()
                         .filter(user -> user != null)

@@ -111,7 +111,6 @@ public final class ViewProfilePresenter implements Presenter<ViewProfileActivity
         final Subscription sub =
                 BaseApplication
                 .get()
-                .getTokenManager()
                 .getUserManager()
                 .getUserObservable()
                 .subscribeOn(Schedulers.io())
@@ -122,7 +121,6 @@ public final class ViewProfilePresenter implements Presenter<ViewProfileActivity
                 );
 
         if (!BaseApplication.get()
-                .getTokenManager()
                 .getUserManager()
                 .getUserObservable()
                 .hasValue()) {
@@ -160,7 +158,6 @@ public final class ViewProfilePresenter implements Presenter<ViewProfileActivity
         final Subscription reputationSub =
                 BaseApplication
                 .get()
-                .getTokenManager()
                 .getReputationManager()
                 .getReputationScore(userAddress)
                 .observeOn(AndroidSchedulers.mainThread())

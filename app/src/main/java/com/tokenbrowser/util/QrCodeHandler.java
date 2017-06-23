@@ -85,7 +85,6 @@ public class QrCodeHandler implements PaymentConfirmationDialog.OnPaymentConfirm
     private Single<User> getUserFromPaymentAddress(final String paymentAddress) {
         return BaseApplication
                 .get()
-                .getTokenManager()
                 .getRecipientManager()
                 .getUserFromPaymentAddress(paymentAddress)
                 .observeOn(AndroidSchedulers.mainThread());
@@ -179,7 +178,6 @@ public class QrCodeHandler implements PaymentConfirmationDialog.OnPaymentConfirm
     private Single<User> getUserByUsername(final String username) {
         return BaseApplication
                 .get()
-                .getTokenManager()
                 .getRecipientManager()
                 .getUserFromUsername(username)
                 .observeOn(AndroidSchedulers.mainThread());
@@ -216,7 +214,6 @@ public class QrCodeHandler implements PaymentConfirmationDialog.OnPaymentConfirm
     private Single<Void> loginWithToken(final String token) {
         return BaseApplication
                 .get()
-                .getTokenManager()
                 .getUserManager()
                 .webLogin(token)
                 .subscribeOn(Schedulers.io())
@@ -279,7 +276,6 @@ public class QrCodeHandler implements PaymentConfirmationDialog.OnPaymentConfirm
     private void sendExternalPayment(final Payment payment) throws InvalidQrCodePayment {
         BaseApplication
                 .get()
-                .getTokenManager()
                 .getTransactionManager()
                 .sendExternalPayment(payment.getToAddress(), payment.getValue());
     }

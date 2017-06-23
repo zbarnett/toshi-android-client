@@ -26,6 +26,7 @@ import com.tokenbrowser.manager.network.IdService;
 import com.tokenbrowser.model.local.User;
 import com.tokenbrowser.model.network.ServerTime;
 import com.tokenbrowser.model.network.UserDetails;
+import com.tokenbrowser.model.network.UserSearchResults;
 import com.tokenbrowser.util.FileNames;
 import com.tokenbrowser.util.FileUtil;
 import com.tokenbrowser.util.LogUtil;
@@ -33,6 +34,7 @@ import com.tokenbrowser.util.SharedPrefsUtil;
 import com.tokenbrowser.view.BaseApplication;
 
 import java.io.File;
+import java.util.List;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;

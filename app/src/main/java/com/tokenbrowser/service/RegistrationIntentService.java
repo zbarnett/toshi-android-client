@@ -90,7 +90,6 @@ public class RegistrationIntentService extends IntentService {
 
         BaseApplication
                 .get()
-                .getTokenManager()
                 .getSofaMessageManager()
                 .setGcmToken(token);
     }
@@ -103,7 +102,6 @@ public class RegistrationIntentService extends IntentService {
 
         BaseApplication
                 .get()
-                .getTokenManager()
                 .getBalanceManager()
                 .registerForGcm(token)
                 .subscribeOn(Schedulers.io())

@@ -58,7 +58,6 @@ Observable<PendingTransaction> observable = pto.init(user); // Only PendingTrans
         return
                 BaseApplication
                 .get()
-                .getTokenManager()
                 .getTransactionManager()
                 .getPendingTransactionObservable()
                 .filter(this::shouldBeBroadcast)

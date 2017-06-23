@@ -95,7 +95,6 @@ public class GroupSetupPresenter implements Presenter<GroupSetupActivity> {
                 .flatMap(
                     BaseApplication
                     .get()
-                    .getTokenManager()
                     .getSofaMessageManager()
                     ::createGroup
                 ).subscribe(
@@ -190,7 +189,6 @@ public class GroupSetupPresenter implements Presenter<GroupSetupActivity> {
     private Observable<User> fetchUser(final String tokenId) {
         return BaseApplication
                 .get()
-                .getTokenManager()
                 .getRecipientManager()
                 .getUserFromTokenId(tokenId)
                 .toObservable();

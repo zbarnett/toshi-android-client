@@ -104,7 +104,6 @@ public class ViewAppPresenter implements Presenter<ViewAppActivity> {
         final Subscription userSub =
                 BaseApplication
                 .get()
-                .getTokenManager()
                 .getRecipientManager()
                 .getUserFromTokenId(this.appTokenId)
                 .subscribeOn(Schedulers.io())
@@ -122,7 +121,6 @@ public class ViewAppPresenter implements Presenter<ViewAppActivity> {
     private Single<App> getAppById(final String appId) {
         return BaseApplication
                 .get()
-                .getTokenManager()
                 .getAppsManager()
                 .getApp(appId);
     }
@@ -144,7 +142,6 @@ public class ViewAppPresenter implements Presenter<ViewAppActivity> {
         final Subscription reputationSub =
                 BaseApplication
                 .get()
-                .getTokenManager()
                 .getReputationManager()
                 .getReputationScore(this.appTokenId)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -228,7 +225,6 @@ public class ViewAppPresenter implements Presenter<ViewAppActivity> {
     private Single<Boolean> isFavorited() {
         return BaseApplication
                 .get()
-                .getTokenManager()
                 .getRecipientManager()
                 .isUserAContact(this.appAsUser)
                 .observeOn(AndroidSchedulers.mainThread());
@@ -237,7 +233,6 @@ public class ViewAppPresenter implements Presenter<ViewAppActivity> {
     private Completable removeFromFavorites() {
         return BaseApplication
                 .get()
-                .getTokenManager()
                 .getRecipientManager()
                 .deleteContact(this.appAsUser);
     }
@@ -245,7 +240,6 @@ public class ViewAppPresenter implements Presenter<ViewAppActivity> {
     private Completable addToFavorites() {
         return BaseApplication
                 .get()
-                .getTokenManager()
                 .getRecipientManager()
                 .saveContact(this.appAsUser);
     }

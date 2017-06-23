@@ -145,7 +145,6 @@ public class RecentAdapter extends RecyclerView.Adapter<ThreadViewHolder> implem
         // Yes, this blocks. But realistically, a value should be always ready for returning.
         return BaseApplication
                 .get()
-                .getTokenManager()
                 .getUserManager()
                 .getCurrentUser()
                 .toBlocking()

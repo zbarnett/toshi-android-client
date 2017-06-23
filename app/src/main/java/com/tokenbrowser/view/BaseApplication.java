@@ -23,7 +23,14 @@ import android.content.IntentFilter;
 import android.os.Build;
 import android.support.multidex.MultiDexApplication;
 
+import com.tokenbrowser.manager.AppsManager;
+import com.tokenbrowser.manager.BalanceManager;
+import com.tokenbrowser.manager.RecipientManager;
+import com.tokenbrowser.manager.ReputationManager;
+import com.tokenbrowser.manager.SofaMessageManager;
 import com.tokenbrowser.manager.TokenManager;
+import com.tokenbrowser.manager.TransactionManager;
+import com.tokenbrowser.manager.UserManager;
 import com.tokenbrowser.service.NetworkChangeReceiver;
 import com.tokenbrowser.util.LogUtil;
 
@@ -38,10 +45,6 @@ public final class BaseApplication extends MultiDexApplication {
 
     private TokenManager tokenManager;
     private boolean inBackground = false;
-
-    public final TokenManager getTokenManager() {
-        return this.tokenManager;
-    }
 
     public final Realm getRealm() {
         if (Thread.currentThread().getId() == 1) {
@@ -103,4 +106,39 @@ public final class BaseApplication extends MultiDexApplication {
     }
 
     public boolean isInBackground() { return this.inBackground; }
+
+
+    public final TokenManager getTokenManager() {
+        return this.tokenManager;
+    }
+
+    // Helper functions
+    // Unwrap the TokenManager container to reduce lines of code
+    public final SofaMessageManager getSofaMessageManager() {
+        return this.tokenManager.getSofaMessageManager();
+    }
+
+    public final TransactionManager getTransactionManager() {
+        return this.tokenManager.getTransactionManager();
+    }
+
+    public final UserManager getUserManager() {
+        return this.tokenManager.getUserManager();
+    }
+
+    public final RecipientManager getRecipientManager() {
+        return this.tokenManager.getRecipientManager();
+    }
+
+    public final BalanceManager getBalanceManager() {
+        return this.tokenManager.getBalanceManager();
+    }
+
+    public final AppsManager getAppsManager() {
+        return this.tokenManager.getAppsManager();
+    }
+
+    public final ReputationManager getReputationManager() {
+        return this.tokenManager.getReputationManager();
+    }
 }

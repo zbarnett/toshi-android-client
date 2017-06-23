@@ -148,7 +148,6 @@ queue.clear(); // Cleans up all state, and unsubscribes everything.
     private void sendAndSaveMessage(final SofaMessage outgoingSofaMessage) {
         BaseApplication
                 .get()
-                .getTokenManager()
                 .getSofaMessageManager()
                 .sendAndSaveMessage(this.remoteUser, outgoingSofaMessage);
     }

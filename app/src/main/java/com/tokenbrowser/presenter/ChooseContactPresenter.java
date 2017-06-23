@@ -93,7 +93,6 @@ public class ChooseContactPresenter implements Presenter<ChooseContactsActivity>
         final Subscription sub =
                 BaseApplication
                 .get()
-                .getTokenManager()
                 .getBalanceManager()
                 .convertEthToLocalCurrencyString(ethAmount)
                 .subscribe(
@@ -127,7 +126,6 @@ public class ChooseContactPresenter implements Presenter<ChooseContactsActivity>
     private void loadContacts() {
         final Subscription sub = BaseApplication
                 .get()
-                .getTokenManager()
                 .getRecipientManager()
                 .loadAllContacts()
                 .observeOn(AndroidSchedulers.mainThread())
@@ -229,7 +227,6 @@ public class ChooseContactPresenter implements Presenter<ChooseContactsActivity>
     private Observable<List<User>> searchOfflineUsers(final String searchString) {
         return BaseApplication
                 .get()
-                .getTokenManager()
                 .getRecipientManager()
                 .searchOfflineUsers(searchString)
                 .toObservable();

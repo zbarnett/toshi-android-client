@@ -327,7 +327,6 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
         // Yes, this blocks. But realistically, a value should be always ready for returning.
         return BaseApplication
                 .get()
-                .getTokenManager()
                 .getUserManager()
                 .getCurrentUser()
                 .toBlocking()

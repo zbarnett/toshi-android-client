@@ -57,7 +57,6 @@ public class RatingHandler {
     private Single<Response<Void>> submitReview(final Review review) {
         return BaseApplication
                 .get()
-                .getTokenManager()
                 .getRecipientManager()
                 .getTimestamp()
                 .flatMap(serverTime -> submitReview(review, serverTime));
@@ -65,7 +64,6 @@ public class RatingHandler {
 
     private Single<Response<Void>> submitReview(final Review review, final ServerTime serverTime) {
         return BaseApplication.get()
-                .getTokenManager()
                 .getReputationManager()
                 .submitReview(review, serverTime.get());
     }

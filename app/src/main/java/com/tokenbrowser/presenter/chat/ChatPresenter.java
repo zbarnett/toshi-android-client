@@ -136,7 +136,6 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         final Subscription sub =
                 BaseApplication
                 .get()
-                .getTokenManager()
                 .getRecipientManager()
                 .getUserFromUsername(username)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -171,7 +170,6 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
                                                  final @PaymentRequest.State int newState) {
         BaseApplication
                 .get()
-                .getTokenManager()
                 .getTransactionManager()
                 .updatePaymentRequestState(remoteUser, existingMessage, newState);
     }
@@ -405,7 +403,6 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         final Subscription sub =
                 BaseApplication
                 .get()
-                .getTokenManager()
                 .getRecipientManager()
                 .getUserFromTokenId(remoteUserAddress)
                 .subscribeOn(Schedulers.io())
@@ -479,7 +476,6 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
 
     private void sendPayment(final User remoteUser, final String value) {
         BaseApplication.get()
-                .getTokenManager()
                 .getTransactionManager()
                 .sendPayment(remoteUser, value);
     }
@@ -548,14 +544,12 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         this.chatObservables =
                 BaseApplication
                 .get()
-                .getTokenManager()
                 .getSofaMessageManager()
                 .registerForConversationChanges(remoteUser.getTokenId());
 
         final Subscription conversationLoadedSub =
                 BaseApplication
                 .get()
-                .getTokenManager()
                 .getSofaMessageManager()
                 .loadConversation(remoteUser.getTokenId())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -607,7 +601,6 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
 
         BaseApplication
                 .get()
-                .getTokenManager()
                 .getSofaMessageManager()
                 .sendMessage(this.remoteUser, sofaMessage);
     }
@@ -863,7 +856,6 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     private void stopListeningForMessageChanges() {
         BaseApplication
                 .get()
-                .getTokenManager()
                 .getSofaMessageManager()
                 .stopListeningForChanges();
     }
@@ -880,7 +872,6 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         // Yes, this blocks. But realistically, a value should be always ready for returning.
         return BaseApplication
                 .get()
-                .getTokenManager()
                 .getUserManager()
                 .getCurrentUser()
                 .toBlocking()

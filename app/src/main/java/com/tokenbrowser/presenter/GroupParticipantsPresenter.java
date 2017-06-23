@@ -182,7 +182,6 @@ public class GroupParticipantsPresenter implements Presenter<GroupParticipantsAc
         final Subscription sub =
                 BaseApplication
                 .get()
-                .getTokenManager()
                 .getRecipientManager()
                 .searchOnlineUsers(query)
                 .observeOn(AndroidSchedulers.mainThread())

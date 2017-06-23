@@ -218,7 +218,6 @@ public class AmountPresenter implements Presenter<AmountActivity> {
         this.subscriptions.add(
                 BaseApplication
                 .get()
-                .getTokenManager()
                 .getBalanceManager()
                 .convertLocalCurrencyToEth(localValue)
                 .subscribe(

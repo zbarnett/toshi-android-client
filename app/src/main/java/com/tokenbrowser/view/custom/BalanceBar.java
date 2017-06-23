@@ -85,7 +85,6 @@ public class BalanceBar extends LinearLayout {
         final Subscription getBalanceSub =
                 BaseApplication
                 .get()
-                .getTokenManager()
                 .getBalanceManager()
                 .getBalanceObservable()
                 .observeOn(AndroidSchedulers.mainThread())
