@@ -24,6 +24,7 @@ import android.util.Patterns;
 import android.view.View;
 
 import com.jakewharton.rxbinding.widget.RxTextView;
+import com.tokenbrowser.manager.AppsManager;
 import com.tokenbrowser.manager.UserManager;
 import com.tokenbrowser.model.local.Dapp;
 import com.tokenbrowser.model.local.TokenEntity;
@@ -275,7 +276,7 @@ public class AppsPresenter implements Presenter<AppsFragment>{
 
     private void fetchTopRatedApps() {
         final Subscription sub =
-                getUserManager()
+                getAppManager()
                 .getTopRatedApps(10)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -293,7 +294,7 @@ public class AppsPresenter implements Presenter<AppsFragment>{
 
     private void fetchLatestApps() {
         final Subscription sub =
-                getUserManager()
+                getAppManager()
                 .getLatestApps(10)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -302,6 +303,13 @@ public class AppsPresenter implements Presenter<AppsFragment>{
                 );
 
         this.subscriptions.add(sub);
+    }
+
+    private AppsManager getAppManager() {
+        return BaseApplication
+                .get()
+                .getTokenManager()
+                .getAppsManager();
     }
 
     private void handleLatestApps(final List<App> apps) {

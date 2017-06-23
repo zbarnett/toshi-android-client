@@ -19,7 +19,10 @@ package com.tokenbrowser.manager;
 
 
 import com.tokenbrowser.manager.network.DirectoryService;
+import com.tokenbrowser.manager.network.IdService;
 import com.tokenbrowser.model.network.App;
+import com.tokenbrowser.model.network.AppSearchResult;
+import com.tokenbrowser.model.network.ServerTime;
 
 import java.util.List;
 
@@ -68,5 +71,39 @@ public class AppsManager {
                 .flatMap((response) -> Observable.just(response.body()))
                 .subscribeOn(Schedulers.io())
                 .toSingle();
+    }
+
+    public Single<List<App>> getTopRatedApps(final int limit) {
+        return getTimestamp()
+                .flatMap(serverTime -> getTopRatedApps(serverTime, limit))
+                .map(AppSearchResult::getResults)
+                .subscribeOn(Schedulers.io());
+    }
+
+    public Single<List<App>> getLatestApps(final int limit) {
+        return getTimestamp()
+                .flatMap(serverTime -> getLatestApps(serverTime, limit))
+                .map(AppSearchResult::getResults)
+                .subscribeOn(Schedulers.io());
+    }
+
+    public Single<ServerTime> getTimestamp() {
+        return IdService
+                .getApi()
+                .getTimestamp();
+    }
+
+    private Single<AppSearchResult> getTopRatedApps(final ServerTime serverTime,
+                                                    final int limit) {
+        return IdService
+                .getApi()
+                .getApps(true, false, limit, serverTime.get());
+    }
+
+    private Single<AppSearchResult> getLatestApps(final ServerTime serverTime,
+                                                  final int limit) {
+        return IdService
+                .getApi()
+                .getApps(false, true, limit, serverTime.get());
     }
 }

@@ -30,8 +30,6 @@ import com.tokenbrowser.model.local.BlockedUser;
 import com.tokenbrowser.model.local.Contact;
 import com.tokenbrowser.model.local.Report;
 import com.tokenbrowser.model.local.User;
-import com.tokenbrowser.model.network.App;
-import com.tokenbrowser.model.network.AppSearchResult;
 import com.tokenbrowser.model.network.ServerTime;
 import com.tokenbrowser.model.network.UserDetails;
 import com.tokenbrowser.model.network.UserSearchResults;
@@ -302,20 +300,6 @@ public class UserManager {
                 .map(UserSearchResults::getResults);
     }
 
-    public Single<List<App>> getTopRatedApps(final int limit) {
-        return getTimestamp()
-                .flatMap(serverTime -> getTopRatedApps(serverTime, limit))
-                .map(AppSearchResult::getResults)
-                .subscribeOn(Schedulers.io());
-    }
-
-    public Single<List<App>> getLatestApps(final int limit) {
-        return getTimestamp()
-                .flatMap(serverTime -> getLatestApps(serverTime, limit))
-                .map(AppSearchResult::getResults)
-                .subscribeOn(Schedulers.io());
-    }
-
     public Single<List<User>> getTopRatedPublicUsers(final int limit) {
         return getTimestamp()
                 .flatMap(serverTime -> getTopRatedPublicUsers(serverTime, limit))
@@ -328,20 +312,6 @@ public class UserManager {
                 .flatMap(serverTime -> getLatestPublicUsers(serverTime, limit))
                 .map(UserSearchResults::getResults)
                 .subscribeOn(Schedulers.io());
-    }
-
-    private Single<AppSearchResult> getTopRatedApps(final ServerTime serverTime,
-                                                    final int limit) {
-        return IdService
-                .getApi()
-                .getApps(true, false, limit, serverTime.get());
-    }
-
-    private Single<AppSearchResult> getLatestApps(final ServerTime serverTime,
-                                                  final int limit) {
-        return IdService
-                .getApi()
-                .getApps(false, true, limit, serverTime.get());
     }
 
     private Single<UserSearchResults> getTopRatedPublicUsers(final ServerTime serverTime,

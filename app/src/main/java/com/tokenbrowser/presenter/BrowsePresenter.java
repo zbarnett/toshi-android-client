@@ -24,6 +24,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.tokenbrowser.R;
+import com.tokenbrowser.manager.AppsManager;
 import com.tokenbrowser.manager.UserManager;
 import com.tokenbrowser.model.local.TokenEntity;
 import com.tokenbrowser.model.local.User;
@@ -148,7 +149,7 @@ public class BrowsePresenter implements Presenter<BrowseActivity> {
 
     private void fetchTopRatedApps() {
         final Subscription sub =
-                getUserManager()
+                getAppManager()
                 .getTopRatedApps(100)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -162,7 +163,7 @@ public class BrowsePresenter implements Presenter<BrowseActivity> {
 
     private void fetchLatestApps() {
         final Subscription sub =
-                getUserManager()
+                getAppManager()
                 .getLatestApps(100)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -172,6 +173,13 @@ public class BrowsePresenter implements Presenter<BrowseActivity> {
                 );
 
         this.subscriptions.add(sub);
+    }
+
+    private AppsManager getAppManager() {
+        return BaseApplication
+                .get()
+                .getTokenManager()
+                .getAppsManager();
     }
 
     private void fetchTopRatedPublicUsers() {
