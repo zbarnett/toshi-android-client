@@ -24,13 +24,15 @@ import android.util.Patterns;
 import android.view.View;
 
 import com.jakewharton.rxbinding.widget.RxTextView;
+import com.tokenbrowser.manager.UserManager;
 import com.tokenbrowser.model.local.Dapp;
+import com.tokenbrowser.model.local.User;
 import com.tokenbrowser.model.network.App;
 import com.tokenbrowser.util.LogUtil;
 import com.tokenbrowser.view.BaseApplication;
 import com.tokenbrowser.view.activity.ViewUserActivity;
 import com.tokenbrowser.view.activity.WebViewActivity;
-import com.tokenbrowser.view.adapter.RecommendedAppsAdapter;
+import com.tokenbrowser.view.adapter.HorizontalAdapter;
 import com.tokenbrowser.view.adapter.SearchAppAdapter;
 import com.tokenbrowser.view.fragment.toplevel.AppsFragment;
 
@@ -48,11 +50,9 @@ import static android.view.inputmethod.EditorInfo.IME_ACTION_DONE;
 
 public class AppsPresenter implements Presenter<AppsFragment>{
 
-    private List<App> apps;
     private AppsFragment fragment;
     private CompositeSubscription subscriptions;
     private boolean firstTimeAttaching = true;
-    private SearchAppAdapter searchAppAdapter;
 
     @Override
     public void onViewAttached(AppsFragment view) {
@@ -64,19 +64,11 @@ public class AppsPresenter implements Presenter<AppsFragment>{
         }
 
         initView();
-        checkIfAppsRequestIsNeeded();
+        fetchData();
     }
 
     private void initLongLivingObjects() {
         this.subscriptions = new CompositeSubscription();
-          initAdapter();
-    }
-
-    private void initAdapter() {
-        this.searchAppAdapter = new SearchAppAdapter(new ArrayList<>());
-        this.searchAppAdapter.setOnItemClickListener(this::handleAppClicked);
-        this.searchAppAdapter.setOnDappLaunchListener(this::handleDappLaunch);
-
         tryRerunQuery();
     }
 
@@ -88,35 +80,74 @@ public class AppsPresenter implements Presenter<AppsFragment>{
     }
 
     private void initView() {
-        initRecyclerViews();
+        initSearchAppsRecyclerView();
+        iniTopRatedAppsRecycleView();
+        initLatestAppsRecycleView();
+        initTopRatedPublicUsersRecyclerView();
+        initLatestPublicUsersRecyclerView();
         initSearchView();
     }
 
-    private void checkIfAppsRequestIsNeeded() {
-        if (this.apps != null) {
-            addAppsData(this.apps);
-        } else {
-            requestAppData();
-        }
+    private void initSearchAppsRecyclerView() {
+        final RecyclerView searchAppList = this.fragment.getBinding().searchList;
+        searchAppList.setLayoutManager(new LinearLayoutManager(this.fragment.getContext()));
+        final SearchAppAdapter adapter = new SearchAppAdapter(new ArrayList<>())
+                .setOnItemClickListener(this::handleAppClicked)
+                .setOnDappLaunchListener(this::handleDappLaunch);
+        searchAppList.setAdapter(adapter);
     }
 
-    private void initRecyclerViews() {
-        final RecyclerView recommendedApps = this.fragment.getBinding().recyclerViewRecommendedApps;
-        recommendedApps.setLayoutManager(new LinearLayoutManager(this.fragment.getContext(), LinearLayoutManager.HORIZONTAL, false));
-        final RecommendedAppsAdapter recommendedAppsAdapter = new RecommendedAppsAdapter(new ArrayList<>());
-        recommendedApps.setAdapter(recommendedAppsAdapter);
-        recommendedApps.setNestedScrollingEnabled(false);
-        recommendedAppsAdapter.setOnItemClickListener(this::handleAppClicked);
-
-        final RecyclerView filteredApps = this.fragment.getBinding().searchList;
-        filteredApps.setLayoutManager(new LinearLayoutManager(this.fragment.getContext()));
-        filteredApps.setAdapter(this.searchAppAdapter);
+    private void iniTopRatedAppsRecycleView() {
+        final RecyclerView topRatedApps = this.fragment.getBinding().topRatedApps;
+        topRatedApps.setLayoutManager(new LinearLayoutManager(this.fragment.getContext(), LinearLayoutManager.HORIZONTAL, false));
+        final HorizontalAdapter adapter = new HorizontalAdapter<App>();
+        topRatedApps.setAdapter(adapter);
+        topRatedApps.setNestedScrollingEnabled(false);
+        adapter.setOnItemClickListener(this::handleAppClicked);
     }
 
-    private void handleAppClicked(final App app) {
+    private void initLatestAppsRecycleView() {
+        final RecyclerView topRatedApps = this.fragment.getBinding().latestApps;
+        topRatedApps.setLayoutManager(new LinearLayoutManager(this.fragment.getContext(), LinearLayoutManager.HORIZONTAL, false));
+        final HorizontalAdapter adapter = new HorizontalAdapter<App>();
+        topRatedApps.setAdapter(adapter);
+        topRatedApps.setNestedScrollingEnabled(false);
+        adapter.setOnItemClickListener(this::handleAppClicked);
+    }
+
+    private void initTopRatedPublicUsersRecyclerView() {
+        final RecyclerView topRatedApps = this.fragment.getBinding().topRatedPublicUsers;
+        topRatedApps.setLayoutManager(new LinearLayoutManager(this.fragment.getContext(), LinearLayoutManager.HORIZONTAL, false));
+        final HorizontalAdapter adapter = new HorizontalAdapter<User>();
+        topRatedApps.setAdapter(adapter);
+        topRatedApps.setNestedScrollingEnabled(false);
+        adapter.setOnItemClickListener(this::handleUserClicked);
+    }
+
+    private void initLatestPublicUsersRecyclerView() {
+        final RecyclerView topRatedApps = this.fragment.getBinding().latestPublicUsers;
+        topRatedApps.setLayoutManager(new LinearLayoutManager(this.fragment.getContext(), LinearLayoutManager.HORIZONTAL, false));
+        final HorizontalAdapter adapter = new HorizontalAdapter<User>();
+        topRatedApps.setAdapter(adapter);
+        topRatedApps.setNestedScrollingEnabled(false);
+        adapter.setOnItemClickListener(this::handleUserClicked);
+    }
+
+    private void handleAppClicked(final Object object) {
         if (this.fragment == null) return;
+        final App app = (App) object;
+        startProfileActivity(app.getTokenId());
+    }
+
+    private void handleUserClicked(final Object object) {
+        if (this.fragment == null) return;
+        final User user = (User) object;
+        startProfileActivity(user.getTokenId());
+    }
+
+    private void startProfileActivity(final String userAddress) {
         final Intent intent = new Intent(this.fragment.getContext(), ViewUserActivity.class)
-                .putExtra(ViewUserActivity.EXTRA__USER_ADDRESS, app.getTokenId());
+                .putExtra(ViewUserActivity.EXTRA__USER_ADDRESS, userAddress);
         this.fragment.getContext().startActivity(intent);
     }
 
@@ -167,13 +198,12 @@ public class AppsPresenter implements Presenter<AppsFragment>{
     }
 
     private void handleSearchPressed() {
-        if (this.searchAppAdapter == null || this.searchAppAdapter.getNumberOfApps() != 1) return;
-        final App appToLaunch = this.searchAppAdapter.getFirstApp();
+        if (getSearchAdapter() == null || getSearchAdapter().getNumberOfApps() != 1) return;
+        final App appToLaunch = getSearchAdapter().getFirstApp();
         if (appToLaunch == null) return;
         if (appToLaunch instanceof Dapp) {
             this.handleDappLaunch((Dapp) appToLaunch);
         }
-
     }
 
     private Observable<List<App>> searchApps(final String searchString) {
@@ -202,41 +232,105 @@ public class AppsPresenter implements Presenter<AppsFragment>{
 
     private void tryRenderDappLink(final String searchString) {
         if (!Patterns.WEB_URL.matcher(searchString.trim()).matches()) {
-            this.searchAppAdapter.removeDapp();
+            getSearchAdapter().removeDapp();
             return;
         }
 
-        this.searchAppAdapter.addDapp(searchString);
+        getSearchAdapter().addDapp(searchString);
     }
 
     private void handleAppSearchResponse(final List<App> apps) {
-        this.searchAppAdapter.addItems(apps);
+        getSearchAdapter().addItems(apps);
     }
 
-    private void requestAppData() {
+    private SearchAppAdapter getSearchAdapter() {
+        return (SearchAppAdapter) this.fragment.getBinding().searchList.getAdapter();
+    }
+
+    private void fetchData() {
+        fetchTopRatedApps();
+        fetchLatestApps();
+        fetchTopRatedPublicUsers();
+        fetchLatestPublicUsers();
+    }
+
+    private void fetchTopRatedApps() {
         final Subscription sub =
-                BaseApplication
-                .get()
-                .getTokenManager()
-                .getAppsManager()
-                .getFeaturedApps()
+                getUserManager()
+                .getTopRatedApps()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        this::addAppsData,
-                        this::handleRecommendedAppsErrorResponse
+                        this::handleTopRatedApps,
+                        throwable -> LogUtil.exception(getClass(), "Error while fetching top rated apps", throwable)
                 );
 
         this.subscriptions.add(sub);
     }
 
-    private void handleRecommendedAppsErrorResponse(final Throwable throwable) {
-        LogUtil.exception(getClass(), "Error while fetching recommended apps", throwable);
+    private void handleTopRatedApps(final List<App> apps) {
+        final HorizontalAdapter<App> adapter = (HorizontalAdapter) this.fragment.getBinding().topRatedApps.getAdapter();
+        adapter.setItems(apps);
     }
 
-    private void addAppsData(final List<App> apps) {
-        this.apps = apps;
-        final RecommendedAppsAdapter adapter = (RecommendedAppsAdapter) this.fragment.getBinding().recyclerViewRecommendedApps.getAdapter();
+    private void fetchLatestApps() {
+        final Subscription sub =
+                getUserManager()
+                .getRecentApps()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        this::handleLatestApps,
+                        throwable -> LogUtil.exception(getClass(), "Error while fetching top rated apps", throwable)
+                );
+
+        this.subscriptions.add(sub);
+    }
+
+    private void handleLatestApps(final List<App> apps) {
+        final HorizontalAdapter<App> adapter = (HorizontalAdapter) this.fragment.getBinding().latestApps.getAdapter();
         adapter.setItems(apps);
+    }
+
+    private void fetchTopRatedPublicUsers() {
+        final Subscription sub =
+                getUserManager()
+                .getTopRatedPublicUsers()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        this::handleTopRatedPublicUser,
+                        throwable -> LogUtil.exception(getClass(), "Error while fetching public users", throwable)
+                );
+
+        this.subscriptions.add(sub);
+    }
+
+    private void handleTopRatedPublicUser(final List<User> users) {
+        final HorizontalAdapter<User> adapter = (HorizontalAdapter) this.fragment.getBinding().topRatedPublicUsers.getAdapter();
+        adapter.setItems(users);
+    }
+
+    private void fetchLatestPublicUsers() {
+        final Subscription sub =
+                getUserManager()
+                .getRecentPublicUsers()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        this::handleLatestPublicUser,
+                        throwable -> LogUtil.exception(getClass(), "Error while fetching public users", throwable)
+                );
+
+        this.subscriptions.add(sub);
+    }
+
+    private void handleLatestPublicUser(final List<User> users) {
+        final HorizontalAdapter<User> adapter = (HorizontalAdapter) this.fragment.getBinding().latestPublicUsers.getAdapter();
+        adapter.setItems(users);
+    }
+
+    private UserManager getUserManager() {
+        return BaseApplication
+                .get()
+                .getTokenManager()
+                .getUserManager();
     }
 
     @Override

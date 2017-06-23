@@ -59,12 +59,14 @@ public class SearchAppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         addExtras();
     }
 
-    public void setOnItemClickListener(final OnItemClickListener<App> listener) {
+    public SearchAppAdapter setOnItemClickListener(final OnItemClickListener<App> listener) {
         this.listener = listener;
+        return this;
     }
 
-    public void setOnDappLaunchListener(final OnItemClickListener<Dapp> listener) {
+    public SearchAppAdapter setOnDappLaunchListener(final OnItemClickListener<Dapp> listener) {
         this.dappLaunchClicked = listener;
+        return this;
     }
 
     public void addItems(final List<App> apps) {
