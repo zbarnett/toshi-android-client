@@ -30,6 +30,8 @@ import com.tokenbrowser.model.local.BlockedUser;
 import com.tokenbrowser.model.local.Contact;
 import com.tokenbrowser.model.local.Report;
 import com.tokenbrowser.model.local.User;
+import com.tokenbrowser.model.network.App;
+import com.tokenbrowser.model.network.AppSearchResult;
 import com.tokenbrowser.model.network.ServerTime;
 import com.tokenbrowser.model.network.UserDetails;
 import com.tokenbrowser.model.network.UserSearchResults;
@@ -298,6 +300,58 @@ public class UserManager {
                 .searchByUsername(query)
                 .subscribeOn(Schedulers.io())
                 .map(UserSearchResults::getResults);
+    }
+
+    public Single<List<App>> getTopRatedApps() {
+        return getTimestamp()
+                .flatMap(this::getTopRatedApps)
+                .map(AppSearchResult::getResults)
+                .subscribeOn(Schedulers.io());
+    }
+
+    public Single<List<App>> getRecentApps() {
+        return getTimestamp()
+                .flatMap(this::getRecentApps)
+                .map(AppSearchResult::getResults)
+                .subscribeOn(Schedulers.io());
+    }
+
+    public Single<List<User>> getTopRatedPublicUsers() {
+        return getTimestamp()
+                .flatMap(this::getTopRatedPublicUsers)
+                .map(UserSearchResults::getResults)
+                .subscribeOn(Schedulers.io());
+    }
+
+    public Single<List<User>> getRecentPublicUsers() {
+        return getTimestamp()
+                .flatMap(this::getRecentPublicUsers)
+                .map(UserSearchResults::getResults)
+                .subscribeOn(Schedulers.io());
+    }
+
+    private Single<AppSearchResult> getTopRatedApps(final ServerTime serverTime) {
+        return IdService
+                .getApi()
+                .getApps(true, false, 10, serverTime.get());
+    }
+
+    private Single<AppSearchResult> getRecentApps(final ServerTime serverTime) {
+        return IdService
+                .getApi()
+                .getApps(false, true, 10, serverTime.get());
+    }
+
+    private Single<UserSearchResults> getTopRatedPublicUsers(final ServerTime serverTime) {
+        return IdService
+                .getApi()
+                .getUsers(true, true, false, 10, serverTime.get());
+    }
+
+    private Single<UserSearchResults> getRecentPublicUsers(final ServerTime serverTime) {
+        return IdService
+                .getApi()
+                .getUsers(true, false, true, 10, serverTime.get());
     }
 
     public Single<Void> webLogin(final String loginToken) {

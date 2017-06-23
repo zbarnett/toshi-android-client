@@ -20,6 +20,7 @@ package com.tokenbrowser.manager.network;
 
 import com.tokenbrowser.model.local.Report;
 import com.tokenbrowser.model.local.User;
+import com.tokenbrowser.model.network.AppSearchResult;
 import com.tokenbrowser.model.network.ServerTime;
 import com.tokenbrowser.model.network.UserDetails;
 import com.tokenbrowser.model.network.UserSearchResults;
@@ -76,5 +77,18 @@ public interface IdInterface {
     @POST("v1/report")
     Single<Void> reportUser(@Body Report report,
                             @Query("timestamp") long timestamp);
+
+    @GET("v1/search/user")
+    Single<UserSearchResults> getUsers(@Query("public") boolean isPublic,
+                                       @Query("top") boolean isTopRated,
+                                       @Query("recent") boolean isRecent,
+                                       @Query("limit") int limit,
+                                       @Query("timestamp") long timestamp);
+
+    @GET("v1/search/apps")
+    Single<AppSearchResult> getApps(@Query("top") boolean isTopRated,
+                                    @Query("recent") boolean isRecent,
+                                    @Query("limit") int limit,
+                                    @Query("timestamp") long timestamp);
 }
 
