@@ -23,13 +23,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.tokenbrowser.R;
+import com.tokenbrowser.model.local.TokenEntity;
 import com.tokenbrowser.view.adapter.listeners.OnItemClickListener;
 import com.tokenbrowser.view.adapter.viewholder.HorizontalViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class HorizontalAdapter<T> extends RecyclerView.Adapter<HorizontalViewHolder> {
+public class HorizontalAdapter<T extends TokenEntity> extends RecyclerView.Adapter<HorizontalViewHolder> {
 
     private List<T> elements;
     private OnItemClickListener<T> listener;
@@ -38,8 +39,9 @@ public class HorizontalAdapter<T> extends RecyclerView.Adapter<HorizontalViewHol
         this.elements = new ArrayList<>();
     }
 
-    public void setOnItemClickListener(final OnItemClickListener<T> listener) {
+    public HorizontalAdapter setOnItemClickListener(final OnItemClickListener<T> listener) {
         this.listener = listener;
+        return this;
     }
 
     public void setItems(final List<T> elements) {

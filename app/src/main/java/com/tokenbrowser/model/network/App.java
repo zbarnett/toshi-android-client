@@ -18,9 +18,10 @@
 package com.tokenbrowser.model.network;
 
 import com.squareup.moshi.Json;
+import com.tokenbrowser.model.local.TokenEntity;
 import com.tokenbrowser.view.adapter.SearchAppAdapter;
 
-public class App {
+public class App implements TokenEntity {
     private String about;
     private String name;
     private String avatar;
@@ -34,15 +35,18 @@ public class App {
     private int review_count;
     private boolean is_app;
 
+    @Override
     public int getReviewCount() {
         return review_count;
     }
 
+    @Override
     public Double getReputationScore() {
         if (this.reputation_score == null) return 0.0;
         return reputation_score;
     }
 
+    @Override
     public String getTokenId() {
         return token_id;
     }
@@ -55,14 +59,17 @@ public class App {
         return is_app;
     }
 
+    @Override
     public String getAbout() {
         return about;
     }
 
-    public String getName() {
+    @Override
+    public String getDisplayName() {
         return name;
     }
 
+    @Override
     public String getAvatar() {
         return avatar;
     }

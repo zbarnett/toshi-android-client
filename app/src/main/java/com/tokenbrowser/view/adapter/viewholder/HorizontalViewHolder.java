@@ -22,15 +22,14 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.tokenbrowser.R;
-import com.tokenbrowser.model.local.User;
-import com.tokenbrowser.model.network.App;
+import com.tokenbrowser.model.local.TokenEntity;
 import com.tokenbrowser.util.ImageUtil;
 import com.tokenbrowser.view.adapter.listeners.OnItemClickListener;
 import com.tokenbrowser.view.custom.StarRatingView;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class HorizontalViewHolder<T> extends RecyclerView.ViewHolder {
+public class HorizontalViewHolder<T extends TokenEntity> extends RecyclerView.ViewHolder {
     private TextView appLabel;
     private TextView appCategory;
     private StarRatingView ratingView;
@@ -52,29 +51,17 @@ public class HorizontalViewHolder<T> extends RecyclerView.ViewHolder {
     }
 
     private void renderName(final T elem) {
-        if (elem instanceof App) {
-            final App app = (App) elem;
-            this.appLabel.setText(app.getName());
-            this.ratingView.setStars(app.getReputationScore());
-        } else if (elem instanceof User) {
-            final User user = (User) elem;
-            this.appLabel.setText(user.getDisplayName());
-            this.ratingView.setStars(user.getReputationScore());
-        }
+        this.appLabel.setText(elem.getDisplayName());
+        this.ratingView.setStars(elem.getReputationScore());
     }
 
     private void loadImage(final T elem) {
-        if (elem instanceof App) {
-            final App app = (App) elem;
-            ImageUtil.load(app.getAvatar(), this.appImage);
-        } else if (elem instanceof User) {
-            final User user = (User) elem;
-            ImageUtil.load(user.getAvatar(), this.appImage);
-        }
+        ImageUtil.load(elem.getAvatar(), this.appImage);
     }
 
-    public HorizontalViewHolder setOnClickListener(final OnItemClickListener<T> listener, final T elem) {
-        this.itemView.setOnClickListener(view -> listener.onItemClick(elem));
+    public HorizontalViewHolder setOnClickListener(final OnItemClickListener<TokenEntity> listener,
+                                                   final TokenEntity elem) {
+        this.itemView.setOnClickListener(__ -> listener.onItemClick(elem));
         return this;
     }
 }

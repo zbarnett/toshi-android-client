@@ -46,12 +46,13 @@ public class SearchAppViewHolder extends RecyclerView.ViewHolder {
         this.reviewCount = (TextView) itemView.findViewById(R.id.review_count);
     }
 
-    public void setApp(final App app) {
-        this.appLabel.setText(app.getName());
+    public SearchAppViewHolder setApp(final App app) {
+        this.appLabel.setText(app.getDisplayName());
         this.ratingView.setStars(app.getReputationScore());
         final String reviewCount = BaseApplication.get().getString(R.string.parentheses, app.getReviewCount());
         this.reviewCount.setText(reviewCount);
         ImageUtil.load(app.getAvatar(), this.appImage);
+        return this;
     }
 
     public void bind(final App app, final OnItemClickListener<App> listener) {

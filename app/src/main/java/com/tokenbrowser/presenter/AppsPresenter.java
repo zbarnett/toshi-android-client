@@ -26,6 +26,7 @@ import android.view.View;
 import com.jakewharton.rxbinding.widget.RxTextView;
 import com.tokenbrowser.manager.UserManager;
 import com.tokenbrowser.model.local.Dapp;
+import com.tokenbrowser.model.local.TokenEntity;
 import com.tokenbrowser.model.local.User;
 import com.tokenbrowser.model.network.App;
 import com.tokenbrowser.util.LogUtil;
@@ -100,49 +101,47 @@ public class AppsPresenter implements Presenter<AppsFragment>{
     private void iniTopRatedAppsRecycleView() {
         final RecyclerView topRatedApps = this.fragment.getBinding().topRatedApps;
         topRatedApps.setLayoutManager(new LinearLayoutManager(this.fragment.getContext(), LinearLayoutManager.HORIZONTAL, false));
-        final HorizontalAdapter adapter = new HorizontalAdapter<App>();
+        final HorizontalAdapter adapter = new HorizontalAdapter<App>()
+                .setOnItemClickListener(this::handleAppClicked);
         topRatedApps.setAdapter(adapter);
         topRatedApps.setNestedScrollingEnabled(false);
-        adapter.setOnItemClickListener(this::handleAppClicked);
     }
 
     private void initLatestAppsRecycleView() {
         final RecyclerView topRatedApps = this.fragment.getBinding().latestApps;
         topRatedApps.setLayoutManager(new LinearLayoutManager(this.fragment.getContext(), LinearLayoutManager.HORIZONTAL, false));
-        final HorizontalAdapter adapter = new HorizontalAdapter<App>();
+        final HorizontalAdapter adapter = new HorizontalAdapter<App>()
+                .setOnItemClickListener(this::handleAppClicked);
         topRatedApps.setAdapter(adapter);
         topRatedApps.setNestedScrollingEnabled(false);
-        adapter.setOnItemClickListener(this::handleAppClicked);
     }
 
     private void initTopRatedPublicUsersRecyclerView() {
         final RecyclerView topRatedApps = this.fragment.getBinding().topRatedPublicUsers;
         topRatedApps.setLayoutManager(new LinearLayoutManager(this.fragment.getContext(), LinearLayoutManager.HORIZONTAL, false));
-        final HorizontalAdapter adapter = new HorizontalAdapter<User>();
+        final HorizontalAdapter adapter = new HorizontalAdapter<User>()
+                .setOnItemClickListener(this::handleUserClicked);
         topRatedApps.setAdapter(adapter);
         topRatedApps.setNestedScrollingEnabled(false);
-        adapter.setOnItemClickListener(this::handleUserClicked);
     }
 
     private void initLatestPublicUsersRecyclerView() {
         final RecyclerView topRatedApps = this.fragment.getBinding().latestPublicUsers;
         topRatedApps.setLayoutManager(new LinearLayoutManager(this.fragment.getContext(), LinearLayoutManager.HORIZONTAL, false));
-        final HorizontalAdapter adapter = new HorizontalAdapter<User>();
+        final HorizontalAdapter adapter = new HorizontalAdapter<User>()
+                .setOnItemClickListener(this::handleUserClicked);
         topRatedApps.setAdapter(adapter);
         topRatedApps.setNestedScrollingEnabled(false);
-        adapter.setOnItemClickListener(this::handleUserClicked);
     }
 
-    private void handleAppClicked(final Object object) {
+    private void handleAppClicked(final Object elem) {
         if (this.fragment == null) return;
-        final App app = (App) object;
-        startProfileActivity(app.getTokenId());
+        startProfileActivity(((TokenEntity)elem).getTokenId());
     }
 
-    private void handleUserClicked(final Object object) {
+    private void handleUserClicked(final Object elem) {
         if (this.fragment == null) return;
-        final User user = (User) object;
-        startProfileActivity(user.getTokenId());
+        startProfileActivity(((TokenEntity)elem).getTokenId());
     }
 
     private void startProfileActivity(final String userAddress) {

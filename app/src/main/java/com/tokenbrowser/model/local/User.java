@@ -24,7 +24,7 @@ import com.tokenbrowser.manager.TokenManager;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
-public class User extends RealmObject {
+public class User extends RealmObject implements TokenEntity {
 
     @PrimaryKey
     @Json(name = "token_id")
@@ -58,6 +58,7 @@ public class User extends RealmObject {
     }
 
     // Defaults to the username if no name is set.
+    @Override
     public String getDisplayName() {
         if (this.name == null) {
             return username;
@@ -65,6 +66,7 @@ public class User extends RealmObject {
         return this.name;
     }
 
+    @Override
     public String getTokenId() {
         return owner_address;
     }
@@ -73,10 +75,12 @@ public class User extends RealmObject {
         return payment_address;
     }
 
+    @Override
     public String getAbout() {
         return this.about;
     }
 
+    @Override
     public String getAvatar() {
         return this.avatar;
     }
@@ -95,11 +99,13 @@ public class User extends RealmObject {
         return System.currentTimeMillis() - cacheTimestamp > TokenManager.CACHE_TIMEOUT;
     }
 
+    @Override
     public Double getReputationScore() {
         if (this.reputation_score == null) return 0.0;
         return this.reputation_score;
     }
 
+    @Override
     public int getReviewCount() {
         return review_count;
     }

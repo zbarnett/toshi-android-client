@@ -174,8 +174,8 @@ public class ViewAppPresenter implements Presenter<ViewAppActivity> {
             return;
         }
         final ActivityViewAppBinding binding = this.activity.getBinding();
-        binding.title.setText(this.app.getName());
-        binding.name.setText(this.app.getName());
+        binding.title.setText(this.app.getDisplayName());
+        binding.name.setText(this.app.getDisplayName());
         binding.username.setText(this.app.getUsername());
         ImageUtil.load(this.app.getAvatar(), binding.avatar);
     }
