@@ -30,7 +30,7 @@ import com.tokenbrowser.model.network.App;
 import com.tokenbrowser.view.adapter.listeners.OnItemClickListener;
 import com.tokenbrowser.view.adapter.viewholder.SearchAppDappViewHolder;
 import com.tokenbrowser.view.adapter.viewholder.SearchAppHeaderViewHolder;
-import com.tokenbrowser.view.adapter.viewholder.SearchAppViewHolder;
+import com.tokenbrowser.view.adapter.viewholder.TokenEntityViewHolder;
 
 import java.util.List;
 
@@ -116,7 +116,7 @@ public class SearchAppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             case ITEM:
             default: {
                 final View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item__search_app, parent, false);
-                return new SearchAppViewHolder(v);
+                return new TokenEntityViewHolder(v);
             }
         }
     }
@@ -137,11 +137,11 @@ public class SearchAppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             }
             case ITEM:
             default: {
-                final SearchAppViewHolder vh = (SearchAppViewHolder) holder;
+                final TokenEntityViewHolder vh = (TokenEntityViewHolder) holder;
                 final App app = this.apps.get(position);
 
-                vh.setApp(app);
-                vh.bind(app, this.listener);
+                vh.setTokenEntity(app)
+                        .setOnClickListener(this.listener, app);
                 break;
             }
         }
