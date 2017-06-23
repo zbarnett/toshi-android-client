@@ -88,6 +88,9 @@ public class LicenseListPresenter implements Presenter<LicenseListActivity> {
         final Library design = new Library()
                 .setName("Android Support Library Design")
                 .setLicence(this.activity.getString(R.string.apache_v2_license));
+        final Library cardView = new Library()
+                .setName("Android Support Library CardView")
+                .setLicence(this.activity.getString(R.string.apache_v2_license));
         final Library multidex = new Library()
                 .setName("Android Support Library Multidex")
                 .setLicence(this.activity.getString(R.string.apache_v2_license));
@@ -139,8 +142,14 @@ public class LicenseListPresenter implements Presenter<LicenseListActivity> {
         final Library okHttpInterceptor = new Library()
                 .setName("Okhttp3 Logging interceptor")
                 .setLicence(this.activity.getString(R.string.apache_v2_license));
-        final List<Library> libraries = new ArrayList<>();
+        final Library cropiwa = new Library()
+                .setName("Cropiwa")
+                .setLicence(this.activity.getString(R.string.apache_v2_license));
+        final Library flexboxLayout = new Library()
+                .setName("FlexboxLayout")
+                .setLicence(this.activity.getString(R.string.apache_v2_license));
 
+        final List<Library> libraries = new ArrayList<>();
         libraries.add(retrofit);
         libraries.add(retrofitMoshi);
         libraries.add(retrofitRxJava);
@@ -154,6 +163,7 @@ public class LicenseListPresenter implements Presenter<LicenseListActivity> {
         libraries.add(recyclerView);
         libraries.add(gridLayout);
         libraries.add(appCompat);
+        libraries.add(cardView);
         libraries.add(design);
         libraries.add(multidex);
         libraries.add(rxjavaProguardRules);
@@ -167,6 +177,8 @@ public class LicenseListPresenter implements Presenter<LicenseListActivity> {
         libraries.add(whisperSystemsLibsignalService);
         libraries.add(chipsLayoutManager);
         libraries.add(googlePlayServicesGcm);
+        libraries.add(cropiwa);
+        libraries.add(flexboxLayout);
 
         final LibraryAdapter adapter = (LibraryAdapter) this.activity.getBinding().libraryList.getAdapter();
         adapter.setLibraries(libraries);
