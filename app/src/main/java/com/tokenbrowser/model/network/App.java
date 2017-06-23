@@ -64,9 +64,13 @@ public class App implements TokenEntity {
         return about;
     }
 
+    // Defaults to the username if no name is set.
     @Override
     public String getDisplayName() {
-        return name;
+        if (this.name != null && this.name.length() > 0) {
+            return this.name;
+        }
+        return username;
     }
 
     @Override

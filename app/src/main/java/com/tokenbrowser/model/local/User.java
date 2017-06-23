@@ -60,10 +60,10 @@ public class User extends RealmObject implements TokenEntity {
     // Defaults to the username if no name is set.
     @Override
     public String getDisplayName() {
-        if (this.name == null) {
-            return username;
+        if (this.name != null && this.name.length() > 0) {
+            return this.name;
         }
-        return this.name;
+        return username;
     }
 
     @Override
