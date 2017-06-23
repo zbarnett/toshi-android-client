@@ -86,23 +86,211 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                        android:layout_marginTop="16dp"
-                        android:layout_marginBottom="16dp"
-                        android:textColor="@color/textColorSecondary"
-                        android:textSize="14sp"
-                        android:text="@string/recommended"/>
+                    <android.support.v4.widget.Space
+                        android:layout_width="0dp"
+                        android:layout_height="20dp" />
 
-                    <android.support.v7.widget.RecyclerView
-                        android:id="@+id/recycler_view_recommended_apps"
+                    <!-- Top rated apps -->
+                    <FrameLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginRight="@dimen/activity_horizontal_margin"
+                        android:layout_marginLeft="@dimen/activity_horizontal_margin">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="16sp"
+                            android:textColor="@color/subTitleTextColor"
+                            android:text="@string/top_rated_apps"/>
+
+                        <TextView
+                            android:id="@+id/more_top_rated_apps"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="right"
+                            android:textSize="14sp"
+                            android:textColor="@color/colorPrimary"
+                            android:text="@string/more"/>
+
+                    </FrameLayout>
+
+                    <android.support.v4.widget.Space
+                        android:layout_width="0dp"
+                        android:layout_height="24sp" />
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/top_rated_apps"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="143dp"
                         android:paddingLeft="@dimen/activity_horizontal_margin"
                         android:paddingRight="@dimen/activity_horizontal_margin"
                         android:clipToPadding="false"/>
+
+                    <android.support.v4.widget.Space
+                        android:layout_width="0dp"
+                        android:layout_height="25dp" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                        android:layout_marginRight="@dimen/activity_horizontal_margin"
+                        android:background="@color/divider"/>
+
+                    <android.support.v4.widget.Space
+                        android:layout_width="0dp"
+                        android:layout_height="20dp" />
+
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="@dimen/activity_horizontal_margin"
+                        android:layout_marginLeft="@dimen/activity_horizontal_margin">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="16sp"
+                            android:textColor="@color/subTitleTextColor"
+                            android:text="@string/latest_apps"/>
+
+                        <TextView
+                            android:id="@+id/more_latest_apps"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="right"
+                            android:textSize="14sp"
+                            android:textColor="@color/colorPrimary"
+                            android:text="@string/more"/>
+
+                    </FrameLayout>
+
+                    <android.support.v4.widget.Space
+                        android:layout_width="0dp"
+                        android:layout_height="24sp" />
+
+                    <!-- Latest apps -->
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/latest_apps"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="143dp"
+                        android:paddingLeft="@dimen/activity_horizontal_margin"
+                        android:paddingRight="@dimen/activity_horizontal_margin"
+                        android:clipToPadding="false"/>
+
+                    <android.support.v4.widget.Space
+                        android:layout_width="0dp"
+                        android:layout_height="25dp" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                        android:layout_marginRight="@dimen/activity_horizontal_margin"
+                        android:background="@color/divider"/>
+
+                    <android.support.v4.widget.Space
+                        android:layout_width="0dp"
+                        android:layout_height="20dp" />
+
+                    <!-- Top rated public users -->
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="@dimen/activity_horizontal_margin"
+                        android:layout_marginLeft="@dimen/activity_horizontal_margin">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="16sp"
+                            android:textColor="@color/subTitleTextColor"
+                            android:text="@string/top_rated_public_users"/>
+
+                        <TextView
+                            android:id="@+id/more_top_rated_public_users"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="right"
+                            android:textSize="14sp"
+                            android:textColor="@color/colorPrimary"
+                            android:text="@string/more"/>
+
+                    </FrameLayout>
+
+                    <android.support.v4.widget.Space
+                        android:layout_width="0dp"
+                        android:layout_height="24sp" />
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/top_rated_public_users"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="143dp"
+                        android:paddingLeft="@dimen/activity_horizontal_margin"
+                        android:paddingRight="@dimen/activity_horizontal_margin"
+                        android:clipToPadding="false"/>
+
+                    <android.support.v4.widget.Space
+                        android:layout_width="0dp"
+                        android:layout_height="25dp" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                        android:layout_marginRight="@dimen/activity_horizontal_margin"
+                        android:background="@color/divider"/>
+
+                    <android.support.v4.widget.Space
+                        android:layout_width="0dp"
+                        android:layout_height="20dp" />
+
+                    <!-- Top rated public users -->
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="@dimen/activity_horizontal_margin"
+                        android:layout_marginLeft="@dimen/activity_horizontal_margin">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="16sp"
+                            android:textColor="@color/subTitleTextColor"
+                            android:text="@string/latest_public_users"/>
+
+                        <TextView
+                            android:id="@+id/more_latest_public_users"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="right"
+                            android:textSize="14sp"
+                            android:textColor="@color/colorPrimary"
+                            android:text="@string/more"/>
+
+                    </FrameLayout>
+
+                    <android.support.v4.widget.Space
+                        android:layout_width="0dp"
+                        android:layout_height="24sp" />
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/latest_public_users"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="143dp"
+                        android:paddingLeft="@dimen/activity_horizontal_margin"
+                        android:paddingRight="@dimen/activity_horizontal_margin"
+                        android:clipToPadding="false"/>
+
+                    <android.support.v4.widget.Space
+                        android:layout_width="0dp"
+                        android:layout_height="30dp" />
 
                 </LinearLayout>
             </android.support.v4.widget.NestedScrollView>
