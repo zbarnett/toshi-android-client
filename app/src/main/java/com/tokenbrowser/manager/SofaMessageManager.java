@@ -157,7 +157,6 @@ public final class SofaMessageManager {
     public final void disconnect() {
         if (this.messageReceiver != null) {
             this.messageReceiver.shutdown();
-            this.messageReceiver = null;
         }
     }
 
@@ -426,13 +425,20 @@ public final class SofaMessageManager {
     }
 
     public void clear() {
-        disconnect();
-        this.protocolStore.deleteAllSessions();
+        clearMessageReceiver();
         clearSubscriptions();
+        this.protocolStore.deleteAllSessions();
         this.sharedPreferences
                 .edit()
                 .clear()
                 .apply();
+    }
+
+    private void clearMessageReceiver() {
+        if (this.messageReceiver != null) {
+            this.messageReceiver.shutdown();
+            this.messageReceiver = null;
+        }
     }
 
     private void clearSubscriptions() {
