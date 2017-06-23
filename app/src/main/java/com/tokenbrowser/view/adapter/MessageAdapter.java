@@ -23,7 +23,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.tokenbrowser.R;
-import com.tokenbrowser.model.local.Conversation;
 import com.tokenbrowser.model.local.Recipient;
 import com.tokenbrowser.model.local.User;
 import com.tokenbrowser.model.sofa.Message;
@@ -51,13 +50,13 @@ import java.util.List;
 public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final static int SENDER_MASK = 0x1000;
 
-    private Conversation conversation;
     private final List<SofaMessage> sofaMessages;
     private OnItemClickListener<SofaMessage> onPaymentRequestApproveListener;
     private OnItemClickListener<SofaMessage> onPaymentRequestRejectListener;
     private OnItemClickListener<String> onUsernameClickListener;
     private OnItemClickListener<String> onImageClickListener;
     private OnItemClickListener<String> onFileClickListener;
+    private Recipient recipient;
 
     public MessageAdapter() {
         this.sofaMessages = new ArrayList<>();
@@ -94,13 +93,18 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
                 && sofaMessage.getType() != SofaType.INIT_REQUEST;
     }
 
-    public void setConversation(final Conversation conversation) {
-        this.conversation = conversation;
-        final List<SofaMessage> messages = conversation == null
+    public MessageAdapter setMessages(final List<SofaMessage> messages) {
+        final List<SofaMessage> messagesToAdd = messages == null
                 ? new ArrayList<>(0)
-                : conversation.getAllMessages();
-        addMessages(messages);
+                : messages;
+        addMessages(messagesToAdd);
         notifyItemInserted(this.sofaMessages.size() - 1);
+        return this;
+    }
+
+    public MessageAdapter setRecipient(final Recipient recipient) {
+        this.recipient = recipient;
+        return this;
     }
 
     private void addMessages(final Collection<SofaMessage> sofaMessages) {
@@ -265,8 +269,7 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
             case SofaType.PAYMENT_REQUEST: {
                 final PaymentRequestViewHolder vh = (PaymentRequestViewHolder) holder;
                 final PaymentRequest request = SofaAdapters.get().txRequestFrom(payload);
-                final Recipient recipient = this.conversation == null ? null : conversation.getRecipient();
-                if (recipient != null && recipient.isGroup()) {
+                if (this.recipient != null && this.recipient.isGroup()) {
                     // Todo - support group payment requests
                     LogUtil.i(getClass(), "Payment requests to groups currently not supported.");
                     return;
@@ -274,7 +277,7 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
 
                 vh.setPaymentRequest(request)
                   .setAvatarUri(sofaMessage.getSender() != null ? sofaMessage.getSender().getAvatar() : null)
-                  .setRemoteUser(recipient.getUser())
+                  .setRemoteUser(this.recipient.getUser())
                   .setSendState(sofaMessage.getSendState())
                   .__setIsFromRemote(isRemote)
                   .setOnApproveListener(this.handleOnPaymentRequestApproved)

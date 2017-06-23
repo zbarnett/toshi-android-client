@@ -38,6 +38,7 @@ import com.tokenbrowser.exception.PermissionException;
 import com.tokenbrowser.model.local.ActivityResultHolder;
 import com.tokenbrowser.model.local.Conversation;
 import com.tokenbrowser.model.local.PermissionResultHolder;
+import com.tokenbrowser.model.local.Recipient;
 import com.tokenbrowser.model.local.User;
 import com.tokenbrowser.model.sofa.Command;
 import com.tokenbrowser.model.sofa.Control;
@@ -574,9 +575,20 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     }
 
     private void initConversation(final Conversation conversation) {
+        initConversationRecipient();
+        initConversationMessages(conversation);
+    }
+
+    private void initConversationRecipient() {
+        // Todo. Temporary - this will be fixed as part of Group chat work.
+        final Recipient recipient = new Recipient(this.remoteUser);
+        this.messageAdapter.setRecipient(recipient);
+    }
+
+    private void initConversationMessages(final Conversation conversation) {
         final boolean shouldAddMessages = conversation != null && conversation.getAllMessages() != null && conversation.getAllMessages().size() > 0;
         if (shouldAddMessages) {
-            this.messageAdapter.setConversation(conversation);
+            this.messageAdapter.setMessages(conversation.getAllMessages());
             scrollToPosition(getSafePosition());
 
             final SofaMessage lastSofaMessage = conversation.getAllMessages().get(conversation.getAllMessages().size() - 1);
