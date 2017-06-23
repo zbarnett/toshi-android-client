@@ -22,6 +22,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.tokenbrowser.R;
+import com.tokenbrowser.model.local.User;
 import com.tokenbrowser.model.network.App;
 import com.tokenbrowser.util.ImageUtil;
 import com.tokenbrowser.view.adapter.listeners.OnItemClickListener;
@@ -29,13 +30,13 @@ import com.tokenbrowser.view.custom.StarRatingView;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class RecommendedAppsViewHolder extends RecyclerView.ViewHolder {
+public class HorizontalViewHolder<T> extends RecyclerView.ViewHolder {
     private TextView appLabel;
     private TextView appCategory;
     private StarRatingView ratingView;
     private CircleImageView appImage;
 
-    public RecommendedAppsViewHolder(View itemView) {
+    public HorizontalViewHolder(View itemView) {
         super(itemView);
 
         this.appLabel = (TextView) itemView.findViewById(R.id.app_label);
@@ -44,17 +45,36 @@ public class RecommendedAppsViewHolder extends RecyclerView.ViewHolder {
         this.appImage = (CircleImageView) itemView.findViewById(R.id.app_image);
     }
 
-    public void setApp(final App app) {
-        this.appLabel.setText(app.getName());
+    public HorizontalViewHolder setElement(final T elem) {
+        renderName(elem);
+        loadImage(elem);
+        return this;
     }
 
-    public void setCategory(final App app) {
-        if (app == null) return;
-        this.ratingView.setStars(app.getReputationScore());
-        ImageUtil.load(app.getAvatar(), this.appImage);
+    private void renderName(final T elem) {
+        if (elem instanceof App) {
+            final App app = (App) elem;
+            this.appLabel.setText(app.getName());
+            this.ratingView.setStars(app.getReputationScore());
+        } else if (elem instanceof User) {
+            final User user = (User) elem;
+            this.appLabel.setText(user.getDisplayName());
+            this.ratingView.setStars(user.getReputationScore());
+        }
     }
 
-    public void bind(final App app, OnItemClickListener<App> listener) {
-        this.itemView.setOnClickListener(view -> listener.onItemClick(app));
+    private void loadImage(final T elem) {
+        if (elem instanceof App) {
+            final App app = (App) elem;
+            ImageUtil.load(app.getAvatar(), this.appImage);
+        } else if (elem instanceof User) {
+            final User user = (User) elem;
+            ImageUtil.load(user.getAvatar(), this.appImage);
+        }
+    }
+
+    public HorizontalViewHolder setOnClickListener(final OnItemClickListener<T> listener, final T elem) {
+        this.itemView.setOnClickListener(view -> listener.onItemClick(elem));
+        return this;
     }
 }

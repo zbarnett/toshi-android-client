@@ -23,48 +23,47 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.tokenbrowser.R;
-import com.tokenbrowser.model.network.App;
 import com.tokenbrowser.view.adapter.listeners.OnItemClickListener;
-import com.tokenbrowser.view.adapter.viewholder.RecommendedAppsViewHolder;
+import com.tokenbrowser.view.adapter.viewholder.HorizontalViewHolder;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class RecommendedAppsAdapter extends RecyclerView.Adapter<RecommendedAppsViewHolder> {
+public class HorizontalAdapter<T> extends RecyclerView.Adapter<HorizontalViewHolder> {
 
-    private List<App> apps;
-    private OnItemClickListener<App> listener;
+    private List<T> elements;
+    private OnItemClickListener<T> listener;
 
-    public RecommendedAppsAdapter(final List<App> apps) {
-        this.apps = apps;
+    public HorizontalAdapter() {
+        this.elements = new ArrayList<>();
     }
 
-    public void setOnItemClickListener(final OnItemClickListener<App> listener) {
+    public void setOnItemClickListener(final OnItemClickListener<T> listener) {
         this.listener = listener;
     }
 
-    public void setItems(final List<App> apps) {
-        this.apps.clear();
-        this.apps.addAll(apps);
+    public void setItems(final List<T> elements) {
+        this.elements.clear();
+        this.elements.addAll(elements);
         this.notifyDataSetChanged();
     }
 
     @Override
-    public RecommendedAppsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        final View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item__recommended_app, parent, false);
-        return new RecommendedAppsViewHolder(v);
+    public HorizontalViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        final View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item__horizontal, parent, false);
+        return new HorizontalViewHolder<T>(v);
     }
 
     @Override
-    public void onBindViewHolder(RecommendedAppsViewHolder holder, int position) {
-        final App app = this.apps.get(position);
+    public void onBindViewHolder(HorizontalViewHolder holder, int position) {
+        final T elem = this.elements.get(position);
 
-        holder.setApp(app);
-        holder.setCategory(app);
-        holder.bind(app, this.listener);
+        holder.setElement(elem)
+                .setOnClickListener(this.listener, elem);
     }
 
     @Override
     public int getItemCount() {
-        return this.apps.size();
+        return this.elements.size();
     }
 }
