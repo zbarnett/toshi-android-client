@@ -23,7 +23,10 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="79dp"
-    android:gravity="center_vertical">
+    android:gravity="center_vertical"
+    android:background="?android:selectableItemBackground"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/avatar"

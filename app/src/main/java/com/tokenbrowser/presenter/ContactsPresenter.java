@@ -85,9 +85,12 @@ public final class ContactsPresenter implements
         recyclerView.setAdapter(this.adapter);
 
         final int dividerLeftPadding = fragment.getResources().getDimensionPixelSize(R.dimen.avatar_size_small)
-                + fragment.getResources().getDimensionPixelSize(R.dimen.activity_horizontal_margin);
+                + fragment.getResources().getDimensionPixelSize(R.dimen.activity_horizontal_margin)
+                + fragment.getResources().getDimensionPixelSize(R.dimen.list_item_avatar_margin);
+        final int dividerRightPadding = fragment.getResources().getDimensionPixelSize(R.dimen.activity_horizontal_margin);
         final HorizontalLineDivider lineDivider =
                 new HorizontalLineDivider(ContextCompat.getColor(this.fragment.getContext(), R.color.divider))
+                        .setRightPadding(dividerRightPadding)
                         .setLeftPadding(dividerLeftPadding);
         recyclerView.addItemDecoration(lineDivider);
     }
