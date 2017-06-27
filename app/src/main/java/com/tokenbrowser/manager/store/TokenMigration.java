@@ -198,6 +198,32 @@ public class TokenMigration implements RealmMigration {
             }
             oldVersion++;
         }
+
+        // Port Recipient ids to be threadIds
+        if (oldVersion == 13) {
+            schema
+                    .get("Conversation")
+                    .transform(obj -> {
+                        // Get existing recipient object
+                        final DynamicRealmObject recipient = obj.getObject("recipient");
+                        final String threadId = obj.getString("threadId");
+                        final DynamicRealmObject user = recipient.getObject("user");
+                        final DynamicRealmObject group = recipient.getObject("group");
+
+                        // Create new object with correct PK
+                        final DynamicRealmObject newRecipient = realm.createObject("Recipient", threadId);
+                        newRecipient.setObject("user", user);
+                        newRecipient.setObject("group", group);
+
+                        // Delete old recipient
+                        recipient.deleteFromRealm();
+
+                        // Set new recipient
+                        obj.set("recipient", newRecipient);
+                    });
+
+            oldVersion++;
+        }
     }
 
     @Override

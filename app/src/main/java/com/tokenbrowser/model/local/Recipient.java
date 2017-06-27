@@ -17,8 +17,6 @@
 
 package com.tokenbrowser.model.local;
 
-import java.util.UUID;
-
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
@@ -32,12 +30,12 @@ public class Recipient extends RealmObject {
     public Recipient() {}
 
     public Recipient(final User user) {
-        this.id = UUID.randomUUID().toString();
+        this.id = user.getTokenId();
         this.user = user;
     }
 
     public Recipient(final Group group) {
-        this.id = UUID.randomUUID().toString();
+        this.id = group.getId();
         this.group = group;
     }
 
@@ -55,7 +53,7 @@ public class Recipient extends RealmObject {
 
     // Helper functions
     public String getThreadId() {
-        return isGroup() ? this.group.getId() : this.user.getTokenId();
+        return this.id;
     }
 
     public String getDisplayName() {
