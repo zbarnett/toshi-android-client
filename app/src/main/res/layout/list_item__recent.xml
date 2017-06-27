@@ -24,7 +24,10 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="79dp"
-    android:gravity="center_vertical">
+    android:gravity="center_vertical"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:background="?android:selectableItemBackground">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/avatar"

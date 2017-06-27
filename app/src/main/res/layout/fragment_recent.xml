@@ -52,7 +52,6 @@
                 android:id="@+id/recents"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:padding="@dimen/activity_horizontal_margin"
                 android:clipToPadding="false"
                 android:background="@color/windowBackground"/>
 
