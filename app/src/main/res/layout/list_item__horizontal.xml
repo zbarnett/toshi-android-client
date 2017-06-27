@@ -22,7 +22,8 @@
     android:orientation="vertical" 
     android:layout_width="79dp"
     android:layout_height="match_parent"
-    android:layout_marginRight="@dimen/activity_horizontal_margin">
+    android:layout_marginRight="@dimen/activity_horizontal_margin"
+    android:background="?android:selectableItemBackground">
     
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/app_image"
