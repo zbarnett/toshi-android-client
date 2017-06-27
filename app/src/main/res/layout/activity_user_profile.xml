@@ -155,10 +155,6 @@
                     android:layout_marginRight="@dimen/activity_horizontal_margin"
                     android:background="@color/divider"/>
 
-                <android.support.v4.widget.Space
-                    android:layout_width="0dp"
-                    android:layout_height="20dp" />
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -172,7 +168,9 @@
                         android:layout_width="0dp"
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
-                        android:background="@null"
+                        android:paddingTop="20dp"
+                        android:paddingBottom="16dp"
+                        android:background="?android:selectableItemBackground"
                         android:drawableTop="@drawable/ic_message"
                         android:drawablePadding="7dp"
                         android:textAllCaps="false"
@@ -185,7 +183,9 @@
                         android:layout_width="0dp"
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
-                        android:background="@null"
+                        android:paddingTop="20dp"
+                        android:paddingBottom="16dp"
+                        android:background="?android:selectableItemBackground"
                         android:drawableTop="@drawable/ic_star_unselected"
                         android:drawablePadding="7dp"
                         android:textAllCaps="false"
@@ -198,7 +198,9 @@
                         android:layout_width="0dp"
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
-                        android:background="@null"
+                        android:paddingTop="20dp"
+                        android:paddingBottom="16dp"
+                        android:background="?android:selectableItemBackground"
                         android:drawablePadding="7dp"
                         android:drawableTop="@drawable/ic_money"
                         android:textAllCaps="false"
@@ -207,10 +209,6 @@
                         android:text="@string/pay"/>
 
                 </LinearLayout>
-
-                <android.support.v4.widget.Space
-                    android:layout_width="0dp"
-                    android:layout_height="16dp"/>
 
                 <View
                     android:layout_width="match_parent"
