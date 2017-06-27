@@ -24,6 +24,7 @@ import android.animation.PropertyValuesHolder;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
+import android.support.v4.widget.Space;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.View;
@@ -153,7 +154,7 @@ public class ChatInputView extends LinearLayout {
                 RxTextView.textChanges(userInput)
                 .subscribe(
                         this::showOrHideSendButton,
-                        throwable -> LogUtil.e(getClass(), "Error when typing")
+                        throwable -> LogUtil.e(getClass(), "Error when typing " + throwable)
                 );
 
         this.subscriptions.add(sub);
@@ -171,7 +172,9 @@ public class ChatInputView extends LinearLayout {
 
     private void showSendButton() {
         final ImageButton sendButton = (ImageButton) findViewById(R.id.send_button);
+        final Space sendSpacing = (Space) findViewById(R.id.send_spacing);
         sendButton.setVisibility(View.VISIBLE);
+        sendSpacing.setVisibility(View.GONE);
         ViewCompat.animate(sendButton)
                 .alpha(1f)
                 .setDuration(50);
@@ -179,15 +182,21 @@ public class ChatInputView extends LinearLayout {
 
     private void hideSendButton() {
         final ImageButton sendButton = (ImageButton) findViewById(R.id.send_button);
+        final Space sendSpacing = (Space) findViewById(R.id.send_spacing);
         ViewCompat.animate(sendButton)
                 .alpha(0f)
                 .setDuration(50)
-                .withEndAction(() -> sendButton.setVisibility(View.GONE));
+                .withEndAction(() -> {
+                    sendButton.setVisibility(View.GONE);
+                    sendSpacing.setVisibility(View.VISIBLE);
+                });
     }
 
     private void showAttachmentButton() {
         final ImageButton attachmentButton = (ImageButton) findViewById(R.id.add_attachments_button);
+        final Space attachmentSpacing = (Space) findViewById(R.id.attachment_spacing);
         attachmentButton.setVisibility(View.VISIBLE);
+        attachmentSpacing.setVisibility(GONE);
         ViewCompat.animate(attachmentButton)
                 .alpha(1f)
                 .setDuration(50);
@@ -195,10 +204,12 @@ public class ChatInputView extends LinearLayout {
 
     private void hideAttachmentButton() {
         final ImageButton attachmentButton = (ImageButton) findViewById(R.id.add_attachments_button);
+        final Space attachmentSpacing = (Space) findViewById(R.id.attachment_spacing);
+        attachmentButton.setVisibility(View.GONE);
+        attachmentSpacing.setVisibility(View.VISIBLE);
         ViewCompat.animate(attachmentButton)
                 .alpha(0f)
-                .setDuration(50)
-                .withEndAction(() -> attachmentButton.setVisibility(View.GONE));
+                .setDuration(50);
     }
 
     @Override

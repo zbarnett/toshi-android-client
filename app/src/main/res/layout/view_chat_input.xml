@@ -29,14 +29,17 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:scaleType="fitCenter"
+        android:paddingRight="8dp"
         android:paddingLeft="18dp"
         android:paddingTop="14dp"
         android:paddingBottom="14dp"
-        android:background="@android:color/transparent"
+        android:background="?android:selectableItemBackground"
         app:srcCompat="@drawable/ic_camera" />
 
     <android.support.v4.widget.Space
-        android:layout_width="16dp"
+        android:id="@+id/attachment_spacing"
+        android:visibility="gone"
+        android:layout_width="8dp"
         android:layout_height="0dp" />
 
     <ImageButton
@@ -45,10 +48,11 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:scaleType="fitCenter"
+        android:paddingLeft="8dp"
         android:paddingTop="14dp"
         android:paddingBottom="14dp"
         android:paddingRight="16dp"
-        android:background="@android:color/transparent"
+        android:background="?android:selectableItemBackground"
         app:srcCompat="@drawable/ic_photo" />
 
     <EditText
@@ -62,7 +66,6 @@
         android:layout_marginBottom="8dp"
         android:paddingLeft="15dp"
         android:paddingRight="15dp"
-        android:layout_marginRight="16dp"
         android:background="@drawable/background_input_chat"
         android:hint="@string/send_message"
         android:imeOptions="actionSend"
@@ -70,16 +73,23 @@
         android:maxLength="1500"
         android:maxLines="3"/>
 
+    <android.support.v4.widget.Space
+        android:id="@+id/send_spacing"
+        android:visibility="visible"
+        android:layout_width="16dp"
+        android:layout_height="0dp" />
+
     <ImageButton
         android:id="@+id/send_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
+        android:paddingLeft="16dp"
         android:paddingTop="14dp"
         android:paddingBottom="14dp"
         android:paddingRight="18dp"
         android:scaleType="fitCenter"
-        android:background="@android:color/transparent"
+        android:background="?android:selectableItemBackground"
         android:visibility="gone"
         android:alpha="0"
         app:srcCompat="@drawable/ic_send" />
