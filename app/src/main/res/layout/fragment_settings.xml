@@ -57,23 +57,23 @@
                     android:id="@+id/my_profile_card"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:columnCount="6" >
+                    app:columnCount="6">
 
                     <!-- Row 1 -->
                     <android.support.v4.widget.Space
                         android:layout_width="@dimen/activity_horizontal_margin"
                         android:layout_height="wrap_content"
-                        app:layout_rowSpan="6"/>
+                        app:layout_rowSpan="6" />
 
                     <android.support.v4.widget.Space
                         android:layout_width="0dp"
                         android:layout_height="20dp"
-                        app:layout_columnSpan="4"/>
+                        app:layout_columnSpan="4" />
 
                     <android.support.v4.widget.Space
                         android:layout_width="@dimen/activity_horizontal_margin"
                         android:layout_height="wrap_content"
-                        app:layout_rowSpan="6"/>
+                        app:layout_rowSpan="6" />
 
                     <!-- Row 2 -->
                     <TextView
@@ -81,70 +81,70 @@
                         android:layout_height="match_parent"
                         android:text="@string/my_profile"
                         android:textColor="@color/textColorSecondary"
-                        app:layout_columnSpan="4"/>
+                        app:layout_columnSpan="4" />
 
                     <!-- Row 3 -->
                     <android.support.v4.widget.Space
                         android:layout_width="0dp"
-                        android:layout_height="20dp"
-                        app:layout_columnSpan="4"/>
+                        android:layout_height="36dp"
+                        app:layout_columnSpan="4" />
 
                     <!-- Row 4 -->
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/avatar"
                         android:layout_width="@dimen/avatar_size_small"
                         android:layout_height="@dimen/avatar_size_small"
-                        tools:src="@mipmap/ic_launcher"
                         android:layout_marginRight="@dimen/activity_horizontal_margin"
-                        app:layout_rowSpan="2"
+                        app:civ_border_color="@color/divider"
                         app:civ_border_width="1dp"
-                        app:civ_border_color="@color/divider"/>
+                        app:layout_rowSpan="2"
+                        tools:src="@mipmap/ic_launcher" />
 
                     <TextView
                         android:id="@+id/name"
-                        android:textColor="@color/textColorPrimary"
                         style="@style/TextStyleMedium"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        tools:text="Damn Daniel!"/>
+                        android:textColor="@color/textColorPrimary"
+                        tools:text="Damn Daniel!" />
 
                     <android.support.v4.widget.Space
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        app:layout_columnWeight="1"/>
+                        app:layout_columnWeight="1" />
 
                     <com.tokenbrowser.view.custom.StarRatingView
                         android:id="@+id/rating_view"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content" />
 
                     <!-- Row 5 -->
                     <TextView
                         android:id="@+id/username"
-                        android:textColor="@color/textColorSecondary"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        tools:text="\@username"/>
+                        android:textColor="@color/textColorSecondary"
+                        tools:text="\@username" />
 
                     <android.support.v4.widget.Space
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        app:layout_columnWeight="1"/>
+                        app:layout_columnWeight="1" />
 
                     <TextView
                         android:id="@+id/number_of_ratings"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        app:layout_gravity="right"
-                        android:textSize="14sp"
                         android:textColor="@color/textColorSecondary"
-                        tools:text="(44)"/>
+                        android:textSize="14sp"
+                        app:layout_gravity="right"
+                        tools:text="(44)" />
 
                     <!-- Row 6 -->
                     <android.support.v4.widget.Space
                         android:layout_width="0dp"
-                        android:layout_height="20dp"
-                        app:layout_columnSpan="4"/>
+                        android:layout_height="17dp"
+                        app:layout_columnSpan="4" />
 
                 </android.support.v7.widget.GridLayout>
 
@@ -158,10 +158,11 @@
                 <TextView
                     android:id="@+id/my_qr_code"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/button_height"
+                    android:layout_height="54dp"
                     android:paddingLeft="@dimen/activity_horizontal_margin"
                     android:paddingRight="@dimen/activity_horizontal_margin"
                     android:gravity="center_vertical"
+                    android:background="?android:selectableItemBackground"
                     android:textSize="16sp"
                     android:textColor="@color/textColorPrimary"
                     android:text="@string/my_qr_code"/>
@@ -171,17 +172,27 @@
                     android:layout_height="10dp"
                     android:background="@color/windowBackgroundContrast"/>
 
+                <android.support.v4.widget.Space
+                    android:layout_width="0dp"
+                    android:layout_height="20dp" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/activity_horizontal_margin"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin"
                     android:textColor="@color/textColorSecondary"
                     android:text="@string/balance"/>
 
+                <android.support.v4.widget.Space
+                    android:layout_width="0dp"
+                    android:layout_height="18dp" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:layout_height="54dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
 
                     <Space
                         android:layout_width="@dimen/activity_horizontal_margin"
@@ -192,7 +203,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/subTitleSize"
-                        tools:text="$0.00 USD"/>
+                        tools:text="$0.00 USD" />
 
                     <Space
                         android:layout_width="0dp"
@@ -210,11 +221,8 @@
                     <Space
                         android:layout_width="@dimen/activity_horizontal_margin"
                         android:layout_height="wrap_content"/>
-                </LinearLayout>
 
-                <Space
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/activity_horizontal_margin"/>
+                </LinearLayout>
 
                 <View
                     android:layout_width="match_parent"
@@ -225,12 +233,12 @@
 
                 <Button
                     android:id="@+id/add_money"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/button_height"
-                    android:gravity="left|center_vertical"
                     style="@style/NoPaddingButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp"
+                    android:gravity="left|center_vertical"
                     android:paddingLeft="@dimen/activity_horizontal_margin"
-                    android:text="@string/add_money"/>
+                    android:text="@string/add_money" />
 
                 <View
                     android:layout_width="match_parent"
@@ -239,11 +247,9 @@
 
                 <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                    android:layout_marginRight="@dimen/activity_horizontal_margin"
-                    android:layout_marginTop="@dimen/activity_horizontal_margin"
-                    android:layout_marginBottom="12dp">
+                    android:layout_height="54dp"
+                    android:paddingLeft="@dimen/activity_horizontal_margin"
+                    android:paddingRight="@dimen/activity_horizontal_margin">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -258,7 +264,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:layout_gravity="right"
+                        android:layout_gravity="right|center_vertical"
                         android:gravity="center_vertical">
 
                         <ImageView
@@ -274,13 +280,12 @@
                             android:text="@string/your_account_is_at_risk" />
 
                     </LinearLayout>
-
                 </FrameLayout>
 
                 <LinearLayout
                     android:id="@+id/backup_phrase"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/button_height"
+                    android:layout_height="54dp"
                     android:orientation="horizontal"
                     android:paddingLeft="@dimen/activity_horizontal_margin"
                     android:paddingRight="@dimen/activity_horizontal_margin"
@@ -313,7 +318,7 @@
                 <LinearLayout
                     android:id="@+id/trusted_friends"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/button_height"
+                    android:layout_height="54dp"
                     android:orientation="horizontal"
                     android:paddingLeft="@dimen/activity_horizontal_margin"
                     android:paddingRight="@dimen/activity_horizontal_margin"
@@ -341,29 +346,31 @@
                     android:layout_height="10dp"
                     android:background="@color/windowBackgroundContrast"/>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <android.support.v4.widget.Space
+                    android:layout_width="0dp"
+                    android:layout_height="20dp" />
+                
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="@dimen/activity_horizontal_margin"
-                    android:orientation="vertical">
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:textColor="@color/textColorSecondary"
+                    android:text="@string/settings"/>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/textColorSecondary"
-                        android:text="@string/settings"/>
+                <android.support.v4.widget.Space
+                    android:layout_width="0dp"
+                    android:layout_height="18dp" />
 
-                    <android.support.v4.widget.NestedScrollView
+                <android.support.v4.widget.NestedScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/settings"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+                        android:layout_height="wrap_content" />
 
-                        <android.support.v7.widget.RecyclerView
-                            android:id="@+id/settings"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
-
-                    </android.support.v4.widget.NestedScrollView>
-                </LinearLayout>
+                </android.support.v4.widget.NestedScrollView>
             </LinearLayout>
         </ScrollView>
     </LinearLayout>

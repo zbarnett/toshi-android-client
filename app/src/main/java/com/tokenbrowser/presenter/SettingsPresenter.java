@@ -18,6 +18,7 @@
 package com.tokenbrowser.presenter;
 
 import android.content.Intent;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -42,7 +43,7 @@ import com.tokenbrowser.view.activity.TransactionOverviewActivity;
 import com.tokenbrowser.view.activity.TrustedFriendsActivity;
 import com.tokenbrowser.view.activity.ViewProfileActivity;
 import com.tokenbrowser.view.adapter.SettingsAdapter;
-import com.tokenbrowser.view.custom.RecyclerViewDivider;
+import com.tokenbrowser.view.custom.HorizontalLineDivider;
 import com.tokenbrowser.view.fragment.toplevel.SettingsFragment;
 
 import java.math.BigInteger;
@@ -141,7 +142,13 @@ public final class SettingsPresenter implements
         final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this.fragment.getContext());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
-        recyclerView.addItemDecoration(new RecyclerViewDivider(this.fragment.getContext(), 0));
+
+        final int padding = fragment.getResources().getDimensionPixelSize(R.dimen.activity_horizontal_margin);
+        final HorizontalLineDivider lineDivider =
+                new HorizontalLineDivider(ContextCompat.getColor(this.fragment.getContext(), R.color.divider))
+                        .setRightPadding(padding)
+                        .setLeftPadding(padding);
+        recyclerView.addItemDecoration(lineDivider);
     }
 
     private void handleItemClickListener(final int option) {
