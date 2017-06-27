@@ -19,9 +19,9 @@ public class BlockedUserStore {
                 realm.where(BlockedUser.class)
                         .equalTo(fieldName, value)
                         .findFirst();
-        final BlockedUser retVal = user == null ? null : realm.copyFromRealm(user);
+        final BlockedUser queriedBlockedUser = user == null ? null : realm.copyFromRealm(user);
         realm.close();
-        return retVal;
+        return queriedBlockedUser;
     }
 
     public void save(final BlockedUser blockedUser) {

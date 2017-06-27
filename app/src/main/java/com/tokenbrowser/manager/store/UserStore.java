@@ -58,9 +58,9 @@ public class UserStore {
                 .equalTo(fieldName, value)
                 .findFirst();
 
-        final User retVal = user == null ? null : realm.copyFromRealm(user);
+        final User queriedUser = user == null ? null : realm.copyFromRealm(user);
         realm.close();
-        return retVal;
+        return queriedUser;
     }
 
     private List<User> filter(final String fieldName, final String value) {

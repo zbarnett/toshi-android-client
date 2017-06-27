@@ -64,9 +64,9 @@ public class PendingTransactionStore {
                 .equalTo(fieldName, value);
 
         final PendingTransaction pendingTransaction = query.findFirst();
-        final PendingTransaction retVal = pendingTransaction == null ? null : realm.copyFromRealm(pendingTransaction);
+        final PendingTransaction queriedPendingTransaction = pendingTransaction == null ? null : realm.copyFromRealm(pendingTransaction);
         realm.close();
-        return retVal;
+        return queriedPendingTransaction;
     }
 
     private List<PendingTransaction> loadAll() {
@@ -75,9 +75,9 @@ public class PendingTransactionStore {
                 .where(PendingTransaction.class);
 
         final List<PendingTransaction> pendingTransactions = query.findAll();
-        final List<PendingTransaction> retVal = realm.copyFromRealm(pendingTransactions);
+        final List<PendingTransaction> allPendingTransactions = realm.copyFromRealm(pendingTransactions);
         realm.close();
-        return retVal;
+        return allPendingTransactions;
     }
 
 

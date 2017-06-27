@@ -37,8 +37,8 @@ public class GroupStore {
                 .equalTo(fieldName, value)
                 .findFirst();
 
-        final Group retVal = group == null ? null : realm.copyFromRealm(group);
+        final Group queriedGroup = group == null ? null : realm.copyFromRealm(group);
         realm.close();
-        return retVal;
+        return queriedGroup;
     }
 }

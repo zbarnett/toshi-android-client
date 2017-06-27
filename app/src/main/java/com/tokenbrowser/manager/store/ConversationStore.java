@@ -188,9 +188,9 @@ public class ConversationStore {
         final Realm realm = BaseApplication.get().getRealm();
         final RealmQuery<Conversation> query = realm.where(Conversation.class);
         final RealmResults<Conversation> results = query.findAllSorted("updatedTime", Sort.DESCENDING);
-        final List<Conversation> retVal = realm.copyFromRealm(results);
+        final List<Conversation> allConversations = realm.copyFromRealm(results);
         realm.close();
-        return retVal;
+        return allConversations;
     }
 
     private void broadcastConversationChanged(final Conversation conversation) {
@@ -210,9 +210,9 @@ public class ConversationStore {
                 .where(Conversation.class)
                 .equalTo(fieldName, value)
                 .findFirst();
-        final Conversation retVal = result == null ? null : realm.copyFromRealm(result);
+        final Conversation queriedConversation = result == null ? null : realm.copyFromRealm(result);
         realm.close();
-        return retVal;
+        return queriedConversation;
     }
 
     public void updateMessage(final User user, final SofaMessage message) {

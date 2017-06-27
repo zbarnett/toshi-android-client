@@ -81,9 +81,9 @@ public class ContactStore {
             final Realm realm = BaseApplication.get().getRealm();
             final RealmQuery<Contact> query = realm.where(Contact.class);
             final RealmResults<Contact> results = query.findAll();
-            final List<Contact> retVal = realm.copyFromRealm(results.sort("user.name"));
+            final List<Contact> allContacts = realm.copyFromRealm(results.sort("user.name"));
             realm.close();
-            return retVal;
+            return allContacts;
         })
         .subscribeOn(Schedulers.io());
 
