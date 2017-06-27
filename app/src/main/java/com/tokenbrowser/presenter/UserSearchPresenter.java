@@ -157,12 +157,14 @@ public final class UserSearchPresenter
                 .setOnItemClickListener(this);
         recyclerView.setAdapter(adapter);
 
-        final int dividerLeftPadding = this.activity.getResources().getDimensionPixelSize(R.dimen.avatar_size_small)
-                + this.activity.getResources().getDimensionPixelSize(R.dimen.activity_horizontal_margin);
+        final int dividerLeftPadding = activity.getResources().getDimensionPixelSize(R.dimen.avatar_size_small)
+                + activity.getResources().getDimensionPixelSize(R.dimen.activity_horizontal_margin)
+                + activity.getResources().getDimensionPixelSize(R.dimen.list_item_avatar_margin);
+        final int dividerRightPadding = activity.getResources().getDimensionPixelSize(R.dimen.activity_horizontal_margin);
         final HorizontalLineDivider lineDivider =
                 new HorizontalLineDivider(ContextCompat.getColor(this.activity, R.color.divider))
-                        .setLeftPadding(dividerLeftPadding)
-                        .setIsTopDivider(true);
+                        .setRightPadding(dividerRightPadding)
+                        .setLeftPadding(dividerLeftPadding);
         recyclerView.addItemDecoration(lineDivider);
     }
 
