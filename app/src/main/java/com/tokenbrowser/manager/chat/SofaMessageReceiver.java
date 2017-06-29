@@ -156,7 +156,7 @@ public class SofaMessageReceiver {
 
         if (content.getDataMessage().isPresent()) {
             final SignalServiceDataMessage dataMessage = content.getDataMessage().get();
-            if (dataMessage.isGroupUpdate()) return handleGroupMessage(dataMessage);
+            if (dataMessage.isGroupUpdate()) return handleGroupUpdate(dataMessage);
             else return handleTextMessage(messageSource, dataMessage);
         }
         return null;
@@ -164,15 +164,16 @@ public class SofaMessageReceiver {
 
     @NonNull
     private DecryptedSignalMessage handleTextMessage(final String messageSource, final SignalServiceDataMessage dataMessage) {
+        final Optional<SignalServiceGroup> signalGroup = dataMessage.getGroupInfo();
         final Optional<String> messageBody = dataMessage.getBody();
         final Optional<List<SignalServiceAttachment>> attachments = dataMessage.getAttachments();
-        final DecryptedSignalMessage decryptedMessage = new DecryptedSignalMessage(messageSource, messageBody.get(), attachments);
+        final DecryptedSignalMessage decryptedMessage = new DecryptedSignalMessage(messageSource, messageBody.get(), attachments, signalGroup);
 
         saveIncomingMessageToDatabase(decryptedMessage);
         return decryptedMessage;
     }
 
-    private DecryptedSignalMessage handleGroupMessage(final SignalServiceDataMessage dataMessage) {
+    private DecryptedSignalMessage handleGroupUpdate(final SignalServiceDataMessage dataMessage) {
         final SignalServiceGroup signalGroup = dataMessage.getGroupInfo().get();
         new Group()
                 .initFromSignalGroup(signalGroup)
@@ -235,8 +236,15 @@ public class SofaMessageReceiver {
                 .makeNew(sender, signalMessage.getBody())
                 .setAttachmentFilePath(signalMessage.getAttachmentFilePath())
                 .setSendState(SendState.STATE_RECEIVED);
-        final Recipient senderRecipient = new Recipient(sender);
 
+        generateRecipientFromSignalMessage(sender, signalMessage)
+                .subscribe(
+                        senderRecipient -> this.saveIncomingMessageToDatabase(sender, remoteMessage, senderRecipient),
+                        ex -> LogUtil.e(getClass(), "Error saving incoming message to database. " + ex)
+                );
+    }
+
+    private void saveIncomingMessageToDatabase(final User sender, final SofaMessage remoteMessage, final Recipient senderRecipient) {
         if (remoteMessage.getType() == SofaType.PAYMENT) {
             // Don't render incoming SOFA::Payments,
             // but ensure we have the sender cached.
@@ -258,6 +266,15 @@ public class SofaMessageReceiver {
         }
 
         this.conversationStore.saveNewMessage(senderRecipient, remoteMessage);
+    }
+
+    private Single<Recipient> generateRecipientFromSignalMessage(final User sender, final DecryptedSignalMessage signalMessage) {
+        if (!signalMessage.isGroup()) {
+            return Single.just(new Recipient(sender));
+        }
+        return signalMessage
+                .getGroup()
+                .map(Recipient::new);
     }
 
     private void handleError(final Throwable throwable) {

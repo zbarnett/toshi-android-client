@@ -81,6 +81,7 @@ public class ChatNotificationManager {
             return;
         }
         final Recipient recipient = new Recipient(user);
+        // Todo - pass group avatar here (if it's a group)
         showChatNotification(recipient, body);
     }
 

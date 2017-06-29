@@ -18,22 +18,33 @@
 package com.tokenbrowser.crypto.signal.model;
 
 
+import com.tokenbrowser.model.local.Group;
+
 import org.whispersystems.libsignal.util.guava.Optional;
 import org.whispersystems.signalservice.api.messages.SignalServiceAttachment;
+import org.whispersystems.signalservice.api.messages.SignalServiceGroup;
 
 import java.util.List;
+
+import rx.Single;
 
 public class DecryptedSignalMessage {
 
     private final String body;
     private final String source;
+    private final Optional<SignalServiceGroup> group;
     private Optional<List<SignalServiceAttachment>> attachments;
     private String attachmentFilePath;
 
-    public DecryptedSignalMessage(final String source, final String body, final Optional<List<SignalServiceAttachment>> attachments) {
+    public DecryptedSignalMessage(
+            final String source,
+            final String body,
+            final Optional<List<SignalServiceAttachment>> attachments,
+            final Optional<SignalServiceGroup> group) {
         this.source = source;
         this.body = body;
         this.attachments = attachments;
+        this.group = group;
     }
 
     public DecryptedSignalMessage setAttachmentFilePath(final String attachmentFilePath) {
@@ -55,5 +66,18 @@ public class DecryptedSignalMessage {
 
     public String getAttachmentFilePath() {
         return attachmentFilePath;
+    }
+
+    public boolean isGroup() {
+        return this.group != null && this.group.isPresent();
+    }
+
+    public Single<Group> getGroup() {
+        if (!isGroup()) {
+            throw new IllegalStateException("Message does not contain a group");
+        }
+
+        return new Group()
+                .initFromSignalGroup(this.group.get());
     }
 }

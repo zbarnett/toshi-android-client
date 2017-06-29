@@ -65,15 +65,20 @@ public class Group extends RealmObject {
     }
 
     public Single<Group> initFromSignalGroup(final SignalServiceGroup group) {
-
         this.id = Hex.toHexString(group.getGroupId());
-        this.title = group.getName().get();
         this.members = new RealmList<>();
 
-        return lookupUsers(group.getMembers().get())
-                .map(this.members::addAll)
-                .map(__ -> this);
+        if (group.getName().isPresent()) {
+            this.title = group.getName().get();
+        }
 
+        if (group.getMembers().isPresent()) {
+            return lookupUsers(group.getMembers().get())
+                    .map(this.members::addAll)
+                    .map(__ -> this);
+        }
+
+        return Single.just(this);
     }
 
     private Single<List<User>> lookupUsers(final List<String> userIds) {
