@@ -96,6 +96,11 @@ public class Group extends RealmObject {
                 .subscribeOn(Schedulers.io());
     }
 
+    public Group addMember(final User member) {
+        this.members.add(member);
+        return this;
+    }
+
     @NonNull
     public String getId() {
         return this.id;

@@ -92,6 +92,7 @@ public class GroupSetupPresenter implements Presenter<GroupSetupActivity> {
         final Subscription subscription =
                 generateAvatar()
                 .map(this::createGroup)
+                .flatMap(this::addCurrentUserToGroup)
                 .flatMap(
                     BaseApplication
                     .get()
@@ -104,14 +105,22 @@ public class GroupSetupPresenter implements Presenter<GroupSetupActivity> {
         this.subscriptions.add(subscription);
     }
 
+    private Single<Bitmap> generateAvatar() {
+        return ImageUtil.loadAsBitmap(this.avatarUri, this.activity);
+    }
+
     private Group createGroup(final Bitmap avatar) {
         return new Group(this.getGroupParticipantAdapter().getUsers())
                         .setTitle(this.activity.getBinding().groupName.getText().toString())
                         .setAvatar(avatar);
     }
 
-    private Single<Bitmap> generateAvatar() {
-        return ImageUtil.loadAsBitmap(this.avatarUri, this.activity);
+    private Single<Group> addCurrentUserToGroup(final Group group) {
+        return BaseApplication
+                .get()
+                .getUserManager()
+                .getCurrentUser()
+                .map(group::addMember);
     }
 
     private void initRecyclerView() {
