@@ -120,11 +120,13 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     private void addMessage(final SofaMessage sofaMessage) {
+        if (!shouldShowChatMessage(sofaMessage)) return;
         this.sofaMessages.add(sofaMessage);
         notifyItemInserted(this.sofaMessages.size() - 1);
     }
 
     public final void updateMessage(final SofaMessage sofaMessage) {
+        if (!shouldShowChatMessage(sofaMessage)) return;
         final int position = this.sofaMessages.indexOf(sofaMessage);
         if (position == -1) {
             addMessage(sofaMessage);
