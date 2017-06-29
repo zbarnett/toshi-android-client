@@ -40,7 +40,7 @@ public class Avatar {
     public Avatar(final Bitmap avatar) {
         try {
             init(avatar);
-        } catch (final FileNotFoundException | IllegalStateException ex) {
+        } catch (final NullPointerException | FileNotFoundException | IllegalStateException ex) {
             LogUtil.e(getClass(), "Avatar not initialised. " + ex);
         }
     }

@@ -171,9 +171,45 @@ public class SofaMessageSender {
     private void sendMessageToRecipient(final SofaMessageTask messageTask, final boolean saveMessageToDatabase) {
         final Recipient receiver = messageTask.getReceiver();
         if (receiver.isGroup()) {
-            //sendMessageToGroup(messageTask.getReceiver().getGroup());
+            sendMessageToGroup(messageTask, saveMessageToDatabase);
         } else {
             sendMessageToUser(messageTask, saveMessageToDatabase);
+        }
+    }
+
+    private void sendMessageToGroup(final SofaMessageTask messageTask, final boolean saveMessageToDatabase) {
+        final Recipient receiver = messageTask.getReceiver();
+        final SofaMessage message = messageTask.getSofaMessage();
+
+        if (saveMessageToDatabase) {
+            this.conversationStore.saveNewMessage(receiver, message);
+        }
+
+        if (!BaseApplication.get().isConnected() && saveMessageToDatabase) {
+            message.setSendState(SendState.STATE_PENDING);
+            updateExistingMessage(receiver, message);
+            savePendingMessage(receiver, message);
+            return;
+        }
+
+        try {
+            sendToSignal(receiver.getGroup().getMemberAddresses(), messageTask);
+
+            if (saveMessageToDatabase) {
+                message.setSendState(SendState.STATE_SENT);
+                updateExistingMessage(receiver, message);
+            }
+        } catch (final IOException ex) {
+            LogUtil.error(getClass(), ex.toString());
+            if (saveMessageToDatabase) {
+                message.setSendState(SendState.STATE_FAILED);
+                updateExistingMessage(receiver, message);
+            }
+        } catch (final EncapsulatedExceptions e) {
+            for (UntrustedIdentityException uie : e.getUntrustedIdentityExceptions()) {
+                LogUtil.error(getClass(), "Keys have changed.");
+                protocolStore.saveIdentity(new SignalProtocolAddress(uie.getE164Number(), SignalServiceAddress.DEFAULT_DEVICE_ID), uie.getIdentityKey());
+            }
         }
     }
 
@@ -213,6 +249,11 @@ public class SofaMessageSender {
         }
     }
 
+    private void sendToSignal(final List<SignalServiceAddress> signalAddresses, final SofaMessageTask messageTask) throws IOException, EncapsulatedExceptions {
+        final SignalServiceDataMessage message = buildMessage(messageTask);
+        this.signalMessageSender.sendMessage(signalAddresses, message);
+    }
+
     private void sendToSignal(final String signalAddress, final SofaMessageTask messageTask) throws UntrustedIdentityException, IOException {
         final SignalServiceAddress receivingAddress = new SignalServiceAddress(signalAddress);
         final SignalServiceDataMessage message = buildMessage(messageTask);
@@ -220,12 +261,30 @@ public class SofaMessageSender {
     }
 
     private SignalServiceDataMessage buildMessage(final SofaMessageTask messageTask) throws FileNotFoundException {
-        // Todo - support groups
         final SignalServiceDataMessage.Builder messageBuilder = SignalServiceDataMessage.newBuilder();
         messageBuilder.withBody(messageTask.getSofaMessage().getAsSofaMessage());
-        final OutgoingAttachment outgoingAttachment = new OutgoingAttachment(messageTask.getSofaMessage());
 
+        tryAddAttachment(messageTask, messageBuilder);
+        tryAddGroup(messageTask, messageBuilder);
+
+        return messageBuilder.build();
+    }
+
+    private void tryAddGroup(final SofaMessageTask messageTask, final SignalServiceDataMessage.Builder messageBuilder) {
         try {
+            if (!messageTask.getReceiver().isGroup()) return;
+            final SignalServiceGroup signalGroup = new SignalServiceGroup(
+                    Hex.fromStringCondensed(messageTask.getReceiver().getGroup().getId()));
+            messageBuilder.asGroupMessage(signalGroup);
+        } catch (final Exception ex) {
+            LogUtil.i(getClass(), "Tried and failed to attach group." + ex);
+        }
+
+    }
+
+    private void tryAddAttachment(final SofaMessageTask messageTask, final SignalServiceDataMessage.Builder messageBuilder) {
+        try {
+            final OutgoingAttachment outgoingAttachment = new OutgoingAttachment(messageTask.getSofaMessage());
             if (outgoingAttachment.isValid()) {
                 final SignalServiceAttachment signalAttachment = buildSignalServiceAttachment(outgoingAttachment);
                 messageBuilder.withAttachment(signalAttachment);
@@ -233,8 +292,6 @@ public class SofaMessageSender {
         } catch (final FileNotFoundException | IllegalStateException ex) {
             LogUtil.i(getClass(), "Tried and failed to attach attachment." + ex);
         }
-
-        return messageBuilder.build();
     }
 
     private void savePendingMessage(final Recipient receiver, final SofaMessage message) {
