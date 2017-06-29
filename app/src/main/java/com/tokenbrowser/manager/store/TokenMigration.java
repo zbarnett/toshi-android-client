@@ -224,6 +224,24 @@ public class TokenMigration implements RealmMigration {
 
             oldVersion++;
         }
+
+        // Port PendingMessageStore to using Recipient
+        if (oldVersion == 14) {
+            schema
+                    .get("PendingMessage")
+                    .addRealmObjectField("tempReceiver", schema.get("Recipient"))
+                    .transform(obj -> {
+                        final DynamicRealmObject oldUser = obj.getObject("receiver");
+                        final String primaryKey = oldUser.getString("owner_address");
+                        final DynamicRealmObject newRecipient = realm.createObject("Recipient", primaryKey);
+                        newRecipient.setObject("user", oldUser);
+                        obj.set("tempReceiver", newRecipient);
+                    })
+                    .removeField("receiver")
+                    .renameField("tempReceiver", "receiver");
+
+            oldVersion++;
+        }
     }
 
     @Override

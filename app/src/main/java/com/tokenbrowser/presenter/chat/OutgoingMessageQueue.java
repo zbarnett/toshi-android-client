@@ -146,23 +146,10 @@ queue.clear(); // Cleans up all state, and unsubscribes everything.
     }
 
     private void sendAndSaveMessage(final SofaMessage outgoingSofaMessage) {
-        if (this.recipient.isGroup()) {
-            sendAndSaveGroupMessage(outgoingSofaMessage);
-        } else {
-            sendAndSaveUserMessage(outgoingSofaMessage);
-        }
-
-    }
-
-    private void sendAndSaveGroupMessage(final SofaMessage outgoingSofaMessage) {
-        // Todo - send to group
-    }
-
-    private void sendAndSaveUserMessage(final SofaMessage outgoingSofaMessage) {
         BaseApplication
                 .get()
                 .getSofaMessageManager()
-                .sendAndSaveMessage(this.recipient.getUser(), outgoingSofaMessage);
+                .sendAndSaveMessage(this.recipient, outgoingSofaMessage);
     }
 
     private void handleSendingMessageError(final Throwable throwable) {

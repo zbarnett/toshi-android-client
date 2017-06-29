@@ -26,6 +26,7 @@ import android.support.v4.content.ContextCompat;
 
 import com.tokenbrowser.R;
 import com.tokenbrowser.crypto.signal.model.DecryptedSignalMessage;
+import com.tokenbrowser.model.local.Recipient;
 import com.tokenbrowser.model.sofa.SofaMessage;
 import com.tokenbrowser.model.local.User;
 import com.tokenbrowser.model.sofa.SofaAdapters;
@@ -79,7 +80,8 @@ public class ChatNotificationManager {
             LogUtil.i(ChatNotificationManager.class, "Not rendering PN");
             return;
         }
-        showChatNotification(user, body);
+        final Recipient recipient = new Recipient(user);
+        showChatNotification(recipient, body);
     }
 
     private static void handleUserError(final Throwable throwable) {
@@ -99,11 +101,11 @@ public class ChatNotificationManager {
     }
 
     public static void showChatNotification(
-            final User sender,
+            final Recipient sender,
             final String content) {
 
         // Sender will be null if the transaction came from outside of the Token platform.
-        final String notificationKey = sender == null ? ChatNotification.DEFAULT_TAG : sender.getTokenId();
+        final String notificationKey = sender == null ? ChatNotification.DEFAULT_TAG : sender.getThreadId();
 
         if (notificationKey.equals(currentlyOpenConversation) && !BaseApplication.get().isInBackground()) {
             return;

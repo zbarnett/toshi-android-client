@@ -41,6 +41,7 @@ import com.tokenbrowser.crypto.HDWallet;
 import com.tokenbrowser.crypto.signal.model.DecryptedSignalMessage;
 import com.tokenbrowser.crypto.util.TypeConverter;
 import com.tokenbrowser.manager.TokenManager;
+import com.tokenbrowser.model.local.Recipient;
 import com.tokenbrowser.model.sofa.SofaMessage;
 import com.tokenbrowser.model.local.User;
 import com.tokenbrowser.model.sofa.Payment;
@@ -233,6 +234,7 @@ public class GcmMessageReceiver extends GcmListenerService {
     private void handleLocalCurrency(final Payment payment, final String localCurrency) {
         final String content = String.format(Locale.getDefault(), this.getString(R.string.latest_message__payment_incoming), localCurrency);
         getUserFromPaymentAddress(payment.getFromAddress())
+                .map(Recipient::new)
                 .subscribe(
                         (sender) -> ChatNotificationManager.showChatNotification(sender, content),
                         __ -> ChatNotificationManager.showChatNotification(null, content)

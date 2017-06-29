@@ -641,7 +641,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         BaseApplication
                 .get()
                 .getSofaMessageManager()
-                .sendMessage(this.recipient.getUser(), sofaMessage);
+                .sendMessage(this.recipient, sofaMessage);
     }
 
     private void initMessageObservables() {

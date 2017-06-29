@@ -27,16 +27,16 @@ public class PendingMessage extends RealmObject {
 
     @PrimaryKey
     private String privateKey;
-    private User receiver;
+    private Recipient receiver;
     private SofaMessage sofaMessage;
 
     public PendingMessage() {}
 
-    public User getReceiver() {
+    public Recipient getReceiver() {
         return receiver;
     }
 
-    public PendingMessage setReceiver(final User receiver) {
+    public PendingMessage setReceiver(final Recipient receiver) {
         this.receiver = receiver;
         return this;
     }

@@ -20,10 +20,8 @@ package com.tokenbrowser.manager.model;
 
 import android.support.annotation.IntDef;
 
-import com.tokenbrowser.model.local.User;
+import com.tokenbrowser.model.local.Recipient;
 import com.tokenbrowser.model.sofa.SofaMessage;
-
-import java.util.List;
 
 public final class SofaMessageTask {
 
@@ -35,43 +33,25 @@ public final class SofaMessageTask {
     public static final int UPDATE_MESSAGE = 3;
     public static final int SAVE_TRANSACTION = 4;
 
-    private final User receiver;
-    private final List<User> receivers;
+    private final Recipient receiver;
     private final SofaMessage sofaMessage;
     private final @Action int action;
 
-    // Create a task for sending to a single contact (Conversation)
     public SofaMessageTask(
-            final User receiver,
+            final Recipient receiver,
             final SofaMessage sofaMessage,
             final @Action int action) {
         this.receiver = receiver;
-        this.receivers = null;
-        this.sofaMessage = sofaMessage;
-        this.action = action;
-    }
-
-    // Create a task for sending to a group (GroupThread)
-    public SofaMessageTask(
-            final List<User> receivers,
-            final SofaMessage sofaMessage,
-            final @Action int action) {
-        this.receivers = receivers;
-        this.receiver = null;
         this.sofaMessage = sofaMessage;
         this.action = action;
     }
 
     public boolean isGroup() {
-        return this.receivers != null;
+        return this.receiver.isGroup();
     }
 
-    public User getReceiver() {
+    public Recipient getReceiver() {
         return receiver;
-    }
-
-    public List<User> getReceivers() {
-        return receivers;
     }
 
     public SofaMessage getSofaMessage() {

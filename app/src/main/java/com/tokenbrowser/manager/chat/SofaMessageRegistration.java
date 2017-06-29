@@ -24,6 +24,7 @@ import com.tokenbrowser.crypto.signal.ChatService;
 import com.tokenbrowser.crypto.signal.SignalPreferences;
 import com.tokenbrowser.crypto.signal.store.ProtocolStore;
 import com.tokenbrowser.manager.network.IdService;
+import com.tokenbrowser.model.local.Recipient;
 import com.tokenbrowser.model.local.User;
 import com.tokenbrowser.model.network.UserSearchResults;
 import com.tokenbrowser.model.sofa.Message;
@@ -152,7 +153,7 @@ public class SofaMessageRegistration {
                 .map(this::generateOnboardingMessage)
                 .doOnSuccess(__ -> SharedPrefsUtil.setHasOnboarded())
                 .subscribe(
-                        onboardingMessage -> this.sendOnboardingMessage(onboardingMessage, onboardingBot),
+                        onboardingMessage -> this.sendOnboardingMessage(onboardingMessage, new Recipient(onboardingBot)),
                         this::handleOnboardingBotError
                 );
     }
@@ -161,7 +162,7 @@ public class SofaMessageRegistration {
         LogUtil.exception(getClass(), "Error during sending onboarding message to bot", throwable);
     }
 
-    private void sendOnboardingMessage(final SofaMessage onboardingMessage, final User onboardingBot) {
+    private void sendOnboardingMessage(final SofaMessage onboardingMessage, final Recipient onboardingBot) {
         BaseApplication
                 .get()
                 .getSofaMessageManager()

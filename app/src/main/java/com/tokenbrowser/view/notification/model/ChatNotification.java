@@ -26,7 +26,7 @@ import android.support.v4.app.TaskStackBuilder;
 
 import com.bumptech.glide.Glide;
 import com.tokenbrowser.R;
-import com.tokenbrowser.model.local.User;
+import com.tokenbrowser.model.local.Recipient;
 import com.tokenbrowser.service.NotificationDismissedReceiver;
 import com.tokenbrowser.view.BaseApplication;
 import com.tokenbrowser.view.activity.ChatActivity;
@@ -44,14 +44,14 @@ public class ChatNotification {
 
     public static final String DEFAULT_TAG = "unknown";
 
-    private final User sender;
+    private final Recipient sender;
     private final ArrayList<String> messages;
     private List<String> lastFewMessages;
     private CharSequence lastMessage;
     private static final int MAXIMUM_NUMBER_OF_SHOWN_MESSAGES = 5;
     private Bitmap largeIcon;
 
-    public ChatNotification(final User sender) {
+    public ChatNotification(final Recipient sender) {
         this.sender = sender;
         this.messages = new ArrayList<>();
         generateLatestMessages(this.messages);
@@ -79,7 +79,7 @@ public class ChatNotification {
     }
 
     public String getTag() {
-        return this.sender == null ? DEFAULT_TAG : sender.getTokenId();
+        return this.sender == null ? DEFAULT_TAG : sender.getThreadId();
     }
 
     public String getTitle() {
@@ -104,7 +104,7 @@ public class ChatNotification {
         final Intent mainIntent = new Intent(BaseApplication.get(), MainActivity.class);
         mainIntent.putExtra(MainActivity.EXTRA__ACTIVE_TAB, 1);
 
-        if (this.sender == null || this.sender.getTokenId() == null) {
+        if (this.sender == null || this.sender.getThreadId() == null) {
             return TaskStackBuilder.create(BaseApplication.get())
                     .addParentStack(MainActivity.class)
                     .addNextIntent(mainIntent)
@@ -112,7 +112,7 @@ public class ChatNotification {
         }
 
         final Intent chatIntent = new Intent(BaseApplication.get(), ChatActivity.class);
-        chatIntent.putExtra(ChatActivity.EXTRA__THREAD_ID, this.sender.getTokenId());
+        chatIntent.putExtra(ChatActivity.EXTRA__THREAD_ID, this.sender.getThreadId());
 
         final PendingIntent nextIntent = TaskStackBuilder.create(BaseApplication.get())
                 .addParentStack(MainActivity.class)

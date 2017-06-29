@@ -27,6 +27,7 @@ import com.tokenbrowser.manager.model.PaymentTask;
 import com.tokenbrowser.manager.network.EthereumService;
 import com.tokenbrowser.manager.store.PendingTransactionStore;
 import com.tokenbrowser.model.local.PendingTransaction;
+import com.tokenbrowser.model.local.Recipient;
 import com.tokenbrowser.model.local.SendState;
 import com.tokenbrowser.model.local.UnsignedW3Transaction;
 import com.tokenbrowser.model.local.User;
@@ -132,12 +133,13 @@ public class TransactionManager {
                     .txRequestFrom(sofaMessage.getPayload())
                     .setState(newState);
 
+            final Recipient recipient = new Recipient(remoteUser);
             final String updatedPayload = SofaAdapters.get().toJson(paymentRequest);
             sofaMessage.setPayload(updatedPayload);
             BaseApplication
                     .get()
                     .getSofaMessageManager()
-                    .updateMessage(remoteUser, sofaMessage);
+                    .updateMessage(recipient, sofaMessage);
 
             if (newState == PaymentRequest.ACCEPTED) {
                 sendPayment(remoteUser, paymentRequest.getDestinationAddresss(), paymentRequest.getValue());
@@ -332,10 +334,11 @@ public class TransactionManager {
         updateMessageState(receiver, storedSofaMessage, SendState.STATE_SENT);
         storeUnconfirmedTransaction(txHash, storedSofaMessage);
 
+        final Recipient recipient = new Recipient(receiver);
         BaseApplication
                 .get()
                 .getSofaMessageManager()
-                .sendMessage(receiver, storedSofaMessage);
+                .sendMessage(recipient, storedSofaMessage);
     }
 
     private void handleOutgoingPaymentError(
@@ -347,9 +350,10 @@ public class TransactionManager {
         showOutgoingPaymentFailedNotification(receiver);
     }
 
-    private void showOutgoingPaymentFailedNotification(final User receiver) {
-        final String content = getNotificationContent(receiver.getDisplayName());
-        ChatNotificationManager.showChatNotification(receiver, content);
+    private void showOutgoingPaymentFailedNotification(final User user) {
+        final String content = getNotificationContent(user.getDisplayName());
+        final Recipient recipient = new Recipient(user);
+        ChatNotificationManager.showChatNotification(recipient, content);
     }
 
     private String getNotificationContent(final String content) {
@@ -452,10 +456,11 @@ public class TransactionManager {
     }
 
     private void updateMessage(final User user, final SofaMessage message) {
+        final Recipient recipient = new Recipient(user);
         BaseApplication
                 .get()
                 .getSofaMessageManager()
-                .updateMessage(user, message);
+                .updateMessage(recipient, message);
     }
 
 

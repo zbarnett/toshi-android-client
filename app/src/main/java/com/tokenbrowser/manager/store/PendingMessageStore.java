@@ -19,7 +19,7 @@ package com.tokenbrowser.manager.store;
 
 
 import com.tokenbrowser.model.local.PendingMessage;
-import com.tokenbrowser.model.local.User;
+import com.tokenbrowser.model.local.Recipient;
 import com.tokenbrowser.model.sofa.SofaMessage;
 import com.tokenbrowser.view.BaseApplication;
 
@@ -30,7 +30,7 @@ import io.realm.RealmResults;
 
 public class PendingMessageStore {
 
-    public void save(final User receiver, final SofaMessage message) {
+    public void save(final Recipient receiver, final SofaMessage message) {
         final PendingMessage pendingMessage = new PendingMessage()
                 .setReceiver(receiver)
                 .setSofaMessage(message);

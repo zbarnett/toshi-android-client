@@ -71,8 +71,7 @@ public class ConversationStore {
     }
 
     public void saveNewGroup(@NonNull final Group group) {
-        final Recipient recipient = new Recipient(group);
-        saveMessage(recipient)
+        saveGroup(group)
                 .observeOn(Schedulers.immediate())
                 .subscribeOn(Schedulers.from(dbThread))
                 .subscribe(
@@ -82,36 +81,45 @@ public class ConversationStore {
     }
 
     public void saveNewMessage(
-            @NonNull final User user,
+            @NonNull final Recipient receiver,
             @NonNull final SofaMessage message) {
-        final Recipient recipient = new Recipient(user);
-        saveMessage(recipient, message)
+        saveMessage(receiver, message)
         .observeOn(Schedulers.immediate())
         .subscribeOn(Schedulers.from(dbThread))
         .subscribe(
                 conversationForBroadcast -> {
-                    broadcastNewChatMessage(user.getTokenId(), message);
+                    broadcastNewChatMessage(receiver.getThreadId(), message);
                     broadcastConversationChanged(conversationForBroadcast);
                 },
                 this::handleError
         );
     }
 
-    private Single<Conversation> saveMessage(@NonNull final Recipient recipient) {
-        return saveMessage(recipient, null);
+    private Single<Conversation> saveGroup(@NonNull final Group group) {
+        return Single.fromCallable(() -> {
+            final Conversation conversationToStore = getOrCreateConversation(group);
+            final Realm realm = BaseApplication.get().getRealm();
+            realm.beginTransaction();
+            final Conversation storedConversation = realm.copyToRealmOrUpdate(conversationToStore);
+            realm.commitTransaction();
+            final Conversation conversationForBroadcast = realm.copyFromRealm(storedConversation);
+            realm.close();
+
+            return conversationForBroadcast;
+        });
     }
 
     private Single<Conversation> saveMessage(
-            @NonNull final Recipient recipient,
+            @NonNull final Recipient receiver,
             @Nullable final SofaMessage message) {
         return Single.fromCallable(() -> {
-            final Conversation conversationToStore = getOrCreateConversation(recipient);
+            final Conversation conversationToStore = getOrCreateConversation(receiver);
 
             if (message != null && shouldSaveTimestampMessage(message, conversationToStore)) {
                 final SofaMessage timestampMessage =
                         generateTimestampMessage();
                 conversationToStore.addMessage(timestampMessage);
-                broadcastNewChatMessage(recipient.getThreadId(), timestampMessage);
+                broadcastNewChatMessage(receiver.getThreadId(), timestampMessage);
             }
 
             final Realm realm = BaseApplication.get().getRealm();
@@ -130,6 +138,18 @@ public class ConversationStore {
 
             return conversationForBroadcast;
         });
+    }
+
+    @NonNull
+    private Conversation getOrCreateConversation(final User user) {
+        final Recipient recipient = new Recipient(user);
+        return getOrCreateConversation(recipient);
+    }
+
+    @NonNull
+    private Conversation getOrCreateConversation(final Group group) {
+        final Recipient recipient = new Recipient(group);
+        return getOrCreateConversation(recipient);
     }
 
     @NonNull
@@ -215,7 +235,7 @@ public class ConversationStore {
         return queriedConversation;
     }
 
-    public void updateMessage(final User user, final SofaMessage message) {
+    public void updateMessage(final Recipient receiver, final SofaMessage message) {
         Single.fromCallable(() -> {
             final Realm realm = BaseApplication.get().getRealm();
             realm.beginTransaction();
@@ -227,7 +247,7 @@ public class ConversationStore {
         .observeOn(Schedulers.immediate())
         .subscribeOn(Schedulers.from(dbThread))
         .subscribe(
-                __ -> broadcastUpdatedChatMessage(user.getTokenId(), message),
+                __ -> broadcastUpdatedChatMessage(receiver.getThreadId(), message),
                 this::handleError
         );
     }

@@ -27,6 +27,7 @@ import com.tokenbrowser.crypto.signal.model.DecryptedSignalMessage;
 import com.tokenbrowser.crypto.signal.store.ProtocolStore;
 import com.tokenbrowser.manager.store.ConversationStore;
 import com.tokenbrowser.model.local.Group;
+import com.tokenbrowser.model.local.Recipient;
 import com.tokenbrowser.model.local.SendState;
 import com.tokenbrowser.model.local.User;
 import com.tokenbrowser.model.sofa.Init;
@@ -204,7 +205,7 @@ public class SofaMessageReceiver {
                 .getRecipientManager()
                 .getUserFromTokenId(signalMessage.getSource())
                 .subscribe(
-                        (user) -> this.saveIncomingMessageFromUserToDatabase(user, signalMessage),
+                        (sender) -> this.saveIncomingMessageToDatabase(sender, signalMessage),
                         ex -> LogUtil.e(getClass(), "Error getting user. " + ex)
                 );
     }
@@ -229,32 +230,34 @@ public class SofaMessageReceiver {
         return attachmentFile != null ? attachmentFile.getAbsolutePath() : null;
     }
 
-    private void saveIncomingMessageFromUserToDatabase(final User user, final DecryptedSignalMessage signalMessage) {
+    private void saveIncomingMessageToDatabase(final User sender, final DecryptedSignalMessage signalMessage) {
         final SofaMessage remoteMessage = new SofaMessage()
-                .makeNew(user, signalMessage.getBody())
+                .makeNew(sender, signalMessage.getBody())
                 .setAttachmentFilePath(signalMessage.getAttachmentFilePath())
                 .setSendState(SendState.STATE_RECEIVED);
+        final Recipient senderRecipient = new Recipient(sender);
+
         if (remoteMessage.getType() == SofaType.PAYMENT) {
             // Don't render incoming SOFA::Payments,
             // but ensure we have the sender cached.
-            fetchAndCacheIncomingPaymentSender(user);
+            fetchAndCacheIncomingPaymentSender(sender);
             return;
         } else if(remoteMessage.getType() == SofaType.PAYMENT_REQUEST) {
             generatePayloadWithLocalAmountEmbedded(remoteMessage)
                     .subscribe((updatedPayload) -> {
                                 remoteMessage.setPayload(updatedPayload);
-                                this.conversationStore.saveNewMessage(user, remoteMessage);
+                                this.conversationStore.saveNewMessage(senderRecipient, remoteMessage);
                             },
                             this::handleError);
             return;
         } else if (remoteMessage.getType() == SofaType.INIT_REQUEST) {
             // Don't render initRequests,
             // but respond to them.
-            respondToInitRequest(user, remoteMessage);
+            respondToInitRequest(sender, remoteMessage);
             return;
         }
 
-        this.conversationStore.saveNewMessage(user, remoteMessage);
+        this.conversationStore.saveNewMessage(senderRecipient, remoteMessage);
     }
 
     private void handleError(final Throwable throwable) {
@@ -268,10 +271,11 @@ public class SofaMessageReceiver {
             final String payload = SofaAdapters.get().toJson(initMessage);
             final SofaMessage newSofaMessage = new SofaMessage().makeNew(sender, payload);
 
+            final Recipient recipient = new Recipient(sender);
             BaseApplication
                     .get()
                     .getSofaMessageManager()
-                    .sendMessage(sender, newSofaMessage);
+                    .sendMessage(recipient, newSofaMessage);
         } catch (final IOException e) {
             LogUtil.exception(getClass(), "Failed to respond to incoming init request", e);
         }
