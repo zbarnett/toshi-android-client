@@ -32,6 +32,7 @@ import com.tokenbrowser.R;
 import com.tokenbrowser.model.local.SendState;
 import com.tokenbrowser.util.ImageUtil;
 import com.tokenbrowser.view.adapter.listeners.OnItemClickListener;
+import com.vdurmont.emoji.EmojiManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +44,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public final class TextViewHolder extends RecyclerView.ViewHolder {
 
     private @NonNull TextView message;
+    private @NonNull TextView emojiMessage;
     private @Nullable CircleImageView avatar;
     private @Nullable ImageView sentStatus;
 
@@ -53,6 +55,7 @@ public final class TextViewHolder extends RecyclerView.ViewHolder {
     public TextViewHolder(final View v) {
         super(v);
         this.message = (TextView) v.findViewById(R.id.message);
+        this.emojiMessage = (TextView) v.findViewById(R.id.emoji_message);
         this.avatar = (CircleImageView) v.findViewById(R.id.avatar);
         this.sentStatus = (ImageView) v.findViewById(R.id.sent_status);
     }
@@ -73,21 +76,28 @@ public final class TextViewHolder extends RecyclerView.ViewHolder {
     }
 
     public TextViewHolder draw() {
-        showText();
+        renderText();
         renderAvatar();
         setSendState();
         return this;
     }
 
-    private void showText() {
-        this.message.setText(this.text);
+    private void renderText() {
+        if (this.text == null) return;
+
+        if (EmojiManager.isOnlyEmojis(this.text)) {
+            this.message.setVisibility(View.GONE);
+            this.emojiMessage.setVisibility(View.VISIBLE);
+            this.emojiMessage.setText(this.text);
+        } else {
+            this.emojiMessage.setVisibility(View.GONE);
+            this.message.setVisibility(View.VISIBLE);
+            this.message.setText(this.text);
+        }
     }
 
     private void renderAvatar() {
-        if (this.avatar == null) {
-            return;
-        }
-
+        if (this.avatar == null) return;
         ImageUtil.load(this.avatarUri, this.avatar);
     }
 

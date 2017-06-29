@@ -55,4 +55,12 @@
         android:textSize="16sp"
         tools:text="Remote Message! www.test.com"  />
 
+    <TextView
+        android:id="@+id/emoji_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxWidth="270dp"
+        android:layout_gravity="center_vertical"
+        android:textSize="50sp"/>
+
 </LinearLayout>

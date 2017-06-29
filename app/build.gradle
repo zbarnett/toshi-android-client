@@ -125,8 +125,8 @@ dependencies {
             //UI
             'com.beloo.widget:ChipsLayoutManager:0.3.4.1@aar',
             'com.github.toshiapp:cropiwa:v1.0.1',
-            'com.github.toshiapp:ahbottomnavigation:v2.0.7'
-
+            'com.github.toshiapp:ahbottomnavigation:v2.0.7',
+            'com.vdurmont:emoji-java:3.2.0',
     )
 
     compile('com.crashlytics.sdk.android:crashlytics:2.6.2@aar') {
@@ -220,6 +220,7 @@ dependencyVerification {
             'com.android.support:support-media-compat:656f810ff0725282dba86f2c1f4ab0940b0724ca84560ab48217a335ec4be483',
             'com.android.support:support-core-utils:5e9035e6b11e798d5c6e89355219192d8fe130965e34794887723b5472e4ec1a',
             'com.android.support:support-fragment:d262cac1a910ee5093a2853b8bb14642011290d50bf4078545113d2d789b84c2',
+            'com.vdurmont:emoji-java:3c0caf2e62164066c860bbd02a8f4e768cb1016735a256df62a8a4521946d1f2',
     ]
 }
 
