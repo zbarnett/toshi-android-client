@@ -1,6 +1,4 @@
-![Token Android Cover](https://raw.githubusercontent.com/tokenbrowser/token-android-client/master/images/header.png)
-
-![Screenshots](https://raw.githubusercontent.com/tokenbrowser/token-android-client/master/images/screens.png)
+![Token Android Cover](https://raw.githubusercontent.com/toshiapp/toshi-android-client/master/images/header.png)
 
 Getting Started
 ===============
@@ -13,7 +11,7 @@ Getting Started
 Adding a dependency
 ===================
 
-The plugin [gradle-witness](https://github.com/WhisperSystems/gradle-witness) to verify dependencies. You will
+The plugin [gradle-witness](https://github.com/WhisperSystems/gradle-witness) is used to verify dependencies. You will
 need to add the relevant checksums to build.gradle. More information can be found on the gradle-witness project.
 
 Making a new build for Play store (Dev only)
@@ -33,7 +31,7 @@ Making a new build for Play store (Dev only)
 
 
 ```
-	Copyright (c) 2017 Token Browser, Inc
+	Copyright (c) 2017 Toshi Browser, Inc
 
 	This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
