@@ -15,6 +15,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.jakewharton.rxbinding.widget.RxTextView;
 import com.toshi.BuildConfig;
@@ -29,6 +30,7 @@ import com.toshi.util.ImageUtil;
 import com.toshi.util.LogUtil;
 import com.toshi.util.PermissionUtil;
 import com.toshi.view.BaseApplication;
+import com.toshi.view.activity.ChatActivity;
 import com.toshi.view.activity.GroupSetupActivity;
 import com.toshi.view.adapter.GroupParticipantAdapter;
 import com.toshi.view.custom.HorizontalLineDivider;
@@ -99,10 +101,25 @@ public class GroupSetupPresenter implements Presenter<GroupSetupActivity> {
                     .getSofaMessageManager()
                     ::createGroup
                 ).subscribe(
-                        __ -> LogUtil.i(getClass(), "Group created."),
-                        ex -> LogUtil.e(getClass(), "Group creation failed: " + ex)
+                        this::handleGroupCreated,
+                        this::handleGroupCreationFailed
                 );
         this.subscriptions.add(subscription);
+    }
+
+    private void handleGroupCreated(final Group group) {
+        if (this.activity == null) return;
+        final Intent intent = new Intent(this.activity, ChatActivity.class)
+                .putExtra(ChatActivity.EXTRA__THREAD_ID, group.getId());
+
+        this.activity.startActivity(intent);
+        this.activity.finish();
+    }
+
+    private void handleGroupCreationFailed(final Throwable throwable) {
+        LogUtil.e(getClass(), "Unable to create group. " + throwable);
+        if (this.activity == null) return;
+        Toast.makeText(this.activity, R.string.error__group_creation, Toast.LENGTH_LONG).show();
     }
 
     private Single<Bitmap> generateAvatar() {
