@@ -17,7 +17,8 @@
   -->
 
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -66,134 +67,203 @@
                 android:orientation="vertical"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
                 android:layout_marginRight="@dimen/activity_horizontal_margin">
+                
+                <android.support.v4.widget.Space
+                    android:layout_width="0dp"
+                    android:layout_height="35dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="30dp"
-                    android:textSize="18sp"
-                    style="@style/TextStyleMedium"
+                    android:textSize="24sp"
                     android:text="@string/add_money_to_wallet"/>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/activity_horizontal_margin"
-                    android:textSize="14sp"
-                    android:textColor="@color/textColorSecondary"
-                    android:text="@string/deposit_info_message"/>
+                <android.support.v4.widget.Space
+                    android:layout_width="0dp"
+                    android:layout_height="13dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="30dp"
-                    android:textSize="16sp"
+                    android:textSize="14sp"
                     android:textColor="@color/textColorPrimary"
+                    android:text="@string/deposit_info_message"/>
+
+                <android.support.v4.widget.Space
+                    android:layout_width="0dp"
+                    android:layout_height="30dp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/divider"/>
+
+                <android.support.v4.widget.Space
+                    android:layout_width="0dp"
+                    android:layout_height="35dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    android:textColor="@color/subTitleTextColor"
                     style="@style/TextStyleMedium"
                     android:text="@string/eth_deposit_method_1"/>
 
+                <android.support.v4.widget.Space
+                    android:layout_width="0dp"
+                    android:layout_height="18sp" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/activity_horizontal_margin"
                     android:textSize="14sp"
-                    android:textColor="@color/textColorSecondary"
+                    android:textColor="@color/textColorPrimary"
                     android:text="@string/eth_deposit_method_1_message"/>
 
-                <LinearLayout
+                <android.support.v4.widget.Space
+                    android:layout_width="0dp"
+                    android:layout_height="9dp" />
+
+                <TextView
+                    android:id="@+id/owner_address"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="30dp">
+                    android:textSize="14sp"
+                    android:textColor="@color/textColorPrimary"
+                    tools:text="0x20302385903825982853"/>
 
-                    <ImageView
-                        android:id="@+id/qr_code"
-                        android:layout_width="100dp"
-                        android:layout_height="100dp" />
+                <android.support.v4.widget.Space
+                    android:layout_width="0dp"
+                    android:layout_height="15dp" />
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                        android:gravity="center_vertical">
+                <TextView
+                    android:id="@+id/copy_to_clipboard"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+                    android:background="?android:selectableItemBackground"
+                    android:textSize="14sp"
+                    android:textColor="@color/colorPrimary"
+                    style="@style/TextStyleMedium"
+                    android:text="@string/copy_to_clipboard"/>
 
-                        <TextView
-                            android:id="@+id/owner_address"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:textSize="14sp"
-                            android:textColor="@color/textColorSecondary" />
+                <android.support.v4.widget.Space
+                    android:layout_width="0dp"
+                    android:layout_height="29dp" />
 
-                        <Button
-                            android:id="@+id/copy_to_clipboard"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
-                            style="@style/FlatButton"
-                            android:enabled="false"
-                            android:textSize="16sp"
-                            android:textColor="@color/colorPrimary"
-                            android:text="@string/copy_to_clipboard"/>
+                <ImageView
+                    android:id="@+id/qr_code"
+                    android:layout_width="220dp"
+                    android:layout_height="220dp"
+                    android:layout_gravity="center_horizontal"/>
 
-                    </LinearLayout>
-                </LinearLayout>
+                <android.support.v4.widget.Space
+                    android:layout_width="0dp"
+                    android:layout_height="30dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/activity_horizontal_margin"
                     android:textSize="14sp"
                     android:textColor="@color/error_color"
                     android:text="@string/eth_deposit_testnet_warning"/>
 
+                <android.support.v4.widget.Space
+                    android:layout_width="0dp"
+                    android:layout_height="30sp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/divider"/>
+
+                <android.support.v4.widget.Space
+                    android:layout_width="0dp"
+                    android:layout_height="35sp" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="30dp"
-                    android:textSize="16sp"
+                    android:textSize="14sp"
+                    android:textColor="@color/subTitleTextColor"
                     style="@style/TextStyleMedium"
                     android:text="@string/eth_deposit_method_2"/>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/activity_horizontal_margin"
-                    android:textSize="14sp"
-                    android:textColor="@color/textColorSecondary"
-                    android:text="@string/eth_deposit_method_2_message"/>
+                <android.support.v4.widget.Space
+                    android:layout_width="0dp"
+                    android:layout_height="18dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="30dp"
-                    android:textSize="16sp"
+                    android:textSize="14sp"
+                    android:textColor="@color/textColorPrimary"
+                    android:text="@string/eth_deposit_method_2_message"/>
+
+                <android.support.v4.widget.Space
+                    android:layout_width="0dp"
+                    android:layout_height="30sp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/divider"/>
+
+                <android.support.v4.widget.Space
+                    android:layout_width="0dp"
+                    android:layout_height="35sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    android:textColor="@color/subTitleTextColor"
                     style="@style/TextStyleMedium"
                     android:text="@string/eth_deposit_method_3"/>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/activity_horizontal_margin"
-                    android:textSize="14sp"
-                    android:textColor="@color/textColorSecondary"
-                    android:text="@string/eth_deposit_method_3_message"/>
+                <android.support.v4.widget.Space
+                    android:layout_width="0dp"
+                    android:layout_height="18dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="30dp"
-                    android:textSize="16sp"
+                    android:textSize="14sp"
+                    android:textColor="@color/textColorPrimary"
+                    android:text="@string/eth_deposit_method_3_message"/>
+
+                <android.support.v4.widget.Space
+                    android:layout_width="0dp"
+                    android:layout_height="30sp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/divider"/>
+
+                <android.support.v4.widget.Space
+                    android:layout_width="0dp"
+                    android:layout_height="35sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    android:textColor="@color/subTitleTextColor"
                     style="@style/TextStyleMedium"
                     android:text="@string/eth_deposit_method_4"/>
 
+                <android.support.v4.widget.Space
+                    android:layout_width="0dp"
+                    android:layout_height="18dp" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/activity_horizontal_margin"
                     android:textSize="14sp"
-                    android:textColor="@color/textColorSecondary"
+                    android:textColor="@color/textColorPrimary"
                     android:text="@string/eth_deposit_method_4_message" />
 
                 <android.support.v4.widget.Space

@@ -104,7 +104,7 @@
     <string name="add_money_to_wallet">Add Money To My Wallet</string>
     <string name="deposit_info_message">You can add money to your account in a variety of ways</string>
     <string name="eth_deposit_method_1">1. Send ethereum from another wallet</string>
-    <string name="eth_deposit_method_1_message">Send to this address to top up your wallet</string>
+    <string name="eth_deposit_method_1_message">Send to this address to top up your wallet:</string>
     <string name="copy_to_clipboard">Copy to Clipboard</string>
     <string name="eth_deposit_method_2">2. Find a local exchanger</string>
     <string name="eth_deposit_method_2_message">Find a local exchanger of ethereum in your country. You can give them cash and they will send you ethereum</string>
