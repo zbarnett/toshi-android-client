@@ -153,7 +153,7 @@ public class Payment {
     public Single<Integer> getPaymentDirection() {
         return BaseApplication
                 .get()
-                .getTokenManager()
+                .getToshiManager()
                 .getWallet()
                 .toObservable()
                 .map(this::getPaymentDirection)

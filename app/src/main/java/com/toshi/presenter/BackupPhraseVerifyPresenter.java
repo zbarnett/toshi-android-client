@@ -61,7 +61,7 @@ public class BackupPhraseVerifyPresenter implements Presenter<BackupPhraseVerify
     private void addBackupPhrase() {
         final Subscription sub =
                 BaseApplication.get()
-                .getTokenManager()
+                .getToshiManager()
                 .getWallet()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

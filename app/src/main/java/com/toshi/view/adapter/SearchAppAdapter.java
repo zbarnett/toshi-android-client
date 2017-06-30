@@ -30,7 +30,7 @@ import com.toshi.model.network.App;
 import com.toshi.view.adapter.listeners.OnItemClickListener;
 import com.toshi.view.adapter.viewholder.SearchAppDappViewHolder;
 import com.toshi.view.adapter.viewholder.SearchAppHeaderViewHolder;
-import com.toshi.view.adapter.viewholder.TokenEntityViewHolder;
+import com.toshi.view.adapter.viewholder.ToshiEntityViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -116,8 +116,8 @@ public class SearchAppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             }
             case ITEM:
             default: {
-                final View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item__token_entity, parent, false);
-                return new TokenEntityViewHolder(v);
+                final View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item__toshi_entity, parent, false);
+                return new ToshiEntityViewHolder(v);
             }
         }
     }
@@ -138,7 +138,7 @@ public class SearchAppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             }
             case ITEM:
             default: {
-                final TokenEntityViewHolder vh = (TokenEntityViewHolder) holder;
+                final ToshiEntityViewHolder vh = (ToshiEntityViewHolder) holder;
                 final App app = this.apps.get(position);
 
                 vh.setTokenEntity(app)

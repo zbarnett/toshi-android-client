@@ -20,7 +20,7 @@ package com.toshi.manager;
 
 import com.toshi.crypto.HDWallet;
 import com.toshi.crypto.signal.SignalPreferences;
-import com.toshi.manager.store.TokenMigration;
+import com.toshi.manager.store.DbMigration;
 import com.toshi.util.LogUtil;
 import com.toshi.util.SharedPrefsUtil;
 import com.toshi.view.BaseApplication;
@@ -34,7 +34,7 @@ import rx.Single;
 import rx.schedulers.Schedulers;
 import rx.subjects.BehaviorSubject;
 
-public class TokenManager {
+public class ToshiManager {
 
     public static final long CACHE_TIMEOUT = 1000 * 60 * 5;
 
@@ -52,7 +52,7 @@ public class TokenManager {
     private boolean areManagersInitialised = false;
     private RealmConfiguration realmConfig;
 
-    public TokenManager() {
+    public ToshiManager() {
         this.singleExecutor = Executors.newSingleThreadExecutor();
         this.appsManager = new AppsManager();
         this.balanceManager = new BalanceManager();
@@ -69,7 +69,7 @@ public class TokenManager {
                         ex -> LogUtil.i(getClass(), "Early init failed."));
     }
 
-    public Single<TokenManager> init() {
+    public Single<ToshiManager> init() {
         if (this.wallet != null && this.areManagersInitialised) {
             return Single.just(this);
         }
@@ -81,13 +81,13 @@ public class TokenManager {
                 .subscribeOn(Schedulers.from(this.singleExecutor));
     }
 
-    public Single<TokenManager> init(final HDWallet wallet) {
+    public Single<ToshiManager> init(final HDWallet wallet) {
         this.setWallet(wallet);
         return initManagers()
                 .subscribeOn(Schedulers.from(this.singleExecutor));
     }
 
-    public Single<TokenManager> tryInit() {
+    public Single<ToshiManager> tryInit() {
         if (this.wallet != null && this.areManagersInitialised) {
             return Single.just(this);
         }
@@ -103,7 +103,7 @@ public class TokenManager {
         this.walletSubject.onNext(wallet);
     }
 
-    private Single<TokenManager> initManagers() {
+    private Single<ToshiManager> initManagers() {
         return Single.fromCallable(() -> {
             if (!this.areManagersInitialised) {
                 initRealm();
@@ -126,7 +126,7 @@ public class TokenManager {
         this.realmConfig = new RealmConfiguration
                 .Builder()
                 .schemaVersion(15)
-                .migration(new TokenMigration(this.wallet))
+                .migration(new DbMigration(this.wallet))
                 .name(this.wallet.getOwnerAddress())
                 .encryptionKey(key)
                 .build();

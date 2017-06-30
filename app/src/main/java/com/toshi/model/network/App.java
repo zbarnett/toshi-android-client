@@ -18,10 +18,10 @@
 package com.toshi.model.network;
 
 import com.squareup.moshi.Json;
-import com.toshi.model.local.TokenEntity;
+import com.toshi.model.local.ToshiEntity;
 import com.toshi.view.adapter.SearchAppAdapter;
 
-public class App implements TokenEntity {
+public class App implements ToshiEntity {
     private String about;
     private String name;
     private String avatar;

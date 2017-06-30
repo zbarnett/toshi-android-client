@@ -95,7 +95,7 @@ public class BackupPhrasePresenter implements Presenter<BackupPhraseActivity> {
     private void addBackupPhrase() {
         final Subscription sub =
                 BaseApplication.get()
-                .getTokenManager()
+                .getToshiManager()
                 .getWallet()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

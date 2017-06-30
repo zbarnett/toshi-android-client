@@ -40,7 +40,7 @@ import com.toshi.R;
 import com.toshi.crypto.HDWallet;
 import com.toshi.crypto.signal.model.DecryptedSignalMessage;
 import com.toshi.crypto.util.TypeConverter;
-import com.toshi.manager.TokenManager;
+import com.toshi.manager.ToshiManager;
 import com.toshi.model.local.Recipient;
 import com.toshi.model.sofa.SofaMessage;
 import com.toshi.model.local.User;
@@ -77,10 +77,10 @@ public class GcmMessageReceiver extends GcmListenerService {
         LogUtil.exception(getClass(), "Error during incoming message", throwable);
     }
 
-    private Single<TokenManager> tryInitApp() {
+    private Single<ToshiManager> tryInitApp() {
         return BaseApplication
                 .get()
-                .getTokenManager()
+                .getToshiManager()
                 .tryInit();
     }
 
@@ -200,7 +200,7 @@ public class GcmMessageReceiver extends GcmListenerService {
 
         BaseApplication
                 .get()
-                .getTokenManager()
+                .getToshiManager()
                 .getWallet()
                 .subscribe(
                         (wallet) -> showOnlyIncomingPaymentNotification(wallet, payment),

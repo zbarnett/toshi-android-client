@@ -54,7 +54,7 @@ import java.io.IOException;
         this.sofaHost = new SOFAHost(this);
         this.wallet = BaseApplication
                         .get()
-                        .getTokenManager()
+                        .getToshiManager()
                         .getWallet()
                         .toBlocking()
                         .value();

@@ -19,12 +19,12 @@ package com.toshi.model.local;
 
 
 import com.squareup.moshi.Json;
-import com.toshi.manager.TokenManager;
+import com.toshi.manager.ToshiManager;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
-public class User extends RealmObject implements TokenEntity {
+public class User extends RealmObject implements ToshiEntity {
 
     @PrimaryKey
     @Json(name = "token_id")
@@ -96,7 +96,7 @@ public class User extends RealmObject implements TokenEntity {
     }
 
     public boolean needsRefresh() {
-        return System.currentTimeMillis() - cacheTimestamp > TokenManager.CACHE_TIMEOUT;
+        return System.currentTimeMillis() - cacheTimestamp > ToshiManager.CACHE_TIMEOUT;
     }
 
     @Override

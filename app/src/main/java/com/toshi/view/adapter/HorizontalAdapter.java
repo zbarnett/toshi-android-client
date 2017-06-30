@@ -23,14 +23,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.toshi.R;
-import com.toshi.model.local.TokenEntity;
+import com.toshi.model.local.ToshiEntity;
 import com.toshi.view.adapter.listeners.OnItemClickListener;
 import com.toshi.view.adapter.viewholder.HorizontalViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class HorizontalAdapter<T extends TokenEntity> extends RecyclerView.Adapter<HorizontalViewHolder> {
+public class HorizontalAdapter<T extends ToshiEntity> extends RecyclerView.Adapter<HorizontalViewHolder> {
 
     private List<T> elements;
     private OnItemClickListener<T> listener;

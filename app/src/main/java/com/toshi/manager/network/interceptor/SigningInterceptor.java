@@ -88,7 +88,7 @@ public class SigningInterceptor implements Interceptor {
     public HDWallet getWallet() {
             return BaseApplication
                     .get()
-                    .getTokenManager()
+                    .getToshiManager()
                     .getWallet()
                     .onErrorReturn(__ -> null)
                     .toBlocking()

@@ -30,11 +30,11 @@ import io.realm.RealmMigration;
 import io.realm.RealmObjectSchema;
 import io.realm.RealmSchema;
 
-public class TokenMigration implements RealmMigration {
+public class DbMigration implements RealmMigration {
 
     private final HDWallet wallet;
 
-    public TokenMigration(final HDWallet wallet) {
+    public DbMigration(final HDWallet wallet) {
         this.wallet = wallet;
     }
 
@@ -246,11 +246,11 @@ public class TokenMigration implements RealmMigration {
 
     @Override
     public int hashCode() {
-        return TokenMigration.class.hashCode();
+        return DbMigration.class.hashCode();
     }
 
     @Override
     public boolean equals(Object object) {
-        return object != null && object instanceof TokenMigration;
+        return object != null && object instanceof DbMigration;
     }
 }

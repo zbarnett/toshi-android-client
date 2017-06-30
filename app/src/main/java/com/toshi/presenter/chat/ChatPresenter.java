@@ -216,7 +216,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     private void getWallet() {
         final Subscription walletSub =
                 BaseApplication.get()
-                .getTokenManager()
+                .getToshiManager()
                 .getWallet()
                 .subscribeOn(Schedulers.io())
                 .subscribe(

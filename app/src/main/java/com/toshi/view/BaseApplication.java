@@ -28,7 +28,7 @@ import com.toshi.manager.BalanceManager;
 import com.toshi.manager.RecipientManager;
 import com.toshi.manager.ReputationManager;
 import com.toshi.manager.SofaMessageManager;
-import com.toshi.manager.TokenManager;
+import com.toshi.manager.ToshiManager;
 import com.toshi.manager.TransactionManager;
 import com.toshi.manager.UserManager;
 import com.toshi.service.NetworkChangeReceiver;
@@ -43,14 +43,14 @@ public final class BaseApplication extends MultiDexApplication {
     public static BaseApplication get() { return instance; }
     private final BehaviorSubject<Boolean> isConnectedSubject = BehaviorSubject.create();
 
-    private TokenManager tokenManager;
+    private ToshiManager toshiManager;
     private boolean inBackground = false;
 
     public final Realm getRealm() {
         if (Thread.currentThread().getId() == 1) {
             LogUtil.e(getClass(), "DB call done on Main Thread. Move this to a background thread.");
         }
-        return this.tokenManager.getRealm().toBlocking().value();
+        return this.toshiManager.getRealm().toBlocking().value();
     }
 
     @Override
@@ -75,14 +75,14 @@ public final class BaseApplication extends MultiDexApplication {
     }
 
     private void initTokenManager() {
-        this.tokenManager = new TokenManager();
+        this.toshiManager = new ToshiManager();
     }
 
 
     public void applicationResumed() {
         if (this.inBackground) {
             this.inBackground = false;
-            this.tokenManager.getSofaMessageManager().resumeMessageReceiving();
+            this.toshiManager.getSofaMessageManager().resumeMessageReceiving();
         }
     }
 
@@ -92,7 +92,7 @@ public final class BaseApplication extends MultiDexApplication {
         // http://stackoverflow.com/a/19920353
         if (level == ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN) {
             this.inBackground = true;
-            this.tokenManager.getSofaMessageManager().disconnect();
+            this.toshiManager.getSofaMessageManager().disconnect();
         }
         super.onTrimMemory(level);
     }
@@ -108,37 +108,37 @@ public final class BaseApplication extends MultiDexApplication {
     public boolean isInBackground() { return this.inBackground; }
 
 
-    public final TokenManager getTokenManager() {
-        return this.tokenManager;
+    public final ToshiManager getToshiManager() {
+        return this.toshiManager;
     }
 
     // Helper functions
-    // Unwrap the TokenManager container to reduce lines of code
+    // Unwrap the ToshiManager container to reduce lines of code
     public final SofaMessageManager getSofaMessageManager() {
-        return this.tokenManager.getSofaMessageManager();
+        return this.toshiManager.getSofaMessageManager();
     }
 
     public final TransactionManager getTransactionManager() {
-        return this.tokenManager.getTransactionManager();
+        return this.toshiManager.getTransactionManager();
     }
 
     public final UserManager getUserManager() {
-        return this.tokenManager.getUserManager();
+        return this.toshiManager.getUserManager();
     }
 
     public final RecipientManager getRecipientManager() {
-        return this.tokenManager.getRecipientManager();
+        return this.toshiManager.getRecipientManager();
     }
 
     public final BalanceManager getBalanceManager() {
-        return this.tokenManager.getBalanceManager();
+        return this.toshiManager.getBalanceManager();
     }
 
     public final AppsManager getAppsManager() {
-        return this.tokenManager.getAppsManager();
+        return this.toshiManager.getAppsManager();
     }
 
     public final ReputationManager getReputationManager() {
-        return this.tokenManager.getReputationManager();
+        return this.toshiManager.getReputationManager();
     }
 }

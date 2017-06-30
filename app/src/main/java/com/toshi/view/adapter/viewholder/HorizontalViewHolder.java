@@ -22,14 +22,14 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.toshi.R;
-import com.toshi.model.local.TokenEntity;
+import com.toshi.model.local.ToshiEntity;
 import com.toshi.util.ImageUtil;
 import com.toshi.view.adapter.listeners.OnItemClickListener;
 import com.toshi.view.custom.StarRatingView;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class HorizontalViewHolder<T extends TokenEntity> extends RecyclerView.ViewHolder {
+public class HorizontalViewHolder<T extends ToshiEntity> extends RecyclerView.ViewHolder {
     private TextView appLabel;
     private TextView appCategory;
     private StarRatingView ratingView;
@@ -59,8 +59,8 @@ public class HorizontalViewHolder<T extends TokenEntity> extends RecyclerView.Vi
         ImageUtil.load(elem.getAvatar(), this.appImage);
     }
 
-    public HorizontalViewHolder setOnClickListener(final OnItemClickListener<TokenEntity> listener,
-                                                   final TokenEntity elem) {
+    public HorizontalViewHolder setOnClickListener(final OnItemClickListener<ToshiEntity> listener,
+                                                   final ToshiEntity elem) {
         this.itemView.setOnClickListener(__ -> listener.onItemClick(elem));
         return this;
     }

@@ -29,7 +29,7 @@ import com.toshi.R;
 import com.toshi.manager.AppsManager;
 import com.toshi.manager.UserManager;
 import com.toshi.model.local.Dapp;
-import com.toshi.model.local.TokenEntity;
+import com.toshi.model.local.ToshiEntity;
 import com.toshi.model.local.User;
 import com.toshi.model.network.App;
 import com.toshi.util.BrowseType;
@@ -181,12 +181,12 @@ public class AppsPresenter implements Presenter<AppsFragment>{
 
     private void handleAppClicked(final Object elem) {
         if (this.fragment == null) return;
-        startProfileActivity(((TokenEntity)elem).getTokenId());
+        startProfileActivity(((ToshiEntity)elem).getTokenId());
     }
 
     private void handleUserClicked(final Object elem) {
         if (this.fragment == null) return;
-        startProfileActivity(((TokenEntity)elem).getTokenId());
+        startProfileActivity(((ToshiEntity)elem).getTokenId());
     }
 
     private void startProfileActivity(final String userAddress) {
@@ -350,7 +350,7 @@ public class AppsPresenter implements Presenter<AppsFragment>{
     private AppsManager getAppManager() {
         return BaseApplication
                 .get()
-                .getTokenManager()
+                .getToshiManager()
                 .getAppsManager();
     }
 
@@ -420,7 +420,7 @@ public class AppsPresenter implements Presenter<AppsFragment>{
     private UserManager getUserManager() {
         return BaseApplication
                 .get()
-                .getTokenManager()
+                .getToshiManager()
                 .getUserManager();
     }
 

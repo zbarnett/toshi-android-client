@@ -25,7 +25,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.toshi.R;
-import com.toshi.model.local.TokenEntity;
+import com.toshi.model.local.ToshiEntity;
 import com.toshi.model.local.User;
 import com.toshi.model.network.App;
 import com.toshi.util.ImageUtil;
@@ -33,7 +33,7 @@ import com.toshi.view.BaseApplication;
 import com.toshi.view.adapter.listeners.OnItemClickListener;
 import com.toshi.view.custom.StarRatingView;
 
-public class TokenEntityViewHolder<T extends TokenEntity> extends RecyclerView.ViewHolder {
+public class ToshiEntityViewHolder<T extends ToshiEntity> extends RecyclerView.ViewHolder {
 
     private @NonNull ImageView avatar;
     private @NonNull TextView displayName;
@@ -42,7 +42,7 @@ public class TokenEntityViewHolder<T extends TokenEntity> extends RecyclerView.V
     private @NonNull StarRatingView ratingView;
     private @NonNull TextView reviewCount;
 
-    public TokenEntityViewHolder(View itemView) {
+    public ToshiEntityViewHolder(View itemView) {
         super(itemView);
         this.avatar = (ImageView) itemView.findViewById(R.id.avatar);
         this.displayName = (TextView) itemView.findViewById(R.id.display_name);
@@ -52,7 +52,7 @@ public class TokenEntityViewHolder<T extends TokenEntity> extends RecyclerView.V
         this.reviewCount = (TextView) itemView.findViewById(R.id.review_count);
     }
 
-    public TokenEntityViewHolder setTokenEntity(final T elem) {
+    public ToshiEntityViewHolder setTokenEntity(final T elem) {
         ImageUtil.loadFromNetwork(elem.getAvatar(), this.avatar);
         this.displayName.setText(elem.getDisplayName());
         setInfo(elem);
@@ -80,7 +80,7 @@ public class TokenEntityViewHolder<T extends TokenEntity> extends RecyclerView.V
         }
     }
 
-    public TokenEntityViewHolder setOnClickListener(final OnItemClickListener<T> listener,
+    public ToshiEntityViewHolder setOnClickListener(final OnItemClickListener<T> listener,
                                                     final T elem) {
         this.itemView.setOnClickListener(__ -> listener.onItemClick(elem));
         return this;

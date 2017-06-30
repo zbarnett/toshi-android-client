@@ -25,7 +25,7 @@ import android.widget.Toast;
 
 import com.toshi.R;
 import com.toshi.crypto.HDWallet;
-import com.toshi.manager.TokenManager;
+import com.toshi.manager.ToshiManager;
 import com.toshi.util.SharedPrefsUtil;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.activity.MainActivity;
@@ -108,10 +108,10 @@ public class SignInPresenter implements Presenter<SignInActivity> {
         this.activity.getBinding().loadingSpinner.setVisibility(View.VISIBLE);
     }
 
-    private Single<TokenManager> initWallet(final HDWallet wallet) {
+    private Single<ToshiManager> initWallet(final HDWallet wallet) {
         return BaseApplication
                 .get()
-                .getTokenManager()
+                .getToshiManager()
                 .init(wallet);
     }
 

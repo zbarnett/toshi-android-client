@@ -75,7 +75,7 @@ public class LandingPresenter implements Presenter<LandingActivity> {
         final Subscription sub =
                 BaseApplication
                 .get()
-                .getTokenManager()
+                .getToshiManager()
                 .init()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

@@ -26,7 +26,7 @@ import android.support.v7.widget.RecyclerView;
 import com.toshi.R;
 import com.toshi.manager.AppsManager;
 import com.toshi.manager.UserManager;
-import com.toshi.model.local.TokenEntity;
+import com.toshi.model.local.ToshiEntity;
 import com.toshi.model.local.User;
 import com.toshi.model.network.App;
 import com.toshi.util.BrowseType;
@@ -53,7 +53,7 @@ public class BrowsePresenter implements Presenter<BrowseActivity> {
 
     private BrowseActivity activity;
     private CompositeSubscription subscriptions;
-    private List<? extends TokenEntity> browseList;
+    private List<? extends ToshiEntity> browseList;
 
     private boolean firstTimeAttaching = true;
     private int scrollPosition = 0;
@@ -131,7 +131,7 @@ public class BrowsePresenter implements Presenter<BrowseActivity> {
 
     private void handleItemClicked(final Object elem) {
         final Intent intent = new Intent(this.activity, ViewUserActivity.class)
-                .putExtra(ViewUserActivity.EXTRA__USER_ADDRESS, ((TokenEntity) elem).getTokenId());
+                .putExtra(ViewUserActivity.EXTRA__USER_ADDRESS, ((ToshiEntity) elem).getTokenId());
         this.activity.startActivity(intent);
     }
 
@@ -195,11 +195,11 @@ public class BrowsePresenter implements Presenter<BrowseActivity> {
     private AppsManager getAppManager() {
         return BaseApplication
                 .get()
-                .getTokenManager()
+                .getToshiManager()
                 .getAppsManager();
     }
 
-    private void handleApps(final List<? extends TokenEntity> apps) {
+    private void handleApps(final List<? extends ToshiEntity> apps) {
         getAdapter().setItems(apps);
         this.browseList = apps;
     }
@@ -245,11 +245,11 @@ public class BrowsePresenter implements Presenter<BrowseActivity> {
     private UserManager getUserManager() {
         return BaseApplication
                 .get()
-                .getTokenManager()
+                .getToshiManager()
                 .getUserManager();
     }
 
-    private void handleUsers(final List<? extends TokenEntity> users) {
+    private void handleUsers(final List<? extends ToshiEntity> users) {
         getAdapter().setItems(users);
         this.browseList = users;
     }

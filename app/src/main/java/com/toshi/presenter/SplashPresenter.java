@@ -70,7 +70,7 @@ public class SplashPresenter implements Presenter<SplashActivity> {
         final Subscription sub =
                 BaseApplication
                 .get()
-                .getTokenManager()
+                .getToshiManager()
                 .tryInit()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

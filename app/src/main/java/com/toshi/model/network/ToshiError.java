@@ -18,7 +18,7 @@
 package com.toshi.model.network;
 
 
-public class TokenError {
+public class ToshiError {
     private String id;
     private String message;
 }

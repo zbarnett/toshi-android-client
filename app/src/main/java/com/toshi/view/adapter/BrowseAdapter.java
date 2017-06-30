@@ -23,14 +23,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.toshi.R;
-import com.toshi.model.local.TokenEntity;
+import com.toshi.model.local.ToshiEntity;
 import com.toshi.view.adapter.listeners.OnItemClickListener;
-import com.toshi.view.adapter.viewholder.TokenEntityViewHolder;
+import com.toshi.view.adapter.viewholder.ToshiEntityViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class BrowseAdapter<T extends TokenEntity> extends RecyclerView.Adapter<TokenEntityViewHolder> {
+public class BrowseAdapter<T extends ToshiEntity> extends RecyclerView.Adapter<ToshiEntityViewHolder> {
 
     private final List<T> elems;
     private OnItemClickListener<T> listener;
@@ -51,14 +51,14 @@ public class BrowseAdapter<T extends TokenEntity> extends RecyclerView.Adapter<T
     }
 
     @Override
-    public TokenEntityViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        final View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item__token_entity, parent, false);
-        return new TokenEntityViewHolder(v);
+    public ToshiEntityViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        final View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item__toshi_entity, parent, false);
+        return new ToshiEntityViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(TokenEntityViewHolder holder, int position) {
-        final TokenEntity elem = this.elems.get(position);
+    public void onBindViewHolder(ToshiEntityViewHolder holder, int position) {
+        final ToshiEntity elem = this.elems.get(position);
         holder.setTokenEntity(elem)
                 .setOnClickListener(this.listener, elem);
     }

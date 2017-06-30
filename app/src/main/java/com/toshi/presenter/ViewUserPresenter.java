@@ -359,7 +359,7 @@ public final class ViewUserPresenter implements
     private User getLocalUser() {
         return BaseApplication
                 .get()
-                .getTokenManager()
+                .getToshiManager()
                 .getUserManager()
                 .getCurrentUser()
                 .toBlocking()

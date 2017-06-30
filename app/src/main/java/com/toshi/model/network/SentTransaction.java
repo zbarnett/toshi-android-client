@@ -22,9 +22,9 @@ import java.util.List;
 
 public class SentTransaction {
     private String tx_hash;
-    private List<TokenError> errors;
+    private List<ToshiError> errors;
 
-    public List<TokenError> getErrors() {
+    public List<ToshiError> getErrors() {
         return this.errors;
     }
 
