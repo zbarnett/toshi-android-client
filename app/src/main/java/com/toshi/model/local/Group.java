@@ -84,8 +84,7 @@ public class Group extends RealmObject {
     private Single<List<User>> lookupUsers(final List<String> userIds) {
         return Observable
                 .from(userIds)
-                .map(uid -> uid)
-                .switchMap( uid -> BaseApplication
+                .flatMap( uid -> BaseApplication
                             .get()
                             .getRecipientManager()
                             .getUserFromTokenId(uid)
