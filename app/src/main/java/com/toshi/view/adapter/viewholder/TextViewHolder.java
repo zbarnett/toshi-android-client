@@ -1,5 +1,5 @@
 /*
- * 	Copyright (c) 2017. Token Browser, Inc
+ * 	Copyright (c) 2017. Toshi Browser, Inc
  *
  * 	This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.tokenbrowser.view.adapter.viewholder;
+package com.toshi.view.adapter.viewholder;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -28,10 +28,10 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.tokenbrowser.R;
-import com.tokenbrowser.model.local.SendState;
-import com.tokenbrowser.util.ImageUtil;
-import com.tokenbrowser.view.adapter.listeners.OnItemClickListener;
+import com.toshi.R;
+import com.toshi.model.local.SendState;
+import com.toshi.util.ImageUtil;
+import com.toshi.view.adapter.listeners.OnItemClickListener;
 import com.vdurmont.emoji.EmojiManager;
 
 import java.util.ArrayList;

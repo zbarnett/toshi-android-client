@@ -71,7 +71,7 @@
     <string name="profile_username">Username</string>
     <string name="about">About</string>
     <string name="contact_information_label">Contact information</string>
-    <string name="contact_information">tokenbrowser@gmail.com</string>
+    <string name="contact_information">contact@toshi.org</string>
     <string name="open_source_licenses">Legal</string>
     <string name="about__licenses">Open Source Licenses</string>
     <string name="error__app_loading">There was a problem loading this app</string>

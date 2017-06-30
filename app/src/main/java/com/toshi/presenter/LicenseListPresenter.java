@@ -1,5 +1,5 @@
 /*
- * 	Copyright (c) 2017. Token Browser, Inc
+ * 	Copyright (c) 2017. Toshi Browser, Inc
  *
  * 	This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.tokenbrowser.presenter;
+package com.toshi.presenter;
 
 import android.content.Intent;
 import android.support.v4.content.ContextCompat;
@@ -23,12 +23,12 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import com.tokenbrowser.model.local.Library;
-import com.tokenbrowser.R;
-import com.tokenbrowser.view.activity.LicenseActivity;
-import com.tokenbrowser.view.activity.LicenseListActivity;
-import com.tokenbrowser.view.adapter.LibraryAdapter;
-import com.tokenbrowser.view.custom.HorizontalLineDivider;
+import com.toshi.model.local.Library;
+import com.toshi.R;
+import com.toshi.view.activity.LicenseActivity;
+import com.toshi.view.activity.LicenseListActivity;
+import com.toshi.view.adapter.LibraryAdapter;
+import com.toshi.view.custom.HorizontalLineDivider;
 
 import java.util.ArrayList;
 import java.util.List;
