@@ -75,7 +75,7 @@
         android:orientation="vertical"
         android:layout_gravity="right|center_vertical">
 
-        <com.tokenbrowser.view.custom.StarRatingView
+        <com.toshi.view.custom.StarRatingView
             android:id="@+id/rating_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />

@@ -203,7 +203,7 @@
                             android:textSize="49sp"
                             android:textColor="@color/ratingPrimary" />
 
-                        <com.tokenbrowser.view.custom.StarRatingView
+                        <com.toshi.view.custom.StarRatingView
                             android:id="@+id/rating_view"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content" />
@@ -221,7 +221,7 @@
 
                     </LinearLayout>
 
-                    <com.tokenbrowser.view.custom.RatingInfo
+                    <com.toshi.view.custom.RatingInfo
                         android:id="@+id/rating_info"
                         android:layout_width="match_parent"
                         android:layout_height="110dp"

@@ -36,7 +36,7 @@
         android:layout_marginLeft="4dp"
         app:srcCompat="@drawable/star_grey"/>
 
-    <com.tokenbrowser.view.custom.RatingBar
+    <com.toshi.view.custom.RatingBar
         android:id="@+id/rating_bar"
         android:layout_width="match_parent"
         android:layout_height="16dp"

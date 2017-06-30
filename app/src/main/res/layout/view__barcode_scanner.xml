@@ -26,7 +26,7 @@
         app:zxing_framing_rect_width="250dp"
         app:zxing_framing_rect_height="250dp"/>
 
-    <com.tokenbrowser.view.custom.FramedViewfinderView
+    <com.toshi.view.custom.FramedViewfinderView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/zxing_viewfinder_view"

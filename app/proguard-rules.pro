@@ -13,15 +13,13 @@
 -keepattributes Annotation
 -dontwarn retrofit2.adapter.rxjava.CompletableHelper$**
 
--keep enum com.tokenbrowser.network.ws.model.** { *; }
-
 -keepclassmembers class * implements android.os.Parcelable {
     public static final android.os.Parcelable$Creator *;
 }
 
--keep class com.tokenbrowser.model.** { *; }
--keep class com.tokenbrowser.network.** { *; }
--keep class com.tokenbrowser.crypto.signal.model.** { *; }
+-keep class com.toshi.model.** { *; }
+-keep class com.toshi.network.** { *; }
+-keep class com.toshi.crypto.signal.model.** { *; }
 
 -keep class org.spongycastle.** {*;}
 
@@ -83,4 +81,4 @@
 -keepattributes SourceFile,LineNumberTable
 -keep public class * extends java.lang.Exception
 
--keep class com.tokenbrowser.manager.network.image.GlideOkHttpStack
+-keep class com.toshi.manager.network.image.GlideOkHttpStack

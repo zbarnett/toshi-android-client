@@ -72,7 +72,7 @@
 
         </LinearLayout>
 
-        <com.tokenbrowser.view.custom.BalanceBar
+        <com.toshi.view.custom.BalanceBar
             android:id="@+id/balance_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -126,7 +126,7 @@
 
             </ViewSwitcher>
 
-            <com.tokenbrowser.view.custom.ControlView
+            <com.toshi.view.custom.ControlView
                 android:id="@+id/control_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -153,7 +153,7 @@
 
         <include layout="@layout/horizontal_divider"/>
 
-        <com.tokenbrowser.view.custom.ChatInputView
+        <com.toshi.view.custom.ChatInputView
             android:id="@+id/chat_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

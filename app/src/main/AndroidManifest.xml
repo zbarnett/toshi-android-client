@@ -18,7 +18,7 @@
 
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.tokenbrowser">
+    package="com.toshi">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -34,11 +34,11 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:hardwareAccelerated="true"
-        android:name="com.tokenbrowser.view.BaseApplication"
+        android:name="com.toshi.view.BaseApplication"
         android:theme="@style/AppTheme">
 
         <activity
-            android:name="com.tokenbrowser.view.activity.SplashActivity"
+            android:name="com.toshi.view.activity.SplashActivity"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -61,52 +61,52 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="com.tokenbrowser.view.activity.MainActivity"
+        <activity android:name="com.toshi.view.activity.MainActivity"
                   android:windowSoftInputMode="adjustPan|stateHidden" />
 
-        <activity android:name="com.tokenbrowser.view.activity.ChatActivity"
-                  android:parentActivityName="com.tokenbrowser.view.activity.MainActivity"
+        <activity android:name="com.toshi.view.activity.ChatActivity"
+                  android:parentActivityName="com.toshi.view.activity.MainActivity"
                   android:windowSoftInputMode="stateUnchanged"
                   android:launchMode="singleTask">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.tokenbrowser.view.activity.MainActivity" />
+                android:value="com.toshi.view.activity.MainActivity" />
         </activity>
 
-        <activity android:name="com.tokenbrowser.view.activity.ViewUserActivity" />
-        <activity android:name="com.tokenbrowser.view.activity.ViewProfileActivity" />
-        <activity android:name="com.tokenbrowser.view.activity.EditProfileActivity" />
-        <activity android:name="com.tokenbrowser.view.activity.UserSearchActivity" />
-        <activity android:name="com.tokenbrowser.view.activity.AmountActivity" />
-        <activity android:name="com.tokenbrowser.view.activity.ScannerActivity"
+        <activity android:name="com.toshi.view.activity.ViewUserActivity" />
+        <activity android:name="com.toshi.view.activity.ViewProfileActivity" />
+        <activity android:name="com.toshi.view.activity.EditProfileActivity" />
+        <activity android:name="com.toshi.view.activity.UserSearchActivity" />
+        <activity android:name="com.toshi.view.activity.AmountActivity" />
+        <activity android:name="com.toshi.view.activity.ScannerActivity"
                   android:theme="@style/FullScreenTheme"/>
-        <activity android:name="com.tokenbrowser.view.activity.ChooseContactsActivity" />
-        <activity android:name="com.tokenbrowser.view.activity.AboutActivity" />
-        <activity android:name="com.tokenbrowser.view.activity.LicenseListActivity" />
-        <activity android:name="com.tokenbrowser.view.activity.LicenseActivity" />
-        <activity android:name="com.tokenbrowser.view.activity.ViewAppActivity" />
-        <activity android:name="com.tokenbrowser.view.activity.TrustedFriendsActivity" />
-        <activity android:name="com.tokenbrowser.view.activity.BackupPhraseInfoActivity" />
-        <activity android:name="com.tokenbrowser.view.activity.BackupPhraseActivity" />
-        <activity android:name="com.tokenbrowser.view.activity.BackupPhraseVerifyActivity" />
-        <activity android:name="com.tokenbrowser.view.activity.DepositActivity" />
-        <activity android:name="com.tokenbrowser.view.activity.FullscreenImageActivity"/>
-        <activity android:name="com.tokenbrowser.view.activity.AttachmentConfirmationActivity" />
-        <activity android:name="com.tokenbrowser.view.activity.SignInActivity" />
-        <activity android:name="com.tokenbrowser.view.activity.SignOutActivity"
+        <activity android:name="com.toshi.view.activity.ChooseContactsActivity" />
+        <activity android:name="com.toshi.view.activity.AboutActivity" />
+        <activity android:name="com.toshi.view.activity.LicenseListActivity" />
+        <activity android:name="com.toshi.view.activity.LicenseActivity" />
+        <activity android:name="com.toshi.view.activity.ViewAppActivity" />
+        <activity android:name="com.toshi.view.activity.TrustedFriendsActivity" />
+        <activity android:name="com.toshi.view.activity.BackupPhraseInfoActivity" />
+        <activity android:name="com.toshi.view.activity.BackupPhraseActivity" />
+        <activity android:name="com.toshi.view.activity.BackupPhraseVerifyActivity" />
+        <activity android:name="com.toshi.view.activity.DepositActivity" />
+        <activity android:name="com.toshi.view.activity.FullscreenImageActivity"/>
+        <activity android:name="com.toshi.view.activity.AttachmentConfirmationActivity" />
+        <activity android:name="com.toshi.view.activity.SignInActivity" />
+        <activity android:name="com.toshi.view.activity.SignOutActivity"
                   android:theme="@style/SplashTheme" />
-        <activity android:name="com.tokenbrowser.view.activity.QrCodeActivity"/>
-        <activity android:name="com.tokenbrowser.view.activity.TransactionOverviewActivity" />
-        <activity android:name="com.tokenbrowser.view.activity.QrCodeHandlerActivity" />
-        <activity android:name="com.tokenbrowser.view.activity.WebViewActivity" />
-        <activity android:name="com.tokenbrowser.view.activity.ImageCropActivity"
+        <activity android:name="com.toshi.view.activity.QrCodeActivity"/>
+        <activity android:name="com.toshi.view.activity.TransactionOverviewActivity" />
+        <activity android:name="com.toshi.view.activity.QrCodeHandlerActivity" />
+        <activity android:name="com.toshi.view.activity.WebViewActivity" />
+        <activity android:name="com.toshi.view.activity.ImageCropActivity"
                   android:theme="@style/DarkTheme"/>
-        <activity android:name="com.tokenbrowser.view.activity.CurrencyActivity" />
-        <activity android:name="com.tokenbrowser.view.activity.LandingActivity"
+        <activity android:name="com.toshi.view.activity.CurrencyActivity" />
+        <activity android:name="com.toshi.view.activity.LandingActivity"
             android:theme="@style/DarkTheme"/>
-        <activity android:name="com.tokenbrowser.view.activity.GroupParticipantsActivity"/>
-        <activity android:name="com.tokenbrowser.view.activity.GroupSetupActivity"/>
-        <activity android:name="com.tokenbrowser.view.activity.BrowseActivity"/>
+        <activity android:name="com.toshi.view.activity.GroupParticipantsActivity"/>
+        <activity android:name="com.toshi.view.activity.GroupSetupActivity"/>
+        <activity android:name="com.toshi.view.activity.BrowseActivity"/>
 
         <meta-data
             android:name="io.fabric.ApiKey"
@@ -124,12 +124,12 @@
         </receiver>
 
         <receiver
-            android:name="com.tokenbrowser.service.NotificationDismissedReceiver"
+            android:name="com.toshi.service.NotificationDismissedReceiver"
             android:exported="false" >
         </receiver>
 
         <receiver
-            android:name="com.tokenbrowser.service.NetworkChangeReceiver">
+            android:name="com.toshi.service.NetworkChangeReceiver">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
                 <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
@@ -137,7 +137,7 @@
         </receiver>
 
         <service
-            android:name="com.tokenbrowser.service.GcmMessageReceiver"
+            android:name="com.toshi.service.GcmMessageReceiver"
             android:exported="false" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
@@ -145,7 +145,7 @@
         </service>
 
         <service
-            android:name="com.tokenbrowser.service.InstanceIdService"
+            android:name="com.toshi.service.InstanceIdService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.android.gms.iid.InstanceID"/>
@@ -153,7 +153,7 @@
         </service>
 
         <service
-            android:name="com.tokenbrowser.service.RegistrationIntentService"
+            android:name="com.toshi.service.RegistrationIntentService"
             android:exported="false">
         </service>
 
@@ -169,7 +169,7 @@
         </provider>
 
         <meta-data
-            android:name="com.tokenbrowser.manager.network.image.GlideOkHttpStack"
+            android:name="com.toshi.manager.network.image.GlideOkHttpStack"
             android:value="GlideModule"/>
 
     </application>
