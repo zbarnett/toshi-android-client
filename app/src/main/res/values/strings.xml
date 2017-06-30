@@ -171,7 +171,7 @@
     <string name="unable_to_create_wallet">Unable to create wallet</string>
     <string name="sign_in_length_error_message">Please insert 12 words</string>
     <string name="favorite">Favorite</string>
-    <string name="my_qr_code">My QR Code</string>
+    <string name="profile_qr_code">Profile QR Code</string>
     <string name="transactions">Transactions</string>
     <string name="payment_to">to</string>
     <string name="payment_from">from</string>
@@ -261,4 +261,6 @@
     <string name="dialog__migration_title">Toshi Wallet Changes</string>
     <string name="dialog__migration_message">We have made changes to make Toshi compatible with other services - as a result your balance will appear to be reset. As this is only testnet ETH, you don\'t need to take any action. If you do want to recover your balance for any reason, you can read how to do it here: http://developers.tokenbrowser.com/page/migrating-your-token-wallet</string>
     <string name="error__group_creation">Unable to create group</string>
+    <string name="qr_code_message">Use this QR code to let others add you on Toshi.</string>
+    <string name="qr_code_sub_title">Profile QR COde</string>
 </resources>

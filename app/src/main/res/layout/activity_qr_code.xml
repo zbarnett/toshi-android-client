@@ -52,46 +52,64 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 style="@style/Toolbar.TitleText"
-                android:text="@string/my_qr_code"/>
+                android:text="@string/profile_qr_code"/>
 
         </LinearLayout>
 
         <android.support.v4.widget.Space
-            android:layout_width="0dp"
-            android:layout_height="24dp"/>
+            android:layout_width="match_parent"
+            android:layout_height="70dp" />
 
-        <ImageView
-            android:id="@+id/qr_code"
-            android:layout_width="250dp"
-            android:layout_height="250dp"
-            android:layout_gravity="center" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-        <android.support.v4.widget.Space
-            android:layout_width="0dp"
-            android:layout_height="16dp"/>
+            <ImageView
+                android:id="@+id/qr_code"
+                android:layout_width="220dp"
+                android:layout_height="220dp"
+                android:layout_gravity="center" />
 
-        <TextView
-            android:id="@+id/name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:textColor="@color/textColorPrimary"
-            android:textSize="22sp"
-            style="@style/TextStyleMedium"
-            tools:text="Damn Daniel!"/>
+            <android.support.v4.widget.Space
+                android:layout_width="match_parent"
+                android:layout_height="54dp" />
 
-        <android.support.v4.widget.Space
-            android:layout_width="0dp"
-            android:layout_height="4dp"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:background="@color/divider"/>
 
-        <TextView
-            android:id="@+id/username"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:textColor="@color/textColorSecondary"
-            tools:text="\@username" />
+            <android.support.v4.widget.Space
+                android:layout_width="match_parent"
+                android:layout_height="35dp" />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:textColor="@color/subTitleTextColor"
+                android:textSize="14sp"
+                style="@style/TextStyleMedium"
+                android:text="@string/qr_code_sub_title"/>
+
+            <android.support.v4.widget.Space
+                android:layout_width="match_parent"
+                android:layout_height="18dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:textSize="14sp"
+                android:textColor="@color/textColorPrimary"
+                android:text="@string/qr_code_message"/>
+
+
+        </LinearLayout>
     </LinearLayout>
 
 </layout>
