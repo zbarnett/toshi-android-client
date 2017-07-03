@@ -21,12 +21,7 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -51,15 +46,7 @@ public class RecentFragment extends BasePresenterFragment<RecentPresenter, Recen
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, final @Nullable Bundle inState) {
         this.binding = DataBindingUtil.inflate(inflater, R.layout.fragment_recent, container, false);
-        initMenu();
         return binding.getRoot();
-    }
-
-    private void initMenu() {
-        ((AppCompatActivity)getActivity()).setSupportActionBar(this.binding.toolbar);
-        final ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
-        if (actionBar != null) actionBar.setDisplayShowTitleEnabled(false);
-        setHasOptionsMenu(true);
     }
 
     public FragmentRecentBinding getBinding() {
@@ -80,16 +67,5 @@ public class RecentFragment extends BasePresenterFragment<RecentPresenter, Recen
     @Override
     protected int loaderId() {
         return LoaderIds.get(this.getClass().getCanonicalName());
-    }
-
-    @Override
-    public void onCreateOptionsMenu(final Menu menu, final MenuInflater inflater) {
-        inflater.inflate(R.menu.recent, menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(final MenuItem item) {
-        this.presenter.handleActionMenuClicked(item);
-        return super.onOptionsItemSelected(item);
     }
 }

@@ -22,7 +22,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.MenuItem;
 
 import com.toshi.R;
 import com.toshi.model.local.Conversation;
@@ -77,6 +76,7 @@ public final class RecentPresenter implements
 
     private void initClickListeners() {
         this.fragment.getBinding().startChat.setOnClickListener(__ -> goToUserSearchActivity());
+        this.fragment.getBinding().add.setOnClickListener(__ -> goToUserSearchActivity());
     }
 
     private void initRecentsAdapter() {
@@ -166,14 +166,6 @@ public final class RecentPresenter implements
         final Intent intent = new Intent(this.fragment.getActivity(), ChatActivity.class);
         intent.putExtra(ChatActivity.EXTRA__THREAD_ID, clickedConversation.getThreadId());
         this.fragment.startActivity(intent);
-    }
-
-    public void handleActionMenuClicked(final MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.add_new_conversation: {
-                goToUserSearchActivity();
-            }
-        }
     }
 
     private void goToUserSearchActivity() {
