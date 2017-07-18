@@ -163,6 +163,8 @@
             android:id="@+id/network"
             android:layout_width="match_parent"
             android:layout_height="24dp"
+            android:visibility="gone"
+            tools:visibility="visible"
             android:gravity="center"
             android:background="@color/file_avatar_background"
             style="@style/TextStyleMedium"

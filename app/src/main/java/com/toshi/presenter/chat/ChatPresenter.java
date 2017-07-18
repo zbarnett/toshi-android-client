@@ -217,7 +217,9 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     }
 
     private void initNetworkView() {
+        if (Networks.getInstance().isDefaultNetwork()) return;
         final Network network = Networks.getInstance().getCurrentNetwork();
+        this.activity.getBinding().network.setVisibility(View.VISIBLE);
         this.activity.getBinding().network.setText(network.getName());
     }
 
