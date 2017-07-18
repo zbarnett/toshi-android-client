@@ -1,34 +1,29 @@
 package com.toshi.model.local;
 
 public class Network {
-    private String id;
-    private String name;
-    private String url;
+    private final String id;
+    private final String name;
+    private final String url;
 
-    public @Networks.Type String getId() {
-        return id;
+    public Network(final String networkDescription) {
+        final String[] splitString = networkDescription.split("\\|");
+
+        if (splitString.length != 3) throw new IllegalArgumentException("Unexpected network format");
+
+        this.url = splitString[0];
+        this.name = splitString[1];
+        this.id = splitString[2];
     }
 
-    public Network setId(String id) {
-        this.id = id;
-        return this;
+    public String getId() {
+        return id;
     }
 
     public String getName() {
         return name;
     }
 
-    public Network setName(String name) {
-        this.name = name;
-        return this;
-    }
-
     public String getUrl() {
         return url;
-    }
-
-    public Network setUrl(String url) {
-        this.url = url;
-        return this;
     }
 }

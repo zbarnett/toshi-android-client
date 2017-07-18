@@ -25,10 +25,10 @@ import com.toshi.manager.network.interceptor.SigningInterceptor;
 import com.toshi.manager.network.interceptor.UserAgentInterceptor;
 import com.toshi.model.adapter.BigIntegerAdapter;
 import com.toshi.model.local.Network;
+import com.toshi.model.local.Networks;
 import com.toshi.model.sofa.Payment;
 import com.toshi.model.sofa.SofaAdapters;
 import com.toshi.model.sofa.SofaMessage;
-import com.toshi.util.SharedPrefsUtil;
 import com.toshi.view.BaseApplication;
 
 import okhttp3.OkHttpClient;
@@ -75,7 +75,7 @@ public class EthereumService {
     }
 
     private String getBaseUrl() {
-        final Network network =  SharedPrefsUtil.getCurrentNetwork();
+        final Network network = Networks.getInstance().getCurrentNetwork();
         return network.getUrl();
     }
 

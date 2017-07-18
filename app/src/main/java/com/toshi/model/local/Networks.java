@@ -1,21 +1,16 @@
 package com.toshi.model.local;
 
-import android.support.annotation.StringDef;
 
-import com.toshi.BuildConfig;
+import android.support.annotation.Nullable;
+
 import com.toshi.R;
+import com.toshi.util.SharedPrefsUtil;
 import com.toshi.view.BaseApplication;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Networks {
-    @StringDef({DEV, ROPSTEN})
-    public @interface Type {}
-    private static final String DEV = "116";
-    private static final String ROPSTEN = "3";
-
     private static Networks instance;
     private List<Network> networks;
 
@@ -27,53 +22,49 @@ public class Networks {
     }
 
     private Networks() {
-        this.networks = getNetworkList();
+        this.networks = loadNetworkList();
+    }
+
+    private List<Network> loadNetworkList() {
+        final String[] networkArray = BaseApplication.get().getResources().getStringArray(R.array.networks);
+        final List<Network> networks = new ArrayList<>();
+        for (final String networkDescription : networkArray) {
+            networks.add(new Network(networkDescription));
+        }
+        return networks;
     }
 
     public List<Network> getNetworks() {
         return this.networks;
     }
 
-    public Network getNetworkById(final @Networks.Type String id) {
-        if (id.equals(DEV)) {
-            return networks.get(0);
+    public boolean isDefaultNetwork() {
+        // If the current network id is unknown then revert to default.
+        if (getCurrentNetworkId() == null) return true;
+
+        return getCurrentNetworkId().equals(getDefaultNetwork().getId());
+    }
+
+    public Network getCurrentNetwork() {
+        try {
+            return getNetworkById(getCurrentNetworkId());
+        } catch (final NullPointerException ex) {
+            return getDefaultNetwork();
         }
-        return networks.get(1);
     }
 
-    private static List<Network> getNetworkList() {
-        final String[] networkArray = BaseApplication.get().getResources().getStringArray(R.array.networks);
-        return convertToNetworkList(Arrays.asList(networkArray));
-    }
-
-    private static List<Network> convertToNetworkList(final List<String> strings) {
-        final List<Network> networks = new ArrayList<>();
-        for (final String s : strings) {
-            networks.add(convertToNetwork(s));
+    private Network getNetworkById(final @Nullable String id) throws NullPointerException {
+        for (final Network network : this.networks) {
+            if (network.getId().equals(id)) return network;
         }
-
-        return networks;
+        throw new NullPointerException("No network exists with that ID");
     }
 
-    private static Network convertToNetwork(final String value) {
-        final String[] splittedString = value.split("\\|");
-
-        if (splittedString.length != 3) throw new IllegalArgumentException();
-
-        final String url = splittedString[0];
-        final String name = splittedString[1];
-        final String id = splittedString[2];
-
-        return new Network()
-                .setId(id)
-                .setName(name)
-                .setUrl(url);
+    private Network getDefaultNetwork() {
+        return this.networks.get(0);
     }
 
-    public static @Networks.Type String getDefaultNetwork() {
-        if (BuildConfig.DEBUG) {
-            return Networks.DEV;
-        }
-        return Networks.ROPSTEN;
+    private @Nullable String getCurrentNetworkId() {
+        return SharedPrefsUtil.getCurrentNetworkId();
     }
 }

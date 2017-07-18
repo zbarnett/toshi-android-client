@@ -256,8 +256,7 @@ public class BalanceManager {
 
     //Don't unregister the default network
     public Completable changeNetwork(final Network network) {
-        final boolean isDefaultNetwork = Networks.getDefaultNetwork().equals(SharedPrefsUtil.getCurrentNetwork().getId());
-        if (isDefaultNetwork) {
+        if (Networks.getInstance().isDefaultNetwork()) {
             return changeEthBaseUrl(network)
                     .andThen(registerEthGcm().first().toCompletable())
                     .subscribeOn(Schedulers.io())

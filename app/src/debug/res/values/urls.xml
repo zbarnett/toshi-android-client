@@ -20,7 +20,6 @@
     <string name="chat_url">https://token-chat-service-development.herokuapp.com</string>
     <string name="directory_url">https://token-id-service-development.herokuapp.com</string>
     <string name="balance_url">https://token-eth-service-development.herokuapp.com</string>
-    <string name="balance_url_testnet">https://ethereum.service.tokenbrowser.com</string>
     <string name="id_url">https://token-id-service-development.herokuapp.com</string>
     <string name="rep_url">https://token-rep-service-development.herokuapp.com</string>
     <string name="currency_url">https://api.coinbase.com</string>
