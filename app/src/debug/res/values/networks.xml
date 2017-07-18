@@ -3,6 +3,6 @@
     <string-array name="networks">
         <item>https://ethereum.service.tokenbrowser.com|Ropsten Revival Test Network|3</item>
         <item>https://token-eth-service-development.herokuapp.com|Toshi Internal Test Network|116</item>
-        <item>https://token-eth-service.herokuapp.com|Ethereum Main Net|116</item>
+        <item>https://token-eth-service.herokuapp.com|Ethereum Main Net|1</item>
     </string-array>
 </resources>

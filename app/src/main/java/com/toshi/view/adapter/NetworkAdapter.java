@@ -24,6 +24,7 @@ import android.view.ViewGroup;
 
 import com.toshi.R;
 import com.toshi.model.local.Network;
+import com.toshi.model.local.Networks;
 import com.toshi.view.adapter.listeners.OnItemClickListener;
 import com.toshi.view.adapter.viewholder.NetworkViewHolder;
 
@@ -33,7 +34,7 @@ public class NetworkAdapter extends RecyclerView.Adapter<NetworkViewHolder> {
 
     private List<Network> networks;
     private OnItemClickListener<Network> listener;
-    private int selectedItem = -1;
+    private Network selectedNetwork = Networks.getInstance().getCurrentNetwork();
 
     public NetworkAdapter(final List<Network> networks) {
         this.networks = networks;
@@ -54,16 +55,13 @@ public class NetworkAdapter extends RecyclerView.Adapter<NetworkViewHolder> {
     public void onBindViewHolder(NetworkViewHolder holder, int position) {
         final Network network = this.networks.get(position);
         holder.setNetwork(network)
-                .setChecked(position == this.selectedItem)
-                .setOnItemClickListener(__ -> handleItemClicked(holder, network));
+                .setChecked(network.getId().equals(selectedNetwork.getId()))
+                .setOnItemClickListener(__ -> handleItemClicked(network));
     }
 
-    private void handleItemClicked(final NetworkViewHolder holder,
-                                   final Network network) {
-        final int prevSelectedItem = selectedItem;
-        this.selectedItem = holder.getAdapterPosition();
-        notifyItemChanged(prevSelectedItem);
-        notifyItemChanged(this.selectedItem);
+    private void handleItemClicked(final Network network) {
+        this.selectedNetwork = network;
+        notifyDataSetChanged();
         this.listener.onItemClick(network);
     }
 

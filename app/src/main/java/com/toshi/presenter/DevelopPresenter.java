@@ -84,7 +84,7 @@ public class DevelopPresenter implements Presenter<DevelopActivity> {
     }
 
     private void showNetworkSwitchDialog() {
-        this.networkDialog = NetworkSwitcherDialog.getInstance()
+        this.networkDialog = new NetworkSwitcherDialog()
                 .setOnNetworkListener(this::changeNetwork);
         this.networkDialog.show(this.activity.getSupportFragmentManager(), NetworkSwitcherDialog.TAG);
     }
@@ -167,7 +167,7 @@ public class DevelopPresenter implements Presenter<DevelopActivity> {
         }
 
         if (this.networkDialog != null) {
-            this.networkDialog.dismiss();
+            this.networkDialog.dismissAllowingStateLoss();
             this.networkDialog = null;
         }
     }

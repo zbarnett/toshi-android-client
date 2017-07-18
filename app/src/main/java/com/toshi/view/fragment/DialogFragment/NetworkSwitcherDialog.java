@@ -44,8 +44,8 @@ public class NetworkSwitcherDialog extends DialogFragment {
     private OnItemClickListener<Network> listener;
     private Network selectedNetwork;
 
-    public static NetworkSwitcherDialog getInstance() {
-        return new NetworkSwitcherDialog();
+    public NetworkSwitcherDialog() {
+        setRetainInstance(true);
     }
 
     public NetworkSwitcherDialog setOnNetworkListener(final OnItemClickListener<Network> listener) {
@@ -89,7 +89,8 @@ public class NetworkSwitcherDialog extends DialogFragment {
     private void initRecyclerView() {
         final RecyclerView networks = this.binding.networks;
         networks.setLayoutManager(new LinearLayoutManager(getContext()));
-        final NetworkAdapter adapter = new NetworkAdapter(Networks.getInstance().getNetworks())
+        final NetworkAdapter adapter =
+                new NetworkAdapter(Networks.getInstance().getNetworks())
                 .setOnItemClickListener(this::handleNetworkClicked);
         networks.setAdapter(adapter);
     }
