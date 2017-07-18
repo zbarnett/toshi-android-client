@@ -18,6 +18,7 @@
 package com.toshi.presenter;
 
 import android.content.Intent;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -28,6 +29,7 @@ import android.widget.Toast;
 import com.toshi.R;
 import com.toshi.model.local.User;
 import com.toshi.model.network.Balance;
+import com.toshi.model.network.ReputationScore;
 import com.toshi.util.ImageUtil;
 import com.toshi.util.LogUtil;
 import com.toshi.util.OnSingleClickListener;
@@ -117,6 +119,7 @@ public final class SettingsPresenter implements
         }
         this.localUser = user;
         updateUi();
+        fetchUserReputation(this.localUser.getTokenId());
     }
 
     private void handleUserError(final Throwable throwable) {
@@ -130,10 +133,8 @@ public final class SettingsPresenter implements
 
         this.fragment.getBinding().name.setText(this.fragment.getString(R.string.profile__unknown_name));
         this.fragment.getBinding().username.setText("");
-        this.fragment.getBinding().ratingView.setStars(0.0);
-        final String reviewCount = this.fragment.getString(R.string.parentheses, 0);
-        this.fragment.getBinding().numberOfRatings.setText(reviewCount);
         this.fragment.getBinding().avatar.setImageResource(R.drawable.ic_unknown_user_24dp);
+        handleReputationResponse(null);
     }
 
     private void initRecyclerView() {
@@ -282,10 +283,37 @@ public final class SettingsPresenter implements
 
         this.fragment.getBinding().name.setText(this.localUser.getDisplayName());
         this.fragment.getBinding().username.setText(this.localUser.getUsername());
-        this.fragment.getBinding().ratingView.setStars(this.localUser.getAverageRating());
-        final String reviewCount = this.fragment.getString(R.string.parentheses, this.localUser.getReviewCount());
-        this.fragment.getBinding().numberOfRatings.setText(reviewCount);
         ImageUtil.load(this.localUser.getAvatar(), this.fragment.getBinding().avatar);
+    }
+
+    private void fetchUserReputation(final String userAddress) {
+        final Subscription reputationSub =
+                BaseApplication
+                        .get()
+                        .getReputationManager()
+                        .getReputationScore(userAddress)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                this::handleReputationResponse,
+                                ex -> LogUtil.exception(getClass(), "Error during reputation fetching", ex)
+                        );
+
+        this.subscriptions.add(reputationSub);
+    }
+
+    private void handleReputationResponse(final @Nullable ReputationScore reputationScore) {
+        if (this.fragment == null) return;
+
+        if (reputationScore == null) {
+            this.fragment.getBinding().ratingView.setStars(0.0);
+            final String reviewCount = this.fragment.getString(R.string.parentheses, 0);
+            this.fragment.getBinding().numberOfRatings.setText(reviewCount);
+        } else {
+            final int revCount = reputationScore.getReviewCount();
+            final String reviewCount = this.fragment.getString(R.string.parentheses, revCount);
+            this.fragment.getBinding().ratingView.setStars(reputationScore.getAverageRating());
+            this.fragment.getBinding().numberOfRatings.setText(reviewCount);
+        }
     }
 
     private void setSecurityState() {
