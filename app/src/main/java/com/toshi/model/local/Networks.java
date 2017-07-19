@@ -34,17 +34,45 @@ public class Networks {
         return networks;
     }
 
+    /**
+     * Get all supported Ethereum networks
+     *
+     * @return List of all Network
+     * @see Network
+     */
     public List<Network> getNetworks() {
         return this.networks;
     }
 
-    public boolean isDefaultNetwork() {
+    /**
+     * Get the default Ethereum network
+     * N.B. This is currently just using the first item in the list of Networks
+     *
+     * @return The default Ethereum Network
+     * @see Network
+     */
+    public Network getDefaultNetwork() {
+        return this.networks.get(0);
+    }
+
+    /**
+     * Find out if the default network is currently being used
+     *
+     * @return <code>true</code> if is currently using default network, <code>false</code> otherwise.
+     */
+    public boolean onDefaultNetwork() {
         // If the current network id is unknown then revert to default.
         if (getCurrentNetworkId() == null) return true;
 
         return getCurrentNetworkId().equals(getDefaultNetwork().getId());
     }
 
+    /**
+     * Get the current Ethereum network
+     *
+     * @return The current Ethereum Network
+     * @see Network
+     */
     public Network getCurrentNetwork() {
         try {
             return getNetworkById(getCurrentNetworkId());
@@ -58,10 +86,6 @@ public class Networks {
             if (network.getId().equals(id)) return network;
         }
         throw new NullPointerException("No network exists with that ID");
-    }
-
-    private Network getDefaultNetwork() {
-        return this.networks.get(0);
     }
 
     private @Nullable String getCurrentNetworkId() {

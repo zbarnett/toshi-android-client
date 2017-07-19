@@ -19,7 +19,6 @@ package com.toshi.manager.network;
 
 
 import com.squareup.moshi.Moshi;
-import com.toshi.R;
 import com.toshi.manager.network.interceptor.LoggingInterceptor;
 import com.toshi.manager.network.interceptor.SigningInterceptor;
 import com.toshi.manager.network.interceptor.UserAgentInterceptor;
@@ -29,7 +28,6 @@ import com.toshi.model.local.Networks;
 import com.toshi.model.sofa.Payment;
 import com.toshi.model.sofa.SofaAdapters;
 import com.toshi.model.sofa.SofaMessage;
-import com.toshi.view.BaseApplication;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -119,7 +117,7 @@ public class EthereumService {
         return Single.fromCallable(() -> {
             final String url = String.format(
                     "%s%s%s%s",
-                    BaseApplication.get().getResources().getString(R.string.balance_url),
+                    Networks.getInstance().getDefaultNetwork().getUrl(),
                     "/v1/tx/",
                     transactionHash,
                     "?format=sofa"
