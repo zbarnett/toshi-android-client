@@ -15,22 +15,6 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * Copyright 2015 Google Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.toshi.service;
 
 import android.app.IntentService;
@@ -39,16 +23,14 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v4.content.LocalBroadcastManager;
 
+import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.android.gms.iid.InstanceID;
 import com.toshi.R;
 import com.toshi.util.FileNames;
 import com.toshi.util.LogUtil;
 import com.toshi.view.BaseApplication;
-import com.google.android.gms.gcm.GoogleCloudMessaging;
-import com.google.android.gms.iid.InstanceID;
 
-import rx.Observable;
 import rx.schedulers.Schedulers;
-import rx.subjects.PublishSubject;
 
 public class RegistrationIntentService extends IntentService {
 
@@ -59,7 +41,6 @@ public class RegistrationIntentService extends IntentService {
     public static final String ETH_SERVICE_SENT_TOKEN_TO_SERVER = "sentTokenToServer_v2";
     public static final String REGISTRATION_COMPLETE = "registrationComplete";
 
-    private final static PublishSubject<Void> registrationSubject = PublishSubject.create();
     private final SharedPreferences sharedPreferences;
 
     public RegistrationIntentService() {
@@ -124,16 +105,10 @@ public class RegistrationIntentService extends IntentService {
 
     public void handleGcmSuccess(final Void unused) {
         this.sharedPreferences.edit().putBoolean(ETH_SERVICE_SENT_TOKEN_TO_SERVER, true).apply();
-        registrationSubject.onNext(unused);
     }
 
     public void handleGcmFailure(final Throwable error) {
         this.sharedPreferences.edit().putBoolean(ETH_SERVICE_SENT_TOKEN_TO_SERVER, false).apply();
         LogUtil.exception(getClass(), "Error while registering gcm", error);
-        registrationSubject.onError(error);
-    }
-
-    public static Observable<Void> getGcmRegistrationObservable() {
-        return registrationSubject.asObservable();
     }
 }

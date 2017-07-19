@@ -47,7 +47,6 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 
 import rx.Completable;
-import rx.Observable;
 import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -258,24 +257,25 @@ public class BalanceManager {
     public Completable changeNetwork(final Network network) {
         if (Networks.getInstance().onDefaultNetwork()) {
             return changeEthBaseUrl(network)
-                    .andThen(registerEthGcm().first().toCompletable())
+                    .andThen(registerEthGcm())
                     .subscribeOn(Schedulers.io())
                     .doOnCompleted(() -> SharedPrefsUtil.setCurrentNetwork(network));
         }
 
         return unregisterEthGcm()
                 .andThen(changeEthBaseUrl(network))
-                .andThen(registerEthGcm().first().toCompletable())
+                .andThen(registerEthGcm())
                 .subscribeOn(Schedulers.io())
                 .doOnCompleted(() -> SharedPrefsUtil.setCurrentNetwork(network));
     }
 
-    private Observable<Void> registerEthGcm() {
-        final Intent intent = new Intent(BaseApplication.get(), RegistrationIntentService.class)
-                .putExtra(RegistrationIntentService.FORCE_UPDATE, true)
-                .putExtra(RegistrationIntentService.ETH_REGISTRATION_ONLY, true);
-        BaseApplication.get().startService(intent);
-        return RegistrationIntentService.getGcmRegistrationObservable();
+    private Completable registerEthGcm() {
+        return Completable.fromAction(() -> {
+            final Intent intent = new Intent(BaseApplication.get(), RegistrationIntentService.class)
+                    .putExtra(RegistrationIntentService.FORCE_UPDATE, true)
+                    .putExtra(RegistrationIntentService.ETH_REGISTRATION_ONLY, true);
+            BaseApplication.get().startService(intent);
+        });
     }
 
     private Completable unregisterEthGcm() {
