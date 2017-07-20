@@ -25,7 +25,9 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.toshi.R;
+import com.toshi.model.local.Networks;
 import com.toshi.model.local.User;
+import com.toshi.util.LocaleUtil;
 import com.toshi.util.LogUtil;
 import com.toshi.util.QrCode;
 import com.toshi.view.BaseApplication;
@@ -105,7 +107,19 @@ public class DepositPresenter implements Presenter<DepositActivity> {
         if (this.localUser == null || this.activity == null) return;
         this.activity.getBinding().ownerAddress.setText(this.localUser.getPaymentAddress());
         this.activity.getBinding().copyToClipboard.setEnabled(true);
+        updateDepositWarningView();
         generateQrCode();
+    }
+
+    private void updateDepositWarningView() {
+        final int warningVisibility = Networks.getInstance().onMainNet() ? View.GONE : View.VISIBLE;
+        this.activity.getBinding().depositWarning.setVisibility(warningVisibility);
+        this.activity.getBinding().depositWarning.setText(
+                String.format(
+                        LocaleUtil.getLocale(),
+                        this.activity.getResources().getString(R.string.eth_deposit_deposit_warning),
+                        Networks.getInstance().getCurrentNetwork().getName()
+                ));
     }
 
     private void generateQrCode() {

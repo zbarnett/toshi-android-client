@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Networks {
+    private static final String MAINNET_ID = "1";
     private static Networks instance;
     private List<Network> networks;
 
@@ -65,6 +66,15 @@ public class Networks {
         if (getCurrentNetworkId() == null) return true;
 
         return getCurrentNetworkId().equals(getDefaultNetwork().getId());
+    }
+
+    /**
+     * Find out if the current network is Ethereum Main Network
+     *
+     * @return <code>true</code> if is currently using Ethereum Main Network, <code>false</code> otherwise.
+     */
+    public boolean onMainNet() {
+        return getCurrentNetwork().getId().equals(MAINNET_ID);
     }
 
     /**

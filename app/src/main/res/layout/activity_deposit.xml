@@ -164,11 +164,14 @@
                     android:layout_height="30dp" />
 
                 <TextView
+                    android:id="@+id/deposit__warning"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="14sp"
                     android:textColor="@color/error_color"
-                    android:text="@string/eth_deposit_testnet_warning"/>
+                    android:text="@string/eth_deposit_deposit_warning"
+                    android:visibility="gone"
+                    tools:visibility="visible"/>
 
                 <android.support.v4.widget.Space
                     android:layout_width="0dp"
