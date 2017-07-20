@@ -111,8 +111,9 @@ public class ChatNotification {
                     .getPendingIntent(0, PendingIntent.FLAG_ONE_SHOT);
         }
 
-        final Intent chatIntent = new Intent(BaseApplication.get(), ChatActivity.class);
-        chatIntent.putExtra(ChatActivity.EXTRA__THREAD_ID, this.sender.getThreadId());
+        final Intent chatIntent = new Intent(BaseApplication.get(), ChatActivity.class)
+                .putExtra(ChatActivity.EXTRA__THREAD_ID, this.sender.getThreadId())
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
         final PendingIntent nextIntent = TaskStackBuilder.create(BaseApplication.get())
                 .addParentStack(MainActivity.class)

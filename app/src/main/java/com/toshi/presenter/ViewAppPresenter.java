@@ -193,8 +193,9 @@ public class ViewAppPresenter implements Presenter<ViewAppActivity> {
         if (this.app == null) {
             return;
         }
-        final Intent intent = new Intent(this.activity, ChatActivity.class);
-        intent.putExtra(ChatActivity.EXTRA__THREAD_ID, this.app.getTokenId());
+        final Intent intent = new Intent(this.activity, ChatActivity.class)
+                .putExtra(ChatActivity.EXTRA__THREAD_ID, this.app.getTokenId())
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         this.activity.startActivity(intent);
     }
 
@@ -267,7 +268,8 @@ public class ViewAppPresenter implements Presenter<ViewAppActivity> {
         final Intent intent = new Intent(this.activity, ChatActivity.class)
                 .putExtra(ChatActivity.EXTRA__THREAD_ID, appId)
                 .putExtra(ChatActivity.EXTRA__ETH_AMOUNT, ethAmount)
-                .putExtra(ChatActivity.EXTRA__PAYMENT_ACTION, PaymentType.TYPE_SEND);
+                .putExtra(ChatActivity.EXTRA__PAYMENT_ACTION, PaymentType.TYPE_SEND)
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         this.activity.startActivity(intent);
         this.activity.finish();
     }
