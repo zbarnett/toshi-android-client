@@ -115,6 +115,7 @@ public class AppsPresenter implements Presenter<AppsFragment>{
         this.fragment.getBinding().moreLatestApps.setOnClickListener(__ -> startBrowseActivity(VIEW_TYPE_LATEST_APPS));
         this.fragment.getBinding().moreTopRatedPublicUsers.setOnClickListener(__ -> startBrowseActivity(VIEW_TYPE_TOP_RATED_PUBLIC_USERS));
         this.fragment.getBinding().moreLatestPublicUsers.setOnClickListener(__ -> startBrowseActivity(VIEW_TYPE_LATEST_PUBLIC_USERS));
+        this.fragment.getBinding().clearButton.setOnClickListener(__ -> this.fragment.getBinding().search.setText(null));
     }
 
     private void startBrowseActivity(final @BrowseType.Type int viewType) {
@@ -266,9 +267,11 @@ public class AppsPresenter implements Presenter<AppsFragment>{
 
         if (shouldShowSearchResult) {
             this.fragment.getBinding().searchList.setVisibility(View.VISIBLE);
+            this.fragment.getBinding().clearButton.setVisibility(View.VISIBLE);
             this.fragment.getBinding().scrollView.setVisibility(View.GONE);
         } else {
             this.fragment.getBinding().searchList.setVisibility(View.GONE);
+            this.fragment.getBinding().clearButton.setVisibility(View.GONE);
             this.fragment.getBinding().scrollView.setVisibility(View.VISIBLE);
         }
     }
