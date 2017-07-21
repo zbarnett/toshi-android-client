@@ -46,6 +46,11 @@ import rx.subscriptions.CompositeSubscription;
 
     private String sofaScript;
 
+    /**
+     * Injects SOFA script into valid pages
+     *
+     * If there is no <script> tag then nothing will be injected
+     */
     /* package */ SofaInjector(@NonNull final OnLoadListener listener) {
         this.listener = listener;
         this.client = new OkHttpClient();
@@ -122,6 +127,7 @@ import rx.subscriptions.CompositeSubscription;
 
     private String injectSofaScript(final String body) {
         final int position = getInjectionPosition(body);
+        if (position == -1) return body;
         final String beforeTag = body.substring(0, position);
         final String afterTab = body.substring(position);
         return beforeTag + this.sofaScript + afterTab;
