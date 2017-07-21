@@ -29,16 +29,16 @@ import com.toshi.model.local.Networks;
 import com.toshi.util.DialogUtil;
 import com.toshi.util.LogUtil;
 import com.toshi.view.BaseApplication;
-import com.toshi.view.activity.DevelopActivity;
+import com.toshi.view.activity.AdvancedSettingsActivity;
 import com.toshi.view.fragment.DialogFragment.NetworkSwitcherDialog;
 
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.subscriptions.CompositeSubscription;
 
-public class DevelopPresenter implements Presenter<DevelopActivity> {
+public class AdvancedSettingsPresenter implements Presenter<AdvancedSettingsActivity> {
 
-    private DevelopActivity activity;
+    private AdvancedSettingsActivity activity;
     private CompositeSubscription subscriptions;
     private boolean firstTimeAttaching = true;
 
@@ -47,7 +47,7 @@ public class DevelopPresenter implements Presenter<DevelopActivity> {
     private boolean onGoingTask = false;
 
     @Override
-    public void onViewAttached(DevelopActivity view) {
+    public void onViewAttached(AdvancedSettingsActivity view) {
         this.activity = view;
 
         if (this.firstTimeAttaching) {

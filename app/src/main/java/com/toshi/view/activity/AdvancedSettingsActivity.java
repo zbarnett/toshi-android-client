@@ -22,15 +22,15 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 
 import com.toshi.R;
-import com.toshi.databinding.ActivityDevelopBinding;
-import com.toshi.presenter.DevelopPresenter;
+import com.toshi.databinding.ActivitySettingsAdvancedBinding;
+import com.toshi.presenter.AdvancedSettingsPresenter;
 import com.toshi.presenter.LoaderIds;
-import com.toshi.presenter.factory.DevelopPresenterFactory;
+import com.toshi.presenter.factory.AdvancedSettingsPresenterFactory;
 import com.toshi.presenter.factory.PresenterFactory;
 
-public class DevelopActivity extends BasePresenterActivity<DevelopPresenter, DevelopActivity> {
+public class AdvancedSettingsActivity extends BasePresenterActivity<AdvancedSettingsPresenter, AdvancedSettingsActivity> {
 
-    private ActivityDevelopBinding binding;
+    private ActivitySettingsAdvancedBinding binding;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -39,21 +39,21 @@ public class DevelopActivity extends BasePresenterActivity<DevelopPresenter, Dev
     }
 
     private void init() {
-        this.binding = DataBindingUtil.setContentView(this, R.layout.activity_develop);
+        this.binding = DataBindingUtil.setContentView(this, R.layout.activity_settings_advanced);
     }
 
-    public ActivityDevelopBinding getBinding() {
+    public ActivitySettingsAdvancedBinding getBinding() {
         return this.binding;
     }
 
     @NonNull
     @Override
-    protected PresenterFactory<DevelopPresenter> getPresenterFactory() {
-        return new DevelopPresenterFactory();
+    protected PresenterFactory<AdvancedSettingsPresenter> getPresenterFactory() {
+        return new AdvancedSettingsPresenterFactory();
     }
 
     @Override
-    protected void onPresenterPrepared(@NonNull DevelopPresenter presenter) {}
+    protected void onPresenterPrepared(@NonNull AdvancedSettingsPresenter presenter) {}
 
     @Override
     protected int loaderId() {

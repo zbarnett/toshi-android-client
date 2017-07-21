@@ -17,11 +17,11 @@
 
 package com.toshi.presenter.factory;
 
-import com.toshi.presenter.DevelopPresenter;
+import com.toshi.presenter.AdvancedSettingsPresenter;
 
-public class DevelopPresenterFactory implements PresenterFactory<DevelopPresenter> {
+public class AdvancedSettingsPresenterFactory implements PresenterFactory<AdvancedSettingsPresenter> {
     @Override
-    public DevelopPresenter create() {
-        return new DevelopPresenter();
+    public AdvancedSettingsPresenter create() {
+        return new AdvancedSettingsPresenter();
     }
 }

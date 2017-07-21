@@ -263,7 +263,7 @@
     <string name="error__group_creation">Unable to create group</string>
     <string name="qr_code_message">Use this QR code to let others add you on Toshi.</string>
     <string name="qr_code_sub_title">Profile QR Code</string>
-    <string name="develop">Develop</string>
+    <string name="advanced_title">Advanced</string>
     <string name="network">Network</string>
     <string name="develop_message">Changing the network allows you to test developed apps without the risk of losing money. It’s recommended not to change these settings unless you are a developer.</string>
     <string name="app_version">App version %s</string>
