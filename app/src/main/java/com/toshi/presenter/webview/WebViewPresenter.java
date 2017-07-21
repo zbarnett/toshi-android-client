@@ -184,6 +184,15 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
             showToast(R.string.error__dapp_loading);
             activity.finish();
         }
+
+        @Override
+        public void newPageLoad(final String address) {
+            try {
+                loadUrlFromAddress(address);
+            } catch (IllegalArgumentException e) {
+                showToast(R.string.unsupported_format);
+            }
+        }
     };
 
     private void hideLoadingSpinner() {

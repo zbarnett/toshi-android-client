@@ -18,7 +18,9 @@
 package com.toshi.presenter.webview;
 
 
+import android.os.Build;
 import android.support.annotation.NonNull;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -36,6 +38,21 @@ import com.toshi.view.custom.listener.OnLoadListener;
     public void onPageFinished(WebView webView, final String url) {
         this.listener.onLoaded();
         super.onPageFinished(webView, url);
+    }
+
+    @Override
+    public boolean shouldOverrideUrlLoading (final WebView view, final WebResourceRequest request) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            this.listener.newPageLoad(request.getUrl().toString());
+        }
+        return true;
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public boolean shouldOverrideUrlLoading (final WebView view, final String url) {
+        this.listener.newPageLoad(url);
+        return true;
     }
 
     @Override

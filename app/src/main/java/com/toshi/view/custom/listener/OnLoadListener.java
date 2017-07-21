@@ -21,4 +21,5 @@ public interface OnLoadListener {
     void onReady();
     void onLoaded();
     void onError(final Throwable t);
+    void newPageLoad(final String url);
 }
