@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ 	Copyright (c) 2017. Token Browser, Inc
+  ~
+  ~ 	This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<resources>
+    <string name="chat_url">https://chat.service.tokenbrowser.com</string>
+    <string name="directory_url">https://identity.service.tokenbrowser.com</string>
+    <string name="id_url">https://identity.service.tokenbrowser.com</string>
+    <string name="rep_url">https://reputation.service.tokenbrowser.com</string>
+    <string name="currency_url">https://api.coinbase.com</string>
+    <string name="qr_code_base_url">https://app.tokenbrowser.com/</string>
+    <string name="qr_code_add_url">%1$s/%2$s</string>
+    <string name="qr_code_pay_url">%1$s/%2$s\?value=%3$s&amp;memo=%4$s</string>
+    <string name="qr_code_pay_url_without_memo">%1$s/%2$s\?value=%3$s</string>
+    <string name="rcp_url">https://propsten.infura.io</string>
+</resources>
