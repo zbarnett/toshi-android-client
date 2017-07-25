@@ -254,19 +254,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     private void initRecyclerView() {
         if (this.activity == null) return;
         attachMessageAdapter();
-
-        // Hack to scroll to bottom when keyboard rendered
-        this.activity.getBinding().messagesList.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> handleLayoutChanged(bottom, oldBottom));
-        this.activity.getBinding().messagesList.getLayoutManager().scrollToPosition(this.lastVisibleMessagePosition);
-    }
-
-    private void handleLayoutChanged(final int bottom,
-                                     final int oldBottom) {
-        if (this.activity == null || this.messageAdapter.getItemCount() <= 0) return;
-        if (bottom < oldBottom) {
-            final int bottomPosition = this.messageAdapter.getItemCount() - 1;
-            this.activity.getBinding().messagesList.postDelayed(() -> this.smoothScrollToPosition(bottomPosition), 100);
-        }
+        this.activity.getBinding().messagesList.getLayoutManager().scrollToPosition(getSafePosition());
     }
 
     private void attachMessageAdapter() {
@@ -381,6 +369,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         final int paddingRight = this.activity.getBinding().messagesList.getPaddingRight();
         final int paddingLeft = this.activity.getBinding().messagesList.getPaddingLeft();
         this.activity.getBinding().messagesList.setPadding(paddingLeft, 0, paddingRight, paddingBottom);
+        this.activity.getBinding().messagesList.scrollToPosition(getSafePosition());
     }
 
     private void loadOrUseRecipient() {
