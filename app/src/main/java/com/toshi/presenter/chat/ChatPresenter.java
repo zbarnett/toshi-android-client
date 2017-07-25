@@ -633,7 +633,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
             this.messageAdapter.setMessages(conversation.getAllMessages());
             scrollToPosition(getSafePosition());
 
-            final SofaMessage lastSofaMessage = conversation.getAllMessages().get(conversation.getAllMessages().size() - 1);
+            final SofaMessage lastSofaMessage = conversation.getLastNonPaymentMessage();
             setControlView(lastSofaMessage);
         } else {
             tryInitAppConversation();
