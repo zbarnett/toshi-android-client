@@ -21,23 +21,25 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.toshi.model.local.SendState;
 import com.toshi.R;
+import com.toshi.model.local.SendState;
+import com.toshi.util.ImageUtil;
 import com.toshi.view.adapter.listeners.OnItemClickListener;
-import com.toshi.view.custom.RoundCornersImageView;
 
 import java.io.File;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
 public final class ImageViewHolder extends RecyclerView.ViewHolder {
 
     private @Nullable CircleImageView avatar;
     private @Nullable TextView sentStatusMessage;
-    private @NonNull RoundCornersImageView image;
+    private @NonNull ImageView image;
     private @SendState.State int sendState;
     private String attachmentFilePath;
     private String avatarUri;
@@ -46,7 +48,7 @@ public final class ImageViewHolder extends RecyclerView.ViewHolder {
         super(v);
         this.avatar = (CircleImageView) v.findViewById(R.id.avatar);
         this.sentStatusMessage = (TextView) v.findViewById(R.id.sent_status_message);
-        this.image = (RoundCornersImageView) v.findViewById(R.id.image);
+        this.image = (ImageView) v.findViewById(R.id.image);
     }
 
     public ImageViewHolder setAvatarUri(final String uri) {
@@ -84,7 +86,7 @@ public final class ImageViewHolder extends RecyclerView.ViewHolder {
 
     private void showImage() {
         final File imageFile = new File(this.attachmentFilePath);
-        this.image.setImage(imageFile);
+        ImageUtil.renderFileIntoTarget(imageFile, this.image, new RoundedCornersTransformation(this.image.getContext(), 30, 0));
         this.attachmentFilePath = null;
     }
 

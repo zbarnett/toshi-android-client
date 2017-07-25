@@ -26,6 +26,7 @@ import android.support.v4.content.ContextCompat;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.Transformation;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.Target;
 import com.google.common.io.Files;
@@ -98,14 +99,28 @@ public class ImageUtil {
         }
     }
 
-    public static void renderFileIntoTarget(final File result, final ImageView imageView) {
+    public static void renderFileIntoTarget(final File imageFile, final ImageView imageView) {
         if (imageView == null || imageView.getContext() == null) return;
 
         try {
             Glide
                 .with(imageView.getContext())
-                .load(result)
+                .load(imageFile)
                 .into(imageView);
+        } catch (final IllegalArgumentException ex) {
+            LogUtil.i(ImageUtil.class, "Tried to render into a now destroyed view.");
+        }
+    }
+
+    public static void renderFileIntoTarget(final File imageFile, final ImageView imageView, final Transformation<Bitmap> transformation) {
+        if (imageView == null || imageView.getContext() == null) return;
+
+        try {
+            Glide
+                    .with(imageView.getContext())
+                    .load(imageFile)
+                    .bitmapTransform(transformation)
+                    .into(imageView);
         } catch (final IllegalArgumentException ex) {
             LogUtil.i(ImageUtil.class, "Tried to render into a now destroyed view.");
         }
@@ -144,7 +159,7 @@ public class ImageUtil {
 
     }
 
-    public static Single<Bitmap> generateQrCode(final String value) {
+    /* package */ static Single<Bitmap> generateQrCode(final String value) {
         return Single.fromCallable(() -> {
             try {
                 return generateQrCodeBitmap(value);
@@ -180,7 +195,7 @@ public class ImageUtil {
         return supportedImageTypes.contains(fileExtension);
     }
 
-    public static @Nullable byte[] toByteArray(@Nullable Bitmap bitmap, final Bitmap.CompressFormat format) {
+    /* package */ static @Nullable byte[] toByteArray(@Nullable Bitmap bitmap, final Bitmap.CompressFormat format) {
         if (bitmap == null) return null;
         final ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmap.compress(format, 100, stream);
