@@ -134,6 +134,7 @@ dependencies {
             'com.github.toshiapp:cropiwa:v1.0.1',
             'com.github.toshiapp:ahbottomnavigation:v2.0.7',
             'com.vdurmont:emoji-java:3.2.0',
+            'jp.wasabeef:glide-transformations:2.0.2',
     )
 
     compile('com.crashlytics.sdk.android:crashlytics:2.6.2@aar') {
@@ -177,6 +178,8 @@ dependencyVerification {
             'com.beloo.widget:ChipsLayoutManager:27b6ad23e8ba18a6a6c43e279db126322601d93daf621946541e4b50dc988874',
             'com.github.toshiapp:cropiwa:e011b1f928009368153578cb6a605928e4e70b44413213edf2381fd454d12840',
             'com.github.toshiapp:ahbottomnavigation:ea8d292b34e908659374183fa7d0fa259aa83e99eabefa1aa89a45ee4ef0e145',
+            'com.vdurmont:emoji-java:3c0caf2e62164066c860bbd02a8f4e768cb1016735a256df62a8a4521946d1f2',
+            'jp.wasabeef:glide-transformations:9e628e44c7d7e3ce96da61796e094119993a4c8bc4b674883a7e094dde983aa5',
             'com.crashlytics.sdk.android:crashlytics:110212c02ece0c4471383e579d378be8b9ad8d5bf51a2c35ad0610d9166065c7',
             'com.google.firebase:firebase-core:558cda4b5421d0ad206a7c14247b649579aebc37259082e80579e14199042ea0',
             'com.android.databinding:library:f172550208c2e86973271cdc1d9b527545d923527abed2daa894cf1499619869',
@@ -207,6 +210,7 @@ dependencyVerification {
             'com.fasterxml.jackson.core:jackson-databind:835097bcdd11f5bc8a08378c70d4c8054dfa4b911691cc2752063c75534d198d',
             'org.apache.httpcomponents:httpclient:c50eafa5477af2fa8217d3f729b815ff3c669dbc467552c0feeedc61be965523',
             'org.whispersystems:signal-protocol-java:720eba8d75f14b1c91198c21843326b9d487e60479929a0dfa550ad4ffea3492',
+            'org.json:json:8e5aa0a368bee60347b5a4ad861d9f68c7793f60deeea89efd449eb70d5ae622',
             'com.crashlytics.sdk.android:answers:ba189c18ae6675280c106a88af96789f94283feacbb6cda1aa4af6f7a961e8a8',
             'com.crashlytics.sdk.android:beta:0c30c2b47eccde6d3cf5212b4f07c56ca16afcadfdc5ef0e1075d97d20e9c325',
             'com.crashlytics.sdk.android:crashlytics-core:6043026b2d6761d3d51cc3bc5eb4f99329d56bdfb93c24db82a9acead7355ef3',
@@ -227,7 +231,6 @@ dependencyVerification {
             'com.android.support:support-media-compat:656f810ff0725282dba86f2c1f4ab0940b0724ca84560ab48217a335ec4be483',
             'com.android.support:support-core-utils:5e9035e6b11e798d5c6e89355219192d8fe130965e34794887723b5472e4ec1a',
             'com.android.support:support-fragment:d262cac1a910ee5093a2853b8bb14642011290d50bf4078545113d2d789b84c2',
-            'com.vdurmont:emoji-java:3c0caf2e62164066c860bbd02a8f4e768cb1016735a256df62a8a4521946d1f2',
     ]
 }
 
