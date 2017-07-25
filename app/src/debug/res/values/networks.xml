@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="networks">
-        <item>https://ethereum.service.tokenbrowser.com|Ropsten Test Network|3</item>
         <item>https://token-eth-service-development.herokuapp.com|Toshi Internal Test Network|116</item>
+        <item>https://ethereum.service.tokenbrowser.com|Ropsten Test Network|3</item>
     </string-array>
 </resources>
