@@ -20,7 +20,6 @@ package com.toshi.model.network;
 public class Currency {
     private String id;
     private String name;
-    private String min_size;
 
     public String getId() {
         return id;

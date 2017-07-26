@@ -102,6 +102,7 @@ public class CurrencyPresenter implements Presenter<CurrencyActivity> {
                 .getBalanceManager()
                 .getCurrencies()
                 .map(Currencies::getData)
+                .flatMap(this::filterCryptocurrencies)
                 .flatMap(this::sortCurrencies)
                 .doOnSuccess(currencies -> this.currencies = currencies)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -118,7 +119,14 @@ public class CurrencyPresenter implements Presenter<CurrencyActivity> {
             Collections.sort(currencies, new CurrencyComparator());
             return currencies;
         })
-        .subscribeOn(Schedulers.io());
+                .subscribeOn(Schedulers.io());
+    }
+
+    private Single<List<Currency>> filterCryptocurrencies(final List<Currency> currencies) {
+        return Single.fromCallable(() -> {
+            currencies.removeIf((currency -> currency.getId().equals("BTC")));
+            return currencies;
+        });
     }
 
     private void handleCurrencies() {
