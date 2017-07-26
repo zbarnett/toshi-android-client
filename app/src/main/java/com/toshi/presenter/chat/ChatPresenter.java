@@ -254,7 +254,6 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     private void initRecyclerView() {
         if (this.activity == null) return;
         attachMessageAdapter();
-        this.activity.getBinding().messagesList.getLayoutManager().scrollToPosition(getSafePosition());
     }
 
     private void attachMessageAdapter() {
@@ -369,7 +368,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         final int paddingRight = this.activity.getBinding().messagesList.getPaddingRight();
         final int paddingLeft = this.activity.getBinding().messagesList.getPaddingLeft();
         this.activity.getBinding().messagesList.setPadding(paddingLeft, 0, paddingRight, paddingBottom);
-        this.activity.getBinding().messagesList.scrollToPosition(getSafePosition());
+        scrollToPosition(getSafePosition());
     }
 
     private void loadOrUseRecipient() {
