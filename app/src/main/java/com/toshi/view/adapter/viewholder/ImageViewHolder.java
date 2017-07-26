@@ -23,9 +23,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.toshi.model.local.SendState;
 import com.toshi.R;
+import com.toshi.model.local.SendState;
+import com.toshi.util.ImageUtil;
 import com.toshi.view.adapter.listeners.OnItemClickListener;
 import com.toshi.view.custom.RoundCornersImageView;
 
@@ -76,10 +76,7 @@ public final class ImageViewHolder extends RecyclerView.ViewHolder {
             return;
         }
 
-        Glide
-            .with(this.avatar.getContext())
-            .load(this.avatarUri)
-            .into(this.avatar);
+        ImageUtil.load(this.avatarUri, this.avatar);
     }
 
     private void showImage() {
