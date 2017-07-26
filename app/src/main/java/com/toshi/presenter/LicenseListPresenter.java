@@ -151,9 +151,6 @@ public class LicenseListPresenter implements Presenter<LicenseListActivity> {
         final Library emojiJava = new Library()
                 .setName("emoji-java")
                 .setLicence(this.activity.getString(R.string.mit_license));
-        final Library glideTransformations = new Library()
-                .setName("glide-transformations")
-                .setLicence(this.activity.getString(R.string.apache_v2_license));
 
         final List<Library> libraries = new ArrayList<>();
         libraries.add(retrofit);
@@ -186,7 +183,6 @@ public class LicenseListPresenter implements Presenter<LicenseListActivity> {
         libraries.add(cropiwa);
         libraries.add(flexboxLayout);
         libraries.add(emojiJava);
-        libraries.add(glideTransformations);
 
         final LibraryAdapter adapter = (LibraryAdapter) this.activity.getBinding().libraryList.getAdapter();
         adapter.setLibraries(libraries);
