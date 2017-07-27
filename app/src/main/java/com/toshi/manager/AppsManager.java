@@ -32,23 +32,6 @@ import rx.schedulers.Schedulers;
 
 public class AppsManager {
 
-    public Observable<List<App>> getRecommendedApps() {
-        return DirectoryService
-                .getApi()
-                .getApps()
-                .first((response) -> response.code() == 200)
-                .flatMap(response -> Observable.just(response.body().getApps()));
-    }
-
-    public Observable<List<App>> getFeaturedApps() {
-        return DirectoryService
-                .getApi()
-                .getFeaturedApps()
-                .subscribeOn(Schedulers.io())
-                .first((response) -> response.code() == 200)
-                .flatMap((response) -> Observable.just(response.body().getApps()));
-    }
-
     public Observable<List<App>> searchApps(final String query) {
         return DirectoryService
                 .getApi()
@@ -70,15 +53,17 @@ public class AppsManager {
     }
 
     public Single<List<App>> getTopRatedApps(final int limit) {
-        return getTimestamp()
-                .flatMap(serverTime -> getTopRatedApps(serverTime, limit))
+        return IdService
+                .getApi()
+                .getApps(true, false, limit)
                 .map(AppSearchResult::getResults)
                 .subscribeOn(Schedulers.io());
     }
 
     public Single<List<App>> getLatestApps(final int limit) {
-        return getTimestamp()
-                .flatMap(serverTime -> getLatestApps(serverTime, limit))
+        return IdService
+                .getApi()
+                .getApps(false, true, limit)
                 .map(AppSearchResult::getResults)
                 .subscribeOn(Schedulers.io());
     }
@@ -87,19 +72,5 @@ public class AppsManager {
         return IdService
                 .getApi()
                 .getTimestamp();
-    }
-
-    private Single<AppSearchResult> getTopRatedApps(final ServerTime serverTime,
-                                                    final int limit) {
-        return IdService
-                .getApi()
-                .getApps(true, false, limit, serverTime.get());
-    }
-
-    private Single<AppSearchResult> getLatestApps(final ServerTime serverTime,
-                                                  final int limit) {
-        return IdService
-                .getApi()
-                .getApps(false, true, limit, serverTime.get());
     }
 }

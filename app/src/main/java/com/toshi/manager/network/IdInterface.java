@@ -82,13 +82,11 @@ public interface IdInterface {
     Single<UserSearchResults> getUsers(@Query("public") boolean isPublic,
                                        @Query("top") boolean isTopRated,
                                        @Query("recent") boolean isRecent,
-                                       @Query("limit") int limit,
-                                       @Query("timestamp") long timestamp);
+                                       @Query("limit") int limit);
 
     @GET("v1/search/apps")
     Single<AppSearchResult> getApps(@Query("top") boolean isTopRated,
                                     @Query("recent") boolean isRecent,
-                                    @Query("limit") int limit,
-                                    @Query("timestamp") long timestamp);
+                                    @Query("limit") int limit);
 }
 

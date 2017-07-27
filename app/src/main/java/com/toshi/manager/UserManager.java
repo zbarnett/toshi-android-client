@@ -223,31 +223,19 @@ public class UserManager {
     }
 
     public Single<List<User>> getTopRatedPublicUsers(final int limit) {
-        return getTimestamp()
-                .flatMap(serverTime -> getTopRatedPublicUsers(serverTime, limit))
+        return IdService
+                .getApi()
+                .getUsers(true, true, false, limit)
                 .map(UserSearchResults::getResults)
                 .subscribeOn(Schedulers.io());
     }
 
     public Single<List<User>> getLatestPublicUsers(final int limit) {
-        return getTimestamp()
-                .flatMap(serverTime -> getLatestPublicUsers(serverTime, limit))
+        return IdService
+                .getApi()
+                .getUsers(true, false, true, limit)
                 .map(UserSearchResults::getResults)
                 .subscribeOn(Schedulers.io());
-    }
-
-    private Single<UserSearchResults> getTopRatedPublicUsers(final ServerTime serverTime,
-                                                             final int limit) {
-        return IdService
-                .getApi()
-                .getUsers(true, true, false, limit, serverTime.get());
-    }
-
-    private Single<UserSearchResults> getLatestPublicUsers(final ServerTime serverTime,
-                                                           final int limit) {
-        return IdService
-                .getApi()
-                .getUsers(true, false, true, limit, serverTime.get());
     }
 
     public Single<Void> webLogin(final String loginToken) {
