@@ -34,10 +34,9 @@ import com.toshi.view.adapter.viewholder.ClickableViewHolder;
 public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.ViewHolder> {
 
     public static final int LOCAL_CURRENCY = 0;
-    public static final int ABOUT = 1;
-    public static final int TRANSACTIONS = 2;
-    public static final int ADVANCED = 3;
-    public static final int SIGN_OUT = 4;
+    public static final int TRANSACTIONS = 1;
+    public static final int ADVANCED = 2;
+    public static final int SIGN_OUT = 3;
 
     private final String[] settings;
     private OnItemClickListener<Integer> listener;

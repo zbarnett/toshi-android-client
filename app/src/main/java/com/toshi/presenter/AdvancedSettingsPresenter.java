@@ -18,6 +18,7 @@
 package com.toshi.presenter;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.support.annotation.StringRes;
 import android.view.View;
 import android.widget.Toast;
@@ -30,6 +31,7 @@ import com.toshi.util.DialogUtil;
 import com.toshi.util.LogUtil;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.activity.AdvancedSettingsActivity;
+import com.toshi.view.activity.LicenseListActivity;
 import com.toshi.view.fragment.DialogFragment.NetworkSwitcherDialog;
 
 import rx.Subscription;
@@ -70,7 +72,8 @@ public class AdvancedSettingsPresenter implements Presenter<AdvancedSettingsActi
 
     private void initCLickListeners() {
         this.activity.getBinding().closeButton.setOnClickListener(__ -> this.activity.finish());
-        this.activity.getBinding().networkWrapper.setOnClickListener(__ -> handleCurrentNetworkClicked());
+        this.activity.getBinding().currentNetwork.setOnClickListener(__ -> handleCurrentNetworkClicked());
+        this.activity.getBinding().openSourceLicenses.setOnClickListener(this::handleOpenSourceLicencesClicked);
     }
 
     private void handleCurrentNetworkClicked() {
@@ -90,8 +93,8 @@ public class AdvancedSettingsPresenter implements Presenter<AdvancedSettingsActi
     }
 
     private void setVersionCode() {
-        final String versionCode = this.activity.getString(R.string.app_version, String.valueOf(BuildConfig.VERSION_CODE));
-        this.activity.getBinding().versionCode.setText(versionCode);
+        final String versionName = BuildConfig.VERSION_NAME;
+        this.activity.getBinding().version.setText(versionName);
     }
 
     private void setCurrentNetwork(final Network network) {
@@ -151,6 +154,11 @@ public class AdvancedSettingsPresenter implements Presenter<AdvancedSettingsActi
         this.onGoingTask = false;
         if (this.activity == null) return;
         this.activity.getBinding().loadingSpinner.setVisibility(View.GONE);
+    }
+
+    private void handleOpenSourceLicencesClicked(final View v) {
+        final Intent intent = new Intent(this.activity, LicenseListActivity.class);
+        this.activity.startActivity(intent);
     }
 
     @Override

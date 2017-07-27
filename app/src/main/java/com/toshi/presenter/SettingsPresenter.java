@@ -35,11 +35,10 @@ import com.toshi.util.LogUtil;
 import com.toshi.util.OnSingleClickListener;
 import com.toshi.util.SharedPrefsUtil;
 import com.toshi.view.BaseApplication;
-import com.toshi.view.activity.AboutActivity;
+import com.toshi.view.activity.AdvancedSettingsActivity;
 import com.toshi.view.activity.BackupPhraseInfoActivity;
 import com.toshi.view.activity.CurrencyActivity;
 import com.toshi.view.activity.DepositActivity;
-import com.toshi.view.activity.AdvancedSettingsActivity;
 import com.toshi.view.activity.QrCodeActivity;
 import com.toshi.view.activity.SignOutActivity;
 import com.toshi.view.activity.TransactionOverviewActivity;
@@ -157,11 +156,6 @@ public final class SettingsPresenter implements
         switch (option) {
             case SettingsAdapter.LOCAL_CURRENCY: {
                 goToCurrencyActivity();
-                break;
-            }
-            case SettingsAdapter.ABOUT: {
-                final Intent intent = new Intent(this.fragment.getContext(), AboutActivity.class);
-                this.fragment.getContext().startActivity(intent);
                 break;
             }
             case SettingsAdapter.TRANSACTIONS: {

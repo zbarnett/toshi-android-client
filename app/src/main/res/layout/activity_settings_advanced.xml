@@ -60,33 +60,26 @@
 
             </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/network_wrapper"
-                android:layout_width="match_parent"
+            <android.support.v4.widget.Space
+                android:layout_width="0dp"
+                android:layout_height="@dimen/activity_horizontal_margin" />
+
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingTop="17sp"
-                android:paddingBottom="13sp"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:textColor="@color/textColorSecondary"
+                android:text="@string/network"/>
+
+            <TextView
+                android:id="@+id/current_network"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:gravity="center_vertical"
                 android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:paddingRight="@dimen/activity_horizontal_margin"
-                android:background="?android:selectableItemBackground">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/textColorPrimary"
-                    android:textSize="16sp"
-                    android:text="@string/network"/>
-
-                <TextView
-                    android:id="@+id/current_network"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="14sp"
-                    android:textColor="@color/textColorSecondaryTransparent"
-                    tools:text="Ropsten Revival Testnet"/>
-
-            </LinearLayout>
+                android:background="@color/windowBackground"
+                android:textSize="16sp"
+                tools:text="Ropsten Revival Testnet"/>
 
             <View
                 android:layout_width="match_parent"
@@ -113,13 +106,42 @@
                 android:layout_height="29dp" />
 
             <TextView
-                android:id="@+id/version_code"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:textSize="14sp"
-                android:textColor="@color/textColorBody"
-                tools:text="App version 1.03"/>
+                android:textColor="@color/textColorSecondary"
+                android:text="@string/version"/>
+
+            <TextView
+                android:id="@+id/version"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:gravity="center_vertical"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:background="@color/windowBackground"
+                android:textSize="16sp"
+                tools:text="VersionName"/>
+
+            <android.support.v4.widget.Space
+                android:layout_width="0dp"
+                android:layout_height="@dimen/activity_horizontal_margin" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:textColor="@color/textColorSecondary"
+                android:text="@string/open_source_licenses"/>
+
+            <TextView
+                android:id="@+id/open_source_licenses"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:gravity="center_vertical"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:background="@color/windowBackground"
+                android:textSize="16sp"
+                android:text="@string/about__licenses"/>
 
         </LinearLayout>
 

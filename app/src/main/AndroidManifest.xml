@@ -80,7 +80,6 @@
         <activity android:name="com.toshi.view.activity.ScannerActivity"
                   android:theme="@style/FullScreenTheme"/>
         <activity android:name="com.toshi.view.activity.ChooseContactsActivity" />
-        <activity android:name="com.toshi.view.activity.AboutActivity" />
         <activity android:name="com.toshi.view.activity.LicenseListActivity" />
         <activity android:name="com.toshi.view.activity.LicenseActivity" />
         <activity android:name="com.toshi.view.activity.ViewAppActivity" />
