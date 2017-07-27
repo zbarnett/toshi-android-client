@@ -44,7 +44,7 @@ import rx.schedulers.Schedulers;
 
 public class SofaMessageRegistration {
 
-    private static final String ONBOARDING_BOT_NAME = "TokenBot";
+    private static final String ONBOARDING_BOT_NAME = "ToshiBot";
 
     private final SharedPreferences sharedPreferences;
     private final ChatService chatService;
