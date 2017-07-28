@@ -95,8 +95,9 @@ public class PaymentConfirmationDialog extends BasePresenterDialogFragment<Payme
         void onPaymentApproved(final Bundle bundle);
     }
 
-    public void setOnPaymentConfirmationListener(final OnPaymentConfirmationListener listener) {
+    public PaymentConfirmationDialog setOnPaymentConfirmationListener(final OnPaymentConfirmationListener listener) {
         this.listener = listener;
+        return this;
     }
 
     public OnPaymentConfirmationListener getPaymentConfirmationListener() {

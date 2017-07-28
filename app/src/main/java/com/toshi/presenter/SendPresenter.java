@@ -18,15 +18,20 @@
 package com.toshi.presenter;
 
 import android.content.Intent;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
 
 import com.jakewharton.rxbinding.widget.RxTextView;
 import com.toshi.R;
 import com.toshi.crypto.util.TypeConverter;
+import com.toshi.model.local.Network;
+import com.toshi.model.local.Networks;
 import com.toshi.util.EthUtil;
 import com.toshi.util.LogUtil;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.activity.ScannerActivity;
 import com.toshi.view.activity.SendActivity;
+import com.toshi.view.fragment.DialogFragment.PaymentConfirmationDialog;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -34,7 +39,7 @@ import java.math.BigInteger;
 import rx.Subscription;
 import rx.subscriptions.CompositeSubscription;
 
-public class SendPresenter implements Presenter<SendActivity> {
+public class SendPresenter implements Presenter<SendActivity>,PaymentConfirmationDialog.OnPaymentConfirmationListener {
 
     public static final String EXTRA__INTENT = "extraIntent";
     private static final int QR_REQUEST_CODE = 200;
@@ -43,6 +48,7 @@ public class SendPresenter implements Presenter<SendActivity> {
     private CompositeSubscription subscriptions;
     private boolean firstTimeAttaching = true;
     private String encodedEthAmount;
+    private PaymentConfirmationDialog paymentConfirmationDialog;
 
 
     @Override
@@ -62,12 +68,20 @@ public class SendPresenter implements Presenter<SendActivity> {
     }
 
     private void initShortLivingObjects() {
+        initNetworkView();
         initUiListeners();
         processIntentData();
     }
 
+    private void initNetworkView() {
+        final Network network = Networks.getInstance().getCurrentNetwork();
+        this.activity.getBinding().network.setText(network.getName());
+    }
+
     private void initUiListeners() {
+        this.activity.getBinding().closeButton.setOnClickListener( __ -> this.activity.finish());
         this.activity.getBinding().scan.setOnClickListener(__ -> startScanQrActivity());
+        this.activity.getBinding().send.setOnClickListener(__ -> showPaymentConfirmationDialog());
         RxTextView
                 .textChanges(this.activity.getBinding().recipientAddress)
                 .subscribe(
@@ -86,32 +100,64 @@ public class SendPresenter implements Presenter<SendActivity> {
         this.activity.startActivityForResult(intent, QR_REQUEST_CODE);
     }
 
+    private void showPaymentConfirmationDialog() {
+        this.paymentConfirmationDialog = PaymentConfirmationDialog.newInstanceExternalPayment(
+                getRecipientAddress(),
+                this.encodedEthAmount,
+                null
+        )
+                .setOnPaymentConfirmationListener(this);
+        this.paymentConfirmationDialog.show(this.activity.getSupportFragmentManager(), PaymentConfirmationDialog.TAG);
+    }
+
+    @Override
+    public void onPaymentRejected(final Bundle bundle) {}
+
+    @Override
+    public void onPaymentApproved(final Bundle bundle) {
+        BaseApplication
+                .get()
+                .getTransactionManager()
+                .sendExternalPayment(
+                        getRecipientAddress(),
+                        this.encodedEthAmount
+                );
+        this.activity.finish();
+    }
+
     private void processIntentData() {
         final Intent amountIntent = this.activity.getIntent().getParcelableExtra(EXTRA__INTENT);
         this.encodedEthAmount = amountIntent.getStringExtra(AmountPresenter.INTENT_EXTRA__ETH_AMOUNT);
-        renderAmounts();
+        generateAmount(this.encodedEthAmount);
     }
 
-    private void renderAmounts() {
-        final BigInteger weiAmount = TypeConverter.StringHexToBigInteger(this.encodedEthAmount);
+    private void generateAmount(final String amountAsEncodedEth) {
+        final BigInteger weiAmount = TypeConverter.StringHexToBigInteger(amountAsEncodedEth);
         final BigDecimal ethAmount = EthUtil.weiToEth(weiAmount);
+        final String ethAmountString = EthUtil.weiAmountToUserVisibleString(weiAmount);
 
         final Subscription sub = BaseApplication
                 .get()
                 .getBalanceManager()
                 .convertEthToLocalCurrencyString(ethAmount)
                 .subscribe(
-                        this::renderBalance,
+                        localAmount -> renderAmount(localAmount, ethAmountString),
                         throwable -> LogUtil.exception(getClass(), throwable)
                 );
 
         this.subscriptions.add(sub);
     }
 
-    private void renderBalance(final String amount) {
+    private void renderAmount(final String localAmount, final String ethAmount) {
         if (this.activity == null) return;
-        final String usdEth = this.activity.getString(R.string.local_dot_eth_amount, amount, getEthValue());
+        final String usdEth = this.activity.getString(R.string.local_dot_eth_amount, localAmount, ethAmount);
         this.activity.getBinding().amount.setText(usdEth);
+    }
+
+    @NonNull
+    private String getRecipientAddress() {
+        final String userInput = this.activity.getBinding().recipientAddress.getText().toString();
+        return userInput.contains(":") ? userInput.split(":")[1] : userInput;
     }
 
     @Override
@@ -122,12 +168,11 @@ public class SendPresenter implements Presenter<SendActivity> {
 
     @Override
     public void onDestroyed() {
+        if (this.paymentConfirmationDialog != null) {
+            this.paymentConfirmationDialog.dismissAllowingStateLoss();
+            this.paymentConfirmationDialog = null;
+        }
         this.subscriptions = null;
         this.activity = null;
-    }
-
-    private String getEthValue() {
-        final BigInteger eth = TypeConverter.StringHexToBigInteger(this.encodedEthAmount);
-        return EthUtil.weiAmountToUserVisibleString(eth);
     }
 }
