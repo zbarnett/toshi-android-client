@@ -17,8 +17,16 @@
 
 package com.toshi.presenter;
 
-import com.toshi.view.activity.BalanceActivity;
+import android.content.Intent;
 
+import com.toshi.model.network.Balance;
+import com.toshi.util.LogUtil;
+import com.toshi.view.BaseApplication;
+import com.toshi.view.activity.BalanceActivity;
+import com.toshi.view.activity.DepositActivity;
+
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.subscriptions.CompositeSubscription;
 
 public class BalancePresenter implements Presenter<BalanceActivity> {
@@ -45,6 +53,50 @@ public class BalancePresenter implements Presenter<BalanceActivity> {
     }
 
     private void initShortLivingObjects() {
+        initClickListeners();
+        attachBalanceSubscriber();
+    }
+
+    private void initClickListeners() {
+        this.activity.getBinding().closeButton.setOnClickListener(__ -> this.activity.finish());
+        this.activity.getBinding().depositMoney.setOnClickListener(__ -> goToDepositActivity());
+    }
+
+    private void goToDepositActivity() {
+        if (this.activity == null) return;
+        final Intent intent = new Intent(this.activity, DepositActivity.class);
+        this.activity.startActivity(intent);
+    }
+
+    private void attachBalanceSubscriber() {
+        final Subscription sub =
+                BaseApplication
+                        .get()
+                        .getBalanceManager()
+                        .getBalanceObservable()
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .filter(balance -> balance != null)
+                        .map(this::renderBalance)
+                        .flatMap(balance -> balance.getFormattedLocalBalance().toObservable())
+                        .subscribe(
+                                this::renderFormattedBalance,
+                                ex -> LogUtil.exception(getClass(), "Error during fetching balance", ex)
+                        );
+
+        this.subscriptions.add(sub);
+    }
+
+    private Balance renderBalance(final Balance balance) {
+        if (this.activity != null) {
+            this.activity.getBinding().ethBalance.setText(balance.getFormattedUnconfirmedBalance());
+        }
+        return balance;
+    }
+
+    private void renderFormattedBalance(final String formattedBalance) {
+        if (this.activity != null) {
+            this.activity.getBinding().localCurrencyBalance.setText(formattedBalance);
+        }
     }
 
     @Override

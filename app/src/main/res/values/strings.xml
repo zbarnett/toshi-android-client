@@ -46,7 +46,6 @@
     <string name="balance">Balance</string>
     <string name="pay">Pay</string>
     <string name="request">Request</string>
-    <string name="add_money">Add Money</string>
     <string name="scan_qr">Scan QR</string>
     <string name="eth_balance">%1$s ETH</string>
     <string name="continue_">Continue</string>
@@ -88,7 +87,8 @@
     <string name="got_it">Got it</string>
     <string name="error__web_signin">It was not possible to complete sign in.</string>
     <string name="web_signin">Sign in successful</string>
-    <string name="deposit_money">Deposit money</string>
+    <string name="send_money">Send</string>
+    <string name="deposit_money">Deposit</string>
     <string name="add_money_to_wallet">Add Money To My Wallet</string>
     <string name="deposit_info_message">You can add money to your account in a variety of ways</string>
     <string name="eth_deposit_method_1">1. Send ethereum from another wallet</string>
