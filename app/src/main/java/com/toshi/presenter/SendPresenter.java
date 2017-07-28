@@ -19,6 +19,7 @@ package com.toshi.presenter;
 
 import android.content.Intent;
 
+import com.jakewharton.rxbinding.widget.RxTextView;
 import com.toshi.R;
 import com.toshi.crypto.util.TypeConverter;
 import com.toshi.util.EthUtil;
@@ -61,12 +62,22 @@ public class SendPresenter implements Presenter<SendActivity> {
     }
 
     private void initShortLivingObjects() {
-        initClickListeners();
+        initUiListeners();
         processIntentData();
     }
 
-    private void initClickListeners() {
+    private void initUiListeners() {
         this.activity.getBinding().scan.setOnClickListener(__ -> startScanQrActivity());
+        RxTextView
+                .textChanges(this.activity.getBinding().recipientAddress)
+                .subscribe(
+                        this::handleRecipientAddressChanged,
+                        t -> LogUtil.e(getClass(), t.toString())
+                );
+    }
+
+    private void handleRecipientAddressChanged(final CharSequence charSequence) {
+        this.activity.getBinding().send.setEnabled(charSequence.length() > 16);
     }
 
     private void startScanQrActivity() {

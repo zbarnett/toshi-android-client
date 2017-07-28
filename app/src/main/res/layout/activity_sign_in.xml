@@ -76,15 +76,15 @@
                 android:id="@+id/password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
                 android:layout_marginRight="@dimen/activity_horizontal_margin"
-                android:textSize="16sp"
+                android:layout_marginTop="5dp"
+                android:hint="@string/password"
+                android:imeOptions="actionDone"
+                android:inputType="textNoSuggestions"
                 android:textColor="@color/textColorInput"
                 android:textColorHint="@color/textColorSecondary"
-                android:inputType="textNoSuggestions"
-                android:imeOptions="actionDone"
-                android:hint="@string/password"/>
+                android:textSize="16sp"/>
 
             <LinearLayout
                 android:layout_width="wrap_content"
