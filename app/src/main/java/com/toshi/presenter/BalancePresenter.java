@@ -24,6 +24,7 @@ import com.toshi.util.LogUtil;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.activity.BalanceActivity;
 import com.toshi.view.activity.DepositActivity;
+import com.toshi.view.activity.SendActivity;
 
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -59,12 +60,13 @@ public class BalancePresenter implements Presenter<BalanceActivity> {
 
     private void initClickListeners() {
         this.activity.getBinding().closeButton.setOnClickListener(__ -> this.activity.finish());
-        this.activity.getBinding().depositMoney.setOnClickListener(__ -> goToDepositActivity());
+        this.activity.getBinding().sendMoney.setOnClickListener(__ -> goToActivity(SendActivity.class));
+        this.activity.getBinding().depositMoney.setOnClickListener(__ -> goToActivity(DepositActivity.class));
     }
 
-    private void goToDepositActivity() {
+    private void goToActivity(final Class clz) {
         if (this.activity == null) return;
-        final Intent intent = new Intent(this.activity, DepositActivity.class);
+        final Intent intent = new Intent(this.activity, clz);
         this.activity.startActivity(intent);
     }
 

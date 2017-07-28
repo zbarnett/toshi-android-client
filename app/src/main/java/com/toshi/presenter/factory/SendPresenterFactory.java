@@ -17,11 +17,11 @@
 
 package com.toshi.presenter.factory;
 
-import com.toshi.presenter.BalancePresenter;
+import com.toshi.presenter.SendPresenter;
 
-public class BalancePresenterFactory implements PresenterFactory<BalancePresenter> {
+public class SendPresenterFactory implements PresenterFactory<SendPresenter> {
     @Override
-    public BalancePresenter create() {
-        return new BalancePresenter();
+    public SendPresenter create() {
+        return new SendPresenter();
     }
 }

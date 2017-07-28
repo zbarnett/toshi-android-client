@@ -32,7 +32,6 @@ import com.toshi.model.network.Balance;
 import com.toshi.model.network.ReputationScore;
 import com.toshi.util.ImageUtil;
 import com.toshi.util.LogUtil;
-import com.toshi.util.OnSingleClickListener;
 import com.toshi.util.SharedPrefsUtil;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.activity.AdvancedSettingsActivity;
@@ -352,44 +351,17 @@ public final class SettingsPresenter implements
     }
 
     private void initClickListeners() {
-        this.fragment.getBinding().myProfileCard.setOnClickListener(this.handleMyProfileClicked);
-        this.fragment.getBinding().trustedFriends.setOnClickListener(this::handleTrustedFriendsClicked);
-        this.fragment.getBinding().backupPhrase.setOnClickListener(this::handleBackupPhraseClicked);
-        this.fragment.getBinding().myQrCode.setOnClickListener(this::handleMyQrCodeClicked);
-        this.fragment.getBinding().balanceContainer.setOnClickListener(this::handleBalanceClicked);
+        this.fragment.getBinding().myProfileCard.setOnClickListener(__ -> goToActivity(ViewProfileActivity.class));
+        this.fragment.getBinding().trustedFriends.setOnClickListener(__ -> goToActivity(TrustedFriendsActivity.class));
+        this.fragment.getBinding().backupPhrase.setOnClickListener(__ -> goToActivity(BackupPhraseInfoActivity.class));
+        this.fragment.getBinding().myQrCode.setOnClickListener(__ -> goToActivity(QrCodeActivity.class));
+        this.fragment.getBinding().balanceContainer.setOnClickListener(__ -> goToActivity(BalanceActivity.class));
     }
 
-    private final OnSingleClickListener handleMyProfileClicked = new OnSingleClickListener() {
-        @Override
-        public void onSingleClick(final View v) {
-            if (fragment == null) return;
-            final Intent intent = new Intent(fragment.getActivity(), ViewProfileActivity.class);
-            fragment.startActivity(intent);
-        }
-    };
-
-    private void handleTrustedFriendsClicked(final View view) {
+    private void goToActivity(final Class clz) {
         if (this.fragment == null) return;
-        final Intent intent = new Intent(this.fragment.getContext(), TrustedFriendsActivity.class);
+        final Intent intent = new Intent(this.fragment.getContext(), clz);
         this.fragment.getContext().startActivity(intent);
-    }
-
-    private void handleBackupPhraseClicked(final View view) {
-        if (this.fragment == null) return;
-        final Intent intent = new Intent(this.fragment.getContext(), BackupPhraseInfoActivity.class);
-        this.fragment.getContext().startActivity(intent);
-    }
-
-    private void handleMyQrCodeClicked(final View view) {
-        if (this.fragment == null) return;
-        final Intent intent = new Intent(this.fragment.getContext(), QrCodeActivity.class);
-        this.fragment.getContext().startActivity(intent);
-    }
-
-    private void handleBalanceClicked(final View view) {
-        if (fragment == null) return;
-        final Intent intent = new Intent(fragment.getActivity(), BalanceActivity.class);
-        fragment.getContext().startActivity(intent);
     }
 
     @Override
