@@ -83,7 +83,7 @@ public class ChatNavigation {
     public void startPaymentActivityForResult(final AppCompatActivity activity,
                                               final int requestCode) {
         final Intent intent = new Intent(activity, AmountActivity.class)
-                .putExtra(AmountActivity.VIEW_TYPE, PaymentType.TYPE_REQUEST);
+                .putExtra(AmountActivity.VIEW_TYPE, PaymentType.TYPE_SEND);
         activity.startActivityForResult(intent, requestCode);
     }
 
