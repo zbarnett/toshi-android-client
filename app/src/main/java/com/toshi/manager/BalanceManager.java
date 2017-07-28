@@ -147,7 +147,10 @@ public class BalanceManager {
         return Single.fromCallable(() -> {
             final String currency = SharedPrefsUtil.getCurrency();
             final BigDecimal marketRate = marketRates.getRate(currency);
-            final BigDecimal localAmount = marketRate.multiply(ethAmount);
+            // Do a bit of fuzzy rounding. This may be dangerous.
+            final BigDecimal localAmount = marketRate
+                    .multiply(ethAmount)
+                    .setScale(1, BigDecimal.ROUND_HALF_UP);
 
             final DecimalFormat numberFormat = CurrencyUtil.getNumberFormat();
             numberFormat.setGroupingUsed(true);
