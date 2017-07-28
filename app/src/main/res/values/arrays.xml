@@ -19,7 +19,6 @@
 <resources>
     <string-array name="settings_options">
         <item>Local currency</item>
-        <item>Transactions</item>
         <item>Advanced</item>
         <item>Sign out</item>
     </string-array>

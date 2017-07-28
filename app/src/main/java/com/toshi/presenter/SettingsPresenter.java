@@ -41,7 +41,6 @@ import com.toshi.view.activity.CurrencyActivity;
 import com.toshi.view.activity.DepositActivity;
 import com.toshi.view.activity.QrCodeActivity;
 import com.toshi.view.activity.SignOutActivity;
-import com.toshi.view.activity.TransactionOverviewActivity;
 import com.toshi.view.activity.TrustedFriendsActivity;
 import com.toshi.view.activity.ViewProfileActivity;
 import com.toshi.view.adapter.SettingsAdapter;
@@ -158,10 +157,6 @@ public final class SettingsPresenter implements
                 goToCurrencyActivity();
                 break;
             }
-            case SettingsAdapter.TRANSACTIONS: {
-                goToTransactionActivity();
-                break;
-            }
             case SettingsAdapter.ADVANCED: {
                 goToDevelopActivity();
                 break;
@@ -179,11 +174,6 @@ public final class SettingsPresenter implements
     private void goToCurrencyActivity() {
         final Intent intent = new Intent(this.fragment.getContext(), CurrencyActivity.class);
         this.fragment.startActivity(intent);
-    }
-
-    private void goToTransactionActivity() {
-        final Intent intent = new Intent(this.fragment.getContext(), TransactionOverviewActivity.class);
-        this.fragment.getContext().startActivity(intent);
     }
 
     private void goToDevelopActivity() {

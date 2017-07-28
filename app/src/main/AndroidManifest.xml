@@ -94,7 +94,6 @@
         <activity android:name="com.toshi.view.activity.SignOutActivity"
                   android:theme="@style/SplashTheme" />
         <activity android:name="com.toshi.view.activity.QrCodeActivity"/>
-        <activity android:name="com.toshi.view.activity.TransactionOverviewActivity" />
         <activity android:name="com.toshi.view.activity.QrCodeHandlerActivity" />
         <activity android:name="com.toshi.view.activity.WebViewActivity" />
         <activity android:name="com.toshi.view.activity.ImageCropActivity"
