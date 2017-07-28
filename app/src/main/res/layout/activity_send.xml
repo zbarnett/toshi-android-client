@@ -91,14 +91,16 @@
                     android:layout_width="3dp"
                     android:layout_height="0dp" />
 
-                <TextView
+                <EditText
                     android:id="@+id/recipient_address"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
                     android:textSize="16sp"
-                    android:textColor="@color/textColorSecondary"
+                    android:singleLine="true"
+                    android:maxLines="1"
+                    android:inputType="textNoSuggestions"
                     android:hint="@string/eth_address"/>
 
                 <ImageButton

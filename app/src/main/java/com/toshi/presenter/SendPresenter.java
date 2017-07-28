@@ -24,6 +24,7 @@ import com.toshi.crypto.util.TypeConverter;
 import com.toshi.util.EthUtil;
 import com.toshi.util.LogUtil;
 import com.toshi.view.BaseApplication;
+import com.toshi.view.activity.ScannerActivity;
 import com.toshi.view.activity.SendActivity;
 
 import java.math.BigDecimal;
@@ -35,6 +36,7 @@ import rx.subscriptions.CompositeSubscription;
 public class SendPresenter implements Presenter<SendActivity> {
 
     public static final String EXTRA__INTENT = "extraIntent";
+    private static final int QR_REQUEST_CODE = 200;
 
     private SendActivity activity;
     private CompositeSubscription subscriptions;
@@ -59,13 +61,24 @@ public class SendPresenter implements Presenter<SendActivity> {
     }
 
     private void initShortLivingObjects() {
+        initClickListeners();
         processIntentData();
-        renderAmounts();
+    }
+
+    private void initClickListeners() {
+        this.activity.getBinding().scan.setOnClickListener(__ -> startScanQrActivity());
+    }
+
+    private void startScanQrActivity() {
+        if (this.activity == null) return;
+        final Intent intent = new Intent(this.activity, ScannerActivity.class);
+        this.activity.startActivityForResult(intent, QR_REQUEST_CODE);
     }
 
     private void processIntentData() {
         final Intent amountIntent = this.activity.getIntent().getParcelableExtra(EXTRA__INTENT);
         this.encodedEthAmount = amountIntent.getStringExtra(AmountPresenter.INTENT_EXTRA__ETH_AMOUNT);
+        renderAmounts();
     }
 
     private void renderAmounts() {
