@@ -37,8 +37,8 @@ import com.toshi.util.SharedPrefsUtil;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.activity.AdvancedSettingsActivity;
 import com.toshi.view.activity.BackupPhraseInfoActivity;
+import com.toshi.view.activity.BalanceActivity;
 import com.toshi.view.activity.CurrencyActivity;
-import com.toshi.view.activity.DepositActivity;
 import com.toshi.view.activity.QrCodeActivity;
 import com.toshi.view.activity.SignOutActivity;
 import com.toshi.view.activity.TrustedFriendsActivity;
@@ -356,7 +356,7 @@ public final class SettingsPresenter implements
         this.fragment.getBinding().trustedFriends.setOnClickListener(this::handleTrustedFriendsClicked);
         this.fragment.getBinding().backupPhrase.setOnClickListener(this::handleBackupPhraseClicked);
         this.fragment.getBinding().myQrCode.setOnClickListener(this::handleMyQrCodeClicked);
-        this.fragment.getBinding().addMoney.setOnClickListener(this::handleAddMoneyClicked);
+        this.fragment.getBinding().balanceContainer.setOnClickListener(this::handleBalanceClicked);
     }
 
     private final OnSingleClickListener handleMyProfileClicked = new OnSingleClickListener() {
@@ -386,9 +386,9 @@ public final class SettingsPresenter implements
         this.fragment.getContext().startActivity(intent);
     }
 
-    private void handleAddMoneyClicked(final View view) {
+    private void handleBalanceClicked(final View view) {
         if (fragment == null) return;
-        final Intent intent = new Intent(fragment.getActivity(), DepositActivity.class);
+        final Intent intent = new Intent(fragment.getActivity(), BalanceActivity.class);
         fragment.getContext().startActivity(intent);
     }
 

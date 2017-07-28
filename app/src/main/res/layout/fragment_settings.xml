@@ -189,6 +189,7 @@
                     android:layout_height="18dp" />
 
                 <LinearLayout
+                    android:id="@+id/balance_container"
                     android:layout_width="match_parent"
                     android:layout_height="54dp"
                     android:orientation="horizontal"
@@ -231,14 +232,6 @@
                     android:layout_marginRight="@dimen/activity_horizontal_margin"
                     android:background="@color/divider" />
 
-                <Button
-                    android:id="@+id/add_money"
-                    style="@style/NoPaddingButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="54dp"
-                    android:gravity="left|center_vertical"
-                    android:paddingLeft="@dimen/activity_horizontal_margin"
-                    android:text="@string/add_money" />
 
                 <View
                     android:layout_width="match_parent"
