@@ -25,7 +25,6 @@
     <dimen name="radiusSize">6dp</dimen>
 
     <dimen name="balance_bar_text_size">14sp</dimen>
-    <dimen name="defaultTextSize">15sp</dimen>
     <dimen name="subTitleSize">16sp</dimen>
     <dimen name="qr_code_size">170dp</dimen>
 
@@ -46,12 +45,10 @@
     <dimen name="backup_phrase_spacing">10dp</dimen>
     <dimen name="backup_phrase_corner_radius">3dp</dimen>
 
-    <dimen name="image_frame_padding">16dp</dimen>
     <dimen name="chat_image__max_width">250dp</dimen>
 
     <dimen name="list_header_text_size">14sp</dimen>
     <dimen name="list_item_text_size">16sp</dimen>
-    <dimen name="button_height">63dp</dimen>
     <dimen name="chat_button_padding">12dp</dimen>
     <dimen name="list_item_avatar_margin">12dp</dimen>
 
