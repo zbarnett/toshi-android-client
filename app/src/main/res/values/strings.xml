@@ -103,7 +103,7 @@
     <string name="confirm_payment_to">Confirm payment to</string>
     <string name="reject">Reject</string>
     <string name="approve">Approve</string>
-    <string name="eth_usd">%1$s · %2$s ETH</string>
+    <string name="local_dot_eth_amount">%1$s · %2$s ETH</string>
     <string name="confirmation_dialog_title_payment">Confirm payment to</string>
     <string name="confirmation_dialog_title_request">Confirm request to</string>
     <string name="rate">Rate</string>
@@ -242,4 +242,5 @@
     <string name="network_dialog_message">Your contacts, apps, balance, and profile are linked to the blockchain. Changing blockchains will cause them to be different</string>
     <string name="network_changed">Network changed</string>
     <string name="network_change_error">Error during changing network</string>
+    <string name="eth_address">0x0000000000000000</string>
 </resources>

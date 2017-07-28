@@ -17,15 +17,29 @@
 
 package com.toshi.presenter;
 
+import android.content.Intent;
+
+import com.toshi.R;
+import com.toshi.crypto.util.TypeConverter;
+import com.toshi.util.EthUtil;
+import com.toshi.util.LogUtil;
+import com.toshi.view.BaseApplication;
 import com.toshi.view.activity.SendActivity;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+
+import rx.Subscription;
 import rx.subscriptions.CompositeSubscription;
 
 public class SendPresenter implements Presenter<SendActivity> {
 
+    public static final String EXTRA__INTENT = "extraIntent";
+
     private SendActivity activity;
     private CompositeSubscription subscriptions;
     private boolean firstTimeAttaching = true;
+    private String encodedEthAmount;
 
 
     @Override
@@ -44,7 +58,37 @@ public class SendPresenter implements Presenter<SendActivity> {
         this.subscriptions = new CompositeSubscription();
     }
 
-    private void initShortLivingObjects() {}
+    private void initShortLivingObjects() {
+        processIntentData();
+        renderAmounts();
+    }
+
+    private void processIntentData() {
+        final Intent amountIntent = this.activity.getIntent().getParcelableExtra(EXTRA__INTENT);
+        this.encodedEthAmount = amountIntent.getStringExtra(AmountPresenter.INTENT_EXTRA__ETH_AMOUNT);
+    }
+
+    private void renderAmounts() {
+        final BigInteger weiAmount = TypeConverter.StringHexToBigInteger(this.encodedEthAmount);
+        final BigDecimal ethAmount = EthUtil.weiToEth(weiAmount);
+
+        final Subscription sub = BaseApplication
+                .get()
+                .getBalanceManager()
+                .convertEthToLocalCurrencyString(ethAmount)
+                .subscribe(
+                        this::renderBalance,
+                        throwable -> LogUtil.exception(getClass(), throwable)
+                );
+
+        this.subscriptions.add(sub);
+    }
+
+    private void renderBalance(final String amount) {
+        if (this.activity == null) return;
+        final String usdEth = this.activity.getString(R.string.local_dot_eth_amount, amount, getEthValue());
+        this.activity.getBinding().amount.setText(usdEth);
+    }
 
     @Override
     public void onViewDetached() {
@@ -56,5 +100,10 @@ public class SendPresenter implements Presenter<SendActivity> {
     public void onDestroyed() {
         this.subscriptions = null;
         this.activity = null;
+    }
+
+    private String getEthValue() {
+        final BigInteger eth = TypeConverter.StringHexToBigInteger(this.encodedEthAmount);
+        return EthUtil.weiAmountToUserVisibleString(eth);
     }
 }

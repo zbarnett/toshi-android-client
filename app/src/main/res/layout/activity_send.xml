@@ -15,13 +15,136 @@
   ~     You should have received a copy of the GNU General Public License
   ~     along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
+
 <layout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            style="@style/Toolbar">
+
+            <ImageButton
+                android:id="@+id/close_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scaleType="fitCenter"
+                android:background="@android:color/transparent"
+                app:srcCompat="@drawable/ic_arrow_back"
+                android:tint="@color/textColorContrast"
+                android:padding="16dp" />
+
+            <android.support.v4.widget.Space
+                android:layout_width="16dp"
+                android:layout_height="0dp" />
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/Toolbar.TitleText"
+                android:text="@string/send_money"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:background="@color/windowBackground">
+
+            <TextView
+                android:id="@+id/amount"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:gravity="center_vertical"
+                android:textSize="@dimen/subTitleSize"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                tools:text="$0.00 USD - 0.0000 ETH" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="18dp"
+                android:paddingBottom="18dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:text="@string/to"/>
+
+                <android.support.v4.widget.Space
+                    android:layout_width="3dp"
+                    android:layout_height="0dp" />
+
+                <TextView
+                    android:id="@+id/recipient_address"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:textSize="16sp"
+                    android:textColor="@color/textColorSecondary"
+                    android:hint="@string/eth_address"/>
+
+                <ImageButton
+                    android:id="@+id/scan"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/scan_qr"
+                    android:background="@android:color/transparent"
+                    android:tint="@color/textColorPrimary"/>
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"/>
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="@dimen/activity_horizontal_margin"/>
+
+            <Button
+                android:id="@+id/send"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                style="@style/FlatButton"
+                android:text="@string/send"/>
+
+            <android.support.v4.widget.Space
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+
+            <TextView
+                android:id="@+id/network"
+                android:layout_width="match_parent"
+                android:layout_height="24dp"
+                android:gravity="center"
+                android:background="@color/file_avatar_background"
+                style="@style/TextStyleMedium"
+                android:textSize="14sp"
+                android:textColor="@color/textColorContrast"
+                tools:text="Active network: Mainnet"/>
+
+
+        </LinearLayout>
+    </LinearLayout>
 
 </layout>

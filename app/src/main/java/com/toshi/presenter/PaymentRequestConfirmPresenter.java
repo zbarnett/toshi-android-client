@@ -189,7 +189,7 @@ public class PaymentRequestConfirmPresenter implements Presenter<PaymentConfirma
                 .getBalanceManager()
                 .convertEthToLocalCurrencyString(ethAmount)
                 .subscribe((localCurrency) -> {
-                    final String usdEth = this.view.getString(R.string.eth_usd, localCurrency, getEthValue());
+                    final String usdEth = this.view.getString(R.string.local_dot_eth_amount, localCurrency, getEthValue());
                     this.view.getBinding().ethUsd.setText(usdEth);
                 },
                         throwable -> LogUtil.exception(getClass(), throwable)

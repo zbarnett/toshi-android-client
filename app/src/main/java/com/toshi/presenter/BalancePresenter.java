@@ -17,11 +17,15 @@
 
 package com.toshi.presenter;
 
+import android.app.Activity;
 import android.content.Intent;
 
+import com.toshi.model.local.ActivityResultHolder;
 import com.toshi.model.network.Balance;
 import com.toshi.util.LogUtil;
+import com.toshi.util.PaymentType;
 import com.toshi.view.BaseApplication;
+import com.toshi.view.activity.AmountActivity;
 import com.toshi.view.activity.BalanceActivity;
 import com.toshi.view.activity.DepositActivity;
 import com.toshi.view.activity.SendActivity;
@@ -31,6 +35,8 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.subscriptions.CompositeSubscription;
 
 public class BalancePresenter implements Presenter<BalanceActivity> {
+
+    private static final int SEND_REQUEST_CODE = 100;
 
     private BalanceActivity activity;
     private CompositeSubscription subscriptions;
@@ -60,13 +66,32 @@ public class BalancePresenter implements Presenter<BalanceActivity> {
 
     private void initClickListeners() {
         this.activity.getBinding().closeButton.setOnClickListener(__ -> this.activity.finish());
-        this.activity.getBinding().sendMoney.setOnClickListener(__ -> goToActivity(SendActivity.class));
+        this.activity.getBinding().sendMoney.setOnClickListener(__ -> startPaymentActivityForResult());
         this.activity.getBinding().depositMoney.setOnClickListener(__ -> goToActivity(DepositActivity.class));
     }
 
-    private void goToActivity(final Class clz) {
+    private void startPaymentActivityForResult() {
         if (this.activity == null) return;
-        final Intent intent = new Intent(this.activity, clz);
+        final Intent intent = new Intent(this.activity, AmountActivity.class)
+                .putExtra(AmountActivity.VIEW_TYPE, PaymentType.TYPE_SEND);
+        activity.startActivityForResult(intent, SEND_REQUEST_CODE);
+    }
+
+    public boolean handleActivityResult(final ActivityResultHolder resultHolder) {
+        if (resultHolder.getResultCode() != Activity.RESULT_OK
+                || this.activity == null
+                || resultHolder.getRequestCode() != SEND_REQUEST_CODE) {
+            return false;
+        }
+
+        startSendActivityWithAmountIntent(resultHolder.getIntent());
+        return true;
+    }
+
+    private void startSendActivityWithAmountIntent(final Intent amountIntent) {
+        if (this.activity == null) return;
+        final Intent intent = new Intent(this.activity, SendActivity.class)
+                .putExtra(SendPresenter.EXTRA__INTENT, amountIntent);
         this.activity.startActivity(intent);
     }
 
@@ -89,16 +114,18 @@ public class BalancePresenter implements Presenter<BalanceActivity> {
     }
 
     private Balance renderBalance(final Balance balance) {
-        if (this.activity != null) {
-            this.activity.getBinding().ethBalance.setText(balance.getFormattedUnconfirmedBalance());
-        }
+        if (this.activity != null) this.activity.getBinding().ethBalance.setText(balance.getFormattedUnconfirmedBalance());
         return balance;
     }
 
     private void renderFormattedBalance(final String formattedBalance) {
-        if (this.activity != null) {
-            this.activity.getBinding().localCurrencyBalance.setText(formattedBalance);
-        }
+        if (this.activity != null) this.activity.getBinding().localCurrencyBalance.setText(formattedBalance);
+    }
+
+    private void goToActivity(final Class clz) {
+        if (this.activity == null) return;
+        final Intent intent = new Intent(this.activity, clz);
+        this.activity.startActivity(intent);
     }
 
     @Override
