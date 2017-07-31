@@ -56,8 +56,8 @@ public class SignInPresenter implements Presenter<SignInActivity> {
     }
 
     private void initMultilineWorkaround() {
-        this.activity.getBinding().password.setHorizontallyScrolling(false);
-        this.activity.getBinding().password.setLines(3);
+        this.activity.getBinding().passphrase.setHorizontallyScrolling(false);
+        this.activity.getBinding().passphrase.setLines(3);
     }
 
     private void initLongLivingObjects() {
@@ -70,7 +70,7 @@ public class SignInPresenter implements Presenter<SignInActivity> {
     }
 
     private void handleSignInClicked() {
-        final String passphraseInput = this.activity.getBinding().password.getText().toString().toLowerCase().trim();
+        final String passphraseInput = this.activity.getBinding().passphrase.getText().toString().toLowerCase().trim();
         final String[] passphraseArray = passphraseInput.split(" ");
         if (passphraseArray.length != 12) {
             Toast.makeText(

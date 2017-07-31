@@ -248,4 +248,7 @@
     <string name="eth_address">0x0000000000000000</string>
     <string name="conversation_deleted">Conversation deleted</string>
     <string name="undo">Undo</string>
+    <string name="enter_passphrase">Enter your passphrase</string>
+    <string name="hide_passphrase">Hide Passphrase</string>
+    <string name="how_does_it_work">How does it work?</string>
 </resources>
