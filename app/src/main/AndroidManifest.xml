@@ -106,6 +106,7 @@
         <activity android:name="com.toshi.view.activity.AdvancedSettingsActivity"/>
         <activity android:name="com.toshi.view.activity.BalanceActivity"/>
         <activity android:name="com.toshi.view.activity.SendActivity"/>
+        <activity android:name="com.toshi.view.activity.SignInInfoActivity"/>
 
         <meta-data
             android:name="io.fabric.ApiKey"

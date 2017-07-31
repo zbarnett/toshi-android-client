@@ -30,6 +30,7 @@ import com.toshi.util.SharedPrefsUtil;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.activity.MainActivity;
 import com.toshi.view.activity.SignInActivity;
+import com.toshi.view.activity.SignInInfoActivity;
 
 import rx.Single;
 import rx.Subscription;
@@ -66,7 +67,13 @@ public class SignInPresenter implements Presenter<SignInActivity> {
 
     private void initClickListeners() {
         this.activity.getBinding().closeButton.setOnClickListener(__ -> this.activity.finish());
+        this.activity.getBinding().infoView.setOnClickListener(__ -> handleInfoViewClicked());
         this.activity.getBinding().signIn.setOnClickListener(v -> handleSignInClicked());
+    }
+
+    private void handleInfoViewClicked() {
+        final Intent intent = new Intent(this.activity, SignInInfoActivity.class);
+        this.activity.startActivity(intent);
     }
 
     private void handleSignInClicked() {

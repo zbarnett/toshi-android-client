@@ -27,8 +27,7 @@
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/contrastBackgroundColor">
+            android:layout_height="match_parent">
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
@@ -100,7 +99,7 @@
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:id="@+id/infoView"
+                    android:id="@+id/errorView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="@dimen/activity_horizontal_margin"
@@ -144,7 +143,7 @@
                 android:layout_height="22dp" />
 
             <TextView
-                android:id="@+id/howDoesItWork"
+                android:id="@+id/infoView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
