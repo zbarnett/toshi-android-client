@@ -40,6 +40,7 @@ import com.toshi.view.activity.ViewUserActivity;
 import com.toshi.view.activity.WebViewActivity;
 import com.toshi.view.adapter.HorizontalAdapter;
 import com.toshi.view.adapter.SearchAppAdapter;
+import com.toshi.view.adapter.listeners.OnItemClickListener;
 import com.toshi.view.custom.HorizontalLineDivider;
 import com.toshi.view.fragment.toplevel.AppsFragment;
 
@@ -145,39 +146,42 @@ public class AppsPresenter implements Presenter<AppsFragment>{
     }
 
     private void iniTopRatedAppsRecycleView() {
-        final RecyclerView topRatedApps = this.fragment.getBinding().topRatedApps;
-        topRatedApps.setLayoutManager(new LinearLayoutManager(this.fragment.getContext(), LinearLayoutManager.HORIZONTAL, false));
-        final HorizontalAdapter adapter = new HorizontalAdapter<App>()
-                .setOnItemClickListener(this::handleAppClicked);
-        topRatedApps.setAdapter(adapter);
-        topRatedApps.setNestedScrollingEnabled(false);
+        initRecyclerView(
+                this.fragment.getBinding().topRatedApps,
+                new HorizontalAdapter<App>(),
+                this::handleAppClicked
+        );
     }
 
     private void initLatestAppsRecycleView() {
-        final RecyclerView topRatedApps = this.fragment.getBinding().featuredApps;
-        topRatedApps.setLayoutManager(new LinearLayoutManager(this.fragment.getContext(), LinearLayoutManager.HORIZONTAL, false));
-        final HorizontalAdapter adapter = new HorizontalAdapter<App>()
-                .setOnItemClickListener(this::handleAppClicked);
-        topRatedApps.setAdapter(adapter);
-        topRatedApps.setNestedScrollingEnabled(false);
+        initRecyclerView(
+                this.fragment.getBinding().featuredApps,
+                new HorizontalAdapter<App>(),
+                this::handleAppClicked
+        );
     }
 
     private void initTopRatedPublicUsersRecyclerView() {
-        final RecyclerView topRatedApps = this.fragment.getBinding().topRatedPublicUsers;
-        topRatedApps.setLayoutManager(new LinearLayoutManager(this.fragment.getContext(), LinearLayoutManager.HORIZONTAL, false));
-        final HorizontalAdapter adapter = new HorizontalAdapter<User>()
-                .setOnItemClickListener(this::handleUserClicked);
-        topRatedApps.setAdapter(adapter);
-        topRatedApps.setNestedScrollingEnabled(false);
+        initRecyclerView(
+                this.fragment.getBinding().topRatedPublicUsers,
+                new HorizontalAdapter<User>(),
+                this::handleUserClicked
+        );
     }
 
     private void initLatestPublicUsersRecyclerView() {
-        final RecyclerView topRatedApps = this.fragment.getBinding().latestPublicUsers;
-        topRatedApps.setLayoutManager(new LinearLayoutManager(this.fragment.getContext(), LinearLayoutManager.HORIZONTAL, false));
-        final HorizontalAdapter adapter = new HorizontalAdapter<User>()
-                .setOnItemClickListener(this::handleUserClicked);
-        topRatedApps.setAdapter(adapter);
-        topRatedApps.setNestedScrollingEnabled(false);
+        initRecyclerView(
+                this.fragment.getBinding().latestPublicUsers,
+                new HorizontalAdapter<User>(),
+                this::handleUserClicked
+        );
+    }
+
+    private void initRecyclerView(final RecyclerView recyclerView, final HorizontalAdapter adapter, final OnItemClickListener onItemClickListener) {
+        recyclerView.setLayoutManager(new LinearLayoutManager(this.fragment.getContext(), LinearLayoutManager.HORIZONTAL, false));
+        adapter.setOnItemClickListener(onItemClickListener);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setNestedScrollingEnabled(false);
     }
 
     private void handleAppClicked(final Object elem) {
