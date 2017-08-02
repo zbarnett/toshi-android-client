@@ -37,21 +37,21 @@ public class HorizontalViewHolder<T extends ToshiEntity> extends RecyclerView.Vi
     private static final double MINIMAL_SCREEN_RATIO = 1.4;
 
     private TextView appLabel;
-    private TextView appCategory;
     private StarRatingView ratingView;
     private CircleImageView appImage;
+    private View container;
 
     public HorizontalViewHolder(View itemView) {
         super(itemView);
 
         this.appLabel = (TextView) itemView.findViewById(R.id.app_label);
-        this.appCategory = (TextView) itemView.findViewById(R.id.app_category);
         this.ratingView = (StarRatingView) itemView.findViewById(R.id.rating_view);
         this.appImage = (CircleImageView) itemView.findViewById(R.id.app_image);
+        this.container = itemView.findViewById(R.id.container);
     }
 
     public HorizontalViewHolder setElement(final T elem) {
-        setAvatarSize();
+        setContainerSize();
         renderName(elem);
         loadImage(elem);
         return this;
@@ -62,14 +62,15 @@ public class HorizontalViewHolder<T extends ToshiEntity> extends RecyclerView.Vi
         this.ratingView.setStars(elem.getAverageRating());
     }
 
-    private void setAvatarSize() {
-        final int avatarSize = getAvatarSize();
+    private void setContainerSize() {
+        final int avatarSize = getContainerSize();
+        this.container.getLayoutParams().width = avatarSize;
         this.appImage.getLayoutParams().width = avatarSize;
         this.appImage.getLayoutParams().height = avatarSize;
-        this.appImage.requestLayout();
+        this.container.requestLayout();
     }
 
-    private int getAvatarSize() {
+    private int getContainerSize() {
         final int screenWidth = ScreenUtil.getWidthOfScreen();
         final int horizontalMargin = this.appImage.getContext().getResources().getDimensionPixelSize(R.dimen.activity_horizontal_margin);
         final double numberOfVisibleApps =

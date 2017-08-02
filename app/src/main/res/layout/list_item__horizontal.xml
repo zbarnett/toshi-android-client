@@ -16,12 +16,14 @@
   ~     along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
     android:orientation="vertical" 
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:layout_marginRight="@dimen/activity_horizontal_margin"
     android:background="?android:selectableItemBackground">
     
@@ -31,23 +33,24 @@
         android:layout_height="79dp"
         app:civ_border_width="1dp"
         app:civ_border_color="@color/divider"/>
-    
-    <TextView
-        android:id="@+id/app_label"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:textSize="14sp"
-        android:textColor="@color/textColorPrimary"
-        style="@style/TextStyleMedium"
-        tools:text="App name"/>
 
-    <TextView
-        android:id="@+id/app_category"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:textSize="14sp"
-        android:textColor="@color/textColorSecondary" />
+    <android.support.v4.widget.Space
+        android:layout_width="0dp"
+        android:layout_height="20dp"/>
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:layout_width="80dp">
+
+        <TextView
+            android:id="@+id/app_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="3"
+            android:ellipsize="end"
+            tools:text="App name - which just so happens to go over several lines"/>
+    </FrameLayout>
+
 
     <android.support.v4.widget.Space
         android:layout_width="0dp"
