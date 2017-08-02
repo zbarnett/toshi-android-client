@@ -32,7 +32,7 @@ import com.toshi.R;
 import com.toshi.model.local.SendState;
 import com.toshi.util.ImageUtil;
 import com.toshi.view.adapter.listeners.OnItemClickListener;
-import com.vdurmont.emoji.EmojiManager;
+import com.vdurmont.emoji.EmojiParser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,15 +85,20 @@ public final class TextViewHolder extends RecyclerView.ViewHolder {
     private void renderText() {
         if (this.text == null) return;
 
-        if (EmojiManager.isOnlyEmojis(this.text)) {
+        if (isOnlyEmojis()) {
             this.message.setVisibility(View.GONE);
             this.emojiMessage.setVisibility(View.VISIBLE);
-            this.emojiMessage.setText(this.text);
+            this.emojiMessage.setText(this.text.trim());
         } else {
             this.emojiMessage.setVisibility(View.GONE);
             this.message.setVisibility(View.VISIBLE);
             this.message.setText(this.text);
         }
+    }
+
+    private boolean isOnlyEmojis() {
+        // Returns true even if there is whitespace between emojis
+        return EmojiParser.removeAllEmojis(this.text).trim().length() == 0;
     }
 
     private void renderAvatar() {
