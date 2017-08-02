@@ -82,7 +82,6 @@
         <activity android:name="com.toshi.view.activity.ChooseContactsActivity" />
         <activity android:name="com.toshi.view.activity.LicenseListActivity" />
         <activity android:name="com.toshi.view.activity.LicenseActivity" />
-        <activity android:name="com.toshi.view.activity.ViewAppActivity" />
         <activity android:name="com.toshi.view.activity.TrustedFriendsActivity" />
         <activity android:name="com.toshi.view.activity.BackupPhraseInfoActivity" />
         <activity android:name="com.toshi.view.activity.BackupPhraseActivity" />
