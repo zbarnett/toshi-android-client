@@ -16,7 +16,8 @@
   ~     along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<layout xmlns:tools="http://schemas.android.com/tools">
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
 
     <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -95,8 +96,9 @@
 
                     <TextView
                         android:id="@+id/name"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        app:layout_gravity="fill_horizontal"
                         android:textColor="@color/textColorPrimary"
                         android:textSize="22sp"
                         style="@style/TextStyleMedium"
