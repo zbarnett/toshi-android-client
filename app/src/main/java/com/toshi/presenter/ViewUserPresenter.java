@@ -30,7 +30,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.toshi.R;
-import com.toshi.databinding.ActivityUserProfileBinding;
+import com.toshi.databinding.ActivityViewUserBinding;
 import com.toshi.model.local.ActivityResultHolder;
 import com.toshi.model.local.User;
 import com.toshi.model.network.ReputationScore;
@@ -177,7 +177,7 @@ public final class ViewUserPresenter implements
 
     private void handleUserLoaded(final User user) {
         this.user = user;
-        final ActivityUserProfileBinding binding = this.activity.getBinding();
+        final ActivityViewUserBinding binding = this.activity.getBinding();
         binding.title.setText(user.getDisplayName());
         binding.name.setText(user.getDisplayName());
         binding.username.setText(user.getUsername());

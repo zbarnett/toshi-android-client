@@ -26,7 +26,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.toshi.R;
-import com.toshi.databinding.ActivityUserProfileBinding;
+import com.toshi.databinding.ActivityViewUserBinding;
 import com.toshi.model.local.ActivityResultHolder;
 import com.toshi.presenter.LoaderIds;
 import com.toshi.presenter.ViewUserPresenter;
@@ -37,7 +37,7 @@ public class ViewUserActivity extends BasePresenterActivity<ViewUserPresenter, V
     public static final String EXTRA__USER_ADDRESS = "extra_user_address";
     public static final String EXTRA__PLAY_SCAN_SOUNDS = "play_scan_sounds";
 
-    private ActivityUserProfileBinding binding;
+    private ActivityViewUserBinding binding;
     private ViewUserPresenter presenter;
     private ActivityResultHolder resultHolder;
     private Menu menu;
@@ -49,7 +49,7 @@ public class ViewUserActivity extends BasePresenterActivity<ViewUserPresenter, V
     }
 
     private void init() {
-        this.binding = DataBindingUtil.setContentView(this, R.layout.activity_user_profile);
+        this.binding = DataBindingUtil.setContentView(this, R.layout.activity_view_user);
     }
 
     @Override
@@ -59,7 +59,7 @@ public class ViewUserActivity extends BasePresenterActivity<ViewUserPresenter, V
         tryCreateOptionsMenu();
     }
 
-    public ActivityUserProfileBinding getBinding() {
+    public ActivityViewUserBinding getBinding() {
         return this.binding;
     }
 
