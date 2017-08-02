@@ -27,7 +27,8 @@
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@color/contrastBackgroundColor">
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
@@ -75,19 +76,34 @@
                 android:layout_width="0dp"
                 android:layout_height="8dp" />
 
-            <EditText
-                android:id="@+id/passphrase"
+
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"
-                android:gravity="center_vertical"
-                android:imeOptions="actionDone"
-                android:inputType="textNoSuggestions"
-                android:textColor="@color/textColorInput"
-                android:textColorHint="@color/textColorSecondary"
-                android:textSize="16sp"
-                android:hint="@string/enter_passphrase" />
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/suggestion"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin"
+                    android:textColor="@color/textColorHint"
+                    android:textSize="16sp" />
+
+                <EditText
+                    android:id="@+id/passphrase"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin"
+                    android:imeOptions="actionDone"
+                    android:inputType="textNoSuggestions"
+                    android:textColor="@color/textColorInput"
+                    android:textColorHint="@color/textColorSecondary"
+                    android:textSize="16sp"
+                    android:hint="@string/enter_passphrase" />
+
+            </FrameLayout>
 
             <android.support.v4.widget.Space
                 android:layout_width="0dp"

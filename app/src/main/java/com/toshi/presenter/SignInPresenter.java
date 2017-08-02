@@ -20,18 +20,34 @@ package com.toshi.presenter;
 import android.content.Intent;
 import android.support.annotation.StringRes;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Toast;
 
+import com.beloo.widget.chipslayoutmanager.ChipsLayoutManager;
+import com.google.common.base.Joiner;
+import com.jakewharton.rxbinding.widget.RxTextView;
 import com.toshi.R;
 import com.toshi.crypto.HDWallet;
 import com.toshi.manager.ToshiManager;
+import com.toshi.util.LogUtil;
 import com.toshi.util.SharedPrefsUtil;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.activity.MainActivity;
 import com.toshi.view.activity.SignInActivity;
 import com.toshi.view.activity.SignInInfoActivity;
+import com.toshi.view.adapter.SignInPassphraseAdapter;
+import com.toshi.view.custom.SpaceDecoration;
 
+import org.bitcoinj.crypto.MnemonicCode;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import rx.Observable;
 import rx.Single;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -40,10 +56,15 @@ import rx.subscriptions.CompositeSubscription;
 
 public class SignInPresenter implements Presenter<SignInActivity> {
 
+    private static final int PASSPHRASE_LENGTH = 12;
+
     private SignInActivity activity;
     private boolean firstTimeAttaching = true;
     private CompositeSubscription subscriptions;
+
     private boolean onGoingTask = false;
+    private List<String> wordList;
+    private List<String> approvedWords;
 
     @Override
     public void onViewAttached(SignInActivity view) {
@@ -52,22 +73,96 @@ public class SignInPresenter implements Presenter<SignInActivity> {
             this.firstTimeAttaching = false;
             initLongLivingObjects();
         }
-        initMultilineWorkaround();
+        initPassphraseList();
+        initPassphraseView();
         initClickListeners();
-    }
-
-    private void initMultilineWorkaround() {
-        this.activity.getBinding().passphrase.setHorizontallyScrolling(false);
-        this.activity.getBinding().passphrase.setLines(3);
     }
 
     private void initLongLivingObjects() {
         this.subscriptions = new CompositeSubscription();
+        initLists();
+        initWordList();
+    }
+
+    private void initLists() {
+        this.wordList = new ArrayList<>();
+        this.approvedWords = new ArrayList<>();
+    }
+
+    private void initWordList() {
+        try {
+            this.wordList = new MnemonicCode().getWordList();
+        } catch (IOException e) {
+            LogUtil.e(getClass(), e.toString());
+        }
+    }
+
+    private void initPassphraseList() {
+        final RecyclerView passphraseList = this.activity.getBinding().passphraseList;
+        if (passphraseList.getAdapter() != null) return;
+
+        final ChipsLayoutManager chipsLayoutManager = ChipsLayoutManager.newBuilder(this.activity)
+                .setRowStrategy(ChipsLayoutManager.STRATEGY_DEFAULT)
+                .build();
+        final int itemSpacing = this.activity.getResources().getDimensionPixelSize(R.dimen.passphrase_sign_in_spacing);
+        passphraseList.addItemDecoration(new SpaceDecoration(itemSpacing));
+        passphraseList.setLayoutManager(chipsLayoutManager);
+        final SignInPassphraseAdapter adapter = new SignInPassphraseAdapter(this.approvedWords);
+        passphraseList.setAdapter(adapter);
+    }
+
+    private void initPassphraseView() {
+        final Subscription sub =
+                RxTextView
+                .textChanges(this.activity.getBinding().passphrase)
+                .skip(1)
+                .map(CharSequence::toString)
+                .doOnNext(this::clearSuggestion)
+                .filter(input -> input.length() > 0)
+                .observeOn(Schedulers.io())
+                .flatMap(this::getWordSuggestion)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        this::handleWordSuggestion,
+                        throwable -> LogUtil.e(getClass(), throwable.toString())
+                );
+
+        this.subscriptions.add(sub);
+    }
+
+    private void clearSuggestion(final String string) {
+        if (string.length() > 0) return;
+        this.activity.getBinding().suggestion.setText("");
+    }
+
+    private Observable<String> getWordSuggestion(final String startOfWord) {
+        return Observable.fromCallable(() -> {
+            if (startOfWord.length() == 0) return null;
+
+            final int searchResult = Collections.binarySearch(this.wordList, startOfWord);
+            if (Math.abs(searchResult) >= this.wordList.size()) return null;
+
+            final int index = searchResult < 0 ? Math.abs(searchResult) - 1 : searchResult;
+            final String suggestion = this.wordList.get(index);
+            if (!suggestion.startsWith(startOfWord)) return null;
+
+            return suggestion;
+        });
+    }
+    private void handleWordSuggestion(final String suggestion) {
+        if (suggestion == null) {
+            this.activity.getBinding().suggestion.setText("");
+            //Show error message
+            return;
+        }
+
+        this.activity.getBinding().suggestion.setText(suggestion);
     }
 
     private void initClickListeners() {
         this.activity.getBinding().closeButton.setOnClickListener(__ -> this.activity.finish());
         this.activity.getBinding().infoView.setOnClickListener(__ -> handleInfoViewClicked());
+        this.activity.getBinding().passphrase.setOnEditorActionListener((__, actionId, ___) -> handleEnterClicked(actionId));
         this.activity.getBinding().signIn.setOnClickListener(v -> handleSignInClicked());
     }
 
@@ -76,19 +171,39 @@ public class SignInPresenter implements Presenter<SignInActivity> {
         this.activity.startActivity(intent);
     }
 
+    private boolean handleEnterClicked(final int actionId) {
+        if (actionId == EditorInfo.IME_ACTION_DONE) {
+            final String word = this.activity.getBinding().passphrase.getText().toString();
+            addWordToList(word);
+            return true;
+        }
+        return false;
+    }
+
+    private void addWordToList(final String word) {
+        if (this.wordList.contains(word)) {
+            this.activity.getBinding().passphrase.setText("");
+            this.activity.getBinding().suggestion.setText("");
+            addWord(word);
+        }
+    }
+
+    private void addWord(final String word) {
+        final SignInPassphraseAdapter adapter = (SignInPassphraseAdapter) this.activity.getBinding().passphraseList.getAdapter();
+        this.approvedWords.add(word);
+        adapter.setPassphrase(this.approvedWords);
+    }
+
     private void handleSignInClicked() {
-        final String passphraseInput = this.activity.getBinding().passphrase.getText().toString().toLowerCase().trim();
-        final String[] passphraseArray = passphraseInput.split(" ");
-        if (passphraseArray.length != 12) {
-            Toast.makeText(
-                    this.activity,
-                    this.activity.getString(R.string.sign_in_length_error_message),
-                    Toast.LENGTH_SHORT)
-                    .show();
+        if (this.approvedWords.size() != PASSPHRASE_LENGTH) {
+            showToast(R.string.sign_in_length_error_message);
             return;
         }
 
-        tryCreateWallet(passphraseInput);
+        final Joiner joiner = Joiner.on(" ");
+        final String masterSeed = joiner.join(this.approvedWords);
+
+        tryCreateWallet(masterSeed);
     }
 
     private void tryCreateWallet(final String masterSeed) {

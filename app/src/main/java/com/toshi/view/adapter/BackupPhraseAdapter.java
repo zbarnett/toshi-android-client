@@ -25,6 +25,7 @@ import android.view.ViewGroup;
 import com.toshi.R;
 import com.toshi.view.adapter.viewholder.BackupPhraseViewHolder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class BackupPhraseAdapter extends RecyclerView.Adapter<BackupPhraseViewHolder> {
@@ -32,7 +33,7 @@ public class BackupPhraseAdapter extends RecyclerView.Adapter<BackupPhraseViewHo
     private List<String> backupPhrase;
 
     public BackupPhraseAdapter(final List<String> backupPhrase) {
-        this.backupPhrase = backupPhrase;
+        this.backupPhrase = new ArrayList<>(backupPhrase);
     }
 
     public void setBackupPhraseItems(final List<String> backupPhrase) {
