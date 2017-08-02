@@ -54,7 +54,7 @@ public class ThreadViewHolder extends ClickableViewHolder {
     public void setThread(final Conversation conversation) {
         final Recipient recipient = conversation.getRecipient();
         this.name.setText(recipient.getDisplayName());
-        this.unreadCounter.setText(String.valueOf(conversation.getNumberOfUnread()));
+        this.unreadCounter.setText(getNumberOfUnread(conversation));
         final String creationTime = getLastMessageCreationTime(conversation);
         this.time.setText(creationTime);
 
@@ -62,6 +62,11 @@ public class ThreadViewHolder extends ClickableViewHolder {
         this.unreadCounter.setVisibility(visibility);
 
         ImageUtil.load(recipient.getAvatar(), this.avatar);
+    }
+
+    private String getNumberOfUnread(final Conversation conversation) {
+        final int numberOfUnread = conversation.getNumberOfUnread();
+        return (numberOfUnread > 99) ? ":)" : String.valueOf(numberOfUnread);
     }
 
     public void setLatestMessage(final String latestMessage) {
