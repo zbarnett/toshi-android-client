@@ -19,12 +19,16 @@ package com.toshi.util;
 
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 
 import com.toshi.R;
+import com.toshi.crypto.util.TypeConverter;
 import com.toshi.exception.InvalidQrCode;
 import com.toshi.exception.InvalidQrCodePayment;
 import com.toshi.model.local.QrCodePayment;
 import com.toshi.view.BaseApplication;
+
+import java.math.BigInteger;
 
 import rx.Single;
 
@@ -53,19 +57,32 @@ public class QrCode {
             return QrCodeType.PAY;
         } else if (this.payload.startsWith(baseUrl + ADD_TYPE)) {
             return QrCodeType.ADD;
-        } else if (hasAddressPrefix()) {
-            return isPaymentAddressQrCode()
-                    ? QrCodeType.PAYMENT_ADDRESS
-                    : QrCodeType.EXTERNAL_PAY;
+        } else if (this.payload.startsWith(EXTERNAL_URL_PREFIX)) {
+            return getTypeForEthereumAddress();
+        } else if (this.payload.startsWith(IBAN_URL_PREFIX)) {
+            return getTypeForIbanAddress();
         } else if (isValidEthereumAddress(this.payload)) {
+            final String encoded = Integer.toHexString(Integer.parseInt(this.payload, 36));
+            LogUtil.print(getClass(), encoded       );
             return QrCodeType.PAYMENT_ADDRESS;
         } else {
             return QrCodeType.INVALID;
         }
     }
 
-    private boolean hasAddressPrefix() {
-        return this.payload.startsWith(EXTERNAL_URL_PREFIX) || this.payload.startsWith(IBAN_URL_PREFIX);
+    private int getTypeForEthereumAddress() {
+        return isPaymentAddressQrCode()
+                ? QrCodeType.PAYMENT_ADDRESS
+                : QrCodeType.EXTERNAL_PAY;
+    }
+
+    private int getTypeForIbanAddress() {
+        final String ibanAddress = cleanIbanAddress().split("\\?")[0];
+        if (ibanAddress.length() < 30) return QrCodeType.INVALID;
+
+        return isPaymentAddressQrCode()
+                ? QrCodeType.PAYMENT_ADDRESS
+                : QrCodeType.EXTERNAL_PAY;
     }
 
     private boolean isValidEthereumAddress(final String address) {
@@ -73,6 +90,14 @@ public class QrCode {
             return address.length() == 42;
         }
         return address.length() == 40;
+    }
+
+    /* package */ String getPayloadAsPaymentAddress() {
+        if (this.payload.startsWith(IBAN_URL_PREFIX)) {
+            final String hexAddress = new BigInteger(cleanIbanAddress(), 36).toString(16);
+            return TypeConverter.toJsonHex(hexAddress);
+        }
+        return this.payload;
     }
 
     public String getUsername() throws InvalidQrCode {
@@ -184,5 +209,11 @@ public class QrCode {
 
     private boolean isPaymentAddressQrCode() {
         return !this.payload.contains("?");
+    }
+
+    @NonNull
+    private String cleanIbanAddress() {
+        // Strip off "iban:XE**"
+        return this.payload.substring(9);
     }
 }

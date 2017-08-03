@@ -186,7 +186,7 @@ public class QrCodeHandler implements PaymentConfirmationDialog.OnPaymentConfirm
     private void handlePaymentAddressQrCode(final QrCode qrCode) {
         if (this.activity == null) return;
         final ClipboardManager clipboard = (ClipboardManager) this.activity.getSystemService(Context.CLIPBOARD_SERVICE);
-        final ClipData clip = ClipData.newPlainText(this.activity.getString(R.string.payment_address), qrCode.getPayload());
+        final ClipData clip = ClipData.newPlainText(this.activity.getString(R.string.payment_address), qrCode.getPayloadAsPaymentAddress());
         clipboard.setPrimaryClip(clip);
 
         Toast.makeText(
