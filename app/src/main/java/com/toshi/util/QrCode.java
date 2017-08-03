@@ -36,23 +36,23 @@ public class QrCode {
     private static final String VALUE = "value";
     private static final String MEMO = "memo";
 
-    private String url;
+    private String payload;
 
-    public QrCode(final String url) {
-        this.url = url;
+    public QrCode(final String payload) {
+        this.payload = payload;
     }
 
-    public String getUrl() {
-        return this.url;
+    public String getPayload() {
+        return this.payload;
     }
 
     public @QrCodeType.Type int getQrCodeType() {
         final String baseUrl = BaseApplication.get().getString(R.string.qr_code_base_url);
-        if (this.url.startsWith(baseUrl + PAY_TYPE)) {
+        if (this.payload.startsWith(baseUrl + PAY_TYPE)) {
             return QrCodeType.PAY;
-        } else if (this.url.startsWith(baseUrl + ADD_TYPE)) {
+        } else if (this.payload.startsWith(baseUrl + ADD_TYPE)) {
             return QrCodeType.ADD;
-        } else if (this.url.startsWith(EXTERNAL_URL_PREFIX)) {
+        } else if (this.payload.startsWith(EXTERNAL_URL_PREFIX)) {
             return isPaymentAddressQrCode()
                     ? QrCodeType.PAYMENT_ADDRESS
                     : QrCodeType.EXTERNAL_PAY;
@@ -63,7 +63,7 @@ public class QrCode {
 
     public String getUsername() throws InvalidQrCode {
         try {
-            final String username = Uri.parse(this.url).getLastPathSegment();
+            final String username = Uri.parse(this.payload).getLastPathSegment();
             if (username == null) throw new InvalidQrCode();
             final String usernameWithoutPrefix = username.startsWith("@")
                     ? username.replaceFirst("@", "")
@@ -90,8 +90,8 @@ public class QrCode {
     public QrCodePayment getExternalPayment() throws InvalidQrCodePayment {
         try {
             final String baseUrl = String.format("%s%s/", BaseApplication.get().getString(R.string.qr_code_base_url), PAY_TYPE);
-            this.url = this.url.replaceFirst(EXTERNAL_URL_PREFIX, baseUrl);
-            final String address = Uri.parse(this.url).getLastPathSegment();
+            this.payload = this.payload.replaceFirst(EXTERNAL_URL_PREFIX, baseUrl);
+            final String address = Uri.parse(this.payload).getLastPathSegment();
             if (address == null) throw new InvalidQrCodePayment();
             return getPaymentWithParams()
                     .setAddress(address);
@@ -101,7 +101,7 @@ public class QrCode {
     }
 
     private QrCodePayment getPaymentWithParams() throws UnsupportedOperationException {
-        final Uri uri = Uri.parse(this.url);
+        final Uri uri = Uri.parse(this.payload);
         final String value = uri.getQueryParameter(VALUE);
         final String memo = uri.getQueryParameter(MEMO);
         return new QrCodePayment()
@@ -164,12 +164,11 @@ public class QrCode {
     }
 
     public static Single<Bitmap> generatePaymentAddressQrCode(final String paymentAddress) {
-        final String url = String.format("ethereum:%s", paymentAddress);
+        final String url = String.format("%s%s", EXTERNAL_URL_PREFIX, paymentAddress);
         return ImageUtil.generateQrCode(url);
     }
 
     private boolean isPaymentAddressQrCode() {
-        final String[] splittedUrl = this.url.split("\\?");
-        return splittedUrl.length == 1;
+        return this.payload.contains("?");
     }
 }
