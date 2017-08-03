@@ -18,11 +18,18 @@
 package com.toshi.presenter;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.drawable.Drawable;
+import android.support.annotation.ColorRes;
 import android.support.annotation.StringRes;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.beloo.widget.chipslayoutmanager.ChipsLayoutManager;
@@ -76,6 +83,7 @@ public class SignInPresenter implements Presenter<SignInActivity> {
         initPassphraseList();
         initPassphraseView();
         initClickListeners();
+        updateSignInView();
     }
 
     private void initLongLivingObjects() {
@@ -119,6 +127,7 @@ public class SignInPresenter implements Presenter<SignInActivity> {
                 .map(CharSequence::toString)
                 .doOnNext(this::clearSuggestion)
                 .filter(input -> input.length() > 0)
+                .doOnNext(__ -> hideErrorMessage())
                 .observeOn(Schedulers.io())
                 .flatMap(this::getWordSuggestion)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -149,14 +158,37 @@ public class SignInPresenter implements Presenter<SignInActivity> {
             return suggestion;
         });
     }
+
     private void handleWordSuggestion(final String suggestion) {
         if (suggestion == null) {
             this.activity.getBinding().suggestion.setText("");
-            //Show error message
+            final String passphraseInput = this.activity.getBinding().passphrase.getText().toString();
+            showErrorMessage(this.activity.getString(R.string.no_suggestion_found, passphraseInput));
             return;
         }
 
         this.activity.getBinding().suggestion.setText(suggestion);
+    }
+
+    private void showErrorMessage(final String message) {
+        this.activity.getBinding().hidePassphrase.setVisibility(View.GONE);
+        this.activity.getBinding().errorView.setVisibility(View.VISIBLE);
+        this.activity.getBinding().errorView.setText(message);
+        updateInputUnderline(R.color.error_color);
+    }
+
+    private void hideErrorMessage() {
+        this.activity.getBinding().hidePassphrase.setVisibility(View.VISIBLE);
+        this.activity.getBinding().errorView.setVisibility(View.GONE);
+        updateInputUnderline(R.color.input_underline);
+    }
+
+    private void updateInputUnderline(final @ColorRes int colorRes) {
+        final EditText passphrase = this.activity.getBinding().passphrase;
+        final Drawable originalDrawable = passphrase.getBackground();
+        final int color = ContextCompat.getColor(this.activity, colorRes);
+        DrawableCompat.setTintList(originalDrawable, ColorStateList.valueOf(color));
+        passphrase.setBackground(originalDrawable);
     }
 
     private void initClickListeners() {
@@ -185,6 +217,7 @@ public class SignInPresenter implements Presenter<SignInActivity> {
             this.activity.getBinding().passphrase.setText("");
             this.activity.getBinding().suggestion.setText("");
             addWord(word);
+            updateSignInView();
         }
     }
 
@@ -192,6 +225,43 @@ public class SignInPresenter implements Presenter<SignInActivity> {
         final SignInPassphraseAdapter adapter = (SignInPassphraseAdapter) this.activity.getBinding().passphraseList.getAdapter();
         this.approvedWords.add(word);
         adapter.setPassphrase(this.approvedWords);
+    }
+
+    private void updateSignInView() {
+        if (this.approvedWords.size() == 0) {
+            disableSignIn(this.activity.getString(R.string.sign_in));
+            return;
+        }
+
+        final int wordsLeft = PASSPHRASE_LENGTH - this.approvedWords.size();
+        if (wordsLeft > 0) {
+            final String wordsLeftString = this.activity.getResources().getQuantityString(R.plurals.words, wordsLeft, wordsLeft);
+            disableSignIn(wordsLeftString);
+        } else if (wordsLeft == 0) {
+            enableSignIn();
+        }
+    }
+
+    private void disableSignIn(final String string) {
+        final Button signIn = this.activity.getBinding().signIn;
+        signIn.setText(string);
+        signIn.setBackgroundResource(R.drawable.background_with_radius_disabled);
+        signIn.setEnabled(false);
+
+        this.activity.getBinding().messageWrapper.setVisibility(View.VISIBLE);
+        this.activity.getBinding().passphrase.setVisibility(View.VISIBLE);
+        this.activity.getBinding().suggestion.setVisibility(View.VISIBLE);
+    }
+
+    private void enableSignIn() {
+        final Button signIn = this.activity.getBinding().signIn;
+        signIn.setText(R.string.sign_in);
+        signIn.setBackgroundResource(R.drawable.background_with_radius_primary_color);
+        signIn.setEnabled(true);
+
+        this.activity.getBinding().messageWrapper.setVisibility(View.GONE);
+        this.activity.getBinding().passphrase.setVisibility(View.GONE);
+        this.activity.getBinding().suggestion.setVisibility(View.GONE);
     }
 
     private void handleSignInClicked() {
@@ -202,7 +272,6 @@ public class SignInPresenter implements Presenter<SignInActivity> {
 
         final Joiner joiner = Joiner.on(" ");
         final String masterSeed = joiner.join(this.approvedWords);
-
         tryCreateWallet(masterSeed);
     }
 

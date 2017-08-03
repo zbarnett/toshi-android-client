@@ -25,4 +25,8 @@
         <item quantity="one">%s Participant</item>
         <item quantity="other">%s Participants</item>
     </plurals>
+    <plurals name="words">
+        <item quantity="one">%d more word</item>
+        <item quantity="other">%d more words</item>
+    </plurals>
 </resources>
