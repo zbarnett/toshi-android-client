@@ -72,6 +72,7 @@ public class SignInPresenter implements Presenter<SignInActivity> {
     private boolean onGoingTask = false;
     private List<String> wordList;
     private List<String> approvedWords;
+    private boolean isHidden;
 
     @Override
     public void onViewAttached(SignInActivity view) {
@@ -117,6 +118,12 @@ public class SignInPresenter implements Presenter<SignInActivity> {
         passphraseList.setLayoutManager(chipsLayoutManager);
         final SignInPassphraseAdapter adapter = new SignInPassphraseAdapter(this.approvedWords);
         passphraseList.setAdapter(adapter);
+
+        if (this.isHidden) {
+            adapter.hideWords();
+        } else {
+            adapter.showWords();
+        }
     }
 
     private void initPassphraseView() {
@@ -193,9 +200,20 @@ public class SignInPresenter implements Presenter<SignInActivity> {
 
     private void initClickListeners() {
         this.activity.getBinding().closeButton.setOnClickListener(__ -> this.activity.finish());
+        this.activity.getBinding().hidePassphrase.setOnClickListener(__ -> handleHidePassphraseClicked());
         this.activity.getBinding().infoView.setOnClickListener(__ -> handleInfoViewClicked());
         this.activity.getBinding().passphrase.setOnEditorActionListener((__, actionId, ___) -> handleEnterClicked(actionId));
         this.activity.getBinding().signIn.setOnClickListener(v -> handleSignInClicked());
+    }
+
+    private void handleHidePassphraseClicked() {
+        this.isHidden = !this.isHidden;
+        final SignInPassphraseAdapter adapter = (SignInPassphraseAdapter) this.activity.getBinding().passphraseList.getAdapter();
+        if (this.isHidden) {
+            adapter.hideWords();
+        } else {
+            adapter.showWords();
+        }
     }
 
     private void handleInfoViewClicked() {

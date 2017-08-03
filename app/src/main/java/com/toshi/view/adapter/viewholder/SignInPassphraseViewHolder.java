@@ -42,4 +42,13 @@ public class SignInPassphraseViewHolder extends RecyclerView.ViewHolder {
         this.textView.setOnClickListener(__ -> listener.onItemClick(position));
         return this;
     }
+
+    public SignInPassphraseViewHolder hideWord(final boolean hideWord) {
+        if (hideWord) {
+            this.textView.hideText();
+        } else {
+            this.textView.showText();
+        }
+        return this;
+    }
 }

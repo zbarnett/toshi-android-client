@@ -33,6 +33,7 @@ public class SignInPassphraseAdapter extends RecyclerView.Adapter<SignInPassphra
 
     private List<String> passphrase;
     private OnItemClickListener<Integer> onItemClickListener;
+    private boolean hideWords = false;
 
     public SignInPassphraseAdapter(final List<String> passphrase) {
         this.passphrase = new ArrayList<>(passphrase);
@@ -41,6 +42,16 @@ public class SignInPassphraseAdapter extends RecyclerView.Adapter<SignInPassphra
     public SignInPassphraseAdapter setOnItemClickListener(final OnItemClickListener<Integer> listener) {
         this.onItemClickListener = listener;
         return this;
+    }
+
+    public void hideWords() {
+        this.hideWords = true;
+        notifyDataSetChanged();
+    }
+
+    public void showWords() {
+        this.hideWords = false;
+        notifyDataSetChanged();
     }
 
     public void setPassphrase(final List<String> passphrase) {
@@ -59,7 +70,8 @@ public class SignInPassphraseAdapter extends RecyclerView.Adapter<SignInPassphra
     public void onBindViewHolder(SignInPassphraseViewHolder holder, int position) {
         final String word = this.passphrase.get(position);
         holder.setText(word)
-                .setOnClickListener(this.onItemClickListener, position);
+                .setOnClickListener(this.onItemClickListener, position)
+                .hideWord(this.hideWords);
     }
 
     @Override

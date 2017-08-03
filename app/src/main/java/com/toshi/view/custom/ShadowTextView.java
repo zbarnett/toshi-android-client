@@ -22,6 +22,7 @@ import android.content.res.TypedArray;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.CardView;
+import android.text.method.PasswordTransformationMethod;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.TextView;
@@ -106,6 +107,16 @@ public class ShadowTextView extends CardView {
     public String getText() {
         final TextView textView = (TextView) findViewById(R.id.text_view);
         return textView.getText().toString();
+    }
+
+    public void hideText() {
+        final TextView textView = (TextView) findViewById(R.id.text_view);
+        textView.setTransformationMethod(PasswordTransformationMethod.getInstance());
+    }
+
+    public void showText() {
+        final TextView textView = (TextView) findViewById(R.id.text_view);
+        textView.setTransformationMethod(null);
     }
 
     @Override
