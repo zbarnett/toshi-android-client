@@ -17,6 +17,8 @@
 
 package com.toshi.model.sofa;
 
+import android.support.annotation.Nullable;
+
 import com.toshi.model.local.SendState;
 import com.toshi.model.local.User;
 import com.toshi.util.ImageUtil;
@@ -91,6 +93,10 @@ public class SofaMessage extends RealmObject {
 
     public User getSender() {
         return this.sender;
+    }
+
+    public @Nullable String getSenderAvatar() {
+        return this.sender == null ? null : this.sender.getAvatar();
     }
 
     // Return message in the correct format for SOFA

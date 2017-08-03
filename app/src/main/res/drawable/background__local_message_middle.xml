@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ 	Copyright (c) 2017. Token Browser, Inc
+  ~ 	Copyright (c) 2017. Toshi Browser, Inc
   ~
   ~ 	This program is free software: you can redistribute it and/or modify
   ~     it under the terms of the GNU General Public License as published by
@@ -20,6 +20,6 @@
     <solid android:color="@color/colorPrimary" />
     <corners android:bottomLeftRadius="20dp"
         android:topLeftRadius="20dp"
-        android:topRightRadius="20dp"
-        android:bottomRightRadius="20dp"/>
+        android:topRightRadius="6dp"
+        android:bottomRightRadius="6dp"/>
 </shape>

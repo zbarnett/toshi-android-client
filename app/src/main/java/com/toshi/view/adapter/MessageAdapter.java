@@ -17,12 +17,14 @@
 
 package com.toshi.view.adapter;
 
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.toshi.R;
+import com.toshi.model.local.ChainPosition;
 import com.toshi.model.local.Recipient;
 import com.toshi.model.local.User;
 import com.toshi.model.sofa.Message;
@@ -46,8 +48,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import static com.toshi.model.local.ChainPosition.FIRST;
+import static com.toshi.model.local.ChainPosition.LAST;
+import static com.toshi.model.local.ChainPosition.MIDDLE;
+import static com.toshi.model.local.ChainPosition.NONE;
+
 
 public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
     private final static int SENDER_MASK = 0x1000;
 
     private final List<SofaMessage> sofaMessages;
@@ -98,7 +106,6 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
                 ? new ArrayList<>(0)
                 : messages;
         addMessages(messagesToAdd);
-        notifyItemInserted(this.sofaMessages.size() - 1);
         return this;
     }
 
@@ -112,10 +119,7 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
         notifyDataSetChanged();
 
         for (SofaMessage sofaMessage : sofaMessages) {
-            if (shouldShowChatMessage(sofaMessage)) {
-                this.sofaMessages.add(sofaMessage);
-                notifyItemInserted(this.sofaMessages.size() - 1);
-            }
+            addMessage(sofaMessage);
         }
     }
 
@@ -123,6 +127,10 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
         if (!shouldShowChatMessage(sofaMessage)) return;
         this.sofaMessages.add(sofaMessage);
         notifyItemInserted(this.sofaMessages.size() - 1);
+        if (this.sofaMessages.size() > 1) {
+            // Update the previous message as well.
+            notifyItemChanged(this.sofaMessages.size() - 2);
+        }
     }
 
     public final void updateMessage(final SofaMessage sofaMessage) {
@@ -208,7 +216,7 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
         if (payload == null) return;
 
         try {
-            renderChatMessageIntoViewHolder(holder, sofaMessage, payload);
+            renderChatMessageIntoViewHolder(holder, sofaMessage, payload, position);
         } catch (final IOException ex) {
             LogUtil.error(getClass(), "Unable to render view holder: " + ex);
         }
@@ -217,7 +225,8 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
     private void renderChatMessageIntoViewHolder(
             final RecyclerView.ViewHolder holder,
             final SofaMessage sofaMessage,
-            final String payload) throws IOException {
+            final String payload,
+            final int position) throws IOException {
 
         final boolean isRemote = holder.getItemViewType() >= SENDER_MASK;
         final int messageType = isRemote ? holder.getItemViewType() ^ SENDER_MASK : holder.getItemViewType();
@@ -227,10 +236,15 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
             case SofaType.PLAIN_TEXT: {
                 final TextViewHolder vh = (TextViewHolder) holder;
                 final Message message = SofaAdapters.get().messageFrom(payload);
+                final @ChainPosition.Position int chainPosition = getChainPosition(position);
+                final boolean showAvatar = chainPosition == LAST || chainPosition == NONE;
+
                 vh
                         .setText(message.getBody())
-                        .setAvatarUri(sofaMessage.getSender() != null ? sofaMessage.getSender().getAvatar() : null)
+                        .setAvatarUri(showAvatar ? sofaMessage.getSenderAvatar() : null)
                         .setSendState(sofaMessage.getSendState())
+                        .setChainPosition(chainPosition)
+                        .setIsSentByRemoteUser(isRemote)
                         .draw()
                         .setClickableUsernames(this.onUsernameClickListener);
                 break;
@@ -239,7 +253,7 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
             case SofaType.IMAGE: {
                 final ImageViewHolder vh = (ImageViewHolder) holder;
                 vh
-                        .setAvatarUri(sofaMessage.getSender() != null ? sofaMessage.getSender().getAvatar() : null)
+                        .setAvatarUri(sofaMessage.getSenderAvatar())
                         .setSendState(sofaMessage.getSendState())
                         .setAttachmentFilePath(sofaMessage.getAttachmentFilePath())
                         .setClickableImage(this.onImageClickListener, sofaMessage.getAttachmentFilePath())
@@ -251,7 +265,7 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
                 final FileViewHolder vh = (FileViewHolder) holder;
                 vh
                         .setAttachmentPath(sofaMessage.getAttachmentFilePath())
-                        .setAvatarUri(sofaMessage.getSender() != null ? sofaMessage.getSender().getAvatar() : null)
+                        .setAvatarUri(sofaMessage.getSenderAvatar())
                         .setOnClickListener(this.onFileClickListener, sofaMessage.getAttachmentFilePath())
                         .draw();
                 break;
@@ -262,7 +276,7 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
                 final Payment payment = SofaAdapters.get().paymentFrom(payload);
                 vh
                         .setPayment(payment)
-                        .setAvatarUri(sofaMessage.getSender() != null ? sofaMessage.getSender().getAvatar() : null)
+                        .setAvatarUri(sofaMessage.getSenderAvatar())
                         .setSendState(sofaMessage.getSendState())
                         .draw();
                 break;
@@ -278,7 +292,7 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
                 }
 
                 vh.setPaymentRequest(request)
-                  .setAvatarUri(sofaMessage.getSender() != null ? sofaMessage.getSender().getAvatar() : null)
+                  .setAvatarUri(sofaMessage.getSenderAvatar())
                   .setRemoteUser(this.recipient.getUser())
                   .setSendState(sofaMessage.getSendState())
                   .__setIsFromRemote(isRemote)
@@ -292,6 +306,27 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
                 final TimestampMessageViewHolder vh = (TimestampMessageViewHolder) holder;
                 vh.setTime(sofaMessage.getCreationTime());
             }
+        }
+    }
+
+    private @ChainPosition.Position int getChainPosition(final int position) {
+        final SofaMessage currentSofaMessage = this.sofaMessages.get(position);
+        final SofaMessage previousSofaMessage = getMessageAtPos(position - 1);
+        final SofaMessage nextSofaMessage = getMessageAtPos(position + 1);
+        final boolean previousMessageSentByCurrent = previousSofaMessage != null && previousSofaMessage.isSentBy(currentSofaMessage.getSender());
+        final boolean nextMessageSentByCurrent = nextSofaMessage != null && nextSofaMessage.isSentBy(currentSofaMessage.getSender());
+
+        if (!previousMessageSentByCurrent && !nextMessageSentByCurrent) return NONE;
+        if (previousMessageSentByCurrent && nextMessageSentByCurrent) return MIDDLE;
+        if (nextMessageSentByCurrent) return FIRST;
+        return LAST;
+    }
+
+    private @Nullable SofaMessage getMessageAtPos(final int position) {
+        try {
+            return this.sofaMessages.get(position);
+        } catch (final IndexOutOfBoundsException ex) {
+            return null;
         }
     }
 

@@ -29,6 +29,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.toshi.R;
+import com.toshi.model.local.ChainPosition;
 import com.toshi.model.local.SendState;
 import com.toshi.util.ImageUtil;
 import com.toshi.view.adapter.listeners.OnItemClickListener;
@@ -41,6 +42,11 @@ import java.util.regex.Pattern;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static com.toshi.model.local.ChainPosition.FIRST;
+import static com.toshi.model.local.ChainPosition.LAST;
+import static com.toshi.model.local.ChainPosition.MIDDLE;
+import static com.toshi.model.local.ChainPosition.NONE;
+
 public final class TextViewHolder extends RecyclerView.ViewHolder {
 
     private @NonNull TextView message;
@@ -51,6 +57,8 @@ public final class TextViewHolder extends RecyclerView.ViewHolder {
     private String text;
     private @SendState.State int sendState;
     private String avatarUri;
+    private @ChainPosition.Position int chainPosition;
+    private boolean isRemote;
 
     public TextViewHolder(final View v) {
         super(v);
@@ -75,6 +83,16 @@ public final class TextViewHolder extends RecyclerView.ViewHolder {
         return this;
     }
 
+    public TextViewHolder setChainPosition(final @ChainPosition.Position int chainPosition) {
+        this.chainPosition = chainPosition;
+        return this;
+    }
+
+    public TextViewHolder setIsSentByRemoteUser(final boolean isSentByRemoteUser) {
+        this.isRemote = isSentByRemoteUser;
+        return this;
+    }
+
     public TextViewHolder draw() {
         renderText();
         renderAvatar();
@@ -93,7 +111,28 @@ public final class TextViewHolder extends RecyclerView.ViewHolder {
             this.emojiMessage.setVisibility(View.GONE);
             this.message.setVisibility(View.VISIBLE);
             this.message.setText(this.text);
+            renderBackground();
         }
+    }
+
+    private void renderBackground() {
+        int bgResource = 0;
+        if (isRemote) {
+            switch (this.chainPosition) {
+                case NONE: { bgResource = R.drawable.background__remote_message; break;}
+                case FIRST: { bgResource = R.drawable.background__remote_message_first; break;}
+                case MIDDLE: { bgResource = R.drawable.background__remote_message_middle; break;}
+                case LAST: { bgResource = R.drawable.background__remote_message_last; break;}
+            }
+        } else {
+            switch (this.chainPosition) {
+                case NONE: { bgResource = R.drawable.background__local_message; break;}
+                case FIRST: { bgResource = R.drawable.background__local_message_first; break;}
+                case MIDDLE: { bgResource = R.drawable.background__local_message_middle; break;}
+                case LAST: { bgResource = R.drawable.background__local_message_last; break;}
+            }
+        }
+        this.message.setBackgroundResource(bgResource);
     }
 
     private boolean isOnlyEmojis() {
@@ -103,6 +142,12 @@ public final class TextViewHolder extends RecyclerView.ViewHolder {
 
     private void renderAvatar() {
         if (this.avatar == null) return;
+        if (this.avatarUri == null) {
+            this.avatar.setVisibility(View.INVISIBLE);
+            return;
+        }
+
+        this.avatar.setVisibility(View.VISIBLE);
         ImageUtil.load(this.avatarUri, this.avatar);
     }
 
