@@ -56,9 +56,18 @@ public class QrCode {
             return isPaymentAddressQrCode()
                     ? QrCodeType.PAYMENT_ADDRESS
                     : QrCodeType.EXTERNAL_PAY;
+        } else if (isValidEthereumAddress(this.payload)) {
+            return QrCodeType.PAYMENT_ADDRESS;
         } else {
             return QrCodeType.INVALID;
         }
+    }
+
+    private boolean isValidEthereumAddress(final String address) {
+        if (address.startsWith("0x")) {
+            return address.length() == 42;
+        }
+        return address.length() == 40;
     }
 
     public String getUsername() throws InvalidQrCode {
