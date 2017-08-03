@@ -33,6 +33,7 @@ public class QrCode {
     private static final String PAY_TYPE = "pay";
     private static final String ADD_TYPE = "add";
     private static final String EXTERNAL_URL_PREFIX = "ethereum:";
+    private static final String IBAN_URL_PREFIX = "iban:";
     private static final String VALUE = "value";
     private static final String MEMO = "memo";
 
@@ -52,7 +53,7 @@ public class QrCode {
             return QrCodeType.PAY;
         } else if (this.payload.startsWith(baseUrl + ADD_TYPE)) {
             return QrCodeType.ADD;
-        } else if (this.payload.startsWith(EXTERNAL_URL_PREFIX)) {
+        } else if (hasAddressPrefix()) {
             return isPaymentAddressQrCode()
                     ? QrCodeType.PAYMENT_ADDRESS
                     : QrCodeType.EXTERNAL_PAY;
@@ -61,6 +62,10 @@ public class QrCode {
         } else {
             return QrCodeType.INVALID;
         }
+    }
+
+    private boolean hasAddressPrefix() {
+        return this.payload.startsWith(EXTERNAL_URL_PREFIX) || this.payload.startsWith(IBAN_URL_PREFIX);
     }
 
     private boolean isValidEthereumAddress(final String address) {
@@ -178,6 +183,6 @@ public class QrCode {
     }
 
     private boolean isPaymentAddressQrCode() {
-        return this.payload.contains("?");
+        return !this.payload.contains("?");
     }
 }
