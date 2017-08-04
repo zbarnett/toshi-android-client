@@ -31,19 +31,29 @@ public class Address {
 
     private final String hexAddress;
     private final String amount;
+    private final String memo;
 
     public Address(final String payload) {
         this.amount = parseAmount(payload);
+        this.memo = parseMemo(payload);
         this.hexAddress = parseAddress(payload);
     }
 
     private String parseAmount(final String payload) {
-        final Pattern pattern = Pattern.compile("amount=([^&])*", Pattern.CASE_INSENSITIVE);
+        return parseGeneric(payload, "amount", "0");
+    }
+
+    private String parseMemo(final String payload) {
+        return parseGeneric(payload, "memo", "");
+    }
+
+    private String parseGeneric(final String payload, final String argument, final String defaultValue) {
+        final Pattern pattern = Pattern.compile(argument + "=([^&]+)*", Pattern.CASE_INSENSITIVE);
         final Matcher matcher = pattern.matcher(payload);
         if (matcher.find()) {
             return matcher.group(1);
         }
-        return "0";
+        return defaultValue;
     }
 
     private String parseAddress(final String payload) {
@@ -96,6 +106,10 @@ public class Address {
 
     public String getAmount() {
         return this.amount;
+    }
+
+    public String getMemo() {
+        return this.memo;
     }
 
     public boolean isValid() {

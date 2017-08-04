@@ -18,134 +18,80 @@
 package com.toshi.util;
 
 import android.graphics.Bitmap;
-import android.net.Uri;
-import android.support.annotation.NonNull;
 
 import com.toshi.R;
-import com.toshi.crypto.util.TypeConverter;
 import com.toshi.exception.InvalidQrCode;
 import com.toshi.exception.InvalidQrCodePayment;
+import com.toshi.model.local.Address;
+import com.toshi.model.local.InternalUrl;
 import com.toshi.model.local.QrCodePayment;
 import com.toshi.view.BaseApplication;
-
-import java.math.BigInteger;
 
 import rx.Single;
 
 public class QrCode {
 
-    private static final String PAY_TYPE = "pay";
-    private static final String ADD_TYPE = "add";
-    private static final String EXTERNAL_URL_PREFIX = "ethereum:";
-    private static final String IBAN_URL_PREFIX = "iban:";
-    private static final String VALUE = "value";
-    private static final String MEMO = "memo";
-
-    private String payload;
+    private final String payload;
+    private final Address asAddress;
+    private final InternalUrl asUrl;
 
     public QrCode(final String payload) {
         this.payload = payload;
+        this.asAddress = new Address(payload);
+        this.asUrl = new InternalUrl(payload);
     }
 
     public String getPayload() {
         return this.payload;
     }
 
-    public @QrCodeType.Type int getQrCodeType() {
-        final String baseUrl = BaseApplication.get().getString(R.string.qr_code_base_url);
-        if (this.payload.startsWith(baseUrl + PAY_TYPE)) {
-            return QrCodeType.PAY;
-        } else if (this.payload.startsWith(baseUrl + ADD_TYPE)) {
-            return QrCodeType.ADD;
-        } else if (this.payload.startsWith(EXTERNAL_URL_PREFIX)) {
-            return getTypeForEthereumAddress();
-        } else if (this.payload.startsWith(IBAN_URL_PREFIX)) {
-            return getTypeForIbanAddress();
-        } else if (isValidEthereumAddress(this.payload)) {
-            final String encoded = Integer.toHexString(Integer.parseInt(this.payload, 36));
-            LogUtil.print(getClass(), encoded       );
-            return QrCodeType.PAYMENT_ADDRESS;
+    /* package */ Address getPayloadAsAddress() {
+        return this.asAddress;
+    }
+
+    /* package */ InternalUrl getPayloadAsUrl() {
+        return this.asUrl;
+    }
+
+    /* package */ @QrCodeType.Type int getQrCodeType() {
+        if (this.asUrl.isValid()) {
+            return asUrl.getType();
+        } else if (this.asAddress.isValid()) {
+            return getTypeForAddress(this.asAddress);
         } else {
             return QrCodeType.INVALID;
         }
     }
 
-    private int getTypeForEthereumAddress() {
-        return isPaymentAddressQrCode()
+    private int getTypeForAddress(final Address address) {
+        return address.getAmount().isEmpty()
                 ? QrCodeType.PAYMENT_ADDRESS
                 : QrCodeType.EXTERNAL_PAY;
     }
 
-    private int getTypeForIbanAddress() {
-        final String ibanAddress = cleanIbanAddress().split("\\?")[0];
-        if (ibanAddress.length() < 30) return QrCodeType.INVALID;
-
-        return isPaymentAddressQrCode()
-                ? QrCodeType.PAYMENT_ADDRESS
-                : QrCodeType.EXTERNAL_PAY;
-    }
-
-    private boolean isValidEthereumAddress(final String address) {
-        if (address.startsWith("0x")) {
-            return address.length() == 42;
-        }
-        return address.length() == 40;
-    }
-
-    /* package */ String getPayloadAsPaymentAddress() {
-        if (this.payload.startsWith(IBAN_URL_PREFIX)) {
-            final String hexAddress = new BigInteger(cleanIbanAddress(), 36).toString(16);
-            return TypeConverter.toJsonHex(hexAddress);
-        }
-        return this.payload;
-    }
 
     public String getUsername() throws InvalidQrCode {
-        try {
-            final String username = Uri.parse(this.payload).getLastPathSegment();
-            if (username == null) throw new InvalidQrCode();
-            final String usernameWithoutPrefix = username.startsWith("@")
-                    ? username.replaceFirst("@", "")
-                    : null;
-            if (usernameWithoutPrefix != null) return usernameWithoutPrefix;
-            else throw new InvalidQrCode();
-        } catch (UnsupportedOperationException e) {
-            throw new InvalidQrCode(e);
-        }
+        if (!this.asUrl.isValid()) throw new InvalidQrCode();
+        return this.asUrl.getUsername();
     }
 
-    public QrCodePayment getPayment() throws InvalidQrCodePayment {
-        try {
-            final String username = getUsername();
-            final QrCodePayment payment = getPaymentWithParams()
-                    .setUsername(username);
-            if (payment.isValid()) return payment;
-            else throw new InvalidQrCodePayment();
-        } catch (UnsupportedOperationException | InvalidQrCode e) {
-            throw new InvalidQrCodePayment(e);
-        }
+    /* package */ QrCodePayment getTokenPayment() throws InvalidQrCodePayment {
+        if (!this.asUrl.isValid()) throw new InvalidQrCodePayment();
+        final QrCodePayment payment = new QrCodePayment()
+                .setValue(this.asUrl.getAmount())
+                .setMemo(this.asUrl.getMemo())
+                .setUsername(this.asUrl.getUsername());
+        if (payment.isValid()) return payment;
+        else throw new InvalidQrCodePayment();
     }
 
-    public QrCodePayment getExternalPayment() throws InvalidQrCodePayment {
-        try {
-            final String baseUrl = String.format("%s%s/", BaseApplication.get().getString(R.string.qr_code_base_url), PAY_TYPE);
-            this.payload = this.payload.replaceFirst(EXTERNAL_URL_PREFIX, baseUrl);
-            final String address = Uri.parse(this.payload).getLastPathSegment();
-            if (address == null) throw new InvalidQrCodePayment();
-            return getPaymentWithParams()
-                    .setAddress(address);
-        } catch (UnsupportedOperationException e) {
-            throw new InvalidQrCodePayment(e);
-        }
-    }
+    /* package */ QrCodePayment getExternalPayment() throws InvalidQrCodePayment {
+        if (!this.asAddress.isValid()) throw new InvalidQrCodePayment();
 
-    private QrCodePayment getPaymentWithParams() throws UnsupportedOperationException {
-        final Uri uri = Uri.parse(this.payload);
-        final String value = uri.getQueryParameter(VALUE);
-        final String memo = uri.getQueryParameter(MEMO);
         return new QrCodePayment()
-                .setValue(value)
-                .setMemo(memo);
+                .setAddress(this.asAddress.getHexAddress())
+                .setValue(this.asAddress.getAmount())
+                .setMemo(this.asAddress.getMemo());
     }
 
     public static Single<Bitmap> generateAddQrCode(final String username) {
@@ -160,7 +106,6 @@ public class QrCode {
                 .get()
                 .getString(
                         R.string.qr_code_add_url,
-                        ADD_TYPE,
                         username
                 );
     }
@@ -183,7 +128,6 @@ public class QrCode {
                 .get()
                 .getString(
                         R.string.qr_code_pay_url,
-                        PAY_TYPE,
                         username,
                         value,
                         memo
@@ -196,24 +140,13 @@ public class QrCode {
                 .get()
                 .getString(
                         R.string.qr_code_pay_url_without_memo,
-                        PAY_TYPE,
                         username,
                         value
                 );
     }
 
     public static Single<Bitmap> generatePaymentAddressQrCode(final String paymentAddress) {
-        final String url = String.format("%s%s", EXTERNAL_URL_PREFIX, paymentAddress);
+        final String url = String.format("ethereum:%s", paymentAddress);
         return ImageUtil.generateQrCode(url);
-    }
-
-    private boolean isPaymentAddressQrCode() {
-        return !this.payload.contains("?");
-    }
-
-    @NonNull
-    private String cleanIbanAddress() {
-        // Strip off "iban:XE**"
-        return this.payload.substring(9);
     }
 }

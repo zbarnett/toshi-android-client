@@ -91,6 +91,26 @@ public class AddressTest {
     }
 
     @Test
+    public void initWithMemoReturnsCorrectMemo() {
+        final String ethAddress = expectedEthAddress + "?memo=Hello";
+        final Address address = new Address(ethAddress);
+        assertThat(address.getMemo(), is("Hello"));
+    }
+
+    @Test
+    public void initWithoutMemoReturnsEmptyString() {
+        final Address address = new Address(expectedEthAddress);
+        assertThat(address.getMemo(), is(""));
+    }
+
+    @Test
+    public void initWithSeveralArgumentsReturnsCorrectMemo() {
+        final String ethAddress = expectedEthAddress + "?unused=2&memo=Hello";
+        final Address address = new Address(ethAddress);
+        assertThat(address.getMemo(), is("Hello"));
+    }
+
+    @Test
     public void initWithInvalidAddressSetsAddressToEmptyString() {
         final String ethAddress = "thisisnotanaddress";
         final Address address = new Address(ethAddress);

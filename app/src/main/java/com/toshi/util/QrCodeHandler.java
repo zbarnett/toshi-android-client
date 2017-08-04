@@ -160,7 +160,7 @@ public class QrCodeHandler implements PaymentConfirmationDialog.OnPaymentConfirm
 
     private void handlePaymentQrCode(final QrCode qrCode) {
         try {
-            final QrCodePayment payment = qrCode.getPayment();
+            final QrCodePayment payment = qrCode.getTokenPayment();
             final Subscription sub =
                     getUserByUsername(payment.getUsername())
                     .doOnSuccess(__ -> playScanSound())
@@ -186,7 +186,7 @@ public class QrCodeHandler implements PaymentConfirmationDialog.OnPaymentConfirm
     private void handlePaymentAddressQrCode(final QrCode qrCode) {
         if (this.activity == null) return;
         final ClipboardManager clipboard = (ClipboardManager) this.activity.getSystemService(Context.CLIPBOARD_SERVICE);
-        final ClipData clip = ClipData.newPlainText(this.activity.getString(R.string.payment_address), qrCode.getPayloadAsPaymentAddress());
+        final ClipData clip = ClipData.newPlainText(this.activity.getString(R.string.payment_address), qrCode.getPayloadAsAddress().getHexAddress());
         clipboard.setPrimaryClip(clip);
 
         Toast.makeText(
