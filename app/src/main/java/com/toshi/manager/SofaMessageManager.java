@@ -149,6 +149,12 @@ public final class SofaMessageManager {
                 .subscribeOn(Schedulers.io());
     }
 
+    public Completable deleteConversation(final Conversation conversation) {
+        return this.conversationStore
+                .deleteByThreadId(conversation.getThreadId())
+                .subscribeOn(Schedulers.io());
+    }
+
     public final Observable<Conversation> registerForAllConversationChanges() {
         return this.conversationStore.getConversationChangedObservable();
     }

@@ -38,6 +38,7 @@ import io.realm.Realm;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
 import io.realm.Sort;
+import rx.Completable;
 import rx.Observable;
 import rx.Single;
 import rx.schedulers.Schedulers;
@@ -250,6 +251,20 @@ public class ConversationStore {
                 __ -> broadcastUpdatedChatMessage(receiver.getThreadId(), message),
                 this::handleError
         );
+    }
+
+    public Completable deleteByThreadId(final String threadId) {
+        return Completable.fromAction(() -> {
+            final Realm realm = BaseApplication.get().getRealm();
+            realm.beginTransaction();
+            realm
+                    .where(Conversation.class)
+                    .equalTo(THREAD_ID_FIELD, threadId)
+                    .findFirst()
+                    .deleteFromRealm();
+            realm.commitTransaction();
+            realm.close();
+        });
     }
 
     public boolean areUnreadMessages() {

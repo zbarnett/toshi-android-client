@@ -22,6 +22,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 
 import com.toshi.R;
 import com.toshi.model.local.Conversation;
@@ -85,6 +86,7 @@ public final class RecentPresenter implements
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(this.adapter);
+        addSwipeToDeleteListener(recyclerView);
 
         final int dividerLeftPadding = fragment.getResources().getDimensionPixelSize(R.dimen.avatar_size_small)
                 + fragment.getResources().getDimensionPixelSize(R.dimen.activity_horizontal_margin)
@@ -95,6 +97,21 @@ public final class RecentPresenter implements
                         .setRightPadding(dividerRightPadding)
                         .setLeftPadding(dividerLeftPadding);
         recyclerView.addItemDecoration(lineDivider);
+    }
+
+    private void addSwipeToDeleteListener(final RecyclerView recyclerView) {
+        final ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+                @Override
+                public boolean onMove(final RecyclerView recyclerView1, final RecyclerView.ViewHolder viewHolder, final RecyclerView.ViewHolder target) {
+                    return false;
+                }
+
+                @Override
+                public void onSwiped(final RecyclerView.ViewHolder viewHolder, final int swipeDir) {
+                    adapter.removeItemAtWithUndo(viewHolder.getAdapterPosition(), recyclerView);
+                }
+            });
+        itemTouchHelper.attachToRecyclerView(recyclerView);
     }
 
     private void populateRecentsAdapter() {
@@ -177,6 +194,7 @@ public final class RecentPresenter implements
 
     @Override
     public void onViewDetached() {
+        this.adapter.doDelete();
         this.subscriptions.clear();
         this.fragment = null;
     }

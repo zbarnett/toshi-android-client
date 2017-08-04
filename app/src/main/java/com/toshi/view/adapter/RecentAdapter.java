@@ -18,20 +18,24 @@
 package com.toshi.view.adapter;
 
 
+import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
+import com.toshi.R;
 import com.toshi.model.local.Conversation;
-import com.toshi.model.sofa.SofaMessage;
 import com.toshi.model.local.User;
 import com.toshi.model.sofa.Message;
 import com.toshi.model.sofa.Payment;
 import com.toshi.model.sofa.PaymentRequest;
 import com.toshi.model.sofa.SofaAdapters;
+import com.toshi.model.sofa.SofaMessage;
 import com.toshi.model.sofa.SofaType;
-import com.toshi.R;
 import com.toshi.util.LogUtil;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.adapter.listeners.OnItemClickListener;
@@ -44,11 +48,13 @@ import java.util.List;
 
 public class RecentAdapter extends RecyclerView.Adapter<ThreadViewHolder> implements ClickableViewHolder.OnClickListener {
 
+    private final ArrayList<Conversation> conversationsToDelete;
     private List<Conversation> conversations;
     private OnItemClickListener<Conversation> onItemClickListener;
 
     public RecentAdapter() {
         this.conversations = new ArrayList<>(0);
+        this.conversationsToDelete = new ArrayList<>();
     }
 
     @Override
@@ -104,6 +110,40 @@ public class RecentAdapter extends RecyclerView.Adapter<ThreadViewHolder> implem
         notifyItemChanged(position);
     }
 
+    public void removeItemAtWithUndo(final int position, final RecyclerView parentView) {
+        final Conversation removedConversation = this.conversations.get(position);
+        final Snackbar snackbar = generateSnackbar(parentView);
+        snackbar.setAction(
+                R.string.undo,
+                handleUndoRemove(position, parentView, removedConversation)
+        ).show();
+        this.conversations.remove(position);
+        notifyItemRemoved(position);
+        conversationsToDelete.add(removedConversation);
+    }
+
+    @NonNull
+    private Snackbar generateSnackbar(final RecyclerView parentView) {
+        final Snackbar snackbar = Snackbar
+                .make(parentView, R.string.conversation_deleted, Snackbar.LENGTH_LONG)
+                .setActionTextColor(ContextCompat.getColor(BaseApplication.get(), R.color.colorAccent));
+
+        final View snackbarView = snackbar.getView();
+        final TextView snackbarTextView = (TextView)snackbarView.findViewById(android.support.design.R.id.snackbar_text);
+        snackbarTextView.setTextColor(ContextCompat.getColor(BaseApplication.get(), R.color.textColorContrast));
+        return snackbar;
+    }
+
+    @NonNull
+    private View.OnClickListener handleUndoRemove(final int position, final RecyclerView parentView, final Conversation removedConversation) {
+        return view -> {
+            this.conversations.add(position, removedConversation);
+            notifyItemInserted(position);
+            parentView.scrollToPosition(position);
+            conversationsToDelete.remove(removedConversation);
+        };
+    }
+
     private String formatLastMessage(final SofaMessage sofaMessage) {
         if (sofaMessage == null) {
             // Todo - this is only null because of group creation not containing a message
@@ -149,5 +189,18 @@ public class RecentAdapter extends RecyclerView.Adapter<ThreadViewHolder> implem
                 .getCurrentUser()
                 .toBlocking()
                 .value();
+    }
+
+    public void doDelete() {
+        for (final Conversation conversationToDelete : conversationsToDelete) {
+            BaseApplication
+                    .get()
+                    .getSofaMessageManager()
+                    .deleteConversation(conversationToDelete)
+                    .subscribe(
+                            () -> {},
+                            t -> LogUtil.e(getClass(), "Unable to delete conversation")
+                    );
+        }
     }
 }

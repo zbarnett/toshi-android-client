@@ -243,4 +243,6 @@
     <string name="network_changed">Network changed</string>
     <string name="network_change_error">Error during changing network</string>
     <string name="eth_address">0x0000000000000000</string>
+    <string name="conversation_deleted">Conversation deleted</string>
+    <string name="undo">Undo</string>
 </resources>
