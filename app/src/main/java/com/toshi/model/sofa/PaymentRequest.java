@@ -19,11 +19,10 @@ package com.toshi.model.sofa;
 
 
 import android.support.annotation.IntDef;
-import android.support.annotation.StringRes;
 
 import com.squareup.moshi.Json;
-import com.toshi.crypto.util.TypeConverter;
 import com.toshi.R;
+import com.toshi.crypto.util.TypeConverter;
 import com.toshi.model.local.SendState;
 import com.toshi.util.EthUtil;
 import com.toshi.util.LocaleUtil;
@@ -120,17 +119,25 @@ public class PaymentRequest {
     }
 
     public String toUserVisibleString(final boolean sentByLocal, final @SendState.State int sentStatus) {
-        final @StringRes int successMessageId = sentByLocal
-                ? R.string.latest_message__payment_request_outgoing
-                : R.string.latest_message__payment_incoming;
-        final @StringRes int messageId = sentStatus == SendState.STATE_FAILED
-                ? R.string.latest_message__request_failed
-                : successMessageId;
-
+        final int messageId = generateMessageId(sentByLocal, sentStatus);
         return String.format(
                 LocaleUtil.getLocale(),
                 BaseApplication.get().getResources().getString(messageId),
                 getLocalPrice());
+    }
+
+    private int generateMessageId(final boolean sentByLocal, final @SendState.State int sentStatus) {
+        if (sentStatus == SendState.STATE_FAILED) {
+            return R.string.latest_message__request_failed;
+        } else if (sentByLocal) {
+            return R.string.latest_message__payment_request_outgoing;
+        } else if (getState() == REJECTED) {
+            return R.string.latest_message__payment_request_denied;
+        } else if (getState() == ACCEPTED) {
+            return R.string.latest_message__payment_request_accepted;
+        } else {
+            return R.string.latest_message__payment_request;
+        }
     }
 
     private static class ClientSideCustomData {
