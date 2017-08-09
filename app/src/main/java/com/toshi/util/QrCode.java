@@ -63,7 +63,7 @@ public class QrCode {
         }
     }
 
-    private int getTypeForAddress(final Address address) {
+    private @QrCodeType.Type int getTypeForAddress(final Address address) {
         return address.getAmount().isEmpty()
                 ? QrCodeType.PAYMENT_ADDRESS
                 : QrCodeType.EXTERNAL_PAY;
