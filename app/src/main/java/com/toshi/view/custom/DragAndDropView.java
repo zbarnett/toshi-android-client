@@ -42,7 +42,7 @@ public class DragAndDropView extends LinearLayout {
     private ArrayList<String> correctBackupPhrase;
     private ArrayList<String> userInputtedBackupPhrase;
     private ArrayList<String> remainingInputBackupPhrase;
-    private ShadowTextView draggedView;
+    private DraggableShadowTextView draggedView;
     private OnFinishListener onFinishedListener;
 
     private static final String BUNDLE__CORRECT_BACKUP_PHRASE = "correctBackupPhrase";
@@ -97,8 +97,8 @@ public class DragAndDropView extends LinearLayout {
         targetLayout.removeAllViews();
 
         for (final String phrase : this.remainingInputBackupPhrase) {
-            final ShadowTextView userInputtedTextView = generateTargetTextView();
-            final ShadowTextView remainingTextView = generateSourceTextView(phrase);
+            final DraggableShadowTextView userInputtedTextView = generateTargetTextView();
+            final DraggableShadowTextView remainingTextView = generateSourceTextView(phrase);
             sourceLayout.addView(remainingTextView, phraseParams);
             targetLayout.addView(userInputtedTextView, phraseParams);
         }
@@ -115,8 +115,8 @@ public class DragAndDropView extends LinearLayout {
     }
 
     @NonNull
-    private ShadowTextView generateTargetTextView() {
-        final ShadowTextView textView = new ShadowTextView(getContext());
+    private DraggableShadowTextView generateTargetTextView() {
+        final DraggableShadowTextView textView = new DraggableShadowTextView(getContext());
         textView
                 .setShadowEnabled(false)
                 .setCornerRadius(getResources().getDimensionPixelSize(R.dimen.backup_phrase_corner_radius))
@@ -126,8 +126,8 @@ public class DragAndDropView extends LinearLayout {
     }
 
     @NonNull
-    private ShadowTextView generateSourceTextView(final String phrase) {
-        final ShadowTextView textView = new ShadowTextView(getContext());
+    private DraggableShadowTextView generateSourceTextView(final String phrase) {
+        final DraggableShadowTextView textView = new DraggableShadowTextView(getContext());
         textView
                 .setShadowEnabled(true)
                 .setCornerRadius(getResources().getDimensionPixelSize(R.dimen.backup_phrase_corner_radius))
@@ -139,33 +139,33 @@ public class DragAndDropView extends LinearLayout {
     private void initListeners() {
         final FlexboxLayout sourceLayout = (FlexboxLayout) findViewById(R.id.remaining_phrases);
         for (int i = 0; i < sourceLayout.getChildCount(); i++) {
-            final ShadowTextView remainingPhraseView = (ShadowTextView) sourceLayout.getChildAt(i);
+            final DraggableShadowTextView remainingPhraseView = (DraggableShadowTextView) sourceLayout.getChildAt(i);
             remainingPhraseView.setListener(this.clickAndDragListener);
             remainingPhraseView.setOnDragListener(this::handleDragEvent);
         }
 
         final FlexboxLayout targetLayout = (FlexboxLayout) findViewById(R.id.user_inputted_phrases);
         for (int i = 0; i < targetLayout.getChildCount(); i++) {
-            final ShadowTextView inputtedPhraseView = (ShadowTextView) targetLayout.getChildAt(i);
+            final DraggableShadowTextView inputtedPhraseView = (DraggableShadowTextView) targetLayout.getChildAt(i);
             inputtedPhraseView.setListener(this.clickAndDragListener);
             inputtedPhraseView.setOnDragListener(this::handleDragEvent);
         }
     }
 
-    private final ShadowTextView.ClickAndDragListener clickAndDragListener = new ShadowTextView.ClickAndDragListener() {
+    private final DraggableShadowTextView.ClickAndDragListener clickAndDragListener = new DraggableShadowTextView.ClickAndDragListener() {
         @Override
-        public void onClick(final ShadowTextView v) {
+        public void onClick(final DraggableShadowTextView v) {
             handlePhraseClicked(v);
         }
 
         @Override
-        public void onDrag(final ShadowTextView v) {
+        public void onDrag(final DraggableShadowTextView v) {
             handlePhraseDragged(v);
         }
     };
 
     private void handlePhraseClicked(final View v) {
-        final ShadowTextView clickedView = (ShadowTextView) v;
+        final DraggableShadowTextView clickedView = (DraggableShadowTextView) v;
         final String clickedPhrase = clickedView.getText();
         if (clickedPhrase.length() == 0) {
             return;
@@ -175,7 +175,7 @@ public class DragAndDropView extends LinearLayout {
     }
 
     private boolean handlePhraseDragged(final View v) {
-        this.draggedView = (ShadowTextView) v;
+        this.draggedView = (DraggableShadowTextView) v;
         final String clickedPhrase = this.draggedView.getText();
         if (clickedPhrase.length() == 0) {
             return false;
@@ -211,7 +211,7 @@ public class DragAndDropView extends LinearLayout {
     }
 
     private void moveViewToCorrectLocationFromClick(final View clickedView) {
-        final String phrase = ((ShadowTextView)clickedView).getText();
+        final String phrase = ((DraggableShadowTextView)clickedView).getText();
         final FlexboxLayout sourceLayout = (FlexboxLayout) findViewById(R.id.remaining_phrases);
         if (clickedView.getParent().equals(sourceLayout)) {
             addPhraseToUserInputtedPhrases(phrase);
@@ -269,7 +269,7 @@ public class DragAndDropView extends LinearLayout {
     private void renderUserInputtedPhrases() {
         final FlexboxLayout backupPhraseTargetLayout = (FlexboxLayout) findViewById(R.id.user_inputted_phrases);
         for (int i = 0; i < this.userInputtedBackupPhrase.size(); i++) {
-            final ShadowTextView backupPhraseTarget = (ShadowTextView) backupPhraseTargetLayout.getChildAt(i);
+            final DraggableShadowTextView backupPhraseTarget = (DraggableShadowTextView) backupPhraseTargetLayout.getChildAt(i);
             final String inputtedPhrase = this.userInputtedBackupPhrase.get(i);
             setText(backupPhraseTarget, inputtedPhrase);
         }
@@ -278,13 +278,13 @@ public class DragAndDropView extends LinearLayout {
     private void renderRemainingInputPhrases() {
         final FlexboxLayout gridLayout = (FlexboxLayout) findViewById(R.id.remaining_phrases);
         for (int i = 0; i < gridLayout.getChildCount(); i++) {
-            final ShadowTextView backupPhraseWord = (ShadowTextView) gridLayout.getChildAt(i);
+            final DraggableShadowTextView backupPhraseWord = (DraggableShadowTextView) gridLayout.getChildAt(i);
             final String remainingPhrase = this.remainingInputBackupPhrase.get(i);
             setText(backupPhraseWord, remainingPhrase);
         }
     }
 
-    private void setText(final ShadowTextView v, final String text) {
+    private void setText(final DraggableShadowTextView v, final String text) {
         if (v == null) return;
 
         v.setText(text);
