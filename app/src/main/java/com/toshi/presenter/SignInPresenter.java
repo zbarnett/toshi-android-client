@@ -116,7 +116,8 @@ public class SignInPresenter implements Presenter<SignInActivity> {
         final int itemSpacing = this.activity.getResources().getDimensionPixelSize(R.dimen.passphrase_sign_in_spacing);
         passphraseList.addItemDecoration(new SpaceDecoration(itemSpacing));
         passphraseList.setLayoutManager(chipsLayoutManager);
-        final SignInPassphraseAdapter adapter = new SignInPassphraseAdapter(this.approvedWords);
+        final SignInPassphraseAdapter adapter = new SignInPassphraseAdapter(this.approvedWords)
+                .setOnItemClickListener(this::handleWordClicked);
         passphraseList.setAdapter(adapter);
 
         if (this.isHidden) {
@@ -124,6 +125,13 @@ public class SignInPresenter implements Presenter<SignInActivity> {
         } else {
             adapter.showWords();
         }
+    }
+
+    private void handleWordClicked(final int position) {
+        this.approvedWords.remove(position);
+        final SignInPassphraseAdapter adapter = (SignInPassphraseAdapter) this.activity.getBinding().passphraseList.getAdapter();
+        adapter.setPassphrase(this.approvedWords);
+        updateSignInView();
     }
 
     private void initPassphraseView() {
