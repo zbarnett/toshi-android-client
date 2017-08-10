@@ -19,10 +19,8 @@ package com.toshi.model.local;
 
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import com.toshi.model.sofa.SofaMessage;
-import com.toshi.model.sofa.SofaType;
 
 import java.util.List;
 
@@ -101,23 +99,6 @@ public class Conversation extends RealmObject {
     @NonNull
     public Recipient getRecipient() {
         return this.recipient;
-    }
-
-    /**
-     * Returns the latest message that isn't a Payment or PaymentRequest
-     * Useful for deciding on whether or not the control view should be shown
-     *
-     * @return      the latest non-payment message, or null if none
-     * @see         SofaMessage
-     */
-    public @Nullable SofaMessage getLastNonPaymentMessage() {
-        for (int i = allMessages.size() - 1; i >= 0; i--) {
-            final SofaMessage message = allMessages.get(i);
-            if (message.getType() == SofaType.PAYMENT || message.getType() == SofaType.PAYMENT_REQUEST) continue;
-            return message;
-        }
-
-        return null;
     }
 
     @Override

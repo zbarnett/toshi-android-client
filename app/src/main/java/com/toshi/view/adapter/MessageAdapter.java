@@ -355,6 +355,23 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
     };
 
+    /**
+     * Returns the latest message that isn't a Payment or PaymentRequest
+     * Useful for deciding on whether or not the control view should be shown
+     *
+     * @return      the latest non-payment message, or null if none
+     * @see         SofaMessage
+     */
+    public @Nullable SofaMessage getLastNonPaymentMessage() {
+        for (int i = this.sofaMessages.size() - 1; i >= 0; i--) {
+            final SofaMessage message = this.sofaMessages.get(i);
+            if (message.getType() == SofaType.PAYMENT || message.getType() == SofaType.PAYMENT_REQUEST) continue;
+            return message;
+        }
+
+        return null;
+    }
+
     public void clear() {
         this.sofaMessages.clear();
         notifyDataSetChanged();

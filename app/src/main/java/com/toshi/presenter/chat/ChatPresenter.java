@@ -686,8 +686,8 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     }
 
     private void handleNewMessage(final SofaMessage sofaMessage) {
-        updateControlView();
         this.messageAdapter.updateMessage(sofaMessage);
+        updateControlView();
         updateEmptyState();
         tryScrollToBottom(true);
         playNewMessageSound(sofaMessage.isSentBy(getCurrentLocalUser()));
@@ -738,7 +738,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     }
 
     private void updateControlView() {
-        final SofaMessage sofaMessage = this.conversation != null ? this.conversation.getLastNonPaymentMessage() : null;
+        final SofaMessage sofaMessage = this.messageAdapter.getLastNonPaymentMessage();
         if (sofaMessage == null || TextUtils.isEmpty(sofaMessage.getPayload()) || this.activity == null) {
             return;
         }
