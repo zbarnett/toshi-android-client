@@ -21,15 +21,12 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Pair;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.DecelerateInterpolator;
-import android.view.animation.PathInterpolator;
 import android.widget.Toast;
 
 import com.toshi.R;
@@ -60,7 +57,6 @@ import com.toshi.util.OnSingleClickListener;
 import com.toshi.util.PaymentType;
 import com.toshi.util.PermissionUtil;
 import com.toshi.util.SoundManager;
-import com.toshi.view.Animation.SlideUpAnimator;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.activity.AttachmentConfirmationActivity;
 import com.toshi.view.activity.ChatActivity;
@@ -205,7 +201,6 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         getWallet();
         initClickListeners();
         initLayoutManager();
-        initAdapterAnimation();
         initRecyclerView();
         initControlView();
         loadOrUseRecipient();
@@ -241,14 +236,6 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         if (this.activity == null) return;
         this.layoutManager = new SpeedyLinearLayoutManager(this.activity);
         this.activity.getBinding().messagesList.setLayoutManager(this.layoutManager);
-    }
-
-    private void initAdapterAnimation() {
-        final SlideUpAnimator anim = Build.VERSION.SDK_INT >= 21
-                ? new SlideUpAnimator(new PathInterpolator(0.33f, 0.78f, 0.3f, 1))
-                : new SlideUpAnimator(new DecelerateInterpolator());
-        anim.setAddDuration(400);
-        this.activity.getBinding().messagesList.setItemAnimator(anim);
     }
 
     private void initRecyclerView() {
