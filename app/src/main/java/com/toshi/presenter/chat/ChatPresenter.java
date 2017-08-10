@@ -92,10 +92,10 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     private static final String CAPTURE_FILENAME = "caputureImageFilename";
 
     private boolean firstViewAttachment = true;
-    private boolean isConversationLoaded = false;
     private ChatActivity activity;
     private ChatNavigation chatNavigation;
     private CompositeSubscription subscriptions;
+    private Conversation conversation;
     private HDWallet userWallet;
     private int lastVisibleMessagePosition;
     private OutgoingMessageQueue outgoingMessageQueue;
@@ -610,11 +610,11 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     }
 
     private void handleConversationLoaded(final Conversation conversation) {
+        this.conversation = conversation;
         initConversation(conversation);
         updateEmptyState();
         tryClearMessageSubscriptions();
         initMessageObservables();
-        this.isConversationLoaded = true;
     }
 
     private void initConversation(final Conversation conversation) {
@@ -631,9 +631,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         if (shouldAddMessages) {
             this.messageAdapter.setMessages(conversation.getAllMessages());
             scrollToPosition(getSafePosition());
-
-            final SofaMessage lastSofaMessage = conversation.getLastNonPaymentMessage();
-            setControlView(lastSofaMessage);
+            updateControlView();
         } else {
             tryInitAppConversation();
         }
@@ -688,7 +686,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     }
 
     private void handleNewMessage(final SofaMessage sofaMessage) {
-        setControlView(sofaMessage);
+        updateControlView();
         this.messageAdapter.updateMessage(sofaMessage);
         updateEmptyState();
         tryScrollToBottom(true);
@@ -739,7 +737,8 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         KeyboardUtil.hideKeyboard(this.activity.getBinding().chatInput.getInputView());
     }
 
-    private void setControlView(final SofaMessage sofaMessage) {
+    private void updateControlView() {
+        final SofaMessage sofaMessage = this.conversation != null ? this.conversation.getLastNonPaymentMessage() : null;
         if (sofaMessage == null || TextUtils.isEmpty(sofaMessage.getPayload()) || this.activity == null) {
             return;
         }
@@ -864,7 +863,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
 
     private void sendMediaMessage(final SofaMessage sofaMessage) {
         Single.fromCallable(() -> {
-            while (!this.isConversationLoaded) {
+            while (this.conversation == null) {
                 Thread.sleep(50);
             }
             return sofaMessage;
@@ -885,7 +884,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         this.lastVisibleMessagePosition = this.layoutManager.findLastCompletelyVisibleItemPosition();
         this.subscriptions.clear();
         this.messageAdapter.clear();
-        this.isConversationLoaded = false;
+        this.conversation = null;
         this.activity = null;
     }
 
