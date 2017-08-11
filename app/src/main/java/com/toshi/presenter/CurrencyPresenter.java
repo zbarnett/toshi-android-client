@@ -124,7 +124,7 @@ public class CurrencyPresenter implements Presenter<CurrencyActivity> {
 
     private Single<List<Currency>> filterCryptocurrencies(final List<Currency> currencies) {
         return Single.fromCallable(() -> {
-            currencies.removeIf((currency -> currency.getId().equals("BTC")));
+            currencies.remove(new Currency("BTC"));
             return currencies;
         });
     }

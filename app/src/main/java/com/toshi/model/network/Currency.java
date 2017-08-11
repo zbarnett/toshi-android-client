@@ -21,11 +21,33 @@ public class Currency {
     private String id;
     private String name;
 
+    public Currency() {}
+
+    public Currency(final String id) {
+        this.id = id;
+    }
+
     public String getId() {
         return id;
     }
 
     public String getName() {
         return name;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        final Currency currency = (Currency) o;
+
+        return this.id.equals(currency.id);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return this.id.hashCode();
     }
 }
