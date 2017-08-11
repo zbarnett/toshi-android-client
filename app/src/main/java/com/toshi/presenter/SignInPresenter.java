@@ -231,20 +231,20 @@ public class SignInPresenter implements Presenter<SignInActivity> {
 
     private boolean handleEnterClicked(final int actionId) {
         if (actionId == EditorInfo.IME_ACTION_DONE) {
-            final String word = this.activity.getBinding().passphrase.getText().toString();
-            addWordToList(word);
+            final String word = this.activity.getBinding().suggestion.getText().toString();
+            if (!word.isEmpty()) {
+                addWordToList(word);
+            }
             return true;
         }
         return false;
     }
 
     private void addWordToList(final String word) {
-        if (this.wordList.contains(word)) {
-            this.activity.getBinding().passphrase.setText("");
-            this.activity.getBinding().suggestion.setText("");
-            addWord(word);
-            updateSignInView();
-        }
+        this.activity.getBinding().passphrase.setText("");
+        this.activity.getBinding().suggestion.setText("");
+        addWord(word);
+        updateSignInView();
     }
 
     private void addWord(final String word) {
