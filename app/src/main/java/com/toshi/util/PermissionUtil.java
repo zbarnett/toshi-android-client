@@ -48,6 +48,7 @@ public class PermissionUtil {
                                      @NonNull final String permission,
                                      final int requestCode,
                                      @NonNull final HasPermissionListener listener) {
+        if (activity == null) return;
         final boolean hasPermission = ContextCompat.checkSelfPermission(activity, permission) == PackageManager.PERMISSION_GRANTED;
         if (hasPermission) {
             listener.onHasPermission();
