@@ -173,4 +173,12 @@
     <style name="RadioButtonStyle" parent="Base.Widget.AppCompat.CompoundButton.RadioButton">
         <item name="colorControlActivated">@color/colorPrimary</item>
     </style>
+
+    <style name="clickableBorderlessBackground">
+        <item name="android:background">?android:selectableItemBackground</item>
+    </style>
+
+    <style name="closeButtonStyle" parent="clickableBorderlessBackground">
+        <item name="android:padding">16dp</item>
+    </style>
 </resources>

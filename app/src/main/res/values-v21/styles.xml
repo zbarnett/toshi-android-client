@@ -30,4 +30,12 @@
         <item name="android:foreground">?android:attr/selectableItemBackground</item>
         <item name="android:stateListAnimator">@null</item>
     </style>
+
+    <style name="clickableBorderlessBackground">
+        <item name="android:background">?android:selectableItemBackgroundBorderless</item>
+    </style>
+
+    <style name="closeButtonStyle" parent="clickableBorderlessBackground">
+        <item name="android:padding">16dp</item>
+    </style>
 </resources>
