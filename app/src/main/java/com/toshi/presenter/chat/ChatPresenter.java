@@ -129,7 +129,8 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
                 .addOnPaymentRequestRejectListener(message -> updatePaymentRequestState(message, PaymentRequest.REJECTED))
                 .addOnUsernameClickListener(this::handleUsernameClicked)
                 .addOnImageClickListener(this::handleImageClicked)
-                .addOnFileClickListener(path -> this.chatNavigation.startAttachmentPicker(this.activity, path));
+                .addOnFileClickListener(path -> this.chatNavigation.startAttachmentPicker(this.activity, path))
+                .addOnResendListener(this::handleResendMessageClicked);
     }
 
     private void handleUsernameClicked(final String username) {
@@ -149,6 +150,14 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
 
     private void handleImageClicked(final String filePath) {
         this.chatNavigation.startImageActivity(this.activity, filePath);
+    }
+
+    private void handleResendMessageClicked(final SofaMessage sofaMessage) {
+        BaseApplication
+                .get()
+                .getToshiManager()
+                .getSofaMessageManager()
+                .resendPendingMessage(sofaMessage);
     }
 
     private void updatePaymentRequestState(
