@@ -67,69 +67,74 @@
 
                 <android.support.v4.widget.Space
                     android:layout_width="0dp"
-                    android:layout_height="24dp"/>
+                    android:layout_height="30dp"/>
 
-                <android.support.v7.widget.GridLayout
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="@dimen/activity_horizontal_margin"
                     android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                    app:columnCount="2">
+                    android:orientation="vertical">
 
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/avatar"
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
-                        tools:src="@mipmap/ic_launcher"
-                        android:layout_marginRight="8dp"
-                        app:layout_rowSpan="4"
-                        app:civ_border_width="1dp"
-                        app:civ_border_color="@color/divider"/>
-
-                    <android.support.v4.widget.Space
-                        android:layout_width="0dp"
-                        android:layout_height="0dp"
-                        app:layout_rowWeight="1"/>
-
-                    <TextView
-                        android:id="@+id/name"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/textColorPrimary"
-                        android:textSize="22sp"
-                        style="@style/TextStyleMedium"
-                        tools:text="Damn Daniel!"/>
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
 
-                    <TextView
-                        android:id="@+id/username"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/textColorSecondary"
-                        tools:text="\@username" />
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/avatar"
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
+                            tools:src="@mipmap/ic_launcher"
+                            app:civ_border_width="1dp"
+                            app:civ_border_color="@color/divider"/>
+
+                        <android.support.v4.widget.Space
+                            android:layout_width="14dp"
+                            android:layout_height="0dp" />
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/name"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/textColorPrimary"
+                                android:textSize="22sp"
+                                style="@style/TextStyleMedium"
+                                tools:text="Damn Daniel!"/>
+
+                            <TextView
+                                android:id="@+id/username"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:maxLines="1"
+                                android:ellipsize="end"
+                                android:textColor="@color/textColorSecondary"
+                                tools:text="\@username" />
+
+                        </LinearLayout>
+                    </LinearLayout>
 
                     <android.support.v4.widget.Space
                         android:layout_width="0dp"
-                        android:layout_height="0dp"
-                        app:layout_rowWeight="1"/>
-
-                    <android.support.v4.widget.Space
-                        android:layout_width="0dp"
-                        android:layout_height="8dp"
-                        app:layout_columnSpan="2"/>
+                        android:layout_height="14dp" />
 
                     <TextView
                         android:id="@+id/about"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:layout_columnSpan="2"
                         android:textSize="16sp"
                         android:textColor="@color/textColorPrimary"
                         tools:text="Commonwealth Games Road Champ, 3x World Champ. Pro cyclist for Team Sky."/>
 
                     <android.support.v4.widget.Space
                         android:layout_width="0dp"
-                        android:layout_height="8dp"
-                        app:layout_columnSpan="2"/>
+                        android:layout_height="9dp" />
 
                     <TextView
                         android:id="@+id/location"
@@ -140,12 +145,11 @@
                         android:textColor="@color/textColorSecondary"
                         tools:text="Amsterdam, ZH"/>
 
-                </android.support.v7.widget.GridLayout>
-
+                </LinearLayout>
 
                 <android.support.v4.widget.Space
                     android:layout_width="0dp"
-                    android:layout_height="16dp" />
+                    android:layout_height="21dp" />
 
                 <Button
                     android:id="@+id/edit_profile_button"
@@ -159,7 +163,7 @@
 
                 <android.support.v4.widget.Space
                     android:layout_width="0dp"
-                    android:layout_height="24dp"/>
+                    android:layout_height="16dp"/>
 
                 <View
                     android:layout_width="match_parent"
@@ -230,6 +234,11 @@
                         android:layout_marginRight="@dimen/activity_horizontal_margin"/>
 
                 </LinearLayout>
+
+                <android.support.v4.widget.Space
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/activity_horizontal_margin" />
+
             </LinearLayout>
         </ScrollView>
     </LinearLayout>

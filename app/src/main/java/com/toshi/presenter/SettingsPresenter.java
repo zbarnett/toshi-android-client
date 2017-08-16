@@ -56,6 +56,8 @@ import rx.subscriptions.CompositeSubscription;
 public final class SettingsPresenter implements
         Presenter<SettingsFragment> {
 
+    private static final int MAX_NAME_LENGHT = 25;
+
     private User localUser;
     private SettingsFragment fragment;
     private CompositeSubscription subscriptions;
@@ -260,9 +262,7 @@ public final class SettingsPresenter implements
     }
 
     private void updateUi() {
-        if (this.localUser == null || this.fragment == null) {
-            return;
-        }
+        if (this.localUser == null || this.fragment == null) return;
 
         this.fragment.getBinding().name.setText(this.localUser.getDisplayName());
         this.fragment.getBinding().username.setText(this.localUser.getUsername());
@@ -290,12 +290,12 @@ public final class SettingsPresenter implements
         if (reputationScore == null) {
             this.fragment.getBinding().ratingView.setStars(0.0);
             final String reviewCount = this.fragment.getString(R.string.parentheses, 0);
-            this.fragment.getBinding().numberOfRatings.setText(reviewCount);
+            this.fragment.getBinding().reviewCount.setText(reviewCount);
         } else {
             final int revCount = reputationScore.getReviewCount();
             final String reviewCount = this.fragment.getString(R.string.parentheses, revCount);
             this.fragment.getBinding().ratingView.setStars(reputationScore.getAverageRating());
-            this.fragment.getBinding().numberOfRatings.setText(reviewCount);
+            this.fragment.getBinding().reviewCount.setText(reviewCount);
         }
     }
 

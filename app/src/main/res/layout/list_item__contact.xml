@@ -41,17 +41,17 @@
         android:layout_height="match_parent"/>
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center_vertical">
+        android:layout_weight="1"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/name"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/TextStyleMedium"
             android:textColor="@color/textColorPrimary"
+            style="@style/TextStyleMedium"
             android:textSize="14sp"
             tools:text="Damn Daniel!"/>
 
@@ -61,19 +61,20 @@
             android:layout_height="wrap_content"
             android:textColor="@color/textColorSecondary"
             android:textSize="14sp"
+            android:maxLines="1"
+            android:ellipsize="end"
             tools:text="\@username"/>
     </LinearLayout>
 
-    <Space
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"/>
+    <android.support.v4.widget.Space
+        android:layout_width="12dp"
+        android:layout_height="match_parent"/>
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_gravity="right|center_vertical">
+        android:gravity="right">
 
         <com.toshi.view.custom.StarRatingView
             android:id="@+id/rating_view"

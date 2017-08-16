@@ -86,6 +86,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     private static final int CAPTURE_IMAGE = 4;
     private static final int CONFIRM_ATTACHMENT = 5;
     private static final String CAPTURE_FILENAME = "caputureImageFilename";
+    private static final int MAX_NAME_LENGHT = 25;
 
     private boolean firstViewAttachment = true;
     private ChatActivity activity;

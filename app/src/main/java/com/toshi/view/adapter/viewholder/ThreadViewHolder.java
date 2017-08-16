@@ -36,6 +36,8 @@ import static android.view.View.VISIBLE;
 
 public class ThreadViewHolder extends ClickableViewHolder {
 
+    private static final int MAX_NAME_LENGHT = 25;
+
     private ImageView avatar;
     private TextView name;
     private TextView latestMessage;

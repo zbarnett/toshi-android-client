@@ -30,6 +30,8 @@ import com.toshi.view.custom.StarRatingView;
 
 public class ContactViewHolder extends ClickableViewHolder {
 
+    private static final int MAX_NAME_LENGHT = 25;
+
     private ImageView avatar;
     private TextView name;
     private TextView username;
