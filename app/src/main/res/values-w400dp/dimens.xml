@@ -18,4 +18,5 @@
 <resources>
     <dimen name="chat_image__max_width">300dp</dimen>
     <dimen name="chat_payment_width">261dp</dimen>
+    <dimen name="chat_file_width">261dp</dimen>
 </resources>

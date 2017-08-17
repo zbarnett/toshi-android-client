@@ -22,7 +22,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/wrapper"
     android:orientation="horizontal"
-    android:layout_width="261dp"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <de.hdodenhof.circleimageview.CircleImageView
@@ -37,7 +37,7 @@
 
     <LinearLayout
         android:orientation="horizontal"
-        android:layout_width="match_parent"
+        android:layout_width="@dimen/chat_file_width"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/bubbleMargin"
         android:background="@drawable/background_file_message_remote"
