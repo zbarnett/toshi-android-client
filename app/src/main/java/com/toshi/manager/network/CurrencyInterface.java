@@ -18,17 +18,17 @@
 package com.toshi.manager.network;
 
 import com.toshi.model.network.Currencies;
-import com.toshi.model.network.MarketRates;
+import com.toshi.model.network.ExchangeRate;
 
 import retrofit2.http.GET;
-import retrofit2.http.Query;
+import retrofit2.http.Path;
 import rx.Single;
 
 public interface CurrencyInterface {
 
-    @GET("/v2/exchange-rates")
-    Single<MarketRates> getRates(@Query("currency") String currency);
+    @GET("/v1/rates/ETH/{code}")
+    Single<ExchangeRate> getRates(@Path("code") String code);
 
-    @GET("/v2/currencies")
+    @GET("/v1/currencies")
     Single<Currencies> getCurrencies();
 }

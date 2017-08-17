@@ -29,9 +29,9 @@ import com.toshi.model.local.Network;
 import com.toshi.model.local.Networks;
 import com.toshi.model.network.Balance;
 import com.toshi.model.network.Currencies;
+import com.toshi.model.network.ExchangeRate;
 import com.toshi.model.network.GcmDeregistration;
 import com.toshi.model.network.GcmRegistration;
-import com.toshi.model.network.MarketRates;
 import com.toshi.model.network.ServerTime;
 import com.toshi.model.sofa.Payment;
 import com.toshi.service.RegistrationIntentService;
@@ -117,17 +117,17 @@ public class BalanceManager {
         LogUtil.exception(getClass(), "Error while fetching balance", throwable);
     }
 
-    private Single<MarketRates> getRates() {
-        return fetchLatestRates()
+    private Single<ExchangeRate> getLocalCurrencyExchangeRate() {
+        return getLocalCurrency()
+                .flatMap((code) -> fetchLatestExchangeRate(code)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
+                .observeOn(AndroidSchedulers.mainThread()));
     }
 
-    private Single<MarketRates> fetchLatestRates() {
+    private Single<ExchangeRate> fetchLatestExchangeRate(final String code) {
         return CurrencyService
                 .getApi()
-                .getRates("ETH")
-                .onErrorReturn(__ -> new MarketRates());
+                .getRates(code);
     }
 
     public Single<Currencies> getCurrencies() {
@@ -138,15 +138,15 @@ public class BalanceManager {
     }
 
     public Single<String> convertEthToLocalCurrencyString(final BigDecimal ethAmount) {
-         return getRates()
-                 .flatMap((marketRates) -> mapToString(marketRates, ethAmount));
+        return getLocalCurrencyExchangeRate()
+                 .flatMap((exchangeRate) -> mapToString(exchangeRate, ethAmount));
     }
 
-    private Single<String> mapToString(final MarketRates marketRates,
+    private Single<String> mapToString(final ExchangeRate exchangeRate,
                                final BigDecimal ethAmount) {
         return Single.fromCallable(() -> {
-            final String currency = SharedPrefsUtil.getCurrency();
-            final BigDecimal marketRate = marketRates.getRate(currency);
+
+            final BigDecimal marketRate = exchangeRate.getRate();
             // Do a bit of fuzzy rounding. This may be dangerous.
             final BigDecimal localAmount = marketRate
                     .multiply(ethAmount)
@@ -158,41 +158,43 @@ public class BalanceManager {
             numberFormat.setMinimumFractionDigits(2);
 
             final String amount = numberFormat.format(localAmount);
-            final String currencyCode = CurrencyUtil.getCode(currency);
-            final String currencySymbol = CurrencyUtil.getSymbol(currency);
+            final String currencyCode = CurrencyUtil.getCode(exchangeRate.getTo());
+            final String currencySymbol = CurrencyUtil.getSymbol(exchangeRate.getTo());
 
             return String.format("%s%s %s", currencySymbol, amount, currencyCode);
         });
     }
 
-    public Single<BigDecimal> convertEthToLocalCurrency(final BigDecimal ethAmount) {
-        return getRates()
-                .flatMap((marketRates) -> mapToLocalCurrency(marketRates, ethAmount));
+    private Single<String> getLocalCurrency() {
+        return Single.fromCallable(SharedPrefsUtil::getCurrency);
     }
 
-    private Single<BigDecimal> mapToLocalCurrency(final MarketRates marketRates,
+    public Single<BigDecimal> convertEthToLocalCurrency(final BigDecimal ethAmount) {
+        return getLocalCurrencyExchangeRate()
+                .flatMap((exchangeRate) -> mapToLocalCurrency(exchangeRate, ethAmount));
+    }
+
+    private Single<BigDecimal> mapToLocalCurrency(final ExchangeRate exchangeRate,
                                                   final BigDecimal ethAmount) {
         return Single.fromCallable(() -> {
-            final String currency = SharedPrefsUtil.getCurrency();
-            final BigDecimal marketRate = marketRates.getRate(currency);
+            final BigDecimal marketRate = exchangeRate.getRate();
             return marketRate.multiply(ethAmount);
         });
     }
 
     public Single<BigDecimal> convertLocalCurrencyToEth(final BigDecimal localAmount) {
-        return getRates()
-                .flatMap((marketRates) -> mapToEth(marketRates, localAmount));
+        return getLocalCurrencyExchangeRate()
+                .flatMap((exchangeRate) -> mapToEth(exchangeRate, localAmount));
     }
 
-    private Single<BigDecimal> mapToEth(final MarketRates marketRates,
+    private Single<BigDecimal> mapToEth(final ExchangeRate exchangeRate,
                                         final BigDecimal localAmount) {
         return Single.fromCallable(() -> {
             if (localAmount.compareTo(BigDecimal.ZERO) == 0) {
                 return BigDecimal.ZERO;
             }
 
-            final String currency = SharedPrefsUtil.getCurrency();
-            final BigDecimal marketRate = marketRates.getRate(currency);
+            final BigDecimal marketRate = exchangeRate.getRate();
             if (marketRate.compareTo(BigDecimal.ZERO) == 0) {
                 return BigDecimal.ZERO;
             }

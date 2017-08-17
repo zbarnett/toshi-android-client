@@ -18,17 +18,17 @@
 package com.toshi.model.network;
 
 public class Currency {
-    private String id;
+    private String code;
     private String name;
 
     public Currency() {}
 
-    public Currency(final String id) {
-        this.id = id;
+    public Currency(final String code) {
+        this.code = code;
     }
 
-    public String getId() {
-        return id;
+    public String getCode() {
+        return code;
     }
 
     public String getName() {
@@ -42,12 +42,12 @@ public class Currency {
 
         final Currency currency = (Currency) o;
 
-        return this.id.equals(currency.id);
+        return this.code.equals(currency.code);
 
     }
 
     @Override
     public int hashCode() {
-        return this.id.hashCode();
+        return this.code.hashCode();
     }
 }

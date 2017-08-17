@@ -47,7 +47,7 @@ public class CurrencyViewHolder extends RecyclerView.ViewHolder {
     public CurrencyViewHolder setCurrency(final Currency currency) {
         this.textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, this.itemTextSize);
         this.textView.setTextColor(this.itemTextColor);
-        final String currencyString = String.format("%s (%s)", currency.getName(), currency.getId());
+        final String currencyString = String.format("%s (%s)", currency.getName(), currency.getCode());
         this.textView.setText(currencyString);
         return this;
     }

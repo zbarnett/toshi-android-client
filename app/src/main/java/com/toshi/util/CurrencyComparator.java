@@ -29,9 +29,9 @@ public class CurrencyComparator implements Comparator<Currency> {
 
     @Override
     public int compare(Currency o1, Currency o2) {
-        if (popularCurrencies.contains(o1.getId())) {
+        if (popularCurrencies.contains(o1.getCode())) {
             return -1;
-        } else if (popularCurrencies.contains(o2.getId())) {
+        } else if (popularCurrencies.contains(o2.getCode())) {
             return 1;
         }
         return o1.getName().compareTo(o2.getName());

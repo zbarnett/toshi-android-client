@@ -20,9 +20,9 @@ package com.toshi.model.network;
 import java.util.List;
 
 public class Currencies {
-    private List<Currency> data;
+    private List<Currency> currencies;
 
-    public List<Currency> getData() {
-        return data;
+    public List<Currency> getCurrencies() {
+        return currencies;
     }
 }

@@ -91,7 +91,7 @@ public class CurrencyPresenter implements Presenter<CurrencyActivity> {
     }
 
     private void handleCurrencyClicked(final Currency currency) {
-        SharedPrefsUtil.saveCurrency(currency.getId());
+        SharedPrefsUtil.saveCurrency(currency.getCode());
         this.activity.finish();
     }
 
@@ -101,7 +101,7 @@ public class CurrencyPresenter implements Presenter<CurrencyActivity> {
                 .get()
                 .getBalanceManager()
                 .getCurrencies()
-                .map(Currencies::getData)
+                .map(Currencies::getCurrencies)
                 .flatMap(this::filterCryptocurrencies)
                 .flatMap(this::sortCurrencies)
                 .doOnSuccess(currencies -> this.currencies = currencies)
