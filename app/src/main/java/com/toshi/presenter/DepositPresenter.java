@@ -20,17 +20,23 @@ package com.toshi.presenter;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.Toast;
 
 import com.toshi.R;
 import com.toshi.model.local.Networks;
 import com.toshi.model.local.User;
+import com.toshi.util.DialogUtil;
 import com.toshi.util.LocaleUtil;
 import com.toshi.util.LogUtil;
 import com.toshi.util.QrCode;
+import com.toshi.util.SharedPrefsUtil;
 import com.toshi.view.BaseApplication;
+import com.toshi.view.activity.BackupPhraseInfoActivity;
 import com.toshi.view.activity.DepositActivity;
 
 import rx.Subscription;
@@ -44,6 +50,7 @@ public class DepositPresenter implements Presenter<DepositActivity> {
     private User localUser;
     private CompositeSubscription subscriptions;
     private boolean firstTimeAttaching = true;
+    private AlertDialog warningDialog;
 
     @Override
     public void onViewAttached(DepositActivity view) {
@@ -54,13 +61,41 @@ public class DepositPresenter implements Presenter<DepositActivity> {
             initLongLivingObjects();
         }
 
+        initShortLivingObjects();
+    }
+
+    private void initLongLivingObjects() {
+        this.subscriptions = new CompositeSubscription();
+    }
+
+    private void initShortLivingObjects() {
+        showWarningDialogIfNotBackedUp();
         attachListeners();
         updateView();
         initClickListeners();
     }
 
-    private void initLongLivingObjects() {
-        this.subscriptions = new CompositeSubscription();
+    private void showWarningDialogIfNotBackedUp() {
+        if (SharedPrefsUtil.hasBackedUpPhrase()) return;
+
+        final AlertDialog.Builder builder =
+                DialogUtil.getBaseDialog(
+                        this.activity,
+                        R.string.balance_dialog_title,
+                        R.string.balance_dialog_body,
+                        R.string.backup,
+                        R.string.cancel,
+                        (dialog, __) -> handlePositiveButtonClicked(dialog)
+                );
+
+        this.warningDialog = builder.create();
+        this.warningDialog.show();
+    }
+
+    private void handlePositiveButtonClicked(final DialogInterface dialog) {
+        dialog.dismiss();
+        final Intent intent = new Intent(this.activity, BackupPhraseInfoActivity.class);
+        this.activity.startActivity(intent);
     }
 
     private void initClickListeners() {
@@ -148,8 +183,16 @@ public class DepositPresenter implements Presenter<DepositActivity> {
 
     @Override
     public void onViewDetached() {
+        closeDialog();
         this.subscriptions.clear();
         this.activity = null;
+    }
+
+    private void closeDialog() {
+        if (this.warningDialog != null) {
+            this.warningDialog.dismiss();
+            this.warningDialog = null;
+        }
     }
 
     @Override

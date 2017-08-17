@@ -259,4 +259,7 @@
     <string name="delete_message">Delete Message</string>
     <string name="retry">Retry</string>
     <string name="not_delivered">Not delivered</string>
+    <string name="balance_dialog_title">You\'re at risk!</string>
+    <string name="balance_dialog_body">You haven\'t backed up your passphrase yet. Without it you risk losing money.</string>
+    <string name="backup">Backup</string>
 </resources>
