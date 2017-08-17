@@ -35,7 +35,7 @@
         app:civ_border_color="@color/divider"/>
 
     <LinearLayout
-        android:layout_width="261dp"
+        android:layout_width="@dimen/chat_payment_width"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:background="@drawable/request_background_remote"

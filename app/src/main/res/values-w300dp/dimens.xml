@@ -16,6 +16,6 @@
   -->
 
 <resources>
-    <dimen name="chat_image__max_width">300dp</dimen>
-    <dimen name="chat_payment_width">261dp</dimen>
+    <dimen name="chat_image__max_width">250dp</dimen>
+    <dimen name="chat_payment_width">200dp</dimen>
 </resources>
