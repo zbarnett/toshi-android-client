@@ -23,11 +23,13 @@ import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.Toast;
 
+import com.toshi.BuildConfig;
 import com.toshi.R;
 import com.toshi.crypto.util.TypeConverter;
 import com.toshi.exception.CurrencyException;
 import com.toshi.model.local.Network;
 import com.toshi.model.local.Networks;
+import com.toshi.util.BuildTypes;
 import com.toshi.util.CurrencyUtil;
 import com.toshi.util.EthUtil;
 import com.toshi.util.LocaleUtil;
@@ -126,8 +128,13 @@ public class AmountPresenter implements Presenter<AmountActivity> {
     }
 
     private void initNetworkView() {
-        final Network network = Networks.getInstance().getCurrentNetwork();
-        this.activity.getBinding().network.setText(network.getName());
+        final boolean isReleaseBuild = BuildConfig.BUILD_TYPE.equals(BuildTypes.RELEASE);
+        this.activity.getBinding().network.setVisibility(isReleaseBuild ? View.GONE : View.VISIBLE);
+
+        if (!isReleaseBuild) {
+            final Network network = Networks.getInstance().getCurrentNetwork();
+            this.activity.getBinding().network.setText(network.getName());
+        }
     }
 
     private View.OnClickListener continueClickListener = new View.OnClickListener() {

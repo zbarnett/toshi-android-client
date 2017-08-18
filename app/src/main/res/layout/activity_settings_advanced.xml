@@ -59,46 +59,54 @@
 
             </LinearLayout>
 
-            <android.support.v4.widget.Space
-                android:layout_width="0dp"
-                android:layout_height="@dimen/activity_horizontal_margin" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:textColor="@color/textColorSecondary"
-                android:text="@string/network"/>
-
-            <TextView
-                android:id="@+id/current_network"
-                android:layout_width="match_parent"
-                android:layout_height="54dp"
-                android:gravity="center_vertical"
-                android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:textSize="16sp"
-                android:background="?android:selectableItemBackground"
-                tools:text="Ropsten Revival Testnet"/>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"
-                android:background="@color/divider"/>
-
-            <android.support.v4.widget.Space
-                android:layout_width="0dp"
-                android:layout_height="16dp" />
-
-            <TextView
+            <LinearLayout
+                android:id="@+id/networkSwitcherWrapper"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:textSize="14sp"
-                android:textColor="@color/textColorBody"
-                android:text="@string/develop_message"/>
+                android:orientation="vertical">
+
+                <android.support.v4.widget.Space
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/activity_horizontal_margin" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:textColor="@color/textColorSecondary"
+                    android:text="@string/network"/>
+
+                <TextView
+                    android:id="@+id/current_network"
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="@dimen/activity_horizontal_margin"
+                    android:textSize="16sp"
+                    android:background="?android:selectableItemBackground"
+                    tools:text="Ropsten Revival Testnet"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin"
+                    android:background="@color/divider"/>
+
+                <android.support.v4.widget.Space
+                    android:layout_width="0dp"
+                    android:layout_height="16dp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:textSize="14sp"
+                    android:textColor="@color/textColorBody"
+                    android:text="@string/develop_message"/>
+
+            </LinearLayout>
 
             <android.support.v4.widget.Space
                 android:layout_width="0dp"

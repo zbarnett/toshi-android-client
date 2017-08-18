@@ -20,12 +20,15 @@ package com.toshi.presenter;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.view.View;
 
 import com.jakewharton.rxbinding.widget.RxTextView;
+import com.toshi.BuildConfig;
 import com.toshi.R;
 import com.toshi.crypto.util.TypeConverter;
 import com.toshi.model.local.Network;
 import com.toshi.model.local.Networks;
+import com.toshi.util.BuildTypes;
 import com.toshi.util.EthUtil;
 import com.toshi.util.LogUtil;
 import com.toshi.view.BaseApplication;
@@ -74,8 +77,13 @@ public class SendPresenter implements Presenter<SendActivity>,PaymentConfirmatio
     }
 
     private void initNetworkView() {
-        final Network network = Networks.getInstance().getCurrentNetwork();
-        this.activity.getBinding().network.setText(network.getName());
+        final boolean isReleaseBuild = BuildConfig.BUILD_TYPE.equals(BuildTypes.RELEASE);
+        this.activity.getBinding().network.setVisibility(isReleaseBuild ? View.GONE : View.VISIBLE);
+
+        if (!isReleaseBuild) {
+            final Network network = Networks.getInstance().getCurrentNetwork();
+            this.activity.getBinding().network.setText(network.getName());
+        }
     }
 
     private void initUiListeners() {

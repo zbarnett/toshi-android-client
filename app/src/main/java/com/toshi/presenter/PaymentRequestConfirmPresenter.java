@@ -21,11 +21,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import com.toshi.BuildConfig;
 import com.toshi.R;
 import com.toshi.crypto.util.TypeConverter;
 import com.toshi.model.local.Network;
 import com.toshi.model.local.Networks;
 import com.toshi.model.local.User;
+import com.toshi.util.BuildTypes;
 import com.toshi.util.EthUtil;
 import com.toshi.util.ImageUtil;
 import com.toshi.util.LogUtil;
@@ -80,8 +82,13 @@ public class PaymentRequestConfirmPresenter implements Presenter<PaymentConfirma
     }
 
     private void initNetworkView() {
-        final Network network = Networks.getInstance().getCurrentNetwork();
-        this.view.getBinding().network.setText(network.getName());
+        final boolean isReleaseBuild = BuildConfig.BUILD_TYPE.equals(BuildTypes.RELEASE);
+        this.view.getBinding().network.setVisibility(isReleaseBuild ? View.GONE : View.VISIBLE);
+
+        if (!isReleaseBuild) {
+            final Network network = Networks.getInstance().getCurrentNetwork();
+            this.view.getBinding().network.setText(network.getName());
+        }
     }
 
     private void initClickListeners() {

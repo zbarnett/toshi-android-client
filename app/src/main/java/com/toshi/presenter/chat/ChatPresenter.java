@@ -33,6 +33,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.toshi.BuildConfig;
 import com.toshi.R;
 import com.toshi.crypto.HDWallet;
 import com.toshi.exception.PermissionException;
@@ -52,6 +53,7 @@ import com.toshi.model.sofa.SofaAdapters;
 import com.toshi.model.sofa.SofaMessage;
 import com.toshi.presenter.AmountPresenter;
 import com.toshi.presenter.Presenter;
+import com.toshi.util.BuildTypes;
 import com.toshi.util.ChatNavigation;
 import com.toshi.util.DialogUtil;
 import com.toshi.util.EthUtil;
@@ -299,10 +301,13 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     }
 
     private void initNetworkView() {
-        if (Networks.getInstance().onDefaultNetwork()) return;
-        final Network network = Networks.getInstance().getCurrentNetwork();
-        this.activity.getBinding().network.setVisibility(View.VISIBLE);
-        this.activity.getBinding().network.setText(network.getName());
+        final boolean isReleaseBuild = BuildConfig.BUILD_TYPE.equals(BuildTypes.RELEASE);
+        this.activity.getBinding().network.setVisibility(isReleaseBuild ? View.GONE : View.VISIBLE);
+
+        if (!isReleaseBuild) {
+            final Network network = Networks.getInstance().getCurrentNetwork();
+            this.activity.getBinding().network.setText(network.getName());
+        }
     }
 
     private void getWallet() {

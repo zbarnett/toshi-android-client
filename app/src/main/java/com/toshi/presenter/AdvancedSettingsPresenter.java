@@ -27,6 +27,7 @@ import com.toshi.BuildConfig;
 import com.toshi.R;
 import com.toshi.model.local.Network;
 import com.toshi.model.local.Networks;
+import com.toshi.util.BuildTypes;
 import com.toshi.util.DialogUtil;
 import com.toshi.util.LogUtil;
 import com.toshi.view.BaseApplication;
@@ -67,6 +68,7 @@ public class AdvancedSettingsPresenter implements Presenter<AdvancedSettingsActi
     private void initShortLivingObjects() {
         initCLickListeners();
         setVersionCode();
+        setNetworkSwitcherVisibility();
         setCurrentNetwork(Networks.getInstance().getCurrentNetwork());
     }
 
@@ -95,6 +97,13 @@ public class AdvancedSettingsPresenter implements Presenter<AdvancedSettingsActi
     private void setVersionCode() {
         final String versionName = BuildConfig.VERSION_NAME;
         this.activity.getBinding().version.setText(versionName);
+    }
+
+    private void setNetworkSwitcherVisibility() {
+        final int visibility = BuildConfig.BUILD_TYPE.equals(BuildTypes.RELEASE)
+                ? View.GONE
+                : View.VISIBLE;
+        this.activity.getBinding().networkSwitcherWrapper.setVisibility(visibility);
     }
 
     private void setCurrentNetwork(final Network network) {
