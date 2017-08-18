@@ -25,6 +25,7 @@ import android.support.annotation.StringRes;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
+import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -38,6 +39,7 @@ import com.jakewharton.rxbinding.widget.RxTextView;
 import com.toshi.R;
 import com.toshi.crypto.HDWallet;
 import com.toshi.manager.ToshiManager;
+import com.toshi.util.SearchUtil;
 import com.toshi.util.LogUtil;
 import com.toshi.util.SharedPrefsUtil;
 import com.toshi.view.BaseApplication;
@@ -51,7 +53,7 @@ import org.bitcoinj.crypto.MnemonicCode;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 
 import rx.Observable;
@@ -162,6 +164,54 @@ public class SignInPresenter implements Presenter<SignInActivity> {
         this.subscriptions.add(sub);
     }
 
+    private void handlePastedString(final String pastedString) {
+        final List<String> pastedPassphrase = Arrays.asList(pastedString.split(" "));
+
+        if (pastedPassphrase.size() != 12) {
+            showErrorMessage(this.activity.getString(R.string.passphrase_must_be_12_words));
+            return;
+        }
+
+        final Subscription sub =
+                Single.fromCallable(() -> sortPassphrase(pastedPassphrase))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        listPair -> handlePastedListResult(listPair.first, listPair.second),
+                        throwable -> LogUtil.e(getClass(), throwable.toString())
+                );
+
+        this.subscriptions.add(sub);
+    }
+
+    private Pair<List<String>, List<String>> sortPassphrase(final List<String> pastedPassphrase) {
+        final List<String> approvedWords = new ArrayList<>();
+        final List<String> notApprovedWords = new ArrayList<>();
+        for (final String word : pastedPassphrase) {
+            final String result = new SearchUtil<String>().findMatch(this.wordList, word);
+            if (result != null) {
+                approvedWords.add(word);
+            } else {
+                notApprovedWords.add(word);
+            }
+        }
+        return new Pair<>(approvedWords, notApprovedWords);
+    }
+
+    private void handlePastedListResult(final List<String> approvedWords,
+                                        final List<String> notApprovedWords) {
+        this.approvedWords.clear();
+        this.approvedWords.addAll(approvedWords);
+        addWordsToAdapter(this.approvedWords);
+        updateSignInView();
+
+        if (approvedWords.size() != 12) {
+            final String s = Joiner.on(", ").join(notApprovedWords);
+            final String errorMessage = this.activity.getString(R.string.pasted_passphrase_error_message, s);
+            showErrorMessage(errorMessage);
+        }
+    }
+
     private void clearSuggestion(final String string) {
         if (string.length() > 0) return;
         this.activity.getBinding().suggestionView.clearSuggestion();
@@ -170,19 +220,17 @@ public class SignInPresenter implements Presenter<SignInActivity> {
     private Observable<String> getWordSuggestion(final String startOfWord) {
         return Observable.fromCallable(() -> {
             if (startOfWord.length() == 0) return null;
-
-            final int searchResult = Collections.binarySearch(this.wordList, startOfWord);
-            if (Math.abs(searchResult) >= this.wordList.size()) return null;
-
-            final int index = searchResult < 0 ? Math.abs(searchResult) - 1 : searchResult;
-            final String suggestion = this.wordList.get(index);
-            if (!suggestion.startsWith(startOfWord)) return null;
-
+            final String suggestion = new SearchUtil<String>().findSuggestion(this.wordList, startOfWord);
+            if (suggestion == null || !suggestion.startsWith(startOfWord)) return null;
             return suggestion;
         });
     }
 
     private void handleWordSuggestion(final String suggestion) {
+        final int lengthOfPassphraseWord = this.activity.getBinding().suggestionView.getWordView().length();
+        //If the passphrase field is cleared, don't show a suggestion or an error
+        if (lengthOfPassphraseWord == 0) return;
+
         if (suggestion == null) {
             this.activity.getBinding().suggestionView.clearSuggestion();
             final String passphraseInput = this.activity.getBinding().suggestionView.getWordView().getText().toString();
