@@ -81,16 +81,21 @@ public class SignInPresenter implements Presenter<SignInActivity> {
             this.firstTimeAttaching = false;
             initLongLivingObjects();
         }
-        initPassphraseList();
-        initPassphraseView();
-        initClickListeners();
-        updateSignInView();
+
+        initShortLivingObjects();
     }
 
     private void initLongLivingObjects() {
         this.subscriptions = new CompositeSubscription();
         initLists();
         initWordList();
+    }
+
+    private void initShortLivingObjects() {
+        initPassphraseList();
+        initPassphraseView();
+        initClickListeners();
+        updateSignInView();
     }
 
     private void initLists() {
@@ -112,6 +117,7 @@ public class SignInPresenter implements Presenter<SignInActivity> {
 
         final ChipsLayoutManager chipsLayoutManager = ChipsLayoutManager.newBuilder(this.activity)
                 .setRowStrategy(ChipsLayoutManager.STRATEGY_DEFAULT)
+                .setMaxViewsInRow(4)
                 .build();
         final int itemSpacing = this.activity.getResources().getDimensionPixelSize(R.dimen.passphrase_sign_in_spacing);
         passphraseList.addItemDecoration(new SpaceDecoration(itemSpacing));
@@ -135,9 +141,11 @@ public class SignInPresenter implements Presenter<SignInActivity> {
     }
 
     private void initPassphraseView() {
+        this.activity.getBinding().suggestionView.setOnPasteListener(this::handlePastedString);
+
         final Subscription sub =
                 RxTextView
-                .textChanges(this.activity.getBinding().passphrase)
+                .textChanges(this.activity.getBinding().suggestionView.getWordView())
                 .skip(1)
                 .map(CharSequence::toString)
                 .doOnNext(this::clearSuggestion)
@@ -156,7 +164,7 @@ public class SignInPresenter implements Presenter<SignInActivity> {
 
     private void clearSuggestion(final String string) {
         if (string.length() > 0) return;
-        this.activity.getBinding().suggestion.setText("");
+        this.activity.getBinding().suggestionView.clearSuggestion();
     }
 
     private Observable<String> getWordSuggestion(final String startOfWord) {
@@ -176,13 +184,13 @@ public class SignInPresenter implements Presenter<SignInActivity> {
 
     private void handleWordSuggestion(final String suggestion) {
         if (suggestion == null) {
-            this.activity.getBinding().suggestion.setText("");
-            final String passphraseInput = this.activity.getBinding().passphrase.getText().toString();
+            this.activity.getBinding().suggestionView.clearSuggestion();
+            final String passphraseInput = this.activity.getBinding().suggestionView.getWordView().getText().toString();
             showErrorMessage(this.activity.getString(R.string.no_suggestion_found, passphraseInput));
             return;
         }
 
-        this.activity.getBinding().suggestion.setText(suggestion);
+        this.activity.getBinding().suggestionView.setSuggestion(suggestion);
     }
 
     private void showErrorMessage(final String message) {
@@ -199,7 +207,7 @@ public class SignInPresenter implements Presenter<SignInActivity> {
     }
 
     private void updateInputUnderline(final @ColorRes int colorRes) {
-        final EditText passphrase = this.activity.getBinding().passphrase;
+        final EditText passphrase = this.activity.getBinding().suggestionView.getWordView();
         final Drawable originalDrawable = passphrase.getBackground();
         final int color = ContextCompat.getColor(this.activity, colorRes);
         DrawableCompat.setTintList(originalDrawable, ColorStateList.valueOf(color));
@@ -210,7 +218,7 @@ public class SignInPresenter implements Presenter<SignInActivity> {
         this.activity.getBinding().closeButton.setOnClickListener(__ -> this.activity.finish());
         this.activity.getBinding().hidePassphrase.setOnClickListener(__ -> handleHidePassphraseClicked());
         this.activity.getBinding().infoView.setOnClickListener(__ -> handleInfoViewClicked());
-        this.activity.getBinding().passphrase.setOnEditorActionListener((__, actionId, ___) -> handleEnterClicked(actionId));
+        this.activity.getBinding().suggestionView.getWordView().setOnEditorActionListener((__, actionId, ___) -> handleEnterClicked(actionId));
         this.activity.getBinding().signIn.setOnClickListener(v -> handleSignInClicked());
     }
 
@@ -231,7 +239,7 @@ public class SignInPresenter implements Presenter<SignInActivity> {
 
     private boolean handleEnterClicked(final int actionId) {
         if (actionId == EditorInfo.IME_ACTION_DONE) {
-            final String word = this.activity.getBinding().suggestion.getText().toString();
+            final String word = this.activity.getBinding().suggestionView.getSuggestioniew().getText().toString();
             if (!word.isEmpty()) {
                 addWordToList(word);
             }
@@ -241,16 +249,19 @@ public class SignInPresenter implements Presenter<SignInActivity> {
     }
 
     private void addWordToList(final String word) {
-        this.activity.getBinding().passphrase.setText("");
-        this.activity.getBinding().suggestion.setText("");
+        this.activity.getBinding().suggestionView.clear();
         addWord(word);
         updateSignInView();
     }
 
     private void addWord(final String word) {
-        final SignInPassphraseAdapter adapter = (SignInPassphraseAdapter) this.activity.getBinding().passphraseList.getAdapter();
         this.approvedWords.add(word);
-        adapter.setPassphrase(this.approvedWords);
+        addWordsToAdapter(this.approvedWords);
+    }
+
+    private void addWordsToAdapter(final List<String> wordList) {
+        final SignInPassphraseAdapter adapter = (SignInPassphraseAdapter) this.activity.getBinding().passphraseList.getAdapter();
+        adapter.setPassphrase(wordList);
     }
 
     private void updateSignInView() {
@@ -275,8 +286,7 @@ public class SignInPresenter implements Presenter<SignInActivity> {
         signIn.setEnabled(false);
 
         this.activity.getBinding().messageWrapper.setVisibility(View.VISIBLE);
-        this.activity.getBinding().passphrase.setVisibility(View.VISIBLE);
-        this.activity.getBinding().suggestion.setVisibility(View.VISIBLE);
+        this.activity.getBinding().suggestionView.setVisibility(View.VISIBLE);
     }
 
     private void enableSignIn() {
@@ -286,8 +296,7 @@ public class SignInPresenter implements Presenter<SignInActivity> {
         signIn.setEnabled(true);
 
         this.activity.getBinding().messageWrapper.setVisibility(View.GONE);
-        this.activity.getBinding().passphrase.setVisibility(View.GONE);
-        this.activity.getBinding().suggestion.setVisibility(View.GONE);
+        this.activity.getBinding().suggestionView.setVisibility(View.GONE);
     }
 
     private void handleSignInClicked() {

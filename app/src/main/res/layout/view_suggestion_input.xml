@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <EditText
+        android:id="@+id/suggestion"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:textColor="@color/textColorHint"
+        android:textSize="16sp" />
+
+    <com.toshi.view.custom.PasteInterceptEditText
+        android:id="@+id/word"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:imeOptions="actionDone"
+        android:inputType="textNoSuggestions"
+        android:textColor="@color/textColorInput"
+        android:textColorHint="@color/textColorSecondary"
+        android:textSize="16sp"
+        android:hint="@string/enter_passphrase" />
+
+</merge>
