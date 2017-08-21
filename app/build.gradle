@@ -135,7 +135,7 @@ dependencies {
             'com.beloo.widget:ChipsLayoutManager:0.3.4.1@aar',
             'com.github.toshiapp:cropiwa:v1.0.1',
             'com.github.toshiapp:ahbottomnavigation:v2.0.7',
-            'com.vdurmont:emoji-java:3.2.0',
+            'com.vdurmont:emoji-java:3.3.0',
     )
 
     compile('com.crashlytics.sdk.android:crashlytics:2.6.2@aar') {
@@ -179,7 +179,7 @@ dependencyVerification {
             'com.beloo.widget:ChipsLayoutManager:27b6ad23e8ba18a6a6c43e279db126322601d93daf621946541e4b50dc988874',
             'com.github.toshiapp:cropiwa:e011b1f928009368153578cb6a605928e4e70b44413213edf2381fd454d12840',
             'com.github.toshiapp:ahbottomnavigation:ea8d292b34e908659374183fa7d0fa259aa83e99eabefa1aa89a45ee4ef0e145',
-            'com.vdurmont:emoji-java:3c0caf2e62164066c860bbd02a8f4e768cb1016735a256df62a8a4521946d1f2',
+            'com.vdurmont:emoji-java:71b1a7cb312533ddc132583c8f84e9bde9ebfb13282cd4462978334fa1c04e9a',
             'com.crashlytics.sdk.android:crashlytics:110212c02ece0c4471383e579d378be8b9ad8d5bf51a2c35ad0610d9166065c7',
             'com.google.firebase:firebase-core:558cda4b5421d0ad206a7c14247b649579aebc37259082e80579e14199042ea0',
             'com.android.databinding:library:f172550208c2e86973271cdc1d9b527545d923527abed2daa894cf1499619869',
