@@ -20,7 +20,6 @@ package com.toshi.view;
 
 import android.content.ComponentCallbacks2;
 import android.content.IntentFilter;
-import android.os.Build;
 import android.support.multidex.MultiDexApplication;
 
 import com.toshi.manager.AppsManager;
@@ -44,6 +43,7 @@ public final class BaseApplication extends MultiDexApplication {
     private final BehaviorSubject<Boolean> isConnectedSubject = BehaviorSubject.create();
 
     private ToshiManager toshiManager;
+    private NetworkChangeReceiver networkChangeReceiver;
     private boolean inBackground = false;
 
     public final Realm getRealm() {
@@ -62,28 +62,25 @@ public final class BaseApplication extends MultiDexApplication {
 
     private void init() {
         initToshiManager();
-        initConnectivityMonitor();
-    }
-
-    private void initConnectivityMonitor() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            final IntentFilter connectivityIntent = new IntentFilter();
-            connectivityIntent.addAction(android.net.ConnectivityManager.CONNECTIVITY_ACTION);
-            this.registerReceiver(new NetworkChangeReceiver(), connectivityIntent);
-        }
-        isConnectedSubject().onNext(NetworkChangeReceiver.getCurrentConnectivityStatus(this));
     }
 
     private void initToshiManager() {
         this.toshiManager = new ToshiManager();
     }
 
-
     public void applicationResumed() {
-        if (this.inBackground) {
-            this.inBackground = false;
-            this.toshiManager.getSofaMessageManager().resumeMessageReceiving();
-        }
+        if (!this.inBackground) return;
+        this.inBackground = false;
+        this.toshiManager.getSofaMessageManager().resumeMessageReceiving();
+        initConnectivityMonitor();
+    }
+
+    private void initConnectivityMonitor() {
+        final IntentFilter connectivityIntent = new IntentFilter();
+        connectivityIntent.addAction(android.net.ConnectivityManager.CONNECTIVITY_ACTION);
+        this.networkChangeReceiver = new NetworkChangeReceiver();
+        this.registerReceiver(this.networkChangeReceiver, connectivityIntent);
+        isConnectedSubject().onNext(NetworkChangeReceiver.getCurrentConnectivityStatus(this));
     }
 
     @Override
@@ -93,8 +90,14 @@ public final class BaseApplication extends MultiDexApplication {
         if (level == ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN) {
             this.inBackground = true;
             this.toshiManager.getSofaMessageManager().disconnect();
+            unregisterConnectivityReceiver();
         }
         super.onTrimMemory(level);
+    }
+
+    private void unregisterConnectivityReceiver() {
+        if (this.networkChangeReceiver == null) return;
+        this.unregisterReceiver(this.networkChangeReceiver);
     }
 
     public BehaviorSubject<Boolean> isConnectedSubject() {
