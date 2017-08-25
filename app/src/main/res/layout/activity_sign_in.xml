@@ -60,48 +60,60 @@
 
             </android.support.v7.widget.Toolbar>
 
-            <android.support.v4.widget.Space
-                android:layout_width="0dp"
-                android:layout_height="27dp" />
-
-            <com.toshi.view.custom.PassphraseInputView
-                android:id="@+id/passphraseInputView"
+            <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"/>
+                android:layout_height="match_parent"
+                android:fillViewport="true">
 
-            <android.support.v4.widget.Space
-                android:layout_width="0dp"
-                android:layout_height="22dp" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
-            <Button
-                android:id="@+id/sign_in"
-                android:layout_width="match_parent"
-                android:layout_height="42dp"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"
-                android:background="@drawable/background_with_radius_disabled"
-                android:textColor="#FFFFFF"
-                android:textSize="15sp"
-                android:textAllCaps="true"
-                android:enabled="false"
-                android:text="@string/sign_in"/>
+                    <android.support.v4.widget.Space
+                        android:layout_width="0dp"
+                        android:layout_height="27dp" />
 
-            <android.support.v4.widget.Space
-                android:layout_width="0dp"
-                android:layout_height="22dp" />
+                    <com.toshi.view.custom.PassphraseInputView
+                        android:id="@+id/passphraseInputView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                        android:layout_marginRight="@dimen/activity_horizontal_margin"/>
 
-            <TextView
-                android:id="@+id/infoView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:padding="5dp"
-                android:textSize="14sp"
-                android:textColor="@color/textColorSecondary"
-                android:text="@string/how_does_it_work"/>
+                    <android.support.v4.widget.Space
+                        android:layout_width="0dp"
+                        android:layout_height="22dp" />
 
+                    <Button
+                        android:id="@+id/sign_in"
+                        android:layout_width="match_parent"
+                        android:layout_height="42dp"
+                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                        android:layout_marginRight="@dimen/activity_horizontal_margin"
+                        android:background="@drawable/background_with_radius_disabled"
+                        android:textColor="#FFFFFF"
+                        android:textSize="15sp"
+                        android:textAllCaps="true"
+                        android:enabled="false"
+                        android:text="@string/sign_in"/>
+
+                    <android.support.v4.widget.Space
+                        android:layout_width="0dp"
+                        android:layout_height="22dp" />
+
+                    <TextView
+                        android:id="@+id/infoView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:padding="5dp"
+                        android:textSize="14sp"
+                        android:textColor="@color/textColorSecondary"
+                        android:text="@string/how_does_it_work"/>
+
+                </LinearLayout>
+            </ScrollView>
         </LinearLayout>
 
         <FrameLayout
