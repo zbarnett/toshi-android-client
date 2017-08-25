@@ -29,6 +29,7 @@
         <item name="android:buttonStyleToggle">@style/ToggleButton</item>
         <item name="colorControlActivated">@color/divider</item>
         <item name="colorControlNormal">@color/divider</item>
+        <item name="android:textCursorDrawable">@drawable/cursor</item>
     </style>
 
     <style name="FullScreenTheme" parent="AppTheme">
@@ -180,5 +181,10 @@
 
     <style name="closeButtonStyle" parent="clickableBorderlessBackground">
         <item name="android:padding">16dp</item>
+    </style>
+
+    <style name="SuggestionViewStyle">
+        <item name="android:padding">2dp</item>
+        <item name="android:clipToPadding">false</item>
     </style>
 </resources>
