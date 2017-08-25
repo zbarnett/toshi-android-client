@@ -38,6 +38,7 @@ import com.toshi.view.activity.SignInInfoActivity;
 import org.bitcoinj.crypto.MnemonicCode;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import rx.Single;
@@ -73,6 +74,7 @@ public class SignInPresenter implements Presenter<SignInActivity> {
     }
 
     private void initShortLivingObjects() {
+        initSignInPassphraseView();
         initClickListeners();
         disableSignIn(this.activity.getString(R.string.sign_in));
     }
@@ -80,9 +82,28 @@ public class SignInPresenter implements Presenter<SignInActivity> {
     private void initWordList() {
         try {
             final List<String> wordList = new MnemonicCode().getWordList();
+            addWordListToViewPasshraseView(wordList);
         } catch (IOException e) {
             LogUtil.e(getClass(), e.toString());
         }
+    }
+
+    private void addWordListToViewPasshraseView(final List<String> wordList) {
+        this.activity.getBinding().passphraseInputView.setWordList((ArrayList<String>) wordList);
+    }
+
+    private void initSignInPassphraseView() {
+        this.activity.getBinding().passphraseInputView
+                .setOnPassphraseFinishListener(this::handlePassphraseFinished)
+                .setOnPassphraseUpdateListener(this::updateSignInButton);
+    }
+
+    private void handlePassphraseFinished(final List<String> passphrase) {
+        if (this.activity == null) return;
+        final Button signIn = this.activity.getBinding().signIn;
+        signIn.setText(R.string.sign_in);
+        signIn.setBackgroundResource(R.drawable.background_with_radius_primary_color);
+        signIn.setEnabled(true);
     }
 
     private void updateSignInButton(final int approvedWords) {
@@ -105,21 +126,16 @@ public class SignInPresenter implements Presenter<SignInActivity> {
     }
 
     private void disableSignIn(final String string) {
+        if (this.activity == null) return;
         final Button signIn = this.activity.getBinding().signIn;
         signIn.setText(string);
         signIn.setBackgroundResource(R.drawable.background_with_radius_disabled);
         signIn.setEnabled(false);
     }
 
-    private void handlePassphraseFinished() {
+    private void handleSignInClicked() {
         if (this.activity == null) return;
-        final Button signIn = this.activity.getBinding().signIn;
-        signIn.setText(R.string.sign_in);
-        signIn.setBackgroundResource(R.drawable.background_with_radius_primary_color);
-        signIn.setEnabled(true);
-    }
-
-    private void handleSignInClicked(final List<String> approvedWords) {
+        final List<String> approvedWords = this.activity.getBinding().passphraseInputView.getApprovedWordList();
         if (approvedWords.size() != PASSPHRASE_LENGTH) {
             showToast(R.string.sign_in_length_error_message);
             return;

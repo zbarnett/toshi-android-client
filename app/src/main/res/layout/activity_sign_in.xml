@@ -62,59 +62,14 @@
 
             <android.support.v4.widget.Space
                 android:layout_width="0dp"
-                android:layout_height="22dp" />
+                android:layout_height="27dp" />
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/passphraseList"
+            <com.toshi.view.custom.PassphraseInputView
+                android:id="@+id/passphraseInputView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"
-                android:paddingLeft="1dp"
-                android:paddingTop="1dp"
-                android:clipToPadding="false"/>
-
-            <android.support.v4.widget.Space
-                android:layout_width="0dp"
-                android:layout_height="8dp" />
-
-
-            <com.toshi.view.custom.SuggestionInputView
-                android:id="@+id/suggestionView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-
-            <android.support.v4.widget.Space
-                android:layout_width="0dp"
-                android:layout_height="8dp" />
-
-            <FrameLayout
-                android:id="@+id/messageWrapper"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/errorView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="@dimen/activity_horizontal_margin"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                    android:layout_marginTop="5dp"
-                    android:textColor="@color/error_color"
-                    tools:text="This word already exist"/>
-
-                <TextView
-                    android:id="@+id/hidePassphrase"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="right"
-                    android:layout_marginRight="@dimen/activity_horizontal_margin"
-                    android:padding="5dp"
-                    android:textSize="14sp"
-                    android:textColor="@color/textColorSecondary"
-                    android:text="@string/hide_passphrase"/>
-
-            </FrameLayout>
+                android:layout_marginRight="@dimen/activity_horizontal_margin"/>
 
             <android.support.v4.widget.Space
                 android:layout_width="0dp"
