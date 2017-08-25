@@ -76,7 +76,6 @@ public class SignInPresenter implements Presenter<SignInActivity> {
     private void initShortLivingObjects() {
         initSignInPassphraseView();
         initClickListeners();
-        disableSignIn(this.activity.getString(R.string.sign_in));
     }
 
     private void initWordList() {

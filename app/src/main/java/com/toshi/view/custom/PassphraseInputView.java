@@ -144,7 +144,7 @@ public class PassphraseInputView extends FrameLayout {
             }
             inputView.setVisibility(VISIBLE);
         }
-        isPassphraseApproved();
+        checkIfPassphraseIsApproved();
     }
 
     private void initClickListeners() {
