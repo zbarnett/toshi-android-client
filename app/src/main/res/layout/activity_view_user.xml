@@ -115,8 +115,6 @@
                                 android:id="@+id/username"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:maxLines="1"
-                                android:ellipsize="end"
                                 android:textColor="@color/textColorSecondary"
                                 tools:text="\@username" />
 

@@ -197,4 +197,14 @@
         <item name="android:scrollbarSize">5dp</item>
         <item name="android:scrollbarFadeDuration">1000</item>
     </style>
+
+    <style name="MediumEllipsizeEndStyle" parent="TextStyleMedium">
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">1</item>
+    </style>
+
+    <style name="NormalEllipsizeEndStyle">
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">1</item>
+    </style>
 </resources>
