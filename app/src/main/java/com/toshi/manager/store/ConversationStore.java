@@ -48,10 +48,12 @@ public class ConversationStore {
 
     private static final int FIFTEEN_MINUTES = 1000 * 60 * 15;
     private static final String THREAD_ID_FIELD = "threadId";
+    private static final String MESSAGE_ID_FIELD = "privateKey";
 
     private static String watchedThreadId;
     private final static PublishSubject<SofaMessage> NEW_MESSAGE_SUBJECT = PublishSubject.create();
     private final static PublishSubject<SofaMessage> UPDATED_MESSAGE_SUBJECT = PublishSubject.create();
+    private final static PublishSubject<SofaMessage> DELETED_MESSAGE_SUBJECT = PublishSubject.create();
     private final static PublishSubject<Conversation> CONVERSATION_CHANGED_SUBJECT = PublishSubject.create();
     private final static ExecutorService dbThread = Executors.newSingleThreadExecutor();
 
@@ -60,6 +62,11 @@ public class ConversationStore {
     public Pair<PublishSubject<SofaMessage>, PublishSubject<SofaMessage>> registerForChanges(final String threadId) {
         watchedThreadId = threadId;
         return new Pair<>(NEW_MESSAGE_SUBJECT, UPDATED_MESSAGE_SUBJECT);
+    }
+
+    public Observable<SofaMessage> registerForDeletedMessages(final String threadId) {
+        watchedThreadId = threadId;
+        return DELETED_MESSAGE_SUBJECT.asObservable();
     }
 
     public void stopListeningForChanges() {
@@ -237,18 +244,17 @@ public class ConversationStore {
     }
 
     public void updateMessage(final Recipient receiver, final SofaMessage message) {
-        Single.fromCallable(() -> {
+        Completable.fromAction(() -> {
             final Realm realm = BaseApplication.get().getRealm();
             realm.beginTransaction();
             realm.insertOrUpdate(message);
             realm.commitTransaction();
             realm.close();
-            return null;
         })
         .observeOn(Schedulers.immediate())
         .subscribeOn(Schedulers.from(dbThread))
         .subscribe(
-                __ -> broadcastUpdatedChatMessage(receiver.getThreadId(), message),
+                () -> broadcastUpdatedChatMessage(receiver.getThreadId(), message),
                 this::handleError
         );
     }
@@ -265,6 +271,26 @@ public class ConversationStore {
             realm.commitTransaction();
             realm.close();
         });
+    }
+
+    public void deleteMessageById(final Recipient receiver, final SofaMessage message) {
+        Completable.fromAction(() -> {
+            final Realm realm = BaseApplication.get().getRealm();
+            realm.beginTransaction();
+            realm
+                    .where(SofaMessage.class)
+                    .equalTo(MESSAGE_ID_FIELD, message.getPrivateKey())
+                    .findFirst()
+                    .deleteFromRealm();
+            realm.commitTransaction();
+            realm.close();
+        })
+        .observeOn(Schedulers.immediate())
+        .subscribeOn(Schedulers.from(dbThread))
+        .subscribe(
+                () -> broadcastDeletedChatMessage(receiver.getThreadId(), message),
+                this::handleError
+        );
     }
 
     public boolean areUnreadMessages() {
@@ -290,6 +316,13 @@ public class ConversationStore {
             return;
         }
         UPDATED_MESSAGE_SUBJECT.onNext(updatedMessage);
+    }
+
+    private void broadcastDeletedChatMessage(final String threadId, final SofaMessage deletedMessage) {
+        if (watchedThreadId == null || !watchedThreadId.equals(threadId)) {
+            return;
+        }
+        DELETED_MESSAGE_SUBJECT.onNext(deletedMessage);
     }
 
     private void handleError(final Throwable throwable) {

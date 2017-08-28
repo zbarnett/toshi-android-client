@@ -155,6 +155,11 @@ public final class SofaMessageManager {
                 .subscribeOn(Schedulers.io());
     }
 
+    public void deleteMessage(final Recipient recipient, final SofaMessage sofaMessage) {
+        this.conversationStore
+                .deleteMessageById(recipient, sofaMessage);
+    }
+
     public final Observable<Conversation> registerForAllConversationChanges() {
         return this.conversationStore.getConversationChangedObservable();
     }
@@ -163,6 +168,10 @@ public final class SofaMessageManager {
     // the second being the observable for updated messages.
     public final Pair<PublishSubject<SofaMessage>, PublishSubject<SofaMessage>> registerForConversationChanges(final String threadId) {
         return this.conversationStore.registerForChanges(threadId);
+    }
+
+    public final Observable<SofaMessage> registerForDeletedMessages(final String threadId) {
+        return this.conversationStore.registerForDeletedMessages(threadId);
     }
 
     public final void stopListeningForChanges() {

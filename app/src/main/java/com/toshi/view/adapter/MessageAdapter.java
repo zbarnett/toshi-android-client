@@ -151,6 +151,14 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
         notifyItemChanged(position);
     }
 
+    public final void deleteMessage(final SofaMessage sofaMessage) {
+        if (!shouldShowChatMessage(sofaMessage)) return;
+        final int position = this.sofaMessages.indexOf(sofaMessage);
+        if (position == -1) return;
+        this.sofaMessages.remove(position);
+        notifyItemRemoved(position);
+    }
+
     @Override
     public int getItemViewType(final int position) {
         final SofaMessage sofaMessage = this.sofaMessages.get(position);

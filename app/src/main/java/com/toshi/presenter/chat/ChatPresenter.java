@@ -70,6 +70,7 @@ import com.toshi.view.notification.ChatNotificationManager;
 import java.io.File;
 import java.io.IOException;
 
+import rx.Observable;
 import rx.Single;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -99,12 +100,14 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     private OutgoingMessageQueue outgoingMessageQueue;
     private MessageAdapter messageAdapter;
     private Pair<PublishSubject<SofaMessage>, PublishSubject<SofaMessage>> chatObservables;
+    private Observable<SofaMessage> deleteObservable;
     private PendingTransactionsObservable pendingTransactionsObservable;
     private Recipient recipient;
     private SpeedyLinearLayoutManager layoutManager;
     private String captureImageFilename;
     private Subscription newMessageSubscription;
     private Subscription updatedMessageSubscription;
+    private Subscription deletedMessageSubscription;
 
     @Override
     public void onViewAttached(final ChatActivity activity) {
@@ -178,7 +181,13 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
                 .resendPendingMessage(sofaMessage);
     }
 
-    private void deleteMessage(final SofaMessage sofaMessage) {}
+    private void deleteMessage(final SofaMessage sofaMessage) {
+        BaseApplication
+                .get()
+                .getToshiManager()
+                .getSofaMessageManager()
+                .deleteMessage(this.recipient, sofaMessage);
+    }
 
     private void updatePaymentRequestState(
             final SofaMessage existingMessage,
@@ -222,7 +231,13 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     }
 
     private void handleUpdatedMessage(final SofaMessage sofaMessage) {
+        if (this.messageAdapter == null) return;
         this.messageAdapter.updateMessage(sofaMessage);
+    }
+
+    private void handleDeletedMessage(final SofaMessage sofaMessage) {
+        if (this.messageAdapter == null) return;
+        this.messageAdapter.deleteMessage(sofaMessage);
     }
 
     private void initShortLivingObjects() {
@@ -613,6 +628,12 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
                 .getSofaMessageManager()
                 .registerForConversationChanges(this.recipient.getThreadId());
 
+        this.deleteObservable =
+                BaseApplication
+                .get()
+                .getSofaMessageManager()
+                .registerForDeletedMessages(this.recipient.getThreadId());
+
         final Subscription conversationLoadedSub =
                 BaseApplication
                 .get()
@@ -669,7 +690,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
 
     private void initMessageObservables() {
         this.newMessageSubscription =
-                chatObservables.first
+                this.chatObservables.first
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -678,11 +699,20 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
                 );
 
         this.updatedMessageSubscription =
-                chatObservables.second
+                this.chatObservables.second
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         this::handleUpdatedMessage,
+                        this::handleError
+                );
+
+        this.deletedMessageSubscription =
+                this.deleteObservable
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        this::handleDeletedMessage,
                         this::handleError
                 );
 
@@ -693,13 +723,9 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     }
 
     private void tryClearMessageSubscriptions() {
-        if (this.newMessageSubscription != null) {
-            this.newMessageSubscription.unsubscribe();
-        }
-
-        if (this.updatedMessageSubscription != null) {
-            this.updatedMessageSubscription.unsubscribe();
-        }
+        if (this.newMessageSubscription != null) this.newMessageSubscription.unsubscribe();
+        if (this.updatedMessageSubscription != null) this.updatedMessageSubscription.unsubscribe();
+        if (this.deletedMessageSubscription != null) this.deletedMessageSubscription.unsubscribe();
     }
 
     private void handleNewMessage(final SofaMessage sofaMessage) {
