@@ -22,11 +22,13 @@ import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.BottomSheetDialog;
 import android.text.TextUtils;
 import android.util.Pair;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.toshi.R;
@@ -86,7 +88,6 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     private static final int CAPTURE_IMAGE = 4;
     private static final int CONFIRM_ATTACHMENT = 5;
     private static final String CAPTURE_FILENAME = "caputureImageFilename";
-    private static final int MAX_NAME_LENGHT = 25;
 
     private boolean firstViewAttachment = true;
     private ChatActivity activity;
@@ -130,7 +131,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
                 .addOnUsernameClickListener(this::handleUsernameClicked)
                 .addOnImageClickListener(this::handleImageClicked)
                 .addOnFileClickListener(path -> this.chatNavigation.startAttachmentPicker(this.activity, path))
-                .addOnResendListener(this::handleResendMessageClicked);
+                .addOnResendListener(this::showResendDialog);
     }
 
     private void handleUsernameClicked(final String username) {
@@ -152,13 +153,32 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         this.chatNavigation.startImageActivity(this.activity, filePath);
     }
 
-    private void handleResendMessageClicked(final SofaMessage sofaMessage) {
+    private void showResendDialog(final SofaMessage sofaMessage) {
+        final BottomSheetDialog dialog = new BottomSheetDialog(this.activity);
+        final View sheetView = this.activity.getLayoutInflater().inflate(R.layout.view_chat_resend, null);
+        final LinearLayout deleteView = sheetView.findViewById(R.id.deleteMessage);
+        deleteView.setOnClickListener(view -> {
+            deleteMessage(sofaMessage);
+            dialog.dismiss();
+        });
+        final LinearLayout retryView = sheetView.findViewById(R.id.retry);
+        retryView.setOnClickListener(view -> {
+            resendMessage(sofaMessage);
+            dialog.dismiss();
+        });
+        dialog.setContentView(sheetView);
+        dialog.show();
+    }
+
+    private void resendMessage(final SofaMessage sofaMessage) {
         BaseApplication
                 .get()
                 .getToshiManager()
                 .getSofaMessageManager()
                 .resendPendingMessage(sofaMessage);
     }
+
+    private void deleteMessage(final SofaMessage sofaMessage) {}
 
     private void updatePaymentRequestState(
             final SofaMessage existingMessage,
