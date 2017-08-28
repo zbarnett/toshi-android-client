@@ -48,6 +48,7 @@ public final class PaymentRequestViewHolder extends RecyclerView.ViewHolder {
     private @Nullable ImageView avatar;
     private @Nullable TextView remotePaymentStatus;
     private @Nullable ImageView sentStatus;
+    private @Nullable TextView errorMessage;
 
     private OnItemClickListener<Integer> onApproveListener;
     private OnItemClickListener<Integer> onRejectListener;
@@ -68,6 +69,7 @@ public final class PaymentRequestViewHolder extends RecyclerView.ViewHolder {
         this.avatar = (ImageView) v.findViewById(R.id.avatar);
         this.remotePaymentStatus = (TextView) v.findViewById(R.id.remote_payment_status);
         this.sentStatus = (ImageView) v.findViewById(R.id.sent_status);
+        this.errorMessage = (TextView) v.findViewById(R.id.error_message);
     }
 
     public PaymentRequestViewHolder setPaymentRequest(final PaymentRequest request) {
@@ -196,11 +198,12 @@ public final class PaymentRequestViewHolder extends RecyclerView.ViewHolder {
     }
 
     private void renderSendState() {
-        if (this.sentStatus == null) return;
+        if (this.sentStatus == null || this.errorMessage == null) return;
         final int visibility = this.sendState == SendState.STATE_FAILED || this.sendState == SendState.STATE_PENDING
                 ? View.VISIBLE
                 : View.GONE;
         this.sentStatus.setVisibility(visibility);
+        this.errorMessage.setVisibility(visibility);
     }
 
     // Todo. Remove this code after September 1st 2017
