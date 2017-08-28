@@ -258,4 +258,5 @@
     <string name="dotdotdot">…</string>
     <string name="delete_message">Delete Message</string>
     <string name="retry">Retry</string>
+    <string name="not_delivered">Not delivered</string>
 </resources>

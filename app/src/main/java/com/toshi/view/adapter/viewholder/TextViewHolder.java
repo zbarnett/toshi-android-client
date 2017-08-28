@@ -54,6 +54,7 @@ public final class TextViewHolder extends RecyclerView.ViewHolder {
     private @NonNull TextView emojiMessage;
     private @Nullable CircleImageView avatar;
     private @Nullable ImageView sentStatus;
+    private @Nullable TextView errorMessage;
 
     private String text;
     private @SendState.State int sendState;
@@ -63,10 +64,11 @@ public final class TextViewHolder extends RecyclerView.ViewHolder {
 
     public TextViewHolder(final View v) {
         super(v);
-        this.message = (TextView) v.findViewById(R.id.message);
-        this.emojiMessage = (TextView) v.findViewById(R.id.emoji_message);
-        this.avatar = (CircleImageView) v.findViewById(R.id.avatar);
-        this.sentStatus = (ImageView) v.findViewById(R.id.sent_status);
+        this.message = v.findViewById(R.id.message);
+        this.emojiMessage = v.findViewById(R.id.emoji_message);
+        this.avatar = v.findViewById(R.id.avatar);
+        this.sentStatus = v.findViewById(R.id.sent_status);
+        this.errorMessage = v.findViewById(R.id.error_message);
     }
 
     public TextViewHolder setText(final String text) {
@@ -161,11 +163,12 @@ public final class TextViewHolder extends RecyclerView.ViewHolder {
     }
 
     private void setSendState() {
-        if (this.sentStatus == null) return;
+        if (this.sentStatus == null || this.errorMessage == null) return;
         final int visibility = this.sendState == SendState.STATE_FAILED || this.sendState == SendState.STATE_PENDING
                 ? View.VISIBLE
                 : View.GONE;
         this.sentStatus.setVisibility(visibility);
+        this.errorMessage.setVisibility(visibility);
     }
 
     public void setClickableUsernames(final OnItemClickListener<String> listener) {
