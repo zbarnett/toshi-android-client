@@ -256,4 +256,6 @@
     <string name="pasted_passphrase_error_message">Couldn\'t approve (%s)</string>
     <string name="passphrase_must_be_12_words">Passphrase must contain 12 words</string>
     <string name="dotdotdot">…</string>
+    <string name="delete_message">Delete Message</string>
+    <string name="retry">Retry</string>
 </resources>
