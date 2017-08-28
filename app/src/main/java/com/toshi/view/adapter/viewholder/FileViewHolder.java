@@ -41,6 +41,7 @@ public class FileViewHolder extends RecyclerView.ViewHolder {
     private @NonNull TextView fileSize;
     private @Nullable ImageView avatar;
     private @Nullable ImageView sentStatus;
+    private @Nullable TextView errorMessage;
 
     private String path;
     private String avatarUri;
@@ -53,6 +54,7 @@ public class FileViewHolder extends RecyclerView.ViewHolder {
         this.fileSize = (TextView) v.findViewById(R.id.file_size);
         this.avatar = (ImageView) v.findViewById(R.id.avatar);
         this.sentStatus = (ImageView) v.findViewById(R.id.sent_status);
+        this.errorMessage = (TextView) v.findViewById(R.id.error_message);
     }
 
     public FileViewHolder setAttachmentPath(final String path) {
@@ -107,10 +109,11 @@ public class FileViewHolder extends RecyclerView.ViewHolder {
     }
 
     private void setSendState() {
-        if (this.sentStatus == null) return;
+        if (this.sentStatus == null || this.errorMessage == null) return;
         final int visibility = this.sendState == SendState.STATE_FAILED || this.sendState == SendState.STATE_PENDING
                 ? View.VISIBLE
                 : View.GONE;
         this.sentStatus.setVisibility(visibility);
+        this.errorMessage.setVisibility(visibility);
     }
 }
