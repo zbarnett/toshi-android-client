@@ -22,6 +22,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.toshi.R;
 import com.toshi.model.local.SendState;
@@ -36,9 +37,10 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public final class ImageViewHolder extends RecyclerView.ViewHolder {
 
+    private @NonNull RoundCornersImageView image;
     private @Nullable CircleImageView avatar;
     private @Nullable ImageView sentStatus;
-    private @NonNull RoundCornersImageView image;
+    private @Nullable TextView errorMessage;
 
     private @SendState.State int sendState;
     private String attachmentFilePath;
@@ -49,6 +51,7 @@ public final class ImageViewHolder extends RecyclerView.ViewHolder {
         this.avatar = (CircleImageView) v.findViewById(R.id.avatar);
         this.image = (RoundCornersImageView) v.findViewById(R.id.image);
         this.sentStatus = (ImageView) v.findViewById(R.id.sent_status);
+        this.errorMessage = (TextView) v.findViewById(R.id.error_message);
     }
 
     public ImageViewHolder setAvatarUri(final String uri) {
@@ -82,10 +85,7 @@ public final class ImageViewHolder extends RecyclerView.ViewHolder {
     }
 
     private void renderAvatar() {
-        if (this.avatar == null) {
-            return;
-        }
-
+        if (this.avatar == null) return;
         ImageUtil.load(this.avatarUri, this.avatar);
     }
 
@@ -96,11 +96,12 @@ public final class ImageViewHolder extends RecyclerView.ViewHolder {
     }
 
     private void setSendState() {
-        if (sentStatus == null) return;
+        if (this.sentStatus == null || this.errorMessage == null) return;
         final int visibility = this.sendState == SendState.STATE_FAILED || this.sendState == SendState.STATE_PENDING
                 ? View.VISIBLE
                 : View.GONE;
         this.sentStatus.setVisibility(visibility);
+        this.errorMessage.setVisibility(visibility);
     }
 
     public ImageViewHolder setClickableImage(final OnItemClickListener<String> listener, final String filePath) {
