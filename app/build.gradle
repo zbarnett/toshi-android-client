@@ -45,6 +45,7 @@ android {
             minifyEnabled false
         }
         beta {
+            applicationIdSuffix ".beta"
             multiDexEnabled true
             minifyEnabled true
             shrinkResources true
