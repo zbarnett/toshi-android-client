@@ -24,12 +24,12 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.makeramen.roundedimageview.RoundedImageView;
 import com.toshi.R;
 import com.toshi.model.local.SendState;
 import com.toshi.model.sofa.SofaMessage;
 import com.toshi.util.ImageUtil;
 import com.toshi.view.adapter.listeners.OnItemClickListener;
-import com.toshi.view.custom.RoundCornersImageView;
 
 import java.io.File;
 
@@ -37,10 +37,10 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public final class ImageViewHolder extends RecyclerView.ViewHolder {
 
-    private @NonNull RoundCornersImageView image;
     private @Nullable CircleImageView avatar;
     private @Nullable ImageView sentStatus;
     private @Nullable TextView errorMessage;
+    private @NonNull RoundedImageView image;
 
     private @SendState.State int sendState;
     private String attachmentFilePath;
@@ -49,7 +49,7 @@ public final class ImageViewHolder extends RecyclerView.ViewHolder {
     public ImageViewHolder(final View v) {
         super(v);
         this.avatar = (CircleImageView) v.findViewById(R.id.avatar);
-        this.image = (RoundCornersImageView) v.findViewById(R.id.image);
+        this.image = (RoundedImageView) v.findViewById(R.id.image);
         this.sentStatus = (ImageView) v.findViewById(R.id.sent_status);
         this.errorMessage = (TextView) v.findViewById(R.id.error_message);
     }
@@ -90,9 +90,14 @@ public final class ImageViewHolder extends RecyclerView.ViewHolder {
     }
 
     private void showImage() {
+        resetImage();
         final File imageFile = new File(this.attachmentFilePath);
-        this.image.setImage(imageFile);
+        ImageUtil.renderFileIntoTarget(imageFile, this.image);
         this.attachmentFilePath = null;
+    }
+
+    private void resetImage() {
+        this.image.layout(0,0,0,0);
     }
 
     private void setSendState() {

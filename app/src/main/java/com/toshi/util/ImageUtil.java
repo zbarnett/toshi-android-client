@@ -105,6 +105,7 @@ public class ImageUtil {
             Glide
                 .with(imageView.getContext())
                 .load(result)
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .into(imageView);
         } catch (final IllegalArgumentException ex) {
             LogUtil.i(ImageUtil.class, "Tried to render into a now destroyed view.");

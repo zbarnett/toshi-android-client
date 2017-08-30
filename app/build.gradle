@@ -124,6 +124,7 @@ dependencies {
             'com.jakewharton.rxbinding:rxbinding:1.0.0',
             // Images
             'de.hdodenhof:circleimageview:2.1.0',
+            'com.makeramen:roundedimageview:2.3.0',
             // Reading barcodes
             'com.journeyapps:zxing-android-embedded:3.5.0',
             // Crypto
@@ -231,6 +232,7 @@ dependencyVerification {
             'com.android.support:support-media-compat:f1d796a7f17e70cc2873f2effd01bc5f3fd84508b22bd42fea6c8c4d714b047e',
             'com.android.support:support-core-utils:c1da145cb7224a82eda9c096223faf8f8623659ad08582184af8e8f655c3d0d0',
             'com.android.support:support-fragment:5e226349f8408d66fbd0d214741479c2983e56b78c12b2174e5ad80807fa4dd4',
+            'com.makeramen:roundedimageview:43156c0b863a99ee22abd6c5cf67aa7b6de4dd65a63adc89d69f3eff3737afd2',
     ]
 }
 
