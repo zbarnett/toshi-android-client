@@ -164,7 +164,6 @@
     <string name="invalid_payment">Invalid payment</string>
     <string name="payment_address_with_value">Payment address: %1$s</string>
     <string name="copied_payment_address_to_clipboard">Copied %1$s to clipboard</string>
-    <string name="eth_deposit_deposit_warning">Do not send ETH from Ethereum Main Network. Toshi is currently using %s.</string>
     <string name="error__dapp_loading">Unable to launch web app</string>
     <string name="move_and_scale">Move and scale</string>
     <string name="crop_error">Unable to crop the image. Please try again</string>
