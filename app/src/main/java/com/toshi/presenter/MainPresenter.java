@@ -20,6 +20,7 @@ package com.toshi.presenter;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.BuildConfig;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -33,11 +34,11 @@ import com.aurelhubert.ahbottomnavigation.AHBottomNavigationAdapter;
 import com.toshi.R;
 import com.toshi.manager.SofaMessageManager;
 import com.toshi.model.local.User;
+import com.toshi.util.BuildTypes;
 import com.toshi.util.LogUtil;
 import com.toshi.util.SharedPrefsUtil;
 import com.toshi.util.SoundManager;
 import com.toshi.view.BaseApplication;
-import com.toshi.view.activity.BackupPhraseInfoActivity;
 import com.toshi.view.activity.MainActivity;
 import com.toshi.view.activity.ScannerActivity;
 import com.toshi.view.adapter.NavigationAdapter;
@@ -211,7 +212,8 @@ public class MainPresenter implements Presenter<MainActivity> {
     }
 
     private void showBetaWarningDialog() {
-        if (SharedPrefsUtil.hasLoadedApp()) return;
+        final boolean isReleaseBuild = BuildConfig.BUILD_TYPE.equals(BuildTypes.RELEASE);
+        if (SharedPrefsUtil.hasLoadedApp() || isReleaseBuild) return;
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(this.activity, R.style.AlertDialogCustom);
         builder.setTitle(R.string.beta_warning_title)
@@ -227,11 +229,6 @@ public class MainPresenter implements Presenter<MainActivity> {
 
     private void showAlertBadge() {
         this.activity.getBinding().navBar.setNotification("!", 4);
-    }
-
-    private void goToBackupPhraseActivity() {
-        final Intent intent = new Intent(this.activity, BackupPhraseInfoActivity.class);
-        this.activity.startActivity(intent);
     }
 
     @Override
