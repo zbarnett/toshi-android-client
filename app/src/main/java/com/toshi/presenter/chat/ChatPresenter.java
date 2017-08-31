@@ -19,10 +19,12 @@ package com.toshi.presenter.chat;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.BottomSheetDialog;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Pair;
 import android.view.View;
@@ -51,6 +53,8 @@ import com.toshi.model.sofa.SofaMessage;
 import com.toshi.presenter.AmountPresenter;
 import com.toshi.presenter.Presenter;
 import com.toshi.util.ChatNavigation;
+import com.toshi.util.DialogUtil;
+import com.toshi.util.EthUtil;
 import com.toshi.util.FileUtil;
 import com.toshi.util.ImageUtil;
 import com.toshi.util.KeyboardUtil;
@@ -90,24 +94,28 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     private static final int CONFIRM_ATTACHMENT = 5;
     private static final String CAPTURE_FILENAME = "caputureImageFilename";
 
-    private boolean firstViewAttachment = true;
     private ChatActivity activity;
     private ChatNavigation chatNavigation;
-    private CompositeSubscription subscriptions;
-    private Conversation conversation;
-    private HDWallet userWallet;
-    private int lastVisibleMessagePosition;
     private OutgoingMessageQueue outgoingMessageQueue;
     private MessageAdapter messageAdapter;
-    private Pair<PublishSubject<SofaMessage>, PublishSubject<SofaMessage>> chatObservables;
-    private Observable<SofaMessage> deleteObservable;
     private PendingTransactionsObservable pendingTransactionsObservable;
-    private Recipient recipient;
     private SpeedyLinearLayoutManager layoutManager;
-    private String captureImageFilename;
+    private HDWallet userWallet;
+    private Dialog paymentRequestConfirmationDialog;
+
+    private CompositeSubscription subscriptions;
     private Subscription newMessageSubscription;
     private Subscription updatedMessageSubscription;
     private Subscription deletedMessageSubscription;
+
+    private Pair<PublishSubject<SofaMessage>, PublishSubject<SofaMessage>> chatObservables;
+    private Observable<SofaMessage> deleteObservable;
+
+    private boolean firstViewAttachment = true;
+    private int lastVisibleMessagePosition;
+    private String captureImageFilename;
+    private Recipient recipient;
+    private Conversation conversation;
 
     @Override
     public void onViewAttached(final ChatActivity activity) {
@@ -129,7 +137,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
 
     private void initMessageAdapter() {
         this.messageAdapter = new MessageAdapter()
-                .addOnPaymentRequestApproveListener(message -> updatePaymentRequestState(message, PaymentRequest.ACCEPTED))
+                .addOnPaymentRequestApproveListener(message -> showPaymentRequestConfirmationDialog(message, PaymentRequest.ACCEPTED))
                 .addOnPaymentRequestRejectListener(message -> updatePaymentRequestState(message, PaymentRequest.REJECTED))
                 .addOnUsernameClickListener(this::handleUsernameClicked)
                 .addOnImageClickListener(this::handleImageClicked)
@@ -187,6 +195,40 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
                 .getToshiManager()
                 .getSofaMessageManager()
                 .deleteMessage(this.recipient, sofaMessage);
+    }
+
+    private void showPaymentRequestConfirmationDialog(final SofaMessage existingMessage,
+                                                      final @PaymentRequest.State int newState) {
+        try {
+            final String sender = existingMessage.getSender().getDisplayName();
+            final PaymentRequest paymentRequest = SofaAdapters.get().txRequestFrom(existingMessage.getPayload());
+            final String localAmount = paymentRequest.getLocalPrice();
+            final String ethAmount = String.format(
+                    BaseApplication.get().getResources().getString(R.string.eth_amount),
+                    EthUtil.hexAmountToUserVisibleString(paymentRequest.getValue())
+            );
+            final String paymentRequestAmounts = this.activity.getString(R.string.payment_request_confirmation_body, localAmount, ethAmount, sender);
+            final String paymentRequestTitle = this.activity.getString(R.string.payment_request_confirmation_title);
+
+            final AlertDialog.Builder builder =
+                    DialogUtil.getBaseDialog(
+                            this.activity,
+                            paymentRequestTitle,
+                            paymentRequestAmounts,
+                            R.string.pay,
+                            R.string.cancel,
+                            (dialog, __) -> {
+                                dialog.dismiss();
+                                updatePaymentRequestState(existingMessage, newState);
+                            }
+                    );
+
+            this.paymentRequestConfirmationDialog = builder.create();
+            this.paymentRequestConfirmationDialog.show();
+
+        } catch (IOException e) {
+            LogUtil.exception(getClass(), e.toString() + " When showing payment request confirmation dialog");
+        }
     }
 
     private void updatePaymentRequestState(
@@ -924,11 +966,19 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
 
     @Override
     public void onViewDetached() {
+        closeDialogs();
         this.lastVisibleMessagePosition = this.layoutManager.findLastCompletelyVisibleItemPosition();
         this.subscriptions.clear();
         this.messageAdapter.clear();
         this.conversation = null;
         this.activity = null;
+    }
+
+    private void closeDialogs() {
+        if (this.paymentRequestConfirmationDialog != null) {
+            this.paymentRequestConfirmationDialog.dismiss();
+            this.paymentRequestConfirmationDialog = null;
+        }
     }
 
     @Override

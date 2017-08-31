@@ -56,8 +56,6 @@ import rx.subscriptions.CompositeSubscription;
 public final class SettingsPresenter implements
         Presenter<SettingsFragment> {
 
-    private static final int MAX_NAME_LENGHT = 25;
-
     private User localUser;
     private SettingsFragment fragment;
     private CompositeSubscription subscriptions;

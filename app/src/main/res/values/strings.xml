@@ -261,4 +261,6 @@
     <string name="balance_dialog_title">You\'re at risk!</string>
     <string name="balance_dialog_body">You haven\'t backed up your passphrase yet. Without it you risk losing money.</string>
     <string name="backup">Backup</string>
+    <string name="payment_request_confirmation_title">Confirm payment request</string>
+    <string name="payment_request_confirmation_body">Do you want to accept the %1$s (%2$s) from %3$s?</string>
 </resources>
