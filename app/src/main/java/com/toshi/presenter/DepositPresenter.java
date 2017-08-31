@@ -27,8 +27,12 @@ import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.Toast;
 
+import com.toshi.BuildConfig;
 import com.toshi.R;
+import com.toshi.model.local.Network;
+import com.toshi.model.local.Networks;
 import com.toshi.model.local.User;
+import com.toshi.util.BuildTypes;
 import com.toshi.util.DialogUtil;
 import com.toshi.util.LogUtil;
 import com.toshi.util.QrCode;
@@ -68,9 +72,10 @@ public class DepositPresenter implements Presenter<DepositActivity> {
 
     private void initShortLivingObjects() {
         showWarningDialogIfNotBackedUp();
+        initNetworkView();
+        initClickListeners();
         attachListeners();
         updateView();
-        initClickListeners();
     }
 
     private void showWarningDialogIfNotBackedUp() {
@@ -94,6 +99,16 @@ public class DepositPresenter implements Presenter<DepositActivity> {
         dialog.dismiss();
         final Intent intent = new Intent(this.activity, BackupPhraseInfoActivity.class);
         this.activity.startActivity(intent);
+    }
+
+    private void initNetworkView() {
+        final boolean isReleaseBuild = BuildConfig.BUILD_TYPE.equals(BuildTypes.RELEASE);
+        this.activity.getBinding().network.setVisibility(isReleaseBuild ? View.GONE : View.VISIBLE);
+
+        if (!isReleaseBuild) {
+            final Network network = Networks.getInstance().getCurrentNetwork();
+            this.activity.getBinding().network.setText(network.getName());
+        }
     }
 
     private void initClickListeners() {
