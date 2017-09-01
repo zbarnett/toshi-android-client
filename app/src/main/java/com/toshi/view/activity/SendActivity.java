@@ -17,12 +17,14 @@
 
 package com.toshi.view.activity;
 
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 
 import com.toshi.R;
 import com.toshi.databinding.ActivitySendBinding;
+import com.toshi.model.local.ActivityResultHolder;
 import com.toshi.presenter.LoaderIds;
 import com.toshi.presenter.SendPresenter;
 import com.toshi.presenter.factory.PresenterFactory;
@@ -31,8 +33,11 @@ import com.toshi.presenter.factory.SendPresenterFactory;
 public class SendActivity extends BasePresenterActivity<SendPresenter, SendActivity> {
 
     public static final String ACTIVITY_RESULT = "activity_result";
+    public static final String EXTRA__INTENT = "extraIntent";
 
     private ActivitySendBinding binding;
+    private ActivityResultHolder resultHolder;
+    private SendPresenter presenter;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -44,8 +49,28 @@ public class SendActivity extends BasePresenterActivity<SendPresenter, SendActiv
         this.binding = DataBindingUtil.setContentView(this, R.layout.activity_send);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        tryProcessResultHolder();
+    }
+
     public ActivitySendBinding getBinding() {
         return this.binding;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        this.resultHolder = new ActivityResultHolder(requestCode, resultCode, data);
+        tryProcessResultHolder();
+    }
+
+    private void tryProcessResultHolder() {
+        if (this.presenter == null || this.resultHolder == null) return;
+
+        if (this.presenter.handleActivityResult(this.resultHolder)) {
+            this.resultHolder = null;
+        }
     }
 
     @NonNull
@@ -55,7 +80,9 @@ public class SendActivity extends BasePresenterActivity<SendPresenter, SendActiv
     }
 
     @Override
-    protected void onPresenterPrepared(@NonNull SendPresenter presenter) {}
+    protected void onPresenterPrepared(@NonNull SendPresenter presenter) {
+        this.presenter = presenter;
+    }
 
     @Override
     protected int loaderId() {

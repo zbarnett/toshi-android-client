@@ -17,6 +17,7 @@
 
 package com.toshi.presenter;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -26,11 +27,13 @@ import com.jakewharton.rxbinding.widget.RxTextView;
 import com.toshi.BuildConfig;
 import com.toshi.R;
 import com.toshi.crypto.util.TypeConverter;
+import com.toshi.model.local.ActivityResultHolder;
 import com.toshi.model.local.Network;
 import com.toshi.model.local.Networks;
 import com.toshi.util.BuildTypes;
 import com.toshi.util.EthUtil;
 import com.toshi.util.LogUtil;
+import com.toshi.util.ScannerResultType;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.activity.ScannerActivity;
 import com.toshi.view.activity.SendActivity;
@@ -44,8 +47,7 @@ import rx.subscriptions.CompositeSubscription;
 
 public class SendPresenter implements Presenter<SendActivity>,PaymentConfirmationDialog.OnPaymentConfirmationListener {
 
-    public static final String EXTRA__INTENT = "extraIntent";
-    private static final int QR_REQUEST_CODE = 200;
+    private static final int PAYMENT_SCAN_REQUEST_CODE = 200;
 
     private SendActivity activity;
     private CompositeSubscription subscriptions;
@@ -53,11 +55,9 @@ public class SendPresenter implements Presenter<SendActivity>,PaymentConfirmatio
     private String encodedEthAmount;
     private PaymentConfirmationDialog paymentConfirmationDialog;
 
-
     @Override
     public void onViewAttached(final SendActivity view) {
         this.activity = view;
-
         if (this.firstTimeAttaching) {
             this.firstTimeAttaching = false;
             initLongLivingObjects();
@@ -90,12 +90,16 @@ public class SendPresenter implements Presenter<SendActivity>,PaymentConfirmatio
         this.activity.getBinding().closeButton.setOnClickListener( __ -> this.activity.finish());
         this.activity.getBinding().scan.setOnClickListener(__ -> startScanQrActivity());
         this.activity.getBinding().send.setOnClickListener(__ -> showPaymentConfirmationDialog());
-        RxTextView
+
+        final Subscription sub =
+                RxTextView
                 .textChanges(this.activity.getBinding().recipientAddress)
                 .subscribe(
                         this::handleRecipientAddressChanged,
-                        t -> LogUtil.e(getClass(), t.toString())
+                        throwable -> LogUtil.e(getClass(), throwable.toString())
                 );
+
+        this.subscriptions.add(sub);
     }
 
     private void handleRecipientAddressChanged(final CharSequence charSequence) {
@@ -104,8 +108,9 @@ public class SendPresenter implements Presenter<SendActivity>,PaymentConfirmatio
 
     private void startScanQrActivity() {
         if (this.activity == null) return;
-        final Intent intent = new Intent(this.activity, ScannerActivity.class);
-        this.activity.startActivityForResult(intent, QR_REQUEST_CODE);
+        final Intent intent = new Intent(this.activity, ScannerActivity.class)
+                .putExtra(ScannerActivity.SCANNER_RESULT_TYPE, ScannerResultType.PAYMENT_ADDRESS);
+        this.activity.startActivityForResult(intent, PAYMENT_SCAN_REQUEST_CODE);
     }
 
     private void showPaymentConfirmationDialog() {
@@ -113,8 +118,7 @@ public class SendPresenter implements Presenter<SendActivity>,PaymentConfirmatio
                 getRecipientAddress(),
                 this.encodedEthAmount,
                 null
-        )
-                .setOnPaymentConfirmationListener(this);
+        ).setOnPaymentConfirmationListener(this);
         this.paymentConfirmationDialog.show(this.activity.getSupportFragmentManager(), PaymentConfirmationDialog.TAG);
     }
 
@@ -134,7 +138,7 @@ public class SendPresenter implements Presenter<SendActivity>,PaymentConfirmatio
     }
 
     private void processIntentData() {
-        final Intent amountIntent = this.activity.getIntent().getParcelableExtra(EXTRA__INTENT);
+        final Intent amountIntent = this.activity.getIntent().getParcelableExtra(SendActivity.EXTRA__INTENT);
         this.encodedEthAmount = amountIntent.getStringExtra(AmountPresenter.INTENT_EXTRA__ETH_AMOUNT);
         generateAmount(this.encodedEthAmount);
     }
@@ -182,5 +186,22 @@ public class SendPresenter implements Presenter<SendActivity>,PaymentConfirmatio
         }
         this.subscriptions = null;
         this.activity = null;
+    }
+
+    public boolean handleActivityResult(final ActivityResultHolder resultHolder) {
+        if (resultHolder.getResultCode() != Activity.RESULT_OK || this.activity == null) {
+            return false;
+        }
+
+        if (resultHolder.getRequestCode() == PAYMENT_SCAN_REQUEST_CODE) {
+            addPaymentAddressToUi(resultHolder);
+        }
+
+        return true;
+    }
+
+    private void addPaymentAddressToUi(final ActivityResultHolder resultHolder) {
+        final String paymentAddress = resultHolder.getIntent().getStringExtra(SendActivity.ACTIVITY_RESULT);
+        this.activity.getBinding().recipientAddress.setText(paymentAddress);
     }
 }

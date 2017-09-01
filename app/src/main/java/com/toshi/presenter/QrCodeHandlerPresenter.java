@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.toshi.R;
 import com.toshi.util.QrCodeHandler;
+import com.toshi.util.ScannerResultType;
 import com.toshi.view.activity.QrCodeHandlerActivity;
 
 import rx.subscriptions.CompositeSubscription;
@@ -51,7 +52,7 @@ public class QrCodeHandlerPresenter implements Presenter<QrCodeHandlerActivity> 
     }
 
     private void initQrCodeHandler() {
-        this.qrCodeHandler = new QrCodeHandler(this.activity);
+        this.qrCodeHandler = new QrCodeHandler(this.activity, ScannerResultType.NO_ACTION);
         this.qrCodeHandler.setOnQrCodeHandlerListener(this::handleInvalidQrCode);
     }
 

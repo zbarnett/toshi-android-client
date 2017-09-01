@@ -91,7 +91,7 @@ public class BalancePresenter implements Presenter<BalanceActivity> {
     private void startSendActivityWithAmountIntent(final Intent amountIntent) {
         if (this.activity == null) return;
         final Intent intent = new Intent(this.activity, SendActivity.class)
-                .putExtra(SendPresenter.EXTRA__INTENT, amountIntent);
+                .putExtra(SendActivity.EXTRA__INTENT, amountIntent);
         this.activity.startActivity(intent);
     }
 
