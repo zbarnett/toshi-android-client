@@ -16,11 +16,11 @@
   -->
 
 <resources>
-    <string name="chat_url">https://token-chat-service-development.herokuapp.com</string>
-    <string name="directory_url">https://token-id-service-development.herokuapp.com</string>
-    <string name="id_url">https://token-id-service-development.herokuapp.com</string>
-    <string name="rep_url">https://token-rep-service-development.herokuapp.com</string>
-    <string name="currency_url">https://toshi-exchangerate-service.herokuapp.com</string>
+    <string name="chat_url">https://chat.internal.service.toshi.org</string>
+    <string name="directory_url">https://identity.internal.service.toshi.org</string>
+    <string name="id_url">https://identity.internal.service.toshi.org</string>
+    <string name="rep_url">https://reputation.internal.service.toshi.org</string>
+    <string name="currency_url">https://exchange.internal.service.toshi.org</string>
     <string name="qr_code_base_url">https://app.tokenbrowser.com/</string>
     <string name="qr_code_add_url">add/%1$s</string>
     <string name="qr_code_pay_url">pay/%1$s\?value=%2$s&amp;memo=%3$s</string>
