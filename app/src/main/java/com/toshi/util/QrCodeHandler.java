@@ -17,6 +17,7 @@
 
 package com.toshi.util;
 
+import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -33,6 +34,7 @@ import com.toshi.model.local.User;
 import com.toshi.model.sofa.Payment;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.activity.ChatActivity;
+import com.toshi.view.activity.SendActivity;
 import com.toshi.view.activity.ViewUserActivity;
 import com.toshi.view.fragment.DialogFragment.PaymentConfirmationDialog;
 import com.toshi.view.fragment.DialogFragment.PaymentConfirmationType;
@@ -54,10 +56,12 @@ public class QrCodeHandler implements PaymentConfirmationDialog.OnPaymentConfirm
     private CompositeSubscription subscriptions;
     private AppCompatActivity activity;
     private QrCodeHandlerListener listener;
+    private @ScannerResultType.TYPE int scannerResultType;
 
-    public QrCodeHandler(final AppCompatActivity activity) {
+    public QrCodeHandler(final AppCompatActivity activity, final @ScannerResultType.TYPE int scannerResultType) {
         this.activity = activity;
         this.subscriptions = new CompositeSubscription();
+        this.scannerResultType = scannerResultType;
     }
 
     public void setOnQrCodeHandlerListener(final QrCodeHandlerListener listener) {
@@ -67,8 +71,12 @@ public class QrCodeHandler implements PaymentConfirmationDialog.OnPaymentConfirm
     public void handleResult(final String result) {
         final QrCode qrCode = new QrCode(result);
         final @QrCodeType.Type int qrCodeType = qrCode.getQrCodeType();
+        final boolean isScannerResultTypePaymentAddress = this.scannerResultType == ScannerResultType.PAYMENT_ADDRESS;
 
-        if (qrCodeType == QrCodeType.EXTERNAL_PAY) {
+        if (isScannerResultTypePaymentAddress && qrCodeType != QrCodeType.PAYMENT_ADDRESS) {
+            showToast(BaseApplication.get().getString(R.string.scan_error_payment));
+            this.activity.finish();
+        } else if (qrCodeType == QrCodeType.EXTERNAL_PAY) {
             handleExternalPayment(qrCode);
         } else if (qrCodeType == QrCodeType.ADD) {
             handleAddQrCode(qrCode);
@@ -201,18 +209,28 @@ public class QrCodeHandler implements PaymentConfirmationDialog.OnPaymentConfirm
     }
 
     private void handlePaymentAddressQrCode(final QrCode qrCode) {
+        if (this.scannerResultType == ScannerResultType.PAYMENT_ADDRESS) {
+            finishActivityWithResult(qrCode);
+        } else {
+            copyPaymentAddressToClipBoard(qrCode);
+            showToast(BaseApplication.get().getString(R.string.copied_payment_address_to_clipboard, qrCode.getPayload()));
+        }
+        this.activity.finish();
+    }
+
+    private void finishActivityWithResult(final QrCode qrCode) {
+        if (this.activity == null) return;
+        final Intent intent = new Intent()
+                .putExtra(SendActivity.ACTIVITY_RESULT, qrCode.getPayloadAsAddress().getHexAddress());
+        this.activity.setResult(Activity.RESULT_OK, intent);
+        this.activity.finish();
+    }
+
+    private void copyPaymentAddressToClipBoard(final QrCode qrCode) {
         if (this.activity == null) return;
         final ClipboardManager clipboard = (ClipboardManager) this.activity.getSystemService(Context.CLIPBOARD_SERVICE);
         final ClipData clip = ClipData.newPlainText(this.activity.getString(R.string.payment_address), qrCode.getPayloadAsAddress().getHexAddress());
         clipboard.setPrimaryClip(clip);
-
-        Toast.makeText(
-                this.activity,
-                this.activity.getString(R.string.copied_payment_address_to_clipboard, qrCode.getPayload()),
-                Toast.LENGTH_LONG
-        ).show();
-
-        this.activity.finish();
     }
 
     private void handleWebLogin(final String result) {
@@ -242,14 +260,14 @@ public class QrCodeHandler implements PaymentConfirmationDialog.OnPaymentConfirm
     }
 
     private void handleLoginSuccess() {
-        Toast.makeText(BaseApplication.get(), R.string.web_signin, Toast.LENGTH_LONG).show();
+        showToast(BaseApplication.get().getString(R.string.web_signin));
         if (this.activity == null) return;
         this.activity.finish();
     }
 
     private void handleLoginFailure(final Throwable throwable) {
         LogUtil.exception(getClass(), "Login failure", throwable);
-        Toast.makeText(BaseApplication.get(), R.string.error__web_signin, Toast.LENGTH_LONG).show();
+        showToast(BaseApplication.get().getString(R.string.error__web_signin));
     }
 
     @Override
@@ -320,6 +338,14 @@ public class QrCodeHandler implements PaymentConfirmationDialog.OnPaymentConfirm
     private void handleInvalidQrCode() {
         SoundManager.getInstance().playSound(SoundManager.SCAN_ERROR);
         this.listener.onInvalidQrCode();
+    }
+
+    private void showToast(final String string) {
+        Toast.makeText(
+                BaseApplication.get(),
+                string,
+                Toast.LENGTH_LONG
+        ).show();
     }
 
     public void clear() {

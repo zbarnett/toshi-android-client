@@ -28,6 +28,7 @@ import com.toshi.model.local.PermissionResultHolder;
 import com.toshi.model.local.ScanResult;
 import com.toshi.util.LogUtil;
 import com.toshi.util.QrCodeHandler;
+import com.toshi.util.ScannerResultType;
 import com.toshi.view.activity.ScannerActivity;
 
 import java.util.List;
@@ -74,8 +75,14 @@ public final class ScannerPresenter implements Presenter<ScannerActivity> {
     }
 
     private void initQrCodeHandler() {
-        this.qrCodeHandler = new QrCodeHandler(this.activity);
+        this.qrCodeHandler = new QrCodeHandler(this.activity, getScannerResultType());
         this.qrCodeHandler.setOnQrCodeHandlerListener(this::handleInvalidQrCode);
+    }
+
+    @SuppressWarnings("WrongConstant")
+    private @ScannerResultType.TYPE int getScannerResultType() {
+        if (this.activity == null) return ScannerResultType.NO_ACTION;
+        return this.activity.getIntent().getIntExtra(ScannerActivity.SCANNER_RESULT_TYPE, ScannerResultType.NO_ACTION);
     }
 
     private void initScanner() {

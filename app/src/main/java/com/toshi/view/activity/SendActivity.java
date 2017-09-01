@@ -30,6 +30,8 @@ import com.toshi.presenter.factory.SendPresenterFactory;
 
 public class SendActivity extends BasePresenterActivity<SendPresenter, SendActivity> {
 
+    public static final String ACTIVITY_RESULT = "activity_result";
+
     private ActivitySendBinding binding;
 
     @Override

@@ -35,6 +35,8 @@ public class ScannerActivity
         extends OfflineViewBasePresenterActivity<ScannerPresenter, ScannerActivity>
         implements OfflineViewRenderer {
 
+    public static final String SCANNER_RESULT_TYPE = "scanner_result_type";
+
     private ScannerPresenter presenter;
     private ActivityScannerBinding binding;
     private PermissionResultHolder resultHolder;
