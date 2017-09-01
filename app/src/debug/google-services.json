@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:687802783603:android:2e3b5d52175eef1d",
         "android_client_info": {
-          "package_name": "com.tokenbrowser.debug"
+          "package_name": "org.toshi.debug"
         }
       },
       "oauth_client": [

@@ -27,7 +27,7 @@ android {
     dataBinding.enabled = true
 
     defaultConfig {
-        applicationId "com.tokenbrowser"
+        applicationId "org.toshi"
         minSdkVersion 16
         targetSdkVersion 26
 
