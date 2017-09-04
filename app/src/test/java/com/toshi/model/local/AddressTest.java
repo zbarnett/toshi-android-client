@@ -78,9 +78,9 @@ public class AddressTest {
     }
 
     @Test
-    public void initWithoutAmountReturnsZero() {
+    public void initWithoutAmountReturnsEmptyString() {
         final Address address = new Address(expectedEthAddress);
-        assertThat(address.getAmount(), is("0"));
+        assertThat(address.getAmount(), is(""));
     }
 
     @Test

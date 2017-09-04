@@ -40,7 +40,7 @@ public class Address {
     }
 
     private String parseAmount(final String payload) {
-        return parseGeneric(payload, "amount", "0");
+        return parseGeneric(payload, "amount", "");
     }
 
     private String parseMemo(final String payload) {
