@@ -24,6 +24,9 @@ import com.toshi.R;
 import com.toshi.util.QrCodeType;
 import com.toshi.view.BaseApplication;
 
+import static com.toshi.util.QrCodeParameterName.MEMO;
+import static com.toshi.util.QrCodeParameterName.VALUE;
+
 public class InternalUrl {
 
     private final String baseUrl;
@@ -50,11 +53,11 @@ public class InternalUrl {
     }
 
     public String getAmount() {
-        return this.uri.getQueryParameter("amount");
+        return this.uri.getQueryParameter(VALUE);
     }
 
     public String getMemo() {
-        return this.uri.getQueryParameter("memo");
+        return this.uri.getQueryParameter(MEMO);
     }
 
     public boolean isValid() {

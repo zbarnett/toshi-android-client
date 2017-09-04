@@ -24,10 +24,15 @@ import java.math.BigInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.toshi.util.QrCodeParameterName.AMOUNT;
+import static com.toshi.util.QrCodeParameterName.MEMO;
+import static com.toshi.util.QrCodeParameterName.VALUE;
+
 public class Address {
 
     private static final String EXTERNAL_URL_PREFIX = "ethereum:";
     private static final String IBAN_URL_PREFIX = "iban:";
+    private static final String PARAMETER_VALUE_REGEX = "=([^&]+)*";
 
     private final String hexAddress;
     private final String amount;
@@ -40,15 +45,17 @@ public class Address {
     }
 
     private String parseAmount(final String payload) {
-        return parseGeneric(payload, "amount", "");
+        final String amountRegex = AMOUNT + PARAMETER_VALUE_REGEX;
+        final String valueRegex = VALUE + PARAMETER_VALUE_REGEX;
+        return parse(payload, amountRegex + "|" + valueRegex, "");
     }
 
     private String parseMemo(final String payload) {
-        return parseGeneric(payload, "memo", "");
+        return parse(payload, MEMO + PARAMETER_VALUE_REGEX, "");
     }
 
-    private String parseGeneric(final String payload, final String argument, final String defaultValue) {
-        final Pattern pattern = Pattern.compile(argument + "=([^&]+)*", Pattern.CASE_INSENSITIVE);
+    private String parse(final String payload, final String regex, final String defaultValue) {
+        final Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
         final Matcher matcher = pattern.matcher(payload);
         if (matcher.find()) {
             return matcher.group(1);
