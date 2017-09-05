@@ -20,7 +20,7 @@ package com.toshi.util;
 import java.util.Collections;
 import java.util.List;
 
-public class SearchUtil<T extends Comparable<T>> {
+public class SearchUtil {
 
     /**
      * Returns null if no match
@@ -28,7 +28,7 @@ public class SearchUtil<T extends Comparable<T>> {
      * @param itemToFind The item to look for
      * @return The matching item of type T
      */
-    public T findMatch(final List<T> searchList, final T itemToFind) {
+    public static <T extends Comparable<T>> T findMatch(final List<T> searchList, final T itemToFind) {
         final int searchResult = Collections.binarySearch(searchList, itemToFind);
         if (Math.abs(searchResult) >= searchList.size() || searchResult < 0) return null;
         return searchList.get(searchResult);
@@ -38,12 +38,20 @@ public class SearchUtil<T extends Comparable<T>> {
      * Returns null if no suggestion is found
      * @param searchList The list to search in
      * @param itemToFind The item to look for
-     * @return The suggestion of type T
+     * @return The suggestion of type String
      */
-    public T findSuggestion(final List<T> searchList, final T itemToFind) {
+    public static String findStringSuggestion(final List<String> searchList, final String itemToFind) {
         final int searchResult = Collections.binarySearch(searchList, itemToFind);
-        if (Math.abs(searchResult) >= searchList.size()) return null;
-        final int index = searchResult < 0 ? Math.abs(searchResult) - 1 : searchResult;
-        return searchList.get(index);
+        final int absoluteIndex = Math.abs(searchResult);
+
+        //If the insertion point is >= searchList.size(), compare it to the last item
+        if (absoluteIndex >= searchList.size()) {
+            final String suggestion = searchList.get(searchList.size() - 1);
+            return suggestion.startsWith(itemToFind) ? suggestion : null;
+        }
+
+        final int index = searchResult < 0 ? absoluteIndex - 1 : searchResult;
+        final String suggestion = searchList.get(index);
+        return suggestion != null && suggestion.startsWith(itemToFind) ? suggestion : null;
     }
 }
