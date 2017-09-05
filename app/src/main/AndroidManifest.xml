@@ -55,7 +55,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="https" />
-                <data android:host="app.tokenbrowser.com"/>
+                <data android:host="app.toshi.org"/>
                 <data android:pathPattern="/add/@.*"/>
                 <data android:pathPattern="/pay/@.*"/>
             </intent-filter>

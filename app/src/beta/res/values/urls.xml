@@ -22,7 +22,7 @@
     <string name="id_url">https://identity.development.service.toshi.org</string>
     <string name="rep_url">https://reputation.development.service.toshi.org</string>
     <string name="currency_url">https://exchange.development.service.toshi.org</string>
-    <string name="qr_code_base_url">https://app.tokenbrowser.com/</string>
+    <string name="qr_code_base_url">https://app.toshi.org/</string>
     <string name="qr_code_add_url">add/%1$s</string>
     <string name="qr_code_pay_url">pay/%1$s\?value=%2$s&amp;memo=%3$s</string>
     <string name="qr_code_pay_url_without_memo">pay/%1$s\?value=%2$s</string>
