@@ -61,14 +61,16 @@ public class InternalUrl {
     }
 
     public boolean isValid() {
-        return this.uri != null && getUsername() != null;
+        return this.uri != null
+                && getUsername() != null
+                && this.uri.getPathSegments().size() >= 2;
     }
 
     public @QrCodeType.Type int getType() {
         try {
             final String typePath = this.uri.getPathSegments().get(0);
             if (typePath.equals("add")) return QrCodeType.ADD;
-            if (typePath.equals("pay")) return QrCodeType.PAY;
+            if (typePath.equals("pay") && getAmount() != null) return QrCodeType.PAY;
             return QrCodeType.INVALID;
         } catch (final NullPointerException ex) {
             return QrCodeType.INVALID;

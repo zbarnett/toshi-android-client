@@ -53,7 +53,7 @@ public class QrCode {
         return this.asUrl;
     }
 
-    /* package */ @QrCodeType.Type int getQrCodeType() {
+    public @QrCodeType.Type int getQrCodeType() {
         if (this.asUrl.isValid()) {
             return asUrl.getType();
         } else if (this.asAddress.isValid()) {
@@ -68,7 +68,6 @@ public class QrCode {
                 ? QrCodeType.PAYMENT_ADDRESS
                 : QrCodeType.EXTERNAL_PAY;
     }
-
 
     public String getUsername() throws InvalidQrCode {
         if (!this.asUrl.isValid()) throw new InvalidQrCode();
@@ -85,7 +84,7 @@ public class QrCode {
         else throw new InvalidQrCodePayment();
     }
 
-    /* package */ QrCodePayment getExternalPayment() throws InvalidQrCodePayment {
+    public QrCodePayment getExternalPayment() throws InvalidQrCodePayment {
         if (!this.asAddress.isValid()) throw new InvalidQrCodePayment();
 
         return new QrCodePayment()

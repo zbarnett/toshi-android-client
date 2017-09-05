@@ -45,16 +45,18 @@ public class Address {
     }
 
     private String parseAmount(final String payload) {
-        final String amountRegex = AMOUNT + PARAMETER_VALUE_REGEX;
-        final String valueRegex = VALUE + PARAMETER_VALUE_REGEX;
-        return parse(payload, amountRegex + "|" + valueRegex, "");
+        //The name of the amount parameter could be amount or value
+        final String amountResult = parseGeneric(payload, AMOUNT + PARAMETER_VALUE_REGEX, "");
+        return !amountResult.isEmpty()
+                ? amountResult
+                : parseGeneric(payload, VALUE + PARAMETER_VALUE_REGEX, "");
     }
 
     private String parseMemo(final String payload) {
-        return parse(payload, MEMO + PARAMETER_VALUE_REGEX, "");
+        return parseGeneric(payload, MEMO + PARAMETER_VALUE_REGEX, "");
     }
 
-    private String parse(final String payload, final String regex, final String defaultValue) {
+    private String parseGeneric(final String payload, final String regex, final String defaultValue) {
         final Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
         final Matcher matcher = pattern.matcher(payload);
         if (matcher.find()) {
