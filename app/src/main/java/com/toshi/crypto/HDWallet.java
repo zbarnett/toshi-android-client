@@ -19,11 +19,14 @@ package com.toshi.crypto;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.support.annotation.NonNull;
 
 import com.toshi.crypto.hdshim.EthereumKeyChainGroup;
+import com.toshi.crypto.keyStore.KeyStoreHandler;
 import com.toshi.crypto.util.TypeConverter;
 import com.toshi.exception.InvalidMasterSeedException;
+import com.toshi.exception.KeyStoreException;
 import com.toshi.util.FileNames;
 import com.toshi.util.LogUtil;
 import com.toshi.view.BaseApplication;
@@ -45,22 +48,34 @@ import static com.toshi.crypto.util.HashUtil.sha3;
 
 public class HDWallet {
 
-    static {
-        Security.insertProviderAt(new org.spongycastle.jce.provider.BouncyCastleProvider(), 1);
-    }
-
+    private static final String ALIAS = "SomeAlias";
     private static final String MASTER_SEED = "ms";
+
     private SharedPreferences prefs;
     private ECKey identityKey;
     private ECKey paymentKey;
     private String masterSeed;
 
     public HDWallet() {
+        setProvider();
         this.prefs = BaseApplication.get().getSharedPreferences(FileNames.WALLET_PREFS, Context.MODE_PRIVATE);
     }
 
     public HDWallet(@NonNull final SharedPreferences preferences) {
+        setProvider();
         this.prefs = preferences;
+    }
+
+    //Issues with Android Key Store and Bouncy Castle lib
+    //https://github.com/rtyley/spongycastle/issues/27
+    //If we call Security.addProvider(..) < 18, the chat service crashes
+    //If we call Security.insertProviderAt(..) >= 18, the AndroidKeyStore doesn't work as expected
+    private void setProvider() {
+        if (Build.VERSION.SDK_INT < 18) {
+            Security.insertProviderAt(new org.spongycastle.jce.provider.BouncyCastleProvider(), 1);
+        } else {
+            Security.addProvider(new org.spongycastle.jce.provider.BouncyCastleProvider());
+        }
     }
 
     public Single<HDWallet> getExistingWallet() {
@@ -221,14 +236,31 @@ public class HDWallet {
     }
 
     private void saveMasterSeedToStorage(final String masterSeed) {
+        try {
+            final KeyStoreHandler keyStoreHandler = new KeyStoreHandler(BaseApplication.get(), ALIAS);
+            final String encryptedMasterSeed = keyStoreHandler.encrypt(masterSeed);
+            saveMasterSeed(encryptedMasterSeed);
+            this.masterSeed = masterSeed;
+        } catch (KeyStoreException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private void saveMasterSeed(final String masterSeed) {
         this.prefs.edit()
                 .putString(MASTER_SEED, masterSeed)
                 .apply();
-        this.masterSeed = masterSeed;
     }
 
     private String readMasterSeedFromStorage() {
-        return this.prefs.getString(MASTER_SEED, null);
+        try {
+            final KeyStoreHandler keyStoreHandler = new KeyStoreHandler(BaseApplication.get(), ALIAS);
+            final String encryptedMasterSeed = this.prefs.getString(MASTER_SEED, null);
+            if (encryptedMasterSeed == null) return null;
+            return keyStoreHandler.decrypt(encryptedMasterSeed);
+        } catch (KeyStoreException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     public void clear() {
