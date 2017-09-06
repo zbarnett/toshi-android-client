@@ -368,9 +368,7 @@ public class PassphraseInputView extends FrameLayout {
     private Observable<String> getWordSuggestion(final String startOfWord) {
         return Observable.fromCallable(() -> {
             if (startOfWord.length() == 0) return null;
-            final String suggestion = new SearchUtil<String>().findSuggestion(this.wordList, startOfWord);
-            if (suggestion == null || !suggestion.startsWith(startOfWord)) return null;
-            return suggestion;
+            return SearchUtil.findStringSuggestion(this.wordList, startOfWord);
         });
     }
 
@@ -492,9 +490,7 @@ public class PassphraseInputView extends FrameLayout {
 
     private Single<String> findMatch(final String wordToFind) {
         return Single.just(wordToFind)
-                .flatMap(word -> Single.fromCallable(() -> {
-                    return new SearchUtil<String>().findMatch(this.wordList, word);
-                }));
+                .flatMap(word -> Single.fromCallable(() -> SearchUtil.findMatch(this.wordList, word)));
     }
 
     private void addWordToView(final String matchResult, final int cellIndex) {
@@ -593,7 +589,7 @@ public class PassphraseInputView extends FrameLayout {
         return Single.fromCallable(() -> {
             final List<Pair<Boolean, String>> validatedPassphrase = new ArrayList<>();
             for (final String word : passphrase) {
-                final String result = new SearchUtil<String>().findMatch(this.wordList, word);
+                final String result = SearchUtil.findMatch(this.wordList, word);
                 if (result != null) {
                     validatedPassphrase.add(new Pair<>(true, word));
                 } else {
