@@ -20,7 +20,6 @@ package com.toshi.presenter;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.BuildConfig;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -34,7 +33,6 @@ import com.aurelhubert.ahbottomnavigation.AHBottomNavigationAdapter;
 import com.toshi.R;
 import com.toshi.manager.SofaMessageManager;
 import com.toshi.model.local.User;
-import com.toshi.util.BuildTypes;
 import com.toshi.util.LogUtil;
 import com.toshi.util.SharedPrefsUtil;
 import com.toshi.util.SoundManager;
@@ -90,7 +88,7 @@ public class MainPresenter implements Presenter<MainActivity> {
         attachUnreadMessagesSubscription();
         attachUserSubscription();
         handleHasBackedUpPhrase();
-        showBetaWarningDialog();
+        showFirstRunDialog();
     }
 
     private void manuallySelectFirstTab() {
@@ -211,14 +209,13 @@ public class MainPresenter implements Presenter<MainActivity> {
         }
     }
 
-    private void showBetaWarningDialog() {
-        final boolean isReleaseBuild = BuildConfig.BUILD_TYPE.equals(BuildTypes.RELEASE);
-        if (SharedPrefsUtil.hasLoadedApp() || isReleaseBuild) return;
+    private void showFirstRunDialog() {
+        if (SharedPrefsUtil.hasLoadedApp()) return;
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(this.activity, R.style.AlertDialogCustom);
         builder.setTitle(R.string.beta_warning_title)
-                .setMessage(R.string.beta_warning_message)
-                .setPositiveButton(R.string.continue_, (dialog, which) -> dialog.dismiss());
+                .setMessage(R.string.init_warning_message)
+                .setPositiveButton(R.string.ok, (dialog, __) -> dialog.dismiss());
         builder.create().show();
         SharedPrefsUtil.setHasLoadedApp();
     }
