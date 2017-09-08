@@ -147,7 +147,7 @@ public class GcmMessageReceiver extends GcmListenerService {
                 refreshBalance();
                 return;
             case Payment.TO_LOCAL_USER:
-                updatePayment(payment);
+                addIncomingPayment(payment);
                 refreshBalance();
                 showPaymentNotification(payment);
                 return;
@@ -184,6 +184,13 @@ public class GcmMessageReceiver extends GcmListenerService {
                 .get()
                 .getTransactionManager()
                 .updatePayment(payment);
+    }
+
+    private void addIncomingPayment(final Payment payment) {
+        BaseApplication
+                .get()
+                .getTransactionManager()
+                .addIncomingPayment(payment);
     }
 
     private void refreshBalance() {

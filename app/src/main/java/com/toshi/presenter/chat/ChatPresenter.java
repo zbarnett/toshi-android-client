@@ -603,9 +603,10 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
 
     private void sendPayment(final Recipient recipient, final String value) {
         // Todo - handle groups
+        final User receiver = recipient.getUser();
         BaseApplication.get()
                 .getTransactionManager()
-                .sendPayment(recipient.getUser(), value);
+                .sendPayment(receiver, receiver.getPaymentAddress(), value);
     }
 
     private void sendPaymentRequestWithValue(final String value) {
