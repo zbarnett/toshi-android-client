@@ -19,7 +19,6 @@ package com.toshi.presenter;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.View;
 
@@ -33,6 +32,7 @@ import com.toshi.model.local.Networks;
 import com.toshi.util.BuildTypes;
 import com.toshi.util.EthUtil;
 import com.toshi.util.LogUtil;
+import com.toshi.util.PaymentType;
 import com.toshi.util.ScannerResultType;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.activity.ScannerActivity;
@@ -45,7 +45,7 @@ import java.math.BigInteger;
 import rx.Subscription;
 import rx.subscriptions.CompositeSubscription;
 
-public class SendPresenter implements Presenter<SendActivity>,PaymentConfirmationDialog.OnPaymentConfirmationListener {
+public class SendPresenter implements Presenter<SendActivity> {
 
     private static final int PAYMENT_SCAN_REQUEST_CODE = 200;
 
@@ -53,7 +53,6 @@ public class SendPresenter implements Presenter<SendActivity>,PaymentConfirmatio
     private CompositeSubscription subscriptions;
     private boolean firstTimeAttaching = true;
     private String encodedEthAmount;
-    private PaymentConfirmationDialog paymentConfirmationDialog;
 
     @Override
     public void onViewAttached(final SendActivity view) {
@@ -114,19 +113,18 @@ public class SendPresenter implements Presenter<SendActivity>,PaymentConfirmatio
     }
 
     private void showPaymentConfirmationDialog() {
-        this.paymentConfirmationDialog = PaymentConfirmationDialog.newInstanceExternalPayment(
-                getRecipientAddress(),
-                this.encodedEthAmount,
-                null
-        ).setOnPaymentConfirmationListener(this);
-        this.paymentConfirmationDialog.show(this.activity.getSupportFragmentManager(), PaymentConfirmationDialog.TAG);
+        final PaymentConfirmationDialog dialog =
+                PaymentConfirmationDialog.newInstanceExternalPayment(
+                        getRecipientAddress(),
+                        this.encodedEthAmount,
+                        null,
+                        PaymentType.TYPE_SEND
+                );
+        dialog.setOnPaymentConfirmationApprovedListener(__ -> onPaymentApproved());
+        dialog.show(this.activity.getSupportFragmentManager(), PaymentConfirmationDialog.TAG);
     }
 
-    @Override
-    public void onPaymentRejected(final Bundle bundle) {}
-
-    @Override
-    public void onPaymentApproved(final Bundle bundle) {
+    private void onPaymentApproved() {
         BaseApplication
                 .get()
                 .getTransactionManager()
@@ -180,10 +178,6 @@ public class SendPresenter implements Presenter<SendActivity>,PaymentConfirmatio
 
     @Override
     public void onDestroyed() {
-        if (this.paymentConfirmationDialog != null) {
-            this.paymentConfirmationDialog.dismissAllowingStateLoss();
-            this.paymentConfirmationDialog = null;
-        }
         this.subscriptions = null;
         this.activity = null;
     }
