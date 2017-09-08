@@ -19,12 +19,10 @@ package com.toshi.presenter.chat;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.BottomSheetDialog;
-import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Pair;
 import android.view.View;
@@ -55,8 +53,6 @@ import com.toshi.presenter.AmountPresenter;
 import com.toshi.presenter.Presenter;
 import com.toshi.util.BuildTypes;
 import com.toshi.util.ChatNavigation;
-import com.toshi.util.DialogUtil;
-import com.toshi.util.EthUtil;
 import com.toshi.util.FileUtil;
 import com.toshi.util.ImageUtil;
 import com.toshi.util.KeyboardUtil;
@@ -71,6 +67,7 @@ import com.toshi.view.activity.ChatActivity;
 import com.toshi.view.adapter.MessageAdapter;
 import com.toshi.view.custom.ChatInputView;
 import com.toshi.view.custom.SpeedyLinearLayoutManager;
+import com.toshi.view.fragment.DialogFragment.PaymentConfirmationDialog;
 import com.toshi.view.notification.ChatNotificationManager;
 
 import java.io.File;
@@ -103,7 +100,6 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     private PendingTransactionsObservable pendingTransactionsObservable;
     private SpeedyLinearLayoutManager layoutManager;
     private HDWallet userWallet;
-    private Dialog paymentRequestConfirmationDialog;
 
     private CompositeSubscription subscriptions;
     private Subscription newMessageSubscription;
@@ -139,8 +135,8 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
 
     private void initMessageAdapter() {
         this.messageAdapter = new MessageAdapter()
-                .addOnPaymentRequestApproveListener(message -> showPaymentRequestConfirmationDialog(message, PaymentRequest.ACCEPTED))
-                .addOnPaymentRequestRejectListener(message -> updatePaymentRequestState(message, PaymentRequest.REJECTED))
+                .addOnPaymentRequestApproveListener(this::showPaymentRequestConfirmationDialog)
+                .addOnPaymentRequestRejectListener(sofaMessage -> updatePaymentRequestState(sofaMessage, PaymentRequest.REJECTED))
                 .addOnUsernameClickListener(this::handleUsernameClicked)
                 .addOnImageClickListener(this::handleImageClicked)
                 .addOnFileClickListener(path -> this.chatNavigation.startAttachmentPicker(this.activity, path))
@@ -199,64 +195,48 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
                 .deleteMessage(this.recipient, sofaMessage);
     }
 
-    private void showPaymentRequestConfirmationDialog(final SofaMessage existingMessage,
-                                                      final @PaymentRequest.State int newState) {
+    private void showPaymentRequestConfirmationDialog(final SofaMessage existingMessage) {
         try {
-            final String sender = existingMessage.getSender().getDisplayName();
             final PaymentRequest paymentRequest = SofaAdapters.get().txRequestFrom(existingMessage.getPayload());
-            final String localAmount = paymentRequest.getLocalPrice();
-            final String ethAmount = String.format(
-                    BaseApplication.get().getResources().getString(R.string.eth_amount),
-                    EthUtil.hexAmountToUserVisibleString(paymentRequest.getValue())
-            );
-            final String paymentRequestAmounts = this.activity.getString(R.string.payment_request_confirmation_body, localAmount, ethAmount, sender);
-            final String paymentRequestTitle = this.activity.getString(R.string.payment_request_confirmation_title);
-
-            final AlertDialog.Builder builder =
-                    DialogUtil.getBaseDialog(
-                            this.activity,
-                            paymentRequestTitle,
-                            paymentRequestAmounts,
-                            R.string.pay,
-                            R.string.cancel,
-                            (dialog, __) -> {
-                                dialog.dismiss();
-                                updatePaymentRequestState(existingMessage, newState);
-                            }
+            final PaymentConfirmationDialog dialog =
+                    PaymentConfirmationDialog.newInstanceToshiPayment(
+                            existingMessage.getSender().getToshiId(),
+                            paymentRequest.getValue(),
+                            null,
+                            PaymentType.TYPE_REQUEST
                     );
-
-            this.paymentRequestConfirmationDialog = builder.create();
-            this.paymentRequestConfirmationDialog.show();
-
+            dialog.show(this.activity.getSupportFragmentManager(), PaymentConfirmationDialog.TAG);
+            dialog.setOnPaymentConfirmationApprovedListener(__ -> {
+                updatePaymentRequestState(existingMessage, PaymentRequest.ACCEPTED);
+                sendPayment(paymentRequest.getDestinationAddresss(), paymentRequest.getValue(), existingMessage.getSender());
+            });
         } catch (IOException e) {
             LogUtil.exception(getClass(), e.toString() + " When showing payment request confirmation dialog");
         }
     }
 
-    private void updatePaymentRequestState(
-            final SofaMessage existingMessage,
-            final @PaymentRequest.State int newState) {
-
+    private void updatePaymentRequestState(final SofaMessage existingMessage,
+                                           final @PaymentRequest.State int paymentState) {
         final Subscription sub =
                 getRecipient()
-                .subscribe(recipient ->
-                        handleUpdatePaymentRequestState(recipient, existingMessage, newState),
+                .subscribe(
+                        recipient -> updatePaymentRequestState(existingMessage, recipient, paymentState),
                         this::handleError
                 );
 
         this.subscriptions.add(sub);
     }
 
-    private void handleUpdatePaymentRequestState(final Recipient recipient,
-                                                 final SofaMessage existingMessage,
-                                                 final @PaymentRequest.State int newState) {
+    private void updatePaymentRequestState(final SofaMessage existingMessage,
+                                           final Recipient recipient,
+                                           final @PaymentRequest.State int paymentState) {
         // Todo - Handle groups
         BaseApplication
                 .get()
                 .getTransactionManager()
-                .updatePaymentRequestState(recipient.getUser(), existingMessage, newState);
+                .updatePaymentRequestState(recipient.getUser(), existingMessage, paymentState);
     }
-    
+
     private void handleUsernameClicked(final String searchedForUsername, final User user) {
         if (this.activity == null) return;
         if (user == null) {
@@ -500,7 +480,8 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     }
 
     private void loadGroupRecipient(final String groupId) {
-        final Subscription sub = BaseApplication
+        final Subscription sub =
+                BaseApplication
                 .get()
                 .getRecipientManager()
                 .getGroupFromId(groupId)
@@ -515,7 +496,8 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     }
 
     private void loadUserRecipient(final String toshiId) {
-        final Subscription sub = BaseApplication
+        final Subscription sub =
+                BaseApplication
                 .get()
                 .getRecipientManager()
                 .getUserFromToshiId(toshiId)
@@ -594,23 +576,38 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         final Subscription sub =
                 getRecipient()
                 .subscribe(
-                        recipient -> sendPayment(recipient, value),
+                        recipient -> confirmPayment(recipient, value),
                         this::handleError
                 );
 
         this.subscriptions.add(sub);
     }
 
-    private void sendPayment(final Recipient recipient, final String value) {
-        // Todo - handle groups
+    private void confirmPayment(final Recipient recipient, final String amount) {
         final User receiver = recipient.getUser();
-        BaseApplication.get()
+        final PaymentConfirmationDialog dialog =
+                PaymentConfirmationDialog.newInstanceToshiPayment(
+                        receiver.getToshiId(),
+                        amount,
+                        null,
+                        PaymentType.TYPE_SEND
+                );
+        dialog.show(this.activity.getSupportFragmentManager(), PaymentConfirmationDialog.TAG);
+        dialog.setOnPaymentConfirmationApprovedListener(__ ->
+                sendPayment(receiver.getPaymentAddress(), amount, recipient.getUser())
+        );
+    }
+
+    private void sendPayment(final String paymentAddress, final String value, final User receiver) {
+        BaseApplication
+                .get()
                 .getTransactionManager()
-                .sendPayment(receiver, receiver.getPaymentAddress(), value);
+                .sendPayment(receiver, paymentAddress, value);
     }
 
     private void sendPaymentRequestWithValue(final String value) {
-        new PaymentRequest()
+        final Subscription sub =
+                new PaymentRequest()
                 .setDestinationAddress(this.userWallet.getPaymentAddress())
                 .setValue(value)
                 .generateLocalPrice()
@@ -618,6 +615,8 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
                         this::sendPaymentRequest,
                         this::handleError
                 );
+
+        this.subscriptions.add(sub);
     }
 
     private void sendPaymentRequest(final PaymentRequest request) {
@@ -690,7 +689,8 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         this::handleConversationLoaded,
-                        this::handleError);
+                        this::handleError
+                );
 
         this.subscriptions.add(conversationLoadedSub);
     }
@@ -972,19 +972,11 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
 
     @Override
     public void onViewDetached() {
-        closeDialogs();
         this.lastVisibleMessagePosition = this.layoutManager.findLastCompletelyVisibleItemPosition();
         this.subscriptions.clear();
         this.messageAdapter.clear();
         this.conversation = null;
         this.activity = null;
-    }
-
-    private void closeDialogs() {
-        if (this.paymentRequestConfirmationDialog != null) {
-            this.paymentRequestConfirmationDialog.dismiss();
-            this.paymentRequestConfirmationDialog = null;
-        }
     }
 
     @Override
