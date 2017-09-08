@@ -46,7 +46,6 @@ import java.io.IOException;
     private final WebView webView;
     private final SOFAHost sofaHost;
     private final HDWallet wallet;
-    private PaymentConfirmationDialog paymentConfirmationDialog;
 
     /* package */ SofaHostWrapper(final AppCompatActivity activity, final WebView webView) {
         this.activity = activity;
@@ -100,7 +99,7 @@ import java.io.IOException;
             return;
         }
         if (this.activity == null) return;
-        this.paymentConfirmationDialog =
+        final PaymentConfirmationDialog dialog =
                 PaymentConfirmationDialog
                         .newInstanceWebPayment(
                                 unsignedTransaction,
@@ -109,61 +108,51 @@ import java.io.IOException;
                                 id,
                                 null
                         );
-        this.paymentConfirmationDialog.show(this.activity.getSupportFragmentManager(), PaymentConfirmationDialog.TAG);
-        this.paymentConfirmationDialog.setOnPaymentConfirmationListener(this.confirmationListener);
+        dialog.show(this.activity.getSupportFragmentManager(), PaymentConfirmationDialog.TAG);
+        dialog.setOnPaymentConfirmationApprovedListener(this::handleApprovedClicked)
+                .setOnPaymentConfirmationCanceledListener(this::handleAcceptedCanceled);
     }
 
-    /* package */ void destroy() {
-        if (this.paymentConfirmationDialog != null) {
-            this.paymentConfirmationDialog.dismissAllowingStateLoss();
-            this.paymentConfirmationDialog = null;
-        }
+    private void handleApprovedClicked(final Bundle bundle) {
+        final String callbackId = bundle.getString(PaymentConfirmationDialog.CALLBACK_ID);
+        final String unsignedTransaction = bundle.getString(PaymentConfirmationDialog.UNSIGNED_TRANSACTION);
+        handlePaymentApproved(callbackId, unsignedTransaction);
     }
 
-    private final PaymentConfirmationDialog.OnPaymentConfirmationListener confirmationListener = new PaymentConfirmationDialog.OnPaymentConfirmationListener() {
-        @Override
-        public void onPaymentApproved(final Bundle bundle) {
-            final String callbackId = bundle.getString(PaymentConfirmationDialog.CALLBACK_ID);
-            final String unsignedTransaction = bundle.getString(PaymentConfirmationDialog.UNSIGNED_TRANSACTION);
-            handlePaymentApproved(callbackId, unsignedTransaction);
+    private void handlePaymentApproved(final String callbackId, final String unsignedTransaction) {
+        final UnsignedW3Transaction transaction;
+        try {
+            transaction = SofaAdapters.get().unsignedW3TransactionFrom(unsignedTransaction);
+        } catch (final IOException e) {
+            LogUtil.exception(getClass(), "Unable to parse unsigned transaction. ", e);
+            return;
         }
 
-        private void handlePaymentApproved(final String callbackId, final String unsignedTransaction) {
-            final UnsignedW3Transaction transaction;
-            try {
-                transaction = SofaAdapters.get().unsignedW3TransactionFrom(unsignedTransaction);
-            } catch (final IOException e) {
-                LogUtil.exception(getClass(), "Unable to parse unsigned transaction. ", e);
-                return;
-            }
+        BaseApplication
+                .get()
+                .getTransactionManager()
+                .signW3Transaction(transaction)
+                .subscribe(
+                        signedTransaction -> handleSignedW3Transaction(callbackId, signedTransaction),
+                        throwable -> LogUtil.exception(getClass(), throwable)
+                );
+    }
 
-            BaseApplication
-                    .get()
-                    .getTransactionManager()
-                    .signW3Transaction(transaction)
-                    .subscribe(
-                            signedTransaction -> handleSignedW3Transaction(callbackId, signedTransaction),
-                            throwable -> LogUtil.exception(getClass(), throwable)
-                    );
-        }
+    private void handleSignedW3Transaction(final String callbackId, final SignedTransaction signedTransaction) {
+        final SignTransactionCallback callback =
+                new SignTransactionCallback()
+                        .setSkeleton(signedTransaction.getSkeleton())
+                        .setSignature(signedTransaction.getSignature());
+        doCallBack(callbackId, callback.toJsonEncodedString());
+    }
 
-        @Override
-        public void onPaymentRejected(final Bundle bundle) {
-            final String callbackId = bundle.getString(PaymentConfirmationDialog.CALLBACK_ID);
-            final RejectTransactionCallback callback =
-                    new RejectTransactionCallback()
-                            .setError(BaseApplication.get().getString(R.string.error__reject_transaction));
-            doCallBack(callbackId, callback.toJsonEncodedString());
-        }
-
-        private void handleSignedW3Transaction(final String callbackId, final SignedTransaction signedTransaction) {
-            final SignTransactionCallback callback =
-                    new SignTransactionCallback()
-                            .setSkeleton(signedTransaction.getSkeleton())
-                            .setSignature(signedTransaction.getSignature());
-            doCallBack(callbackId, callback.toJsonEncodedString());
-        }
-    };
+    private void handleAcceptedCanceled(final Bundle bundle) {
+        final String callbackId = bundle.getString(PaymentConfirmationDialog.CALLBACK_ID);
+        final RejectTransactionCallback callback =
+                new RejectTransactionCallback()
+                        .setError(BaseApplication.get().getString(R.string.error__reject_transaction));
+        doCallBack(callbackId, callback.toJsonEncodedString());
+    }
 
     private void doCallBack(final String id, final String encodedCallback) {
         new Handler(Looper.getMainLooper()).post(() -> {

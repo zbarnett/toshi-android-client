@@ -238,7 +238,6 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
         this.sofaInjector = null;
         this.webClient = null;
         this.isLoaded = false;
-        this.sofaHostWrapper.destroy();
         this.sofaHostWrapper = null;
     }
 
