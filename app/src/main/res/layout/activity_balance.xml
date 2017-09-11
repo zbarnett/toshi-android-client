@@ -65,21 +65,11 @@
                 android:orientation="vertical"
                 android:background="@color/windowBackground">
 
-                <android.support.v4.widget.Space
-                    android:layout_width="0dp"
-                    android:layout_height="20dp" />
-
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                    android:layout_marginRight="@dimen/activity_horizontal_margin"
-                    android:textColor="@color/subTitleTextColor"
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp"
+                    style="@style/subTitleStyle"
                     android:text="@string/balance"/>
-
-                <android.support.v4.widget.Space
-                    android:layout_width="0dp"
-                    android:layout_height="18dp" />
 
                 <LinearLayout
                     android:id="@+id/balance_container"
