@@ -17,9 +17,11 @@
 
 package com.toshi.presenter;
 
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import com.toshi.R;
 import com.toshi.model.network.Currencies;
 import com.toshi.model.network.Currency;
 import com.toshi.util.CurrencyComparator;
@@ -28,6 +30,7 @@ import com.toshi.util.SharedPrefsUtil;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.activity.CurrencyActivity;
 import com.toshi.view.adapter.CurrencyAdapter;
+import com.toshi.view.custom.HorizontalLineDivider;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -72,12 +75,18 @@ public class CurrencyPresenter implements Presenter<CurrencyActivity> {
     }
 
     private void initRecyclerView() {
-        final RecyclerView recyclerView = this.activity.getBinding().recyclerView;
+        final RecyclerView currencyList = this.activity.getBinding().currencyList;
         final LinearLayoutManager llm = new LinearLayoutManager(this.activity);
-        recyclerView.setLayoutManager(llm);
+        currencyList.setLayoutManager(llm);
         final CurrencyAdapter adapter = new CurrencyAdapter(this.currencies)
                 .setOnClickListener(this::handleCurrencyClicked);
-        recyclerView.setAdapter(adapter);
+        currencyList.setAdapter(adapter);
+        final int padding = this.activity.getResources().getDimensionPixelSize(R.dimen.activity_horizontal_margin);
+        final HorizontalLineDivider lineDivider =
+                new HorizontalLineDivider(ContextCompat.getColor(this.activity, R.color.divider))
+                        .setRightPadding(padding)
+                        .setLeftPadding(padding);
+        currencyList.addItemDecoration(lineDivider);
         llm.scrollToPosition(this.scrollPosition);
     }
 
@@ -131,7 +140,7 @@ public class CurrencyPresenter implements Presenter<CurrencyActivity> {
 
     private void handleCurrencies() {
         if (this.activity == null) return;
-        final CurrencyAdapter adapter = (CurrencyAdapter) this.activity.getBinding().recyclerView.getAdapter();
+        final CurrencyAdapter adapter = (CurrencyAdapter) this.activity.getBinding().currencyList.getAdapter();
         adapter.addItems(this.currencies);
     }
 
@@ -148,7 +157,7 @@ public class CurrencyPresenter implements Presenter<CurrencyActivity> {
 
     private void cacheScrollPosition() {
         if (this.activity == null) return;
-        final LinearLayoutManager llm = (LinearLayoutManager) this.activity.getBinding().recyclerView.getLayoutManager();
+        final LinearLayoutManager llm = (LinearLayoutManager) this.activity.getBinding().currencyList.getLayoutManager();
         this.scrollPosition = llm.findFirstVisibleItemPosition();
     }
 
