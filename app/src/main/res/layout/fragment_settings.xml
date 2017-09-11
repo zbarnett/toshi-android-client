@@ -66,8 +66,8 @@
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
                     android:background="?android:selectableItemBackground"
-                    android:paddingLeft="16dp"
-                    android:paddingRight="16dp">
+                    android:paddingLeft="@dimen/activity_horizontal_margin"
+                    android:paddingRight="@dimen/activity_horizontal_margin">
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/avatar"
@@ -110,28 +110,12 @@
                         android:layout_width="12dp"
                         android:layout_height="match_parent"/>
 
-                    <LinearLayout
+                    <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:gravity="right">
+                        android:layout_gravity="right|center_vertical"
+                        app:srcCompat="@drawable/ic_chevron_right" />
 
-                        <com.toshi.view.custom.StarRatingView
-                            android:id="@+id/rating_view"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            tools:visibility="gone"/>
-
-                        <TextView
-                            android:id="@+id/review_count"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="right"
-                            android:textSize="14sp"
-                            android:textColor="@color/textColorSecondary"
-                            tools:text="(44)"/>
-
-                    </LinearLayout>
                 </LinearLayout>
 
                 <View
@@ -141,17 +125,30 @@
                     android:layout_marginRight="@dimen/activity_horizontal_margin"
                     android:background="@color/divider" />
 
-                <TextView
+                <FrameLayout
                     android:id="@+id/my_qr_code"
                     android:layout_width="match_parent"
                     android:layout_height="54dp"
+                    android:orientation="horizontal"
                     android:paddingLeft="@dimen/activity_horizontal_margin"
-                    android:paddingRight="@dimen/activity_horizontal_margin"
-                    android:gravity="center_vertical"
-                    android:background="?android:selectableItemBackground"
-                    android:textSize="16sp"
-                    android:textColor="@color/textColorPrimary"
-                    android:text="@string/profile_qr_code"/>
+                    android:paddingRight="@dimen/activity_horizontal_margin">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:background="?android:selectableItemBackground"
+                        android:textSize="16sp"
+                        android:textColor="@color/textColorPrimary"
+                        android:text="@string/profile_qr_code"/>
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right|center_vertical"
+                        app:srcCompat="@drawable/ic_chevron_right" />
+
+                </FrameLayout>
 
                 <View
                     android:layout_width="match_parent"
@@ -198,7 +195,17 @@
 
                     <Space
                         android:layout_width="@dimen/activity_horizontal_margin"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="0dp"/>
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right|center_vertical"
+                        app:srcCompat="@drawable/ic_chevron_right" />
+
+                    <Space
+                        android:layout_width="@dimen/activity_horizontal_margin"
+                        android:layout_height="0dp"/>
 
                 </LinearLayout>
 
@@ -260,13 +267,27 @@
                         android:clickable="false"
                         android:button="@drawable/checkbox"/>
 
+                    <android.support.v4.widget.Space
+                        android:layout_width="30dp"
+                        android:layout_height="0dp" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="30dp"
                         android:textSize="17sp"
                         android:textColor="@color/textColorPrimary"
                         android:text="@string/store_backup_phrase"/>
+
+                    <android.support.v4.widget.Space
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"/>
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right|center_vertical"
+                        app:srcCompat="@drawable/ic_chevron_right" />
 
                 </LinearLayout>
 
@@ -293,13 +314,27 @@
                         android:clickable="false"
                         android:button="@drawable/checkbox"/>
 
+                    <android.support.v4.widget.Space
+                        android:layout_width="30dp"
+                        android:layout_height="0dp" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="30dp"
                         android:textSize="17sp"
                         android:textColor="@color/textColorPrimary"
                         android:text="@string/choose_trusted_friends"/>
+
+                    <android.support.v4.widget.Space
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"/>
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right|center_vertical"
+                        app:srcCompat="@drawable/ic_chevron_right" />
 
                 </LinearLayout>
 
