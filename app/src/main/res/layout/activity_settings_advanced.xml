@@ -65,15 +65,10 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <android.support.v4.widget.Space
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/activity_horizontal_margin" />
-
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                    android:textColor="@color/textColorSecondary"
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp"
+                    style="@style/subTitleStyle"
                     android:text="@string/network"/>
 
                 <TextView
@@ -113,10 +108,9 @@
                 android:layout_height="29dp" />
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:textColor="@color/textColorSecondary"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                style="@style/subTitleStyle"
                 android:text="@string/version"/>
 
             <TextView
@@ -134,10 +128,9 @@
                 android:layout_height="@dimen/activity_horizontal_margin" />
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:textColor="@color/textColorSecondary"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                style="@style/subTitleStyle"
                 android:text="@string/open_source_licenses"/>
 
             <TextView
