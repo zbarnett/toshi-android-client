@@ -83,20 +83,13 @@
 
             <android.support.v4.widget.Space
                 android:layout_width="match_parent"
-                android:layout_height="35dp" />
+                android:layout_height="16dp" />
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:textColor="@color/subTitleTextColor"
-                android:textSize="14sp"
-                style="@style/TextStyleMedium"
-                android:text="@string/qr_code_sub_title"/>
-
-            <android.support.v4.widget.Space
                 android:layout_width="match_parent"
-                android:layout_height="18dp" />
+                android:layout_height="54dp"
+                style="@style/subTitleStyle"
+                android:text="@string/qr_code_sub_title"/>
 
             <TextView
                 android:layout_width="wrap_content"
