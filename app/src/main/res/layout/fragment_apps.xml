@@ -121,7 +121,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="16sp"
-                        android:textColor="@color/subTitleTextColor"
+                        android:textColor="@color/categoryTextColor"
                         android:text="@string/top_rated_apps"/>
 
                     <TextView
@@ -176,7 +176,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="16sp"
-                        android:textColor="@color/subTitleTextColor"
+                        android:textColor="@color/categoryTextColor"
                         android:text="@string/featured_apps"/>
 
                     <TextView
@@ -232,7 +232,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="16sp"
-                        android:textColor="@color/subTitleTextColor"
+                        android:textColor="@color/categoryTextColor"
                         android:text="@string/top_rated_public_users"/>
 
                     <TextView
@@ -287,7 +287,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="16sp"
-                        android:textColor="@color/subTitleTextColor"
+                        android:textColor="@color/categoryTextColor"
                         android:text="@string/latest_public_users"/>
 
                     <TextView
