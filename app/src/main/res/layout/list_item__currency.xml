@@ -16,13 +16,30 @@
   ~     along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/currency"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="54dp"
+    android:orientation="horizontal"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
-    android:background="?android:selectableItemBackground"
-    android:textSize="16sp"
-    android:textColor="@color/textColorPrimary"
-    android:gravity="center_vertical" />
+    android:background="?android:selectableItemBackground">
+
+    <TextView
+        android:id="@+id/currency"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:textSize="16sp"
+        android:textColor="@color/textColorPrimary"
+        android:gravity="center_vertical"
+        tools:text="United States Dollar (USD)"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|center_vertical"
+        app:srcCompat="@drawable/ic_chevron_right" />
+
+</FrameLayout>
