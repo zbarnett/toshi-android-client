@@ -26,7 +26,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.toshi.R;
-import com.toshi.databinding.FragmentPaymentRequestConfirmationBinding;
+import com.toshi.databinding.FragmentPaymentConfirmationBinding;
 import com.toshi.presenter.LoaderIds;
 import com.toshi.presenter.PaymentRequestConfirmPresenter;
 import com.toshi.presenter.factory.PaymentRequestConfirmPresenterFactory;
@@ -45,8 +45,8 @@ public class PaymentConfirmationDialog extends BasePresenterDialogFragment<Payme
     public static final String TOSHI_ID = "toshi_id";
     public static final String UNSIGNED_TRANSACTION = "unsigned_transaction";
 
-    private FragmentPaymentRequestConfirmationBinding binding;
     private OnPaymentConfirmationListener listener;
+    private FragmentPaymentConfirmationBinding binding;
 
     public static PaymentConfirmationDialog newInstanceToshiPayment(@NonNull final String toshiId,
                                                                     @NonNull final String value,
@@ -107,11 +107,11 @@ public class PaymentConfirmationDialog extends BasePresenterDialogFragment<Payme
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, final @Nullable Bundle inState) {
-        this.binding = DataBindingUtil.inflate(inflater, R.layout.fragment__payment_request_confirmation, container, false);
+        this.binding = DataBindingUtil.inflate(inflater, R.layout.fragment__payment_confirmation, container, false);
         return binding.getRoot();
     }
 
-    public FragmentPaymentRequestConfirmationBinding getBinding() {
+    public FragmentPaymentConfirmationBinding getBinding() {
         return this.binding;
     }
 
