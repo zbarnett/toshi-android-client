@@ -201,10 +201,6 @@
                     style="@style/subTitleStyle"
                     android:text="@string/visibility_settings"/>
 
-                <android.support.v4.widget.Space
-                    android:layout_width="0dp"
-                    android:layout_height="18dp"/>
-
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="54dp"

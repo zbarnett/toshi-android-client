@@ -219,16 +219,10 @@
                     android:layout_height="10dp"
                     android:background="@color/divider"/>
 
-                <android.support.v4.widget.Space
-                    android:layout_width="0dp"
-                    android:layout_height="20dp" />
-
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="14sp"
-                    android:textColor="@color/textColorSecondary"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp"
+                    style="@style/subTitleStyle"
                     android:text="@string/reputation"/>
 
                 <android.support.v4.widget.Space
