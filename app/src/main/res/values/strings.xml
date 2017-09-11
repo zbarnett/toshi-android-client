@@ -104,8 +104,6 @@
     <string name="reject">Reject</string>
     <string name="approve">Approve</string>
     <string name="local_dot_eth_amount">%1$s · %2$s ETH</string>
-    <string name="confirmation_dialog_title_payment">Confirm payment to</string>
-    <string name="confirmation_dialog_title_request">Confirm request to</string>
     <string name="rate">Rate</string>
     <string name="error_unknown_user">Unable to find user at this address</string>
     <string name="latest_message__payment_outgoing">You paid %1$s</string>
@@ -263,6 +261,8 @@
     <string name="backup">Backup</string>
     <string name="payment_request_confirmation_title">Confirm payment request</string>
     <string name="payment_request_confirmation_body">Do you want to accept the %1$s (%2$s) from %3$s?</string>
+    <string name="payment_confirmation_title">Confirm payment</string>
+    <string name="payment_confirmation_body">Do you want to send %1$s (%2$s) to %3$s?</string>
     <string name="scan_error_payment">This isn\'t a payment address QR Code. You can find it under Me/Balance/Deposit</string>
     <string name="confirm">Confirm</string>
 </resources>

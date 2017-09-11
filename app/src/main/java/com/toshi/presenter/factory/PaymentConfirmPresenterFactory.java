@@ -17,11 +17,11 @@
 
 package com.toshi.presenter.factory;
 
-import com.toshi.presenter.PaymentRequestConfirmPresenter;
+import com.toshi.presenter.PaymentConfirmationPresenter;
 
-public class PaymentRequestConfirmPresenterFactory implements PresenterFactory<PaymentRequestConfirmPresenter> {
+public class PaymentConfirmPresenterFactory implements PresenterFactory<PaymentConfirmationPresenter> {
     @Override
-    public PaymentRequestConfirmPresenter create() {
-        return new PaymentRequestConfirmPresenter();
+    public PaymentConfirmationPresenter create() {
+        return new PaymentConfirmationPresenter();
     }
 }

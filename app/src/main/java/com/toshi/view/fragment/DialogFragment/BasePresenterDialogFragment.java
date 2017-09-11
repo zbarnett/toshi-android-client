@@ -76,6 +76,7 @@ public abstract class BasePresenterDialogFragment<P extends Presenter<V>, V> ext
     @Override
     public void onPause() {
         presenter.onViewDetached();
+        dismissAllowingStateLoss();
         super.onPause();
     }
 

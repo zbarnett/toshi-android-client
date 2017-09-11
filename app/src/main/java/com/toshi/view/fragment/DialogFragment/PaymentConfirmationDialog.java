@@ -28,12 +28,12 @@ import android.view.ViewGroup;
 import com.toshi.R;
 import com.toshi.databinding.FragmentPaymentConfirmationBinding;
 import com.toshi.presenter.LoaderIds;
-import com.toshi.presenter.PaymentRequestConfirmPresenter;
-import com.toshi.presenter.factory.PaymentRequestConfirmPresenterFactory;
+import com.toshi.presenter.PaymentConfirmationPresenter;
+import com.toshi.presenter.factory.PaymentConfirmPresenterFactory;
 import com.toshi.presenter.factory.PresenterFactory;
 import com.toshi.util.PaymentType;
 
-public class PaymentConfirmationDialog extends BasePresenterDialogFragment<PaymentRequestConfirmPresenter, PaymentConfirmationDialog> {
+public class PaymentConfirmationDialog extends BasePresenterDialogFragment<PaymentConfirmationPresenter, PaymentConfirmationDialog> {
 
     public static final String CALLBACK_ID = "callback_id";
     public static final String CONFIRMATION_TYPE = "confirmation_type";
@@ -45,25 +45,36 @@ public class PaymentConfirmationDialog extends BasePresenterDialogFragment<Payme
     public static final String TOSHI_ID = "toshi_id";
     public static final String UNSIGNED_TRANSACTION = "unsigned_transaction";
 
-    private OnPaymentConfirmationListener listener;
     private FragmentPaymentConfirmationBinding binding;
+    private OnPaymentConfirmationApproved approvedListener;
+    private OnPaymentConfirmationCanceled canceledListener;
+
+    public interface OnPaymentConfirmationApproved {
+        void onPaymentApproved(final Bundle bundle);
+    }
+
+    public interface OnPaymentConfirmationCanceled {
+        void onPaymentCanceled(final Bundle bundle);
+    }
 
     public static PaymentConfirmationDialog newInstanceToshiPayment(@NonNull final String toshiId,
                                                                     @NonNull final String value,
-                                                                    @Nullable final String memo) {
+                                                                    @Nullable final String memo,
+                                                                    final @PaymentType.Type int paymentType) {
         final Bundle bundle = new Bundle();
         bundle.putInt(CONFIRMATION_TYPE, PaymentConfirmationType.TOSHI);
         bundle.putString(TOSHI_ID, toshiId);
-        return newInstance(bundle, value, memo);
+        return newInstance(bundle, value, memo, paymentType);
     }
 
     public static PaymentConfirmationDialog newInstanceExternalPayment(@NonNull final String paymentAddress,
                                                                        @NonNull final String value,
-                                                                       @Nullable final String memo) {
+                                                                       @Nullable final String memo,
+                                                                       final @PaymentType.Type int paymentType) {
         final Bundle bundle = new Bundle();
         bundle.putInt(CONFIRMATION_TYPE, PaymentConfirmationType.EXTERNAL);
         bundle.putString(PAYMENT_ADDRESS, paymentAddress);
-        return newInstance(bundle, value, memo);
+        return newInstance(bundle, value, memo, paymentType);
     }
 
     public static PaymentConfirmationDialog newInstanceWebPayment(@NonNull final String unsignedTransaction,
@@ -76,32 +87,37 @@ public class PaymentConfirmationDialog extends BasePresenterDialogFragment<Payme
         bundle.putString(UNSIGNED_TRANSACTION, unsignedTransaction);
         bundle.putString(PAYMENT_ADDRESS, paymentAddress);
         bundle.putString(CALLBACK_ID, callbackId);
-        return newInstance(bundle, value, memo);
+        return newInstance(bundle, value, memo, PaymentType.TYPE_SEND);
     }
 
     private static PaymentConfirmationDialog newInstance(final Bundle bundle,
                                                          final String value,
-                                                         final String memo) {
+                                                         final String memo,
+                                                         final @PaymentType.Type int paymentType) {
         bundle.putString(ETH_AMOUNT, value);
         bundle.putString(MEMO, memo);
-        bundle.putInt(PAYMENT_TYPE, PaymentType.TYPE_SEND);
+        bundle.putInt(PAYMENT_TYPE, paymentType);
         final PaymentConfirmationDialog fragment = new PaymentConfirmationDialog();
         fragment.setArguments(bundle);
         return fragment;
     }
 
-    public interface OnPaymentConfirmationListener {
-        void onPaymentRejected(final Bundle bundle);
-        void onPaymentApproved(final Bundle bundle);
-    }
-
-    public PaymentConfirmationDialog setOnPaymentConfirmationListener(final OnPaymentConfirmationListener listener) {
-        this.listener = listener;
+    public PaymentConfirmationDialog setOnPaymentConfirmationApprovedListener(final OnPaymentConfirmationApproved listener) {
+        this.approvedListener = listener;
         return this;
     }
 
-    public OnPaymentConfirmationListener getPaymentConfirmationListener() {
-        return this.listener;
+    public PaymentConfirmationDialog setOnPaymentConfirmationCanceledListener(final OnPaymentConfirmationCanceled listener) {
+        this.canceledListener = listener;
+        return this;
+    }
+
+    public OnPaymentConfirmationApproved getPaymentConfirmationApprovedListener() {
+        return this.approvedListener;
+    }
+
+    public OnPaymentConfirmationCanceled getPaymentConfirmationCanceledListener() {
+        return this.canceledListener;
     }
 
     @Nullable
@@ -117,12 +133,12 @@ public class PaymentConfirmationDialog extends BasePresenterDialogFragment<Payme
 
     @NonNull
     @Override
-    protected PresenterFactory<PaymentRequestConfirmPresenter> getPresenterFactory() {
-        return new PaymentRequestConfirmPresenterFactory();
+    protected PresenterFactory<PaymentConfirmationPresenter> getPresenterFactory() {
+        return new PaymentConfirmPresenterFactory();
     }
 
     @Override
-    protected void onPresenterPrepared(@NonNull PaymentRequestConfirmPresenter presenter) {}
+    protected void onPresenterPrepared(@NonNull PaymentConfirmationPresenter presenter) {}
 
     @Override
     protected int loaderId() {

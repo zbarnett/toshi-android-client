@@ -18,19 +18,15 @@
 package com.toshi.presenter;
 
 import android.os.Bundle;
+import android.support.annotation.StringRes;
+import android.support.v4.util.Pair;
 import android.view.View;
 import android.widget.Toast;
 
-import com.toshi.BuildConfig;
 import com.toshi.R;
 import com.toshi.crypto.util.TypeConverter;
-import com.toshi.model.local.Network;
-import com.toshi.model.local.Networks;
 import com.toshi.model.local.User;
-import com.toshi.util.BuildTypes;
 import com.toshi.util.EthUtil;
-import com.toshi.util.ImageUtil;
-import com.toshi.util.LogUtil;
 import com.toshi.util.OnSingleClickListener;
 import com.toshi.util.PaymentType;
 import com.toshi.view.BaseApplication;
@@ -39,17 +35,18 @@ import com.toshi.view.fragment.DialogFragment.PaymentConfirmationDialog;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+import rx.Single;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 
-public class PaymentRequestConfirmPresenter implements Presenter<PaymentConfirmationDialog> {
+public class PaymentConfirmationPresenter implements Presenter<PaymentConfirmationDialog> {
 
     private PaymentConfirmationDialog view;
     private CompositeSubscription subscriptions;
     private boolean firstTimeAttached = true;
 
-    private User user;
     private Bundle bundle;
     private String encodedEthAmount;
     private String memo;
@@ -74,26 +71,16 @@ public class PaymentRequestConfirmPresenter implements Presenter<PaymentConfirma
     }
 
     private void initShortLivingObjects() {
-        initNetworkView();
         initClickListeners();
         processBundleData();
-        updateView();
-        tryLoadUser();
-    }
-
-    private void initNetworkView() {
-        final boolean isReleaseBuild = BuildConfig.BUILD_TYPE.equals(BuildTypes.RELEASE);
-        this.view.getBinding().network.setVisibility(isReleaseBuild ? View.GONE : View.VISIBLE);
-
-        if (!isReleaseBuild) {
-            final Network network = Networks.getInstance().getCurrentNetwork();
-            this.view.getBinding().network.setText(network.getName());
-        }
+        setTitle();
+        setMemo();
+        tryLoadUserAndLocalAmount(this.toshiId, this.encodedEthAmount);
     }
 
     private void initClickListeners() {
-        this.view.getBinding().reject.setOnClickListener(__ -> handleRejectClicked());
-        this.view.getBinding().approve.setOnClickListener(new OnSingleClickListener() {
+        this.view.getBinding().cancel.setOnClickListener(__ -> handleCanceledClicked());
+        this.view.getBinding().pay.setOnClickListener(new OnSingleClickListener() {
             @Override
             public void onSingleClick(View v) {
                 handleApprovedClicked();
@@ -102,12 +89,16 @@ public class PaymentRequestConfirmPresenter implements Presenter<PaymentConfirma
     }
 
     private void handleApprovedClicked() {
-        this.view.getPaymentConfirmationListener().onPaymentApproved(this.bundle);
+        if (this.view.getPaymentConfirmationApprovedListener() != null) {
+            this.view.getPaymentConfirmationApprovedListener().onPaymentApproved(this.bundle);
+        }
         this.view.dismiss();
     }
 
-    private void handleRejectClicked() {
-        this.view.getPaymentConfirmationListener().onPaymentRejected(this.bundle);
+    private void handleCanceledClicked() {
+        if (this.view.getPaymentConfirmationCanceledListener() != null) {
+            this.view.getPaymentConfirmationCanceledListener().onPaymentCanceled(this.bundle);
+        }
         this.view.dismiss();
     }
 
@@ -121,21 +112,55 @@ public class PaymentRequestConfirmPresenter implements Presenter<PaymentConfirma
         this.paymentType = this.bundle.getInt(PaymentConfirmationDialog.PAYMENT_TYPE);
     }
 
-    private void tryLoadUser() {
-        if (this.toshiId == null) return;
+    private void setTitle() {
+        final String title = this.paymentType == PaymentType.TYPE_SEND
+                ? this.view.getString(R.string.payment_confirmation_title)
+                : this.view.getString(R.string.payment_request_confirmation_title);
+        this.view.getBinding().title.setText(title);
+    }
+
+    private void setMemo() {
+        if (this.memo == null) return;
+        this.view.getBinding().memo.setVisibility(View.VISIBLE);
+        this.view.getBinding().memo.setText(this.memo);
+    }
+
+    private void tryLoadUserAndLocalAmount(final String toshiId, final String encodedEthAmount) {
+        if (toshiId != null) {
+            getUserAndLocalAmount(toshiId, encodedEthAmount);
+        } else {
+            getLocalAmount(encodedEthAmount);
+        }
+    }
+
+    private void getUserAndLocalAmount(final String toshiId, final String encodedEthAmount) {
         final Subscription sub =
-                BaseApplication
-                .get()
-                .getRecipientManager()
-                .getUserFromToshiId(this.toshiId)
-                .doOnSuccess(user -> this.user = user)
+                Single.zip(
+                        getUserFromId(toshiId),
+                        getLocalCurrency(encodedEthAmount),
+                        Pair::new
+                )
+                .doOnSuccess(pair -> addPaymentAddressToBundle(pair.first))
                 .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
                 .subscribe(
-                        __ -> updateView(),
+                        pair -> renderPaymentMessage(pair.first, pair.second),
                         this::handleUserError
                 );
 
         this.subscriptions.add(sub);
+    }
+
+    private void addPaymentAddressToBundle(final User user) {
+        if (user == null) return;
+        this.bundle.putString(PaymentConfirmationDialog.PAYMENT_ADDRESS, user.getPaymentAddress());
+    }
+
+    private Single<User> getUserFromId(final String toshiId) {
+        return BaseApplication
+                .get()
+                .getRecipientManager()
+                .getUserFromToshiId(toshiId);
     }
 
     private void handleUserError(final Throwable throwable) {
@@ -147,65 +172,40 @@ public class PaymentRequestConfirmPresenter implements Presenter<PaymentConfirma
         ).show();
     }
 
-    private void updateView() {
-        setTitle();
-        setUserInfo();
-        setPaymentAddress();
-        setMemo();
-        setLocalCurrency();
-    }
-
-    private void setTitle() {
-        final String title = this.paymentType == PaymentType.TYPE_SEND
-                ? this.view.getString(R.string.confirmation_dialog_title_payment)
-                : this.view.getString(R.string.confirmation_dialog_title_request);
-        this.view.getBinding().title.setText(title);
-    }
-
-    private void setUserInfo() {
-        if (this.user == null) return;
-        this.view.getBinding().userInfoWrapper.setVisibility(View.VISIBLE);
-        ImageUtil.loadFromNetwork(user.getAvatar(), this.view.getBinding().avatar);
-        this.view.getBinding().displayName.setText(this.user.getDisplayName());
-        this.view.getBinding().username.setText(this.user.getUsername());
-        final String reviewCount = BaseApplication.get().getString(R.string.parentheses, this.user.getReviewCount());
-        this.view.getBinding().numberOfRatings.setText(reviewCount);
-        this.view.getBinding().ratingView.setStars(this.user.getAverageRating());
-    }
-
-    private void setPaymentAddress() {
-        if (this.paymentAddress == null) return;
-        this.view.getBinding().paymentAddress.setVisibility(View.VISIBLE);
-        final String paymentAddress = this.view.getString(R.string.payment_address_with_value, this.paymentAddress);
-        this.view.getBinding().paymentAddress.setText(paymentAddress);
-    }
-
-    private void setMemo() {
-        if (this.memo == null) return;
-        this.view.getBinding().memo.setVisibility(View.VISIBLE);
-        this.view.getBinding().memo.setText(this.memo);
-    }
-
-    private void setLocalCurrency() {
-        final BigInteger weiAmount = TypeConverter.StringHexToBigInteger(this.encodedEthAmount);
-        final BigDecimal ethAmount = EthUtil.weiToEth(weiAmount);
-
+    private void getLocalAmount(final String encodedEthAmount) {
         final Subscription sub =
-                BaseApplication
-                .get()
-                .getBalanceManager()
-                .convertEthToLocalCurrencyString(ethAmount)
-                .subscribe((localCurrency) -> {
-                    final String usdEth = this.view.getString(R.string.local_dot_eth_amount, localCurrency, getEthValue());
-                    this.view.getBinding().ethUsd.setText(usdEth);
-                },
-                        throwable -> LogUtil.exception(getClass(), throwable)
+                getLocalCurrency(encodedEthAmount)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(
+                        localAmount -> renderPaymentMessage(null, localAmount),
+                        this::handleUserError
                 );
 
         this.subscriptions.add(sub);
     }
 
-    private String getEthValue() {
+    private Single<String> getLocalCurrency(final String encodedEthAmount) {
+        final BigInteger weiAmount = TypeConverter.StringHexToBigInteger(encodedEthAmount);
+        final BigDecimal ethAmount = EthUtil.weiToEth(weiAmount);
+
+        return BaseApplication
+                .get()
+                .getBalanceManager()
+                .convertEthToLocalCurrencyString(ethAmount);
+    }
+
+    private void renderPaymentMessage(final User user, final String localAmount) {
+        final String displayNameOrPaymentAddress = user != null ? user.getDisplayName() : this.paymentAddress;
+        final String ethAmount = this.view.getContext().getString(R.string.eth_amount, getEthAmount());
+        final @StringRes int messageRes = this.paymentType == PaymentType.TYPE_SEND
+                ? R.string.payment_confirmation_body
+                : R.string.payment_request_confirmation_body;
+        final String messageBody = BaseApplication.get().getString(messageRes, localAmount, ethAmount, displayNameOrPaymentAddress);
+        this.view.getBinding().message.setText(messageBody);
+    }
+
+    private String getEthAmount() {
         final BigInteger eth = TypeConverter.StringHexToBigInteger(this.encodedEthAmount);
         return EthUtil.weiAmountToUserVisibleString(eth);
     }
