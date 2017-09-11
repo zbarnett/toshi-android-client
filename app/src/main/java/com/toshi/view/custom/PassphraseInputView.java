@@ -358,11 +358,17 @@ public class PassphraseInputView extends FrameLayout {
     private void goToCell(final SuggestionInputView cell) {
         if (cell == null) return;
         final String word = cell.getWord();
-        cell.showInputView(word);
+        setWordInCell(cell, word);
         cell.setVisibility(VISIBLE);
         setCursorAtEnd(cell.getWordView());
         cell.getWordView().requestFocus();
         KeyboardUtil.showKeyboard(cell.getWordView());
+    }
+
+    private void setWordInCell(final SuggestionInputView cell, final String word) {
+        //If word is null(word isn't approved), don't clear the text view
+        if (word == null) return;
+        cell.showInputView(word);
     }
 
     private Observable<String> getWordSuggestion(final String startOfWord) {
@@ -503,13 +509,12 @@ public class PassphraseInputView extends FrameLayout {
         checkIfPassphraseIsApproved();
     }
 
-    private SuggestionInputView getChild(final int i) {
+    private SuggestionInputView getChild(final int index) {
         final FlexboxLayout wrapper = findViewById(R.id.wrapper);
-        return (SuggestionInputView) wrapper.getChildAt(i);
+        return (SuggestionInputView) wrapper.getChildAt(index);
     }
 
-    private void addWordToPassphraseList(final String word,
-                                         final int cellIndex) {
+    private void addWordToPassphraseList(final String word, final int cellIndex) {
         if (cellIndex < this.passphraseList.size()) {
             this.passphraseList.set(cellIndex, word);
         } else {
@@ -541,7 +546,7 @@ public class PassphraseInputView extends FrameLayout {
 
     @Override
     public Parcelable onSaveInstanceState() {
-        Bundle bundle = new Bundle();
+        final Bundle bundle = new Bundle();
         bundle.putInt(BUNDLE__CURRENT_CELL, this.currentCell);
         bundle.putStringArrayList(BUNDLE__APPROVED_WORDS, this.passphraseList);
         bundle.putStringArrayList(BUNDLE__WORD_LIST, this.wordList);
