@@ -77,8 +77,6 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"
                 android:orientation="vertical">
 
                 <android.support.v4.widget.Space
@@ -115,7 +113,9 @@
 
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin">
 
                     <EditText
                         android:id="@+id/input_name"
@@ -134,7 +134,9 @@
 
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin">
 
                     <EditText
                         android:id="@+id/input_username"
@@ -153,7 +155,9 @@
 
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin">
 
                     <EditText
                         android:id="@+id/input_about"
@@ -172,7 +176,9 @@
 
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin">
 
                     <EditText
                         android:id="@+id/input_location"
@@ -187,14 +193,12 @@
 
                 <android.support.v4.widget.Space
                     android:layout_width="0dp"
-                    android:layout_height="28dp"/>
+                    android:layout_height="8dp"/>
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    style="@style/TextStyleMedium"
-                    android:textSize="14sp"
-                    android:textColor="@color/subTitleTextColor"
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp"
+                    style="@style/subTitleStyle"
                     android:text="@string/visibility_settings"/>
 
                 <android.support.v4.widget.Space
@@ -203,7 +207,9 @@
 
                 <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="54dp">
+                    android:layout_height="54dp"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -226,9 +232,11 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin"
                     android:textColor="@color/textColorSecondaryTransparent"
                     android:textSize="14sp"
-                    android:text="@string/public_profile_message"/>
+                    android:text="@string/public_profile_message" />
 
                 <android.support.v4.widget.Space
                     android:layout_width="wrap_content"
