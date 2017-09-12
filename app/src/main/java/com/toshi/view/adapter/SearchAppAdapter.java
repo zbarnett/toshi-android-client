@@ -24,12 +24,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.toshi.R;
-import com.toshi.model.local.AppSearchHeader;
 import com.toshi.model.local.Dapp;
 import com.toshi.model.network.App;
 import com.toshi.view.adapter.listeners.OnItemClickListener;
 import com.toshi.view.adapter.viewholder.SearchAppDappViewHolder;
-import com.toshi.view.adapter.viewholder.SearchAppHeaderViewHolder;
 import com.toshi.view.adapter.viewholder.ToshiEntityViewHolder;
 
 import java.util.ArrayList;
@@ -39,15 +37,11 @@ public class SearchAppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @IntDef({
             ITEM,
-            HEADER,
             DAPP_LINK
     })
     public @interface ViewType {}
     public final static int ITEM = 1;
-    public final static int HEADER = 2;
     public final static int DAPP_LINK = 3;
-
-    private final AppSearchHeader appSearchHeader;
 
     private List<App> apps;
     private Dapp dapp;
@@ -55,7 +49,6 @@ public class SearchAppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private OnItemClickListener<Dapp> dappLaunchClicked;
 
     public SearchAppAdapter() {
-        this.appSearchHeader = new AppSearchHeader();
         this.apps = new ArrayList<>();
         addExtras();
     }
@@ -78,10 +71,8 @@ public class SearchAppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     private void addExtras() {
-        this.apps.add(0, this.appSearchHeader);
-        if (this.dapp != null) {
-            this.apps.add(dapp);
-        }
+        if (this.dapp == null) return;
+        this.apps.add(dapp);
     }
 
     public void addDapp(final String DappAddress) {
@@ -106,10 +97,6 @@ public class SearchAppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
-            case HEADER: {
-                final View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_search_header, parent, false);
-                return new SearchAppHeaderViewHolder(v);
-            }
             case DAPP_LINK: {
                 final View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item__search_dapp, parent, false);
                 return new SearchAppDappViewHolder(v);
@@ -131,9 +118,6 @@ public class SearchAppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 final SearchAppDappViewHolder vh = (SearchAppDappViewHolder) holder;
                 vh.setDapp(this.dapp);
                 vh.setListener(this.dappLaunchClicked);
-                break;
-            }
-            case HEADER: {
                 break;
             }
             case ITEM:
@@ -164,7 +148,6 @@ public class SearchAppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     public int getNumberOfApps() {
-        // Remove the header.
-        return this.apps.size() - 1;
+        return this.apps.size();
     }
 }
