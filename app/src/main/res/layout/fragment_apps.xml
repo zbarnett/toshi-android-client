@@ -74,14 +74,9 @@
                     android:id="@+id/clear_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:scaleType="fitCenter"
-                    android:layout_gravity="center"
-                    android:padding="8dp"
-                    android:background="@android:color/transparent"
+                    style="@style/searchClearButton"
                     app:srcCompat="@drawable/ic_clear"
-                    android:visibility="invisible"
-                    tools:visibility="visible"
-                    android:tint="@color/textColorInput"/>
+                    tools:visibility="visible" />
 
             </LinearLayout>
 
