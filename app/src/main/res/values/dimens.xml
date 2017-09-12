@@ -45,7 +45,7 @@
     <dimen name="rating_bar_width">160dp</dimen>
 
     <dimen name="backup_phrase_spacing">10dp</dimen>
-    <dimen name="backup_phrase_corner_radius">3dp</dimen>
+    <dimen name="backup_phrase_corner_radius">8dp</dimen>
 
     <dimen name="chat_image__max_width">250dp</dimen>
     <dimen name="chat_payment_width">261dp</dimen>

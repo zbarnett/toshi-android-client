@@ -22,30 +22,36 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <android.support.v4.widget.Space
+        android:layout_width="0dp"
+        android:layout_height="33dp" />
+
     <com.google.android.flexbox.FlexboxLayout
         android:id="@+id/user_inputted_phrases"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:flexWrap="wrap"
-        android:layout_marginTop="33dp"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:paddingTop="10dp"
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
-        android:background="@drawable/backup_phrase_background_dotted">
-    </com.google.android.flexbox.FlexboxLayout>
+        android:background="@drawable/backup_phrase_background_dotted"
+        android:clipToPadding="false"/>
+
+    <android.support.v4.widget.Space
+        android:layout_width="0dp"
+        android:layout_height="33dp" />
 
     <com.google.android.flexbox.FlexboxLayout
         android:id="@+id/remaining_phrases"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:flexWrap="wrap"
-        android:layout_marginTop="33dp"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_marginRight="@dimen/activity_horizontal_margin">
-
-    </com.google.android.flexbox.FlexboxLayout>
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:padding="2dp"
+        android:clipToPadding="false"/>
 
 </LinearLayout>

@@ -116,23 +116,15 @@ public class DragAndDropView extends LinearLayout {
 
     @NonNull
     private DraggableShadowTextView generateTargetTextView() {
-        final DraggableShadowTextView textView = new DraggableShadowTextView(getContext());
-        textView
-                .setShadowEnabled(false)
-                .setCornerRadius(getResources().getDimensionPixelSize(R.dimen.backup_phrase_corner_radius))
-                .setBackground(null);
-        textView.setMinimumWidth(200);
+        final DraggableShadowTextView textView = (DraggableShadowTextView) inflate(getContext(), R.layout.view_drag_and_drop_text_view, null);
+        textView.setShadowEnabled(false);
         return textView;
     }
 
     @NonNull
     private DraggableShadowTextView generateSourceTextView(final String phrase) {
-        final DraggableShadowTextView textView = new DraggableShadowTextView(getContext());
-        textView
-                .setShadowEnabled(true)
-                .setCornerRadius(getResources().getDimensionPixelSize(R.dimen.backup_phrase_corner_radius))
-                .setText(phrase);
-        textView.setMinimumWidth(200);
+        final DraggableShadowTextView textView = (DraggableShadowTextView) inflate(getContext(), R.layout.view_drag_and_drop_text_view, null);
+        textView.setShadowEnabled(true);
         return textView;
     }
 
