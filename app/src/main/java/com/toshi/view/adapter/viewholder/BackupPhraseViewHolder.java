@@ -21,8 +21,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
-import com.toshi.R;
-
 public class BackupPhraseViewHolder extends RecyclerView.ViewHolder {
 
     private TextView word;
@@ -30,7 +28,7 @@ public class BackupPhraseViewHolder extends RecyclerView.ViewHolder {
     public BackupPhraseViewHolder(View itemView) {
         super(itemView);
 
-        this.word = (TextView) itemView.findViewById(R.id.word);
+        this.word = (TextView) itemView;
     }
 
     public void setText(final String word) {
