@@ -41,10 +41,13 @@ import com.toshi.view.adapter.ContactsAdapter;
 import com.toshi.view.adapter.listeners.OnItemClickListener;
 import com.toshi.view.custom.HorizontalLineDivider;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import rx.Single;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.observables.ConnectableObservable;
 import rx.subscriptions.CompositeSubscription;
 
 public final class UserSearchPresenter
@@ -99,9 +102,15 @@ public final class UserSearchPresenter
     }
 
     private void initClickListeners() {
+        this.activity.getBinding().clearButton.setOnClickListener(__ -> handleClearButtonClicked());
         if (this.viewType == UserSearchType.CONVERSATION) {
             this.activity.getBinding().newGroup.setOnClickListener(__ -> handleNewGroupClicked());
         }
+    }
+
+    private void handleClearButtonClicked() {
+        if (this.activity == null) return;
+        this.activity.getBinding().search.setText(null);
     }
 
     private void handleNewGroupClicked() {
@@ -110,38 +119,75 @@ public final class UserSearchPresenter
     }
 
     private void initSearch() {
-        final Subscription sub =
+        final ConnectableObservable<String> sourceObservable =
                 RxTextView
-                .textChangeEvents(this.activity.getBinding().userInput)
+                .textChangeEvents(this.activity.getBinding().search)
+                .skip(1)
                 .debounce(500, TimeUnit.MILLISECONDS)
                 .map(event -> event.text().toString())
-                .observeOn(AndroidSchedulers.mainThread())
+                .publish();
+
+        final Subscription searchSub =
+                sourceObservable
+                .filter(query -> query.length() > 2)
                 .subscribe(
-                        this::submitQuery,
+                        this::runSearchQuery,
                         this::handleSearchError
                 );
 
-        this.subscriptions.add(sub);
+        final Subscription uiSub =
+                sourceObservable
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        this::updateSearchUi,
+                        this::handleSearchError
+                );
+
+        final Subscription sourceSub = sourceObservable.connect();
+        this.subscriptions.addAll(sourceSub, searchSub, uiSub);
     }
 
-    private void submitQuery(final String query) {
-        if (query.length() < 3) {
-            this.getContactsAdapter().clear();
+    private void runSearchQuery(final String query) {
+        final Subscription searchSub =
+                searchOnlineUsers(query)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        this::handleSearchResult,
+                        this::handleSearchError
+                );
+
+        this.subscriptions.add(searchSub);
+    }
+
+    private Single<List<User>> searchOnlineUsers(final String query) {
+        return BaseApplication
+                .get()
+                .getRecipientManager()
+                .searchOnlineUsers(query);
+    }
+
+    private void handleSearchResult(final List<User> users) {
+        final ContactsAdapter adapter = getContactsAdapter();
+        if (adapter == null) return;
+        adapter.setUsers(users);
+    }
+
+    private ContactsAdapter getContactsAdapter() {
+        if (this.activity == null) return null;
+        return (ContactsAdapter) this.activity.getBinding().searchResults.getAdapter();
+    }
+
+    private void updateSearchUi(final String query) {
+        final ContactsAdapter adapter = getContactsAdapter();
+        if (adapter == null) return;
+
+        if (query.length() == 0) {
+            this.activity.getBinding().clearButton.setVisibility(View.GONE);
+            adapter.clear();
             return;
         }
 
-        final Subscription sub =
-                BaseApplication
-                .get()
-                .getRecipientManager()
-                .searchOnlineUsers(query)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        users -> this.getContactsAdapter().setUsers(users),
-                        this::handleSearchError
-                );
-
-        this.subscriptions.add(sub);
+        this.activity.getBinding().clearButton.setVisibility(View.VISIBLE);
     }
 
     private void handleSearchError(final Throwable throwable) {
@@ -166,10 +212,6 @@ public final class UserSearchPresenter
                         .setRightPadding(dividerRightPadding)
                         .setLeftPadding(dividerLeftPadding);
         recyclerView.addItemDecoration(lineDivider);
-    }
-
-    private ContactsAdapter getContactsAdapter() {
-        return (ContactsAdapter) this.activity.getBinding().searchResults.getAdapter();
     }
 
     private final OnSingleClickListener handleCloseClicked = new OnSingleClickListener() {

@@ -66,19 +66,37 @@
                 android:background="@color/windowBackground"
                 app:elevation="0dp">
 
-                <EditText
-                    android:id="@+id/user_input"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="54dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:background="@color/input_bg"
                     app:layout_scrollFlags="scroll"
-                    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                    android:paddingLeft="16dp"
-                    android:singleLine="true"
-                    android:maxLines="1"
-                    android:imeOptions="actionNext"
-                    style="@style/SearchEditText"
-                    android:textSize="16sp"
-                    android:hint="@string/search_people"/>
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+                    <EditText
+                        android:id="@+id/search"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="54dp"
+                        android:paddingLeft="@dimen/activity_horizontal_margin"
+                        android:paddingRight="@dimen/activity_horizontal_margin"
+                        android:background="@color/input_bg"
+                        android:singleLine="true"
+                        android:maxLines="1"
+                        android:imeOptions="actionDone"
+                        android:textSize="16sp"
+                        android:hint="@string/search_people"/>
+
+                    <ImageButton
+                        android:id="@+id/clear_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/searchClearButton"
+                        app:srcCompat="@drawable/ic_clear"
+                        tools:visibility="visible" />
+
+                </LinearLayout>
 
                 <View
                     android:layout_width="wrap_content"
