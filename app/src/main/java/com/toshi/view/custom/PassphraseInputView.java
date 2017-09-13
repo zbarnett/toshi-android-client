@@ -363,6 +363,7 @@ public class PassphraseInputView extends FrameLayout {
         setCursorAtEnd(cell.getWordView());
         cell.getWordView().requestFocus();
         KeyboardUtil.showKeyboard(cell.getWordView());
+        hideErrorMessage();
     }
 
     private void setWordInCell(final SuggestionInputView cell, final String word) {
