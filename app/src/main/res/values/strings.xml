@@ -260,7 +260,7 @@
     <string name="balance_dialog_body">You haven\'t backed up your passphrase yet. Without it you risk losing money.</string>
     <string name="backup">Backup</string>
     <string name="payment_request_confirmation_title">Confirm payment request</string>
-    <string name="payment_request_confirmation_body">Do you want to accept the %1$s (%2$s) from %3$s?</string>
+    <string name="payment_request_confirmation_body">Do you want to accept the %1$s (%2$s) request from %3$s?</string>
     <string name="payment_confirmation_title">Confirm payment</string>
     <string name="payment_confirmation_body">Do you want to send %1$s (%2$s) to %3$s?</string>
     <string name="scan_error_payment">This isn\'t a payment address QR Code. You can find it under Me/Balance/Deposit</string>
