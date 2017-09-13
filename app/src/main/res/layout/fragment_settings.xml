@@ -150,11 +150,6 @@
 
                 </FrameLayout>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="10dp"
-                    android:background="@color/windowBackgroundContrast"/>
-
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="54dp"
@@ -208,11 +203,6 @@
                         android:layout_height="0dp"/>
 
                 </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="10dp"
-                    android:background="@color/windowBackgroundContrast"/>
 
                 <FrameLayout
                     android:layout_width="match_parent"
@@ -337,11 +327,6 @@
                         app:srcCompat="@drawable/ic_chevron_right" />
 
                 </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="10dp"
-                    android:background="@color/windowBackgroundContrast"/>
                 
                 <TextView
                     android:layout_width="match_parent"
