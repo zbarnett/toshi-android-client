@@ -198,7 +198,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="54dp"
-                    style="@style/subTitleStyle"
+                    style="@style/contentSubTitleStyle"
                     android:text="@string/visibility_settings"/>
 
                 <FrameLayout

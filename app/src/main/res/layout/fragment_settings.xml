@@ -56,7 +56,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="54dp"
-                    style="@style/subTitleStyle"
+                    style="@style/listSubTitleStyle"
                     android:text="@string/my_profile" />
 
                 <LinearLayout
@@ -129,15 +129,14 @@
                     android:id="@+id/my_qr_code"
                     android:layout_width="match_parent"
                     android:layout_height="54dp"
-                    android:orientation="horizontal"
                     android:paddingLeft="@dimen/activity_horizontal_margin"
-                    android:paddingRight="@dimen/activity_horizontal_margin">
+                    android:paddingRight="@dimen/activity_horizontal_margin"
+                    android:background="?android:selectableItemBackground">
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
-                        android:background="?android:selectableItemBackground"
                         android:textSize="16sp"
                         android:textColor="@color/textColorPrimary"
                         android:text="@string/profile_qr_code"/>
@@ -153,7 +152,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="54dp"
-                    style="@style/subTitleStyle"
+                    style="@style/listSubTitleStyle"
                     android:text="@string/balance"/>
 
                 <LinearLayout
@@ -211,7 +210,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="54dp"
-                        style="@style/subTitleStyle"
+                        style="@style/listSubTitleStyle"
                         android:text="@string/security" />
 
                     <LinearLayout
@@ -331,7 +330,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="54dp"
-                    style="@style/subTitleStyle"
+                    style="@style/listSubTitleStyle"
                     android:text="@string/settings"/>
 
                 <android.support.v4.widget.NestedScrollView

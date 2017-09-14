@@ -208,7 +208,7 @@
         <item name="android:maxLines">1</item>
     </style>
 
-    <style name="subTitleStyle">
+    <style name="listSubTitleStyle">
         <item name="android:background">@color/subTitleBackgroundColor</item>
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/subTitleTextColor</item>
@@ -216,6 +216,10 @@
         <item name="android:paddingLeft">@dimen/activity_horizontal_margin</item>
         <item name="android:paddingTop">22dp</item>
         <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="contentSubTitleStyle" parent="listSubTitleStyle">
+        <item name="android:background">@color/windowBackground</item>
     </style>
 
     <style name="searchClearButton">

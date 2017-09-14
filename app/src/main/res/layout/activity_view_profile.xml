@@ -163,15 +163,10 @@
                     android:layout_width="0dp"
                     android:layout_height="16dp"/>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="10dp"
-                    android:background="@color/divider"/>
-
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="54dp"
-                    style="@style/subTitleStyle"
+                    style="@style/contentSubTitleStyle"
                     android:text="@string/reputation"/>
 
                 <android.support.v4.widget.Space

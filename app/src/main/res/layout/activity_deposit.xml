@@ -112,7 +112,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="54dp"
-                        style="@style/subTitleStyle"
+                        style="@style/contentSubTitleStyle"
                         android:text="@string/eth_deposit_method_1"/>
 
                     <TextView
@@ -184,7 +184,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="54dp"
-                        style="@style/subTitleStyle"
+                        style="@style/contentSubTitleStyle"
                         android:text="@string/eth_deposit_method_2"/>
 
                     <TextView
@@ -214,7 +214,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="54dp"
-                        style="@style/subTitleStyle"
+                        style="@style/contentSubTitleStyle"
                         android:text="@string/eth_deposit_method_3"/>
 
                     <TextView
@@ -244,7 +244,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="54dp"
-                        style="@style/subTitleStyle"
+                        style="@style/contentSubTitleStyle"
                         android:text="@string/eth_deposit_method_4"/>
 
                     <TextView
