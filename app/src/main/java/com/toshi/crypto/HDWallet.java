@@ -19,7 +19,6 @@ package com.toshi.crypto;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.support.annotation.NonNull;
 
 import com.toshi.crypto.hdshim.EthereumKeyChainGroup;
@@ -40,7 +39,6 @@ import org.bitcoinj.wallet.UnreadableWalletException;
 import org.bitcoinj.wallet.Wallet;
 
 import java.io.IOException;
-import java.security.Security;
 
 import rx.Single;
 
@@ -57,25 +55,11 @@ public class HDWallet {
     private String masterSeed;
 
     public HDWallet() {
-        setProvider();
         this.prefs = BaseApplication.get().getSharedPreferences(FileNames.WALLET_PREFS, Context.MODE_PRIVATE);
     }
 
     public HDWallet(@NonNull final SharedPreferences preferences) {
-        setProvider();
         this.prefs = preferences;
-    }
-
-    //Issues with Android Key Store and Bouncy Castle lib
-    //https://github.com/rtyley/spongycastle/issues/27
-    //If we call Security.addProvider(..) < 18, the chat service crashes
-    //If we call Security.insertProviderAt(..) >= 18, the AndroidKeyStore doesn't work as expected
-    private void setProvider() {
-        if (Build.VERSION.SDK_INT < 18) {
-            Security.insertProviderAt(new org.spongycastle.jce.provider.BouncyCastleProvider(), 1);
-        } else {
-            Security.addProvider(new org.spongycastle.jce.provider.BouncyCastleProvider());
-        }
     }
 
     public Single<HDWallet> getExistingWallet() {

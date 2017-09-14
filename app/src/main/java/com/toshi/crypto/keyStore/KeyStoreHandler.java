@@ -26,10 +26,7 @@ public class KeyStoreHandler {
     private KeyStoreBase secretHandler;
 
     public KeyStoreHandler(final Context context, final String alias) throws KeyStoreException {
-        final int version = Build.VERSION.SDK_INT;
-        if (version >= 18 && version < 23) {
-            this.secretHandler = new KeyStoreHandler18(context, alias);
-        } else if (version >= 23) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             this.secretHandler = new KeystoreHandler23(context, alias);
         } else {
             this.secretHandler = new KeyStoreHandler16();
