@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.toshi.R;
 import com.toshi.util.LogUtil;
 import com.toshi.util.SharedPrefsUtil;
+import com.toshi.util.TermsDialog;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.activity.LandingActivity;
 import com.toshi.view.activity.MainActivity;
@@ -60,12 +61,20 @@ public class LandingPresenter implements Presenter<LandingActivity> {
 
     private void initClickListeners() {
         this.activity.getBinding().signIn.setOnClickListener(__ -> goToSignInActivity());
-        this.activity.getBinding().createNewAccount.setOnClickListener(__ -> handleCreateNewAccountClicked());
+        this.activity.getBinding().createNewAccount.setOnClickListener(__ -> showsTermDialog());
     }
 
     private void goToSignInActivity() {
         final Intent intent = new Intent(this.activity, SignInActivity.class);
         this.activity.startActivity(intent);
+    }
+
+    private void showsTermDialog() {
+        final TermsDialog termsDialog = new TermsDialog(
+                this.activity,
+                __ -> handleCreateNewAccountClicked()
+        );
+        termsDialog.show();
     }
 
     private void handleCreateNewAccountClicked() {
