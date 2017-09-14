@@ -20,6 +20,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
+import android.support.annotation.NonNull;
 import android.util.Base64;
 
 import com.toshi.exception.KeyStoreException;
@@ -89,7 +90,29 @@ public class KeystoreHandler23 extends KeyStoreBase {
     }
 
     @Override
-    public String decrypt(final String encryptedData) throws KeyStoreException {
+    public String decrypt(final String encryptedData, final KeyStoreBase.KeystoreListener listener) throws KeyStoreException {
+        final String oldVersion = tryDecryptOldKeystoreVersion(encryptedData);
+        if (oldVersion != null) {
+            return portOldKeystoreVersion(oldVersion, listener);
+        }
+        return decryptCurrentKeystoreVersion(encryptedData);
+    }
+
+    private String portOldKeystoreVersion(final String oldVersion, final KeystoreListener listener) throws KeyStoreException {
+        final String encryptedData = encrypt(oldVersion);
+        listener.onUpdate(encryptedData);
+        return oldVersion;
+    }
+
+    private String tryDecryptOldKeystoreVersion(final String encryptedData) throws KeyStoreException {
+        final String oldVersionDecryption = new KeyStoreHandler16().decrypt(encryptedData, null);
+        // If the old version wasn't able to decrypt the data then return null.
+        if (oldVersionDecryption.equals(encryptedData)) return null;
+        return oldVersionDecryption;
+    }
+
+    @NonNull
+    private String decryptCurrentKeystoreVersion(String encryptedData) throws KeyStoreException {
         try {
             final Cipher cipher = Cipher.getInstance(TRANSFORMATION);
             final GCMParameterSpec spec = new GCMParameterSpec(128, encryptionIv.getBytes());

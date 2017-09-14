@@ -241,7 +241,7 @@ public class HDWallet {
             final KeyStoreHandler keyStoreHandler = new KeyStoreHandler(BaseApplication.get(), ALIAS);
             final String encryptedMasterSeed = this.prefs.getString(MASTER_SEED, null);
             if (encryptedMasterSeed == null) return null;
-            return keyStoreHandler.decrypt(encryptedMasterSeed);
+            return keyStoreHandler.decrypt(encryptedMasterSeed, this::saveMasterSeed);
         } catch (KeyStoreException e) {
             throw new IllegalStateException(e);
         }

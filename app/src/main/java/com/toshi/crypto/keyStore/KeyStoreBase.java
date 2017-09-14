@@ -27,6 +27,11 @@ import java.security.cert.CertificateException;
 
 public abstract class KeyStoreBase {
 
+    public interface KeystoreListener {
+        // Called when the security has been updated and the new encrypted data needs storing
+        void onUpdate(final String encryptedData);
+    }
+
     /*package */ static final String ANDROID_KEY_STORE = "AndroidKeyStore";
     /*package */ static final String UTF_8 = "UTF-8";
     /*package */ String alias;
@@ -55,7 +60,7 @@ public abstract class KeyStoreBase {
 
     abstract public String encrypt(final String stringToEncrypt) throws KeyStoreException;
 
-    abstract public String decrypt(final String encryptedData) throws KeyStoreException;
+    abstract public String decrypt(final String encryptedData, final KeystoreListener updateListener) throws KeyStoreException;
 
     public void deleteKey() throws KeyStoreException {
         try {

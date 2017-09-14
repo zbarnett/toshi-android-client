@@ -37,8 +37,8 @@ public class KeyStoreHandler {
         return this.secretHandler.encrypt(data);
     }
 
-    public String decrypt(final String data) throws KeyStoreException {
-        return this.secretHandler.decrypt(data);
+    public String decrypt(final String data, final KeyStoreBase.KeystoreListener listener) throws KeyStoreException {
+        return this.secretHandler.decrypt(data, listener);
     }
 
     public void  delete(final String alias) throws KeyStoreException {

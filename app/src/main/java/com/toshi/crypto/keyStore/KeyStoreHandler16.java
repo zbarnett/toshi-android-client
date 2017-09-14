@@ -16,18 +16,14 @@
  */
 package com.toshi.crypto.keyStore;
 
-import android.content.Context;
-
 import com.toshi.exception.KeyStoreException;
 
 public class KeyStoreHandler16 extends KeyStoreBase {
 
+    public static final String VERSION_IDENTIFIER = "$$KeystoreVersion_16$$";
+
     /*package */ KeyStoreHandler16() throws KeyStoreException {
         super();
-    }
-
-    /*package */ KeyStoreHandler16(Context context, String alias) throws KeyStoreException {
-        super(context, alias);
     }
 
     @Override
@@ -35,11 +31,11 @@ public class KeyStoreHandler16 extends KeyStoreBase {
 
     @Override
     public String encrypt(final String stringToEncrypt) throws KeyStoreException {
-        return stringToEncrypt;
+        return String.format("%s%s", VERSION_IDENTIFIER, stringToEncrypt);
     }
 
     @Override
-    public String decrypt(final String encryptedData) throws KeyStoreException {
-        return encryptedData;
+    public String decrypt(final String encryptedData, final KeyStoreBase.KeystoreListener listener) throws KeyStoreException {
+        return encryptedData.replace(VERSION_IDENTIFIER, "");
     }
 }
