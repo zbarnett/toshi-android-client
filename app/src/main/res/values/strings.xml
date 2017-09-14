@@ -265,4 +265,5 @@
     <string name="payment_confirmation_body">Do you want to send %1$s (%2$s) to %3$s?</string>
     <string name="scan_error_payment">This isn\'t a payment address QR Code. You can find it under Me/Balance/Deposit</string>
     <string name="confirm">Confirm</string>
+    <string name="app_version">App version: %s</string>
 </resources>

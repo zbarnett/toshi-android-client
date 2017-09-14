@@ -65,21 +65,32 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <TextView
+                <LinearLayout
+                    android:id="@+id/currentNetworkWrapper"
                     android:layout_width="match_parent"
-                    android:layout_height="54dp"
-                    style="@style/subTitleStyle"
-                    android:text="@string/network"/>
-
-                <TextView
-                    android:id="@+id/current_network"
-                    android:layout_width="match_parent"
-                    android:layout_height="54dp"
-                    android:gravity="center_vertical"
-                    android:paddingLeft="@dimen/activity_horizontal_margin"
-                    android:textSize="16sp"
+                    android:layout_height="72dp"
+                    android:orientation="vertical"
                     android:background="?android:selectableItemBackground"
-                    tools:text="Ropsten Revival Testnet"/>
+                    android:paddingLeft="@dimen/activity_horizontal_margin"
+                    android:paddingRight="@dimen/activity_horizontal_margin"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="16sp"
+                        android:textColor="@color/textColorPrimary"
+                        android:text="@string/network"/>
+
+                    <TextView
+                        android:id="@+id/currentNetwork"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp"
+                        android:textColor="@color/textColorSecondaryTransparent"
+                        tools:text="Ropsten Revival Testnet"/>
+
+                </LinearLayout>
 
                 <View
                     android:layout_width="match_parent"
@@ -88,30 +99,24 @@
                     android:layout_marginRight="@dimen/activity_horizontal_margin"
                     android:background="@color/divider"/>
 
-                <android.support.v4.widget.Space
-                    android:layout_width="0dp"
-                    android:layout_height="16dp" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="@dimen/activity_horizontal_margin"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                    android:textSize="14sp"
-                    android:textColor="@color/textColorBody"
-                    android:text="@string/develop_message"/>
-
             </LinearLayout>
 
             <android.support.v4.widget.Space
                 android:layout_width="0dp"
-                android:layout_height="29dp" />
+                android:layout_height="16dp" />
 
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="54dp"
-                style="@style/subTitleStyle"
-                android:text="@string/version"/>
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:textSize="14sp"
+                android:textColor="@color/textColorBody"
+                android:text="@string/develop_message"/>
+
+            <android.support.v4.widget.Space
+                android:layout_width="0dp"
+                android:layout_height="29dp" />
 
             <TextView
                 android:id="@+id/version"
@@ -119,29 +124,33 @@
                 android:layout_height="54dp"
                 android:gravity="center_vertical"
                 android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:background="@color/windowBackground"
+                android:textColor="@color/textColorBody"
                 android:textSize="16sp"
                 tools:text="VersionName"/>
 
-            <android.support.v4.widget.Space
-                android:layout_width="0dp"
-                android:layout_height="@dimen/activity_horizontal_margin" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="54dp"
-                style="@style/subTitleStyle"
-                android:text="@string/open_source_licenses"/>
-
-            <TextView
+            <FrameLayout
                 android:id="@+id/open_source_licenses"
                 android:layout_width="match_parent"
                 android:layout_height="54dp"
-                android:gravity="center_vertical"
                 android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:textSize="16sp"
-                android:background="?android:selectableItemBackground"
-                android:text="@string/about__licenses" />
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:background="?android:selectableItemBackground">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:textSize="16sp"
+                    android:textColor="@color/textColorBody"
+                    android:text="@string/about__licenses" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right|center_vertical"
+                    app:srcCompat="@drawable/ic_chevron_right" />
+
+            </FrameLayout>
 
         </LinearLayout>
 

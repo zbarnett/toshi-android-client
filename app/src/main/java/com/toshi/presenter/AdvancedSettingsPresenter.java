@@ -67,14 +67,14 @@ public class AdvancedSettingsPresenter implements Presenter<AdvancedSettingsActi
 
     private void initShortLivingObjects() {
         initCLickListeners();
-        setVersionCode();
+        setVersionName();
         setNetworkSwitcherVisibility();
         setCurrentNetwork(Networks.getInstance().getCurrentNetwork());
     }
 
     private void initCLickListeners() {
         this.activity.getBinding().closeButton.setOnClickListener(__ -> this.activity.finish());
-        this.activity.getBinding().currentNetwork.setOnClickListener(__ -> handleCurrentNetworkClicked());
+        this.activity.getBinding().currentNetworkWrapper.setOnClickListener(__ -> handleCurrentNetworkClicked());
         this.activity.getBinding().openSourceLicenses.setOnClickListener(this::handleOpenSourceLicencesClicked);
     }
 
@@ -94,9 +94,10 @@ public class AdvancedSettingsPresenter implements Presenter<AdvancedSettingsActi
         this.networkDialog.show(this.activity.getSupportFragmentManager(), NetworkSwitcherDialog.TAG);
     }
 
-    private void setVersionCode() {
+    private void setVersionName() {
         final String versionName = BuildConfig.VERSION_NAME;
-        this.activity.getBinding().version.setText(versionName);
+        final String appVersion = this.activity.getString(R.string.app_version, versionName);
+        this.activity.getBinding().version.setText(appVersion);
     }
 
     private void setNetworkSwitcherVisibility() {
