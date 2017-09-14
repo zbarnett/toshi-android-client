@@ -52,7 +52,7 @@
             android:layout_marginLeft="24dp"
             android:layout_marginRight="24dp"
             android:textSize="16sp"
-            android:textColor="@color/textColorPrimary"
+            android:textColor="@color/textColorSecondaryTransparent"
             tools:text="Do you want to send 2$ (0.001 ETH) to user1234?"/>
 
         <TextView
