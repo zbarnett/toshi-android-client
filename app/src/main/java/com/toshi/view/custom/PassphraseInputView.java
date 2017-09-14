@@ -25,6 +25,7 @@ import android.os.Parcelable;
 import android.support.annotation.ColorRes;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.util.Pair;
+import android.text.InputFilter;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.View;
@@ -284,14 +285,7 @@ public class PassphraseInputView extends FrameLayout {
                 .map(CharSequence::toString)
                 .publish();
 
-        final Subscription spaceSub =
-                textSource
-                .filter(__ -> this.currentCell <= 11)
-                .filter(this::isLastCharSpace)
-                .subscribe(
-                        __ -> goToNextCell(),
-                        throwable ->  LogUtil.e(getClass(), throwable.toString())
-                );
+        addSpaceHandler(et);
 
         final Subscription suggestionSub =
                 textSource
@@ -328,7 +322,6 @@ public class PassphraseInputView extends FrameLayout {
 
         final Subscription connectSub = textSource.connect();
         this.subscriptions.addAll(
-                spaceSub,
                 suggestionSub,
                 clearSuggestionSub,
                 errorMessageSub,
@@ -337,9 +330,22 @@ public class PassphraseInputView extends FrameLayout {
         );
     }
 
-    private boolean isLastCharSpace(final String string) {
-        if (string.length() == 0) return false;
-        return string.substring(string.length() - 1).equals(" ");
+    private void addSpaceHandler(EditText et) {
+        final InputFilter filter = (source, start, end, dest, dstart, dend) -> {
+            for (int i = start; i < end; i++) {
+                if (Character.isWhitespace(source.charAt(i))) {
+                    tryAddSuggestion();
+                    return "";
+                }
+            }
+            return null;
+        };
+        et.setFilters(new InputFilter[] { filter });
+    }
+
+    private void tryAddSuggestion() {
+        if (this.currentCell > 11) return;
+        goToNextCell();
     }
 
     private void goToNextCell() {
