@@ -298,36 +298,25 @@ public class PassphraseInputView extends FrameLayout {
                         throwable -> LogUtil.e(getClass(), throwable.toString())
                 );
 
-        final Subscription errorMessageSub =
+        final Subscription uiSub =
                 textSource
-                .filter(input -> input.length() > 0)
                 .subscribe(
-                        __ -> hideErrorMessage(),
+                        this::updateUi,
                         throwable ->  LogUtil.e(getClass(), throwable.toString())
-                );
-
-        final Subscription clearSuggestionSub =
-                textSource
-                .subscribe(
-                        this::clearSuggestion,
-                        throwable -> LogUtil.e(getClass(), throwable.toString())
-                );
-
-        final Subscription clearHintSub =
-                textSource
-                .subscribe(
-                        this::clearHint,
-                        throwable -> LogUtil.e(getClass(), throwable.toString())
                 );
 
         final Subscription connectSub = textSource.connect();
         this.subscriptions.addAll(
                 suggestionSub,
-                clearSuggestionSub,
-                errorMessageSub,
-                clearHintSub,
+                uiSub,
                 connectSub
         );
+    }
+
+    private void updateUi(final String input) {
+        hideErrorMessage();
+        clearSuggestion(input);
+        clearHint(input);
     }
 
     private void addSpaceHandler(EditText et) {
