@@ -1,27 +1,27 @@
 {
   "project_info": {
-    "project_number": "687802783603",
-    "firebase_url": "https://token-staging.firebaseio.com",
-    "project_id": "token-staging",
-    "storage_bucket": "token-staging.appspot.com"
+    "project_number": "584945004290",
+    "firebase_url": "https://toshi-debug-617c6.firebaseio.com",
+    "project_id": "toshi-debug-617c6",
+    "storage_bucket": "toshi-debug-617c6.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:687802783603:android:2e3b5d52175eef1d",
+        "mobilesdk_app_id": "1:584945004290:android:38dc511da4cc1148",
         "android_client_info": {
           "package_name": "org.toshi.debug"
         }
       },
       "oauth_client": [
         {
-          "client_id": "687802783603-5lhsek0l7tvg0q5kti4db2k68qipfhl6.apps.googleusercontent.com",
+          "client_id": "584945004290-hf1daoaman8lo63ffplkpt3cnuetkr3u.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyASiPPlgfsigCr639UgkeUa2upu5Za3w-4"
+          "current_key": "AIzaSyDav4kIfmw1cZSBUQa0EvDjS-3XvqXuU8w"
         }
       ],
       "services": {

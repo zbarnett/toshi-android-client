@@ -45,8 +45,8 @@ android {
             debuggable true
             minifyEnabled false
         }
-        beta {
-            applicationIdSuffix ".beta"
+        developer {
+            applicationIdSuffix ".developer"
             multiDexEnabled true
             minifyEnabled true
             shrinkResources true
