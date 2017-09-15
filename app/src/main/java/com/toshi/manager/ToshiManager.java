@@ -69,13 +69,14 @@ public class ToshiManager {
                         ex -> LogUtil.i(getClass(), "Early init failed."));
     }
 
-    public Single<ToshiManager> init() {
+    // Ignores any data that may be stored on disk and always creates a new wallet.
+    public Single<ToshiManager> initNewWallet() {
         if (this.wallet != null && this.areManagersInitialised) {
             return Single.just(this);
         }
 
         return new HDWallet()
-                .getOrCreateWallet()
+                .createWallet()
                 .doOnSuccess(this::setWallet)
                 .flatMap(__ -> initManagers())
                 .subscribeOn(Schedulers.from(this.singleExecutor));

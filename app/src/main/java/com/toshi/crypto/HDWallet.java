@@ -73,13 +73,10 @@ public class HDWallet {
         });
     }
 
-    public Single<HDWallet> getOrCreateWallet() {
+    // WARNING: This will delete any wallet stored on disk
+    public Single<HDWallet> createWallet() {
         return Single.fromCallable(() -> {
-            this.masterSeed = readMasterSeedFromStorage();
-            final Wallet wallet = this.masterSeed == null
-                    ? generateNewWallet()
-                    : initFromMasterSeed(this.masterSeed);
-
+            final Wallet wallet = generateNewWallet();
             deriveKeysFromWallet(wallet);
 
             return this;

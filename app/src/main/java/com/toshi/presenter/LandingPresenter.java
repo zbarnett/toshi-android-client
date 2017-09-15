@@ -85,7 +85,7 @@ public class LandingPresenter implements Presenter<LandingActivity> {
                 BaseApplication
                 .get()
                 .getToshiManager()
-                .init()
+                .initNewWallet()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
