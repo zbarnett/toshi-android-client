@@ -22,6 +22,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.view.View;
 
 import com.toshi.model.network.ReputationScore;
 import com.toshi.R;
@@ -52,6 +53,7 @@ public class RatingInfo extends RecyclerView {
     private void initRecyclerView() {
         this.setLayoutManager(new LinearLayoutManager(getContext()));
         this.setAdapter(new RatingInfoAdapter());
+        this.setOverScrollMode(View.OVER_SCROLL_NEVER);
     }
 
     public void setRatingInfo(final ReputationScore reputationScore) {
