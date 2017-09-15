@@ -48,7 +48,11 @@ public class LicenseListPresenter implements Presenter<LicenseListActivity> {
     private void initRecycleView() {
         final RecyclerView libraryList = this.activity.getBinding().libraryList;
         libraryList.setLayoutManager(new LinearLayoutManager(this.activity));
-        libraryList.addItemDecoration(new HorizontalLineDivider(ContextCompat.getColor(this.activity, R.color.divider)));
+        final int spacing = this.activity.getResources().getDimensionPixelSize(R.dimen.activity_horizontal_margin);
+        final HorizontalLineDivider divider = new HorizontalLineDivider(ContextCompat.getColor(this.activity, R.color.divider))
+                .setLeftPadding(spacing)
+                .setRightPadding(spacing);
+        libraryList.addItemDecoration(divider);
         final LibraryAdapter adapter = new LibraryAdapter(new ArrayList<>());
         libraryList.setAdapter(adapter);
         adapter.setOnItemClickListener(this::handleItemClicked);
