@@ -99,34 +99,24 @@
                     android:layout_marginRight="@dimen/activity_horizontal_margin"
                     android:background="@color/divider"/>
 
+                <android.support.v4.widget.Space
+                    android:layout_width="0dp"
+                    android:layout_height="16dp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:textSize="14sp"
+                    android:textColor="@color/textColorBody"
+                    android:text="@string/develop_message"/>
+
+                <android.support.v4.widget.Space
+                    android:layout_width="0dp"
+                    android:layout_height="29dp" />
+
             </LinearLayout>
-
-            <android.support.v4.widget.Space
-                android:layout_width="0dp"
-                android:layout_height="16dp" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:textSize="14sp"
-                android:textColor="@color/textColorBody"
-                android:text="@string/develop_message"/>
-
-            <android.support.v4.widget.Space
-                android:layout_width="0dp"
-                android:layout_height="29dp" />
-
-            <TextView
-                android:id="@+id/version"
-                android:layout_width="match_parent"
-                android:layout_height="54dp"
-                android:gravity="center_vertical"
-                android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:textColor="@color/textColorBody"
-                android:textSize="16sp"
-                tools:text="VersionName"/>
 
             <FrameLayout
                 android:id="@+id/open_source_licenses"
@@ -141,7 +131,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:textSize="16sp"
-                    android:textColor="@color/textColorBody"
+                    android:textColor="@color/textColorPrimary"
                     android:text="@string/about__licenses" />
 
                 <ImageView
@@ -151,6 +141,16 @@
                     app:srcCompat="@drawable/ic_chevron_right" />
 
             </FrameLayout>
+
+            <TextView
+                android:id="@+id/version"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:gravity="center_vertical"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:textColor="@color/textColorBody"
+                android:textSize="16sp"
+                tools:text="VersionName"/>
 
         </LinearLayout>
 
