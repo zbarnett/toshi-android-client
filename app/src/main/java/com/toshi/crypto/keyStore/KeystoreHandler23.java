@@ -45,7 +45,7 @@ import javax.crypto.spec.GCMParameterSpec;
 public class KeystoreHandler23 extends KeyStoreBase {
 
     private static final String TRANSFORMATION = "AES/GCM/NoPadding";
-    private String encryptionIv = "RandomThingg";
+    private String encryptionIv = "fixed_enc_iv";
 
     /*package */ KeystoreHandler23(final Context context, final String alias) throws KeyStoreException {
         super(context, alias);

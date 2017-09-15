@@ -46,7 +46,7 @@ import static com.toshi.crypto.util.HashUtil.sha3;
 
 public class HDWallet {
 
-    private static final String ALIAS = "SomeAlias";
+    private static final String ALIAS = "MasterSeedAlias";
     private static final String MASTER_SEED = "ms";
 
     private SharedPreferences prefs;
