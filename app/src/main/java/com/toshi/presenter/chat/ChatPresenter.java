@@ -244,7 +244,8 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
             return;
         }
 
-        final boolean isSameUser = user.getUsernameForEditing().equals(searchedForUsername);
+        if (user.getUsernameForEditing() == null) return;
+        final boolean isSameUser = user.getUsernameForEditing().toLowerCase().equals(searchedForUsername.toLowerCase());
 
         if (!isSameUser) {
             Toast.makeText(this.activity, this.activity.getString(R.string.username_search_response_no_match), Toast.LENGTH_SHORT).show();
