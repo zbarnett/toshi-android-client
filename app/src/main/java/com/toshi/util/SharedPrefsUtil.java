@@ -147,6 +147,7 @@ public class SharedPrefsUtil {
                 .putString(STORED_QR_CODE, null)
                 .putString(LOCAL_CURRENCY_CODE, null)
                 .putBoolean(WAS_MIGRATED, false)
+                .putBoolean(HAS_ONBOARDED, false)
                 .apply();
     }
 }
