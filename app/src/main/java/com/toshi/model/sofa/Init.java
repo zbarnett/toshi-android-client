@@ -38,4 +38,14 @@ public class Init {
 
         return this;
     }
+
+    public Init setPaymentAddress(final String paymentAddress) {
+        this.paymentAddress = paymentAddress;
+        return this;
+    }
+
+    public Init setLanguage(final String language) {
+        this.language = language;
+        return this;
+    }
 }
