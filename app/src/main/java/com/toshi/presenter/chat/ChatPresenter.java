@@ -984,7 +984,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     public void onDestroyed() {
         this.messageAdapter = null;
         stopListeningForMessageChanges();
-        ChatNotificationManager.stopNotificationSuppression();
+        ChatNotificationManager.stopNotificationSuppression(this.recipient.getThreadId());
         this.subscriptions = null;
         this.chatObservables = null;
         this.outgoingMessageQueue.clear();

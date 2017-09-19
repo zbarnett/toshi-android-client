@@ -59,8 +59,13 @@ public class ChatNotificationManager {
         activeNotifications.remove(notificationTag);
     }
 
-    public static void stopNotificationSuppression() {
-        currentlyOpenConversation = null;
+    public static void stopNotificationSuppression(final String conversationId) {
+        // By passing conversationId we ensure that a second activity
+        // doesn't accidentally get unsubscribed by the first activity
+        // being destroyed
+        if (conversationId.equals(currentlyOpenConversation)) {
+            currentlyOpenConversation = null;
+        }
     }
 
     public static void showNotification(final DecryptedSignalMessage signalMessage) {
