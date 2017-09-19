@@ -69,8 +69,13 @@ public class ConversationStore {
         return DELETED_MESSAGE_SUBJECT.asObservable();
     }
 
-    public void stopListeningForChanges() {
-        watchedThreadId = null;
+    public void stopListeningForChanges(final String threadId) {
+        // Avoids the race condition where a second activity has already registered
+        // before the first activity is destroyed. Thus the first activity can't deregister
+        // changes for the second activity.
+        if (watchedThreadId.equals(threadId)) {
+            watchedThreadId = null;
+        }
     }
 
     public Observable<Conversation> getConversationChangedObservable() {

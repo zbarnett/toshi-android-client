@@ -174,8 +174,8 @@ public final class SofaMessageManager {
         return this.conversationStore.registerForDeletedMessages(threadId);
     }
 
-    public final void stopListeningForChanges() {
-        this.conversationStore.stopListeningForChanges();
+    public final void stopListeningForChanges(final String threadId) {
+        this.conversationStore.stopListeningForChanges(threadId);
     }
 
     public final Single<Boolean> areUnreadMessages() {

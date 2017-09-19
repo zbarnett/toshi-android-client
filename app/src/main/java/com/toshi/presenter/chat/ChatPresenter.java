@@ -995,7 +995,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         BaseApplication
                 .get()
                 .getSofaMessageManager()
-                .stopListeningForChanges();
+                .stopListeningForChanges(this.recipient.getThreadId());
     }
 
     public void onSaveInstanceState(final Bundle outState) {
