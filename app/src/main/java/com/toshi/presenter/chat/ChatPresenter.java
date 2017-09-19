@@ -980,7 +980,6 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     public void onDestroyed() {
         this.messageAdapter = null;
         stopListeningForMessageChanges();
-        ChatNotificationManager.stopNotificationSuppression(this.recipient.getThreadId());
         this.subscriptions = null;
         this.chatObservables = null;
         this.outgoingMessageQueue.clear();
@@ -988,10 +987,13 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     }
 
     private void stopListeningForMessageChanges() {
+        if (this.recipient == null) return;
         BaseApplication
                 .get()
                 .getSofaMessageManager()
                 .stopListeningForChanges(this.recipient.getThreadId());
+
+        ChatNotificationManager.stopNotificationSuppression(this.recipient.getThreadId());
     }
 
     public void onSaveInstanceState(final Bundle outState) {
