@@ -727,14 +727,10 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     private void tryInitAppConversation() {
         if (this.recipient.isGroup() || !this.recipient.getUser().isApp()) return;
 
-        final Message message = new Message().setBody("");
-        final String messageBody = SofaAdapters.get().toJson(message);
-        final SofaMessage sofaMessage = new SofaMessage().makeNew(getCurrentLocalUser(), messageBody);
-
         BaseApplication
                 .get()
                 .getSofaMessageManager()
-                .sendMessage(this.recipient, sofaMessage);
+                .sendInitMessage(getCurrentLocalUser(), this.recipient);
     }
 
     private void initMessageObservables() {
