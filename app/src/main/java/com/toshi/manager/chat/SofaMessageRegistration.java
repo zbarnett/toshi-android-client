@@ -27,9 +27,6 @@ import com.toshi.manager.network.IdService;
 import com.toshi.model.local.Recipient;
 import com.toshi.model.local.User;
 import com.toshi.model.network.UserSearchResults;
-import com.toshi.model.sofa.Message;
-import com.toshi.model.sofa.SofaAdapters;
-import com.toshi.model.sofa.SofaMessage;
 import com.toshi.service.RegistrationIntentService;
 import com.toshi.util.LogUtil;
 import com.toshi.util.SharedPrefsUtil;
@@ -150,10 +147,9 @@ public class SofaMessageRegistration {
                 .get()
                 .getUserManager()
                 .getCurrentUser()
-                .map(this::generateOnboardingMessage)
                 .doOnSuccess(__ -> SharedPrefsUtil.setHasOnboarded())
                 .subscribe(
-                        onboardingMessage -> this.sendOnboardingMessage(onboardingMessage, new Recipient(onboardingBot)),
+                        currentUser -> this.sendOnboardingMessage(currentUser, new Recipient(onboardingBot)),
                         this::handleOnboardingBotError
                 );
     }
@@ -162,16 +158,10 @@ public class SofaMessageRegistration {
         LogUtil.exception(getClass(), "Error during sending onboarding message to bot", throwable);
     }
 
-    private void sendOnboardingMessage(final SofaMessage onboardingMessage, final Recipient onboardingBot) {
+    private void sendOnboardingMessage(final User sender, final Recipient onboardingBot) {
         BaseApplication
                 .get()
                 .getSofaMessageManager()
-                .sendMessage(onboardingBot, onboardingMessage);
-    }
-
-    private SofaMessage generateOnboardingMessage(final User localUser) {
-        final Message sofaMessage = new Message().setBody("");
-        final String messageBody = SofaAdapters.get().toJson(sofaMessage);
-        return new SofaMessage().makeNew(localUser, messageBody);
+                .sendInitMessage(sender, onboardingBot);
     }
 }
