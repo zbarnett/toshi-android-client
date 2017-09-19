@@ -101,9 +101,9 @@ public class AdvancedSettingsPresenter implements Presenter<AdvancedSettingsActi
     }
 
     private void setNetworkSwitcherVisibility() {
-        final int visibility = BuildConfig.BUILD_TYPE.equals(BuildTypes.RELEASE)
-                ? View.GONE
-                : View.VISIBLE;
+        final int visibility = BuildConfig.BUILD_TYPE.equals(BuildTypes.DEBUG)
+                ? View.VISIBLE
+                : View.GONE;
         this.activity.getBinding().networkSwitcherWrapper.setVisibility(visibility);
     }
 

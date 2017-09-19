@@ -282,10 +282,10 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     }
 
     private void initNetworkView() {
-        final boolean isReleaseBuild = BuildConfig.BUILD_TYPE.equals(BuildTypes.RELEASE);
-        this.activity.getBinding().network.setVisibility(isReleaseBuild ? View.GONE : View.VISIBLE);
+        final boolean showNetwork = BuildConfig.BUILD_TYPE.equals(BuildTypes.DEBUG);
+        this.activity.getBinding().network.setVisibility(showNetwork ? View.VISIBLE : View.GONE);
 
-        if (!isReleaseBuild) {
+        if (showNetwork) {
             final Network network = Networks.getInstance().getCurrentNetwork();
             this.activity.getBinding().network.setText(network.getName());
         }
