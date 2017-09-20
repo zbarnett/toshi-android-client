@@ -179,6 +179,7 @@ public class ConversationStore {
 
     private boolean shouldSaveTimestampMessage(final SofaMessage message,
                                                final Conversation conversation) {
+        if (!message.isUserVisible()) return false;
         final long newMessageTimestamp = message.getCreationTime();
         final long latestMessageTimestamp = conversation.getUpdatedTime();
         return newMessageTimestamp - latestMessageTimestamp > FIFTEEN_MINUTES;

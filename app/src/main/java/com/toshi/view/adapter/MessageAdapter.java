@@ -101,12 +101,6 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
         return this;
     }
 
-    private boolean shouldShowChatMessage(final SofaMessage sofaMessage) {
-        return sofaMessage.getType() != SofaType.UNKNOWN
-                && sofaMessage.getType() != SofaType.INIT
-                && sofaMessage.getType() != SofaType.INIT_REQUEST;
-    }
-
     public MessageAdapter setMessages(final List<SofaMessage> messages) {
         final List<SofaMessage> messagesToAdd = messages == null
                 ? new ArrayList<>(0)
@@ -130,7 +124,7 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     private void addMessage(final SofaMessage sofaMessage) {
-        if (!shouldShowChatMessage(sofaMessage)) return;
+        if (sofaMessage == null || !sofaMessage.isUserVisible()) return;
         this.sofaMessages.add(sofaMessage);
         notifyItemInserted(this.sofaMessages.size() - 1);
         if (this.sofaMessages.size() > 1) {
@@ -140,7 +134,7 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     public final void updateMessage(final SofaMessage sofaMessage) {
-        if (!shouldShowChatMessage(sofaMessage)) return;
+        if (sofaMessage == null || !sofaMessage.isUserVisible()) return;
         final int position = this.sofaMessages.indexOf(sofaMessage);
         if (position == -1) {
             addMessage(sofaMessage);
@@ -152,7 +146,7 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     public final void deleteMessage(final SofaMessage sofaMessage) {
-        if (!shouldShowChatMessage(sofaMessage)) return;
+        if (sofaMessage == null || !sofaMessage.isUserVisible()) return;
         final int position = this.sofaMessages.indexOf(sofaMessage);
         if (position == -1) return;
         this.sofaMessages.remove(position);

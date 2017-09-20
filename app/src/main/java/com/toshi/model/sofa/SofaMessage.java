@@ -195,6 +195,12 @@ public class SofaMessage extends RealmObject {
         }
     }
 
+    public boolean isUserVisible() {
+        return this.type != SofaType.UNKNOWN
+                && this.type  != SofaType.INIT
+                && this.type  != SofaType.INIT_REQUEST;
+    }
+
     @Override
     public boolean equals(Object other){
         if (other == null) return false;
