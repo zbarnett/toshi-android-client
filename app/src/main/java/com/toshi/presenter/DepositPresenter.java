@@ -29,9 +29,9 @@ import android.widget.Toast;
 
 import com.toshi.BuildConfig;
 import com.toshi.R;
+import com.toshi.crypto.HDWallet;
 import com.toshi.model.local.Network;
 import com.toshi.model.local.Networks;
-import com.toshi.model.local.User;
 import com.toshi.util.BuildTypes;
 import com.toshi.util.DialogUtil;
 import com.toshi.util.LogUtil;
@@ -49,7 +49,7 @@ import rx.subscriptions.CompositeSubscription;
 public class DepositPresenter implements Presenter<DepositActivity> {
 
     private DepositActivity activity;
-    private User localUser;
+    private HDWallet wallet;
     private CompositeSubscription subscriptions;
     private boolean firstTimeAttaching = true;
     private AlertDialog warningDialog;
@@ -122,7 +122,7 @@ public class DepositPresenter implements Presenter<DepositActivity> {
 
     private void handleCopyToClipboardClicked(final View v) {
         final ClipboardManager clipboard = (ClipboardManager) this.activity.getSystemService(Context.CLIPBOARD_SERVICE);
-        final ClipData clip = ClipData.newPlainText(this.activity.getString(R.string.payment_address), this.localUser.getPaymentAddress());
+        final ClipData clip = ClipData.newPlainText(this.activity.getString(R.string.payment_address), this.wallet.getPaymentAddress());
         clipboard.setPrimaryClip(clip);
         Toast.makeText(this.activity, this.activity.getString(R.string.copied_to_clipboard), Toast.LENGTH_SHORT).show();
     }
@@ -130,37 +130,37 @@ public class DepositPresenter implements Presenter<DepositActivity> {
     private void attachListeners() {
         final Subscription sub =
                 BaseApplication.get()
-                .getUserManager()
-                .getCurrentUser()
+                .getToshiManager()
+                .getWallet()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        this::handleUserCallback,
-                        this::handleUserError
+                        this::handleWalletCallback,
+                        this::handleWalletError
                 );
 
         this.subscriptions.add(sub);
     }
 
-    private void handleUserError(final Throwable throwable) {
-        LogUtil.exception(getClass(), "Error while fetching current user", throwable);
+    private void handleWalletError(final Throwable throwable) {
+        LogUtil.exception(getClass(), "Error while fetching wallet", throwable);
     }
 
-    private void handleUserCallback(final User user) {
-        this.localUser = user;
+    private void handleWalletCallback(final HDWallet wallet) {
+        this.wallet = wallet;
         updateView();
     }
 
     private void updateView() {
-        if (this.localUser == null || this.activity == null) return;
-        this.activity.getBinding().ownerAddress.setText(this.localUser.getPaymentAddress());
+        if (this.wallet == null || this.activity == null) return;
+        this.activity.getBinding().ownerAddress.setText(this.wallet.getPaymentAddress());
         this.activity.getBinding().copyToClipboard.setEnabled(true);
         generateQrCode();
     }
 
     private void generateQrCode() {
         final Subscription sub =
-                QrCode.generatePaymentAddressQrCode(this.localUser.getPaymentAddress())
+                QrCode.generatePaymentAddressQrCode(this.wallet.getPaymentAddress())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
