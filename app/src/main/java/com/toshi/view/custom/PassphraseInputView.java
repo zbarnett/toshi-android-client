@@ -189,8 +189,8 @@ public class PassphraseInputView extends FrameLayout {
         final ClipData clipData = clipboard.getPrimaryClip();
         final String clip = clipData.getItemAt(0).getText().toString();
         final List<String> wordList = Arrays.asList(clip.split(" "));
-        if (wordList.size() != 12) {
-            showErrorMessage(getContext().getString(R.string.passphrase_must_be_12_words));
+        if (wordList.size() > 12) {
+            showErrorMessage(getContext().getString(R.string.paste_passphrase_error));
             return false;
         }
         pastePassphrase(wordList);
