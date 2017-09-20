@@ -147,6 +147,10 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
         }
 
         private void loadUrlFromAddress(final String address) {
+            if (sofaInjector == null) {
+                onError(new Throwable("SofaInjector is null"));
+                return;
+            }
             final Subscription sub = sofaInjector.loadUrl(address)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
