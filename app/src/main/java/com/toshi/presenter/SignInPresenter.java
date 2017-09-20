@@ -106,6 +106,7 @@ public class SignInPresenter implements Presenter<SignInActivity> {
     }
 
     private void updateSignInButton(final int approvedWords) {
+        if (this.activity == null) return;
         final int wordsLeft = PASSPHRASE_LENGTH - approvedWords;
         if (wordsLeft > 0) {
             final String wordsLeftString = this.activity.getResources().getQuantityString(R.plurals.words, wordsLeft, wordsLeft);
