@@ -572,7 +572,6 @@ public class PassphraseInputView extends FrameLayout {
     public void pastePassphrase(final List<String> wordList) {
         initPassphraseList();
         this.passphraseList.clear();
-        findViewById(R.id.hint).setVisibility(GONE);
 
         final Subscription sub =
                 validatePastedPassphrase(wordList)
@@ -602,6 +601,7 @@ public class PassphraseInputView extends FrameLayout {
     }
 
     private void addValidatedPassphraseToView(final List<Pair<Boolean, String>> validatedPassphrase) {
+        if (validatedPassphrase.size() == 0) return;
         final FlexboxLayout wrapper = findViewById(R.id.wrapper);
         for (int i = 0; i < validatedPassphrase.size(); i++) {
             final SuggestionInputView inputView = (SuggestionInputView) wrapper.getChildAt(i);
@@ -619,6 +619,7 @@ public class PassphraseInputView extends FrameLayout {
 
         checkIfPassphraseIsApproved();
         this.currentCell = validatedPassphrase.size() - 1;
+        findViewById(R.id.hint).setVisibility(GONE);
     }
 
     @Override
