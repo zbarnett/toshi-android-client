@@ -32,7 +32,7 @@ public class SharedPrefsUtil {
     private static final String HAS_LOADED_APP_FIRST_TIME = "hasLoadedAppFirstTime";
     private static final String LOCAL_CURRENCY_CODE = "localCurrencyCode";
     private static final String WAS_MIGRATED = "wasMigrated";
-    private static final String FORCE_USER_UPDATE = "forceUserUpdate";
+    private static final String FORCE_USER_UPDATE = "forceUserUpdate_2";
     private static final String CURRENT_NETWORK = "currentNetwork";
 
     public static boolean hasOnboarded() {

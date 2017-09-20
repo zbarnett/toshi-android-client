@@ -174,11 +174,11 @@ public class UserManager {
 
     private void forceUpdateUser() {
         final UserDetails ud = new UserDetails().setPaymentAddress(this.wallet.getPaymentAddress());
-        updateUser(ud).subscribe(
-                __ -> {},
+        updateUser(ud)
+                .subscribe(
+                __ -> SharedPrefsUtil.setForceUserUpdate(false),
                 this::handleUserError
         );
-        SharedPrefsUtil.setForceUserUpdate(false);
     }
 
     public Single<User> updateUser(final UserDetails userDetails) {
