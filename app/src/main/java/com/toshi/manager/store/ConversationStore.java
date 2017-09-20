@@ -73,7 +73,7 @@ public class ConversationStore {
         // Avoids the race condition where a second activity has already registered
         // before the first activity is destroyed. Thus the first activity can't deregister
         // changes for the second activity.
-        if (watchedThreadId.equals(threadId)) {
+        if (watchedThreadId != null && watchedThreadId.equals(threadId)) {
             watchedThreadId = null;
         }
     }
