@@ -21,6 +21,7 @@ package com.toshi.manager.chat;
 import com.toshi.crypto.signal.ChatService;
 import com.toshi.crypto.signal.SignalPreferences;
 import com.toshi.crypto.signal.store.ProtocolStore;
+import com.toshi.manager.OnboardingManager;
 import com.toshi.util.GcmPrefsUtil;
 import com.toshi.util.GcmUtil;
 import com.toshi.util.LogUtil;
@@ -56,6 +57,15 @@ public class SofaMessageRegistration {
         } else {
             return registerChatGcm();
         }
+    }
+
+    public Completable registerIfNeededWithOnboarding() {
+        if (SignalPreferences.getRegisteredWithServer()) return Completable.complete();
+        return this.chatService
+                .registerKeys(this.protocolStore)
+                .andThen(setRegisteredWithServer())
+                .andThen(registerChatGcm())
+                .andThen(new OnboardingManager().tryTriggerOnboarding());
     }
 
     private Completable setRegisteredWithServer() {

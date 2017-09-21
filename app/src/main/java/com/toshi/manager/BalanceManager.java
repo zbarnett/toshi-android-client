@@ -73,9 +73,9 @@ public class BalanceManager {
         this.networks = Networks.getInstance();
         initPrefs();
         initCachedBalance();
-        attachConnectivityObserver();
         return registerEthGcm()
-                .onErrorComplete();
+                .onErrorComplete()
+                .doOnCompleted(this::attachConnectivityObserver);
     }
 
     private void initPrefs() {
@@ -93,18 +93,25 @@ public class BalanceManager {
                 .isConnectedSubject()
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
+                .filter(isConnected -> isConnected)
                 .subscribe(
-                        __ -> this.refreshBalance(),
-                        this::handleConnectionStateError
+                        __ -> handleConnectivity(),
+                        throwable -> LogUtil.exception(getClass(), "Error checking connection state", throwable)
                 );
     }
 
-    private void handleConnectionStateError(final Throwable throwable) {
-        LogUtil.exception(getClass(), "Error checking connection state", throwable);
+    private void handleConnectivity() {
+        refreshBalance();
+        registerEthGcm()
+                .subscribeOn(Schedulers.io())
+                .subscribe(
+                        () -> {},
+                        throwable -> LogUtil.e(getClass(), "Error while registering eth gcm " + throwable)
+                );
     }
 
     public void refreshBalance() {
-            EthereumService
+        EthereumService
                 .getApi()
                 .getBalance(this.wallet.getPaymentAddress())
                 .subscribeOn(Schedulers.io())
@@ -274,15 +281,15 @@ public class BalanceManager {
     }
 
     private Completable registerEthGcm() {
+        final String currentNetworkId = this.networks.getCurrentNetwork().getId();
+        if (GcmPrefsUtil.isEthGcmTokenSentToServer(currentNetworkId)) return Completable.complete();
+
         return GcmUtil
                 .getGcmToken()
                 .flatMapCompletable(this::registerEthGcmToken);
     }
 
     private Completable registerEthGcmToken(final String token) {
-        final String currentNetworkId = this.networks.getCurrentNetwork().getId();
-        if (GcmPrefsUtil.isEthGcmTokenSentToServer(currentNetworkId)) return Completable.complete();
-
         return EthereumService
                 .getApi()
                 .getTimestamp()
