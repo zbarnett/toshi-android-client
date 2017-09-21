@@ -19,7 +19,6 @@ package com.toshi.manager;
 
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 
 import com.toshi.crypto.HDWallet;
@@ -34,9 +33,9 @@ import com.toshi.model.network.GcmDeregistration;
 import com.toshi.model.network.GcmRegistration;
 import com.toshi.model.network.ServerTime;
 import com.toshi.model.sofa.Payment;
-import com.toshi.service.RegistrationIntentService;
 import com.toshi.util.CurrencyUtil;
 import com.toshi.util.FileNames;
+import com.toshi.util.GcmPrefsUtil;
 import com.toshi.util.GcmUtil;
 import com.toshi.util.LogUtil;
 import com.toshi.util.SharedPrefsUtil;
@@ -48,6 +47,7 @@ import java.text.DecimalFormat;
 
 import rx.Completable;
 import rx.Single;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subjects.BehaviorSubject;
@@ -59,6 +59,7 @@ public class BalanceManager {
 
     private HDWallet wallet;
     private SharedPreferences prefs;
+    private Networks networks;
 
     /* package */ BalanceManager() {
     }
@@ -67,15 +68,21 @@ public class BalanceManager {
         return balanceObservable;
     }
 
-    public BalanceManager init(final HDWallet wallet) {
+    public Completable init(final HDWallet wallet) {
         this.wallet = wallet;
+        this.networks = Networks.getInstance();
+        initPrefs();
         initCachedBalance();
         attachConnectivityObserver();
-        return this;
+        return registerEthGcm()
+                .onErrorComplete();
+    }
+
+    private void initPrefs() {
+        this.prefs = BaseApplication.get().getSharedPreferences(FileNames.BALANCE_PREFS, Context.MODE_PRIVATE);
     }
 
     private void initCachedBalance() {
-        this.prefs = BaseApplication.get().getSharedPreferences(FileNames.BALANCE_PREFS, Context.MODE_PRIVATE);
         final Balance cachedBalance = new Balance(readLastKnownBalance());
         handleNewBalance(cachedBalance);
     }
@@ -199,34 +206,7 @@ public class BalanceManager {
         });
     }
 
-    public Single<Void> registerForGcm(final String token) {
-        return EthereumService
-                .getApi()
-                .getTimestamp()
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .flatMap((st) -> registerForGcmWithTimestamp(token, st));
-    }
-
-    public Completable unregisterFromGcm(final String token) {
-        return EthereumService
-                .getApi()
-                .getTimestamp()
-                .subscribeOn(Schedulers.io())
-                .flatMapCompletable((st) -> unregisterGcmWithTimestamp(token, st));
-    }
-
-    private Single<Void> registerForGcmWithTimestamp(final String token, final ServerTime serverTime) {
-        if (serverTime == null) {
-            throw new IllegalStateException("ServerTime was null");
-        }
-
-        return EthereumService
-                .getApi()
-                .registerGcm(serverTime.get(), new GcmRegistration(token, wallet.getPaymentAddress()));
-    }
-
-    private Completable unregisterGcmWithTimestamp(final String token, final ServerTime serverTime) {
+    private Completable unregisterEthGcmWithTimestamp(final String token, final ServerTime serverTime) {
         if (serverTime == null) {
             return Completable.error(new IllegalStateException("Unable to fetch server time"));
         }
@@ -257,41 +237,82 @@ public class BalanceManager {
 
     //Don't unregister the default network
     public Completable changeNetwork(final Network network) {
-        if (Networks.getInstance().onDefaultNetwork()) {
+        if (this.networks.onDefaultNetwork()) {
             return changeEthBaseUrl(network)
                     .andThen(registerEthGcm())
                     .subscribeOn(Schedulers.io())
                     .doOnCompleted(() -> SharedPrefsUtil.setCurrentNetwork(network));
         }
 
-        return unregisterEthGcm()
+        return GcmUtil
+                .getGcmToken()
+                .flatMapCompletable(this::unregisterFromEthGcm)
                 .andThen(changeEthBaseUrl(network))
                 .andThen(registerEthGcm())
                 .subscribeOn(Schedulers.io())
                 .doOnCompleted(() -> SharedPrefsUtil.setCurrentNetwork(network));
     }
 
-    private Completable registerEthGcm() {
-        return Completable.fromAction(() -> {
-            final Intent intent = new Intent(BaseApplication.get(), RegistrationIntentService.class)
-                    .putExtra(RegistrationIntentService.FORCE_UPDATE, true)
-                    .putExtra(RegistrationIntentService.ETH_REGISTRATION_ONLY, true);
-            BaseApplication.get().startService(intent);
-        });
-    }
-
-    private Completable unregisterEthGcm() {
-        return GcmUtil
-                .getGcmToken()
-                .flatMapCompletable(token ->
-                        BaseApplication
-                        .get()
-                        .getBalanceManager()
-                        .unregisterFromGcm(token));
+    public Completable unregisterFromEthGcm(final String token) {
+        final String currentNetworkId = this.networks.getCurrentNetwork().getId();
+        return EthereumService
+                .getApi()
+                .getTimestamp()
+                .subscribeOn(Schedulers.io())
+                .flatMapCompletable((st) -> unregisterEthGcmWithTimestamp(token, st))
+                .doOnCompleted(() -> GcmPrefsUtil.setEthGcmTokenSentToServer(currentNetworkId, false));
     }
 
     private Completable changeEthBaseUrl(final Network network) {
         return Completable.fromAction(() -> EthereumService.get().changeBaseUrl(network.getUrl()));
+    }
+
+    public Completable forceRegisterEthGcm() {
+        final String currentNetworkId = this.networks.getCurrentNetwork().getId();
+        GcmPrefsUtil.setEthGcmTokenSentToServer(currentNetworkId, false);
+        return registerEthGcm();
+    }
+
+    private Completable registerEthGcm() {
+        return GcmUtil
+                .getGcmToken()
+                .flatMapCompletable(this::registerEthGcmToken);
+    }
+
+    private Completable registerEthGcmToken(final String token) {
+        final String currentNetworkId = this.networks.getCurrentNetwork().getId();
+        if (GcmPrefsUtil.isEthGcmTokenSentToServer(currentNetworkId)) return Completable.complete();
+
+        return EthereumService
+                .getApi()
+                .getTimestamp()
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .flatMapCompletable((st) -> registerEthGcmWithTimestamp(token, st))
+                .doOnCompleted(this::setEthGcmTokenSentToServer)
+                .doOnError(this::handleGcmRegisterError);
+    }
+
+    private void setEthGcmTokenSentToServer() {
+        final String currentNetworkId = this.networks.getCurrentNetwork().getId();
+        GcmPrefsUtil.setEthGcmTokenSentToServer(currentNetworkId, true);
+    }
+
+    private Completable registerEthGcmWithTimestamp(final String token, final ServerTime serverTime) {
+        if (serverTime == null) {
+            throw new IllegalStateException("ServerTime was null");
+        }
+
+        return EthereumService
+                .getApi()
+                .registerGcm(serverTime.get(), new GcmRegistration(token, this.wallet.getPaymentAddress()))
+                .toCompletable();
+    }
+
+    private void handleGcmRegisterError(final Throwable throwable) {
+        LogUtil.exception(getClass(), "Error during registering of GCM " + throwable.getMessage());
+        final String currentNetworkId = this.networks.getCurrentNetwork().getId();
+        GcmPrefsUtil.setEthGcmTokenSentToServer(currentNetworkId, false);
     }
 
     public void clear() {

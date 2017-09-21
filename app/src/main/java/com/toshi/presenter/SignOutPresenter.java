@@ -71,7 +71,7 @@ public class SignOutPresenter implements Presenter<SignOutActivity> {
                 .flatMapCompletable(token -> BaseApplication
                         .get()
                         .getBalanceManager()
-                        .unregisterFromGcm(token));
+                        .unregisterFromEthGcm(token));
     }
 
     private void clearUserDataAndLogOut() {
