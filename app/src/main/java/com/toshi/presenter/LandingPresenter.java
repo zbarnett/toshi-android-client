@@ -19,17 +19,23 @@ package com.toshi.presenter;
 
 import android.content.Intent;
 import android.support.annotation.StringRes;
+import android.support.v4.app.TaskStackBuilder;
 import android.view.View;
 import android.widget.Toast;
 
 import com.toshi.R;
+import com.toshi.manager.OnboardingManager;
+import com.toshi.model.local.Conversation;
 import com.toshi.util.LogUtil;
 import com.toshi.util.SharedPrefsUtil;
 import com.toshi.util.TermsDialog;
 import com.toshi.view.BaseApplication;
+import com.toshi.view.activity.ChatActivity;
 import com.toshi.view.activity.LandingActivity;
 import com.toshi.view.activity.MainActivity;
 import com.toshi.view.activity.SignInActivity;
+
+import java.util.concurrent.TimeUnit;
 
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -87,9 +93,8 @@ public class LandingPresenter implements Presenter<LandingActivity> {
                 .getToshiManager()
                 .initNewWallet()
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        this::handleWalletSuccess,
+                        this::startListeningToBotConversation,
                         this::handleWalletError
                 );
 
@@ -101,22 +106,70 @@ public class LandingPresenter implements Presenter<LandingActivity> {
         this.activity.getBinding().loadingSpinner.setVisibility(View.VISIBLE);
     }
 
-    private void handleWalletSuccess() {
-        stopLoadingTask();
-        goToMainActivity();
-    }
-
-    private void goToMainActivity() {
-        SharedPrefsUtil.setSignedIn();
-        final Intent intent = new Intent(this.activity, MainActivity.class);
-        this.activity.startActivity(intent);
-        this.activity.finish();
-    }
-
     private void handleWalletError(final Throwable throwable) {
         LogUtil.exception(getClass(), "Error while creating new wallet", throwable);
         stopLoadingTask();
         showToast(R.string.unable_to_create_wallet);
+    }
+
+    private void startListeningToBotConversation() {
+        final Subscription sub =
+                BaseApplication
+                .get()
+                .getSofaMessageManager()
+                .registerForAllConversationChanges()
+                .filter(this::isOnboardingBot)
+                .first()
+                .timeout(10, TimeUnit.SECONDS)
+                .map(conversation -> conversation.getRecipient().getUser().getToshiId())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        this::handleOnboardingSuccess,
+                        __ -> handleOnboardingError()
+                );
+
+        this.subscriptions.add(sub);
+    }
+
+    private boolean isOnboardingBot(final Conversation conversation) {
+        return conversation.getRecipient().getUser().getUsernameForEditing().equals(OnboardingManager.ONBOARDING_BOT_NAME);
+    }
+
+    private void handleOnboardingSuccess(final String onboardingBotId) {
+        stopLoadingTask();
+        goToChatActivity(onboardingBotId);
+    }
+
+    private void goToChatActivity(final String onboardingBotId) {
+        SharedPrefsUtil.setSignedIn();
+
+        final Intent mainIntent = new Intent(this.activity, MainActivity.class)
+                .putExtra(MainActivity.EXTRA__ACTIVE_TAB, 1);
+
+        final Intent chatIntent = new Intent(this.activity, ChatActivity.class)
+                .putExtra(ChatActivity.EXTRA__THREAD_ID, onboardingBotId)
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        final TaskStackBuilder nextIntent = TaskStackBuilder.create(this.activity)
+                .addParentStack(MainActivity.class)
+                .addNextIntent(mainIntent)
+                .addNextIntent(chatIntent);
+
+        this.activity.startActivities(nextIntent.getIntents());
+        this.activity.finish();
+    }
+
+    private void handleOnboardingError() {
+        stopLoadingTask();
+        SharedPrefsUtil.setSignedIn();
+        goToMainActivity();
+    }
+
+    private void goToMainActivity() {
+        final Intent intent = new Intent(this.activity, MainActivity.class);
+        this.activity.startActivity(intent);
+        this.activity.finish();
     }
 
     private void stopLoadingTask() {

@@ -21,15 +21,9 @@ package com.toshi.manager.chat;
 import com.toshi.crypto.signal.ChatService;
 import com.toshi.crypto.signal.SignalPreferences;
 import com.toshi.crypto.signal.store.ProtocolStore;
-import com.toshi.manager.network.IdService;
-import com.toshi.model.local.Recipient;
-import com.toshi.model.local.User;
-import com.toshi.model.network.UserSearchResults;
 import com.toshi.util.GcmPrefsUtil;
 import com.toshi.util.GcmUtil;
 import com.toshi.util.LogUtil;
-import com.toshi.util.SharedPrefsUtil;
-import com.toshi.view.BaseApplication;
 
 import org.whispersystems.libsignal.util.guava.Optional;
 
@@ -39,8 +33,6 @@ import rx.Completable;
 import rx.schedulers.Schedulers;
 
 public class SofaMessageRegistration {
-
-    private static final String ONBOARDING_BOT_NAME = "ToshiBot";
 
     private final ChatService chatService;
     private final ProtocolStore protocolStore;
@@ -59,8 +51,8 @@ public class SofaMessageRegistration {
             return this.chatService
                     .registerKeys(this.protocolStore)
                     .andThen(setRegisteredWithServer())
-                    .andThen(forceRegisterChatGcm())
-                    .doOnCompleted(this::tryTriggerOnboarding);
+                    .andThen(registerChatGcm())
+                    .andThen(new OnboardingManager().tryTriggerOnboarding());
         } else {
             return registerChatGcm();
         }
@@ -107,47 +99,6 @@ public class SofaMessageRegistration {
             }
         })
         .subscribeOn(Schedulers.io());
-    }
-
-    private void tryTriggerOnboarding() {
-        if (SharedPrefsUtil.hasOnboarded()) return;
-
-        IdService.getApi()
-                .searchByUsername(ONBOARDING_BOT_NAME)
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .map(UserSearchResults::getResults)
-                .toObservable()
-                .flatMapIterable(users -> users)
-                .filter(user -> user.getUsernameForEditing().equals(ONBOARDING_BOT_NAME))
-                .toSingle()
-                .subscribe(
-                        this::sendOnboardingMessageToOnboardingBot,
-                        this::handleOnboardingBotError
-                );
-    }
-
-    private void sendOnboardingMessageToOnboardingBot(final User onboardingBot) {
-        BaseApplication
-                .get()
-                .getUserManager()
-                .getCurrentUser()
-                .doOnSuccess(__ -> SharedPrefsUtil.setHasOnboarded(true))
-                .subscribe(
-                        currentUser -> this.sendOnboardingMessage(currentUser, new Recipient(onboardingBot)),
-                        this::handleOnboardingBotError
-                );
-    }
-
-    private void handleOnboardingBotError(final Throwable throwable) {
-        LogUtil.exception(getClass(), "Error during sending onboarding message to bot", throwable);
-    }
-
-    private void sendOnboardingMessage(final User sender, final Recipient onboardingBot) {
-        BaseApplication
-                .get()
-                .getSofaMessageManager()
-                .sendInitMessage(sender, onboardingBot);
     }
 
     public void clear() {
