@@ -47,8 +47,6 @@ public class InstanceIdService extends InstanceIDListenerService {
     @Override
     public void onTokenRefresh() {
         LogUtil.d(getClass(), "onTokenRefresh");
-        final Intent intent = new Intent(this, RegistrationIntentService.class);
-        intent.putExtra(RegistrationIntentService.FORCE_UPDATE, true);
-        startService(intent);
+        startService(new Intent(this, RegistrationIntentService.class));
     }
 }

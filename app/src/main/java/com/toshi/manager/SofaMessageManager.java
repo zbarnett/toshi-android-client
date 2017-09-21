@@ -18,8 +18,6 @@
 package com.toshi.manager;
 
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.util.Pair;
 
 import com.toshi.BuildConfig;
@@ -42,7 +40,7 @@ import com.toshi.model.local.User;
 import com.toshi.model.sofa.Init;
 import com.toshi.model.sofa.SofaAdapters;
 import com.toshi.model.sofa.SofaMessage;
-import com.toshi.util.FileNames;
+import com.toshi.util.GcmPrefsUtil;
 import com.toshi.util.LocaleUtil;
 import com.toshi.view.BaseApplication;
 
@@ -61,7 +59,6 @@ import rx.subscriptions.CompositeSubscription;
 public final class SofaMessageManager {
     private final ConversationStore conversationStore;
 
-    private final SharedPreferences sharedPreferences;
     private final SignalServiceUrl[] signalServiceUrls;
     private final CompositeSubscription subscriptions;
     private final String userAgent;
@@ -77,7 +74,6 @@ public final class SofaMessageManager {
         this.conversationStore = new ConversationStore();
         this.userAgent = "Android " + BuildConfig.APPLICATION_ID + " - " + BuildConfig.VERSION_NAME +  ":" + BuildConfig.VERSION_CODE;
         this.signalServiceUrls = new SignalServiceUrl[1];
-        this.sharedPreferences = BaseApplication.get().getSharedPreferences(FileNames.GCM_PREFS, Context.MODE_PRIVATE);
         this.subscriptions = new CompositeSubscription();
     }
 
@@ -236,7 +232,7 @@ public final class SofaMessageManager {
 
     private Completable initRegistrationTask() {
         if (this.sofaGcmRegister != null) return Completable.complete();
-        this.sofaGcmRegister = new SofaMessageRegistration(this.sharedPreferences, this.chatService, this.protocolStore);
+        this.sofaGcmRegister = new SofaMessageRegistration(this.chatService, this.protocolStore);
         return this.sofaGcmRegister
                 .registerIfNeeded()
                 .doOnCompleted(this::handleRegistrationCompleted);
@@ -254,11 +250,11 @@ public final class SofaMessageManager {
         return this.sofaGcmRegister.tryUnregisterGcm();
     }
 
-    public Completable registerChatGcm() {
+    public Completable forceRegisterChatGcm() {
         if (this.sofaGcmRegister == null) {
             return Completable.error(new NullPointerException("Unable to register as class hasn't been initialised yet."));
         }
-        return this.sofaGcmRegister.registerChatGcm();
+        return this.sofaGcmRegister.forceRegisterChatGcm();
     }
 
     public void resendPendingMessage(final SofaMessage sofaMessage) {
@@ -282,10 +278,7 @@ public final class SofaMessageManager {
         clearGcmRegistration();
         clearSubscriptions();
         this.protocolStore.deleteAllSessions();
-        this.sharedPreferences
-                .edit()
-                .clear()
-                .apply();
+        GcmPrefsUtil.clear();
     }
 
     private void clearMessageReceiver() {
@@ -303,7 +296,10 @@ public final class SofaMessageManager {
     }
 
     private void clearGcmRegistration() {
-        this.sofaGcmRegister = null;
+        if (this.sofaGcmRegister != null) {
+            this.sofaGcmRegister.clear();
+            this.sofaGcmRegister = null;
+        }
     }
 
     private void clearSubscriptions() {

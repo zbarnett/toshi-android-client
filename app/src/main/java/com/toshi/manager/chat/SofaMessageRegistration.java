@@ -18,8 +18,6 @@
 package com.toshi.manager.chat;
 
 
-import android.content.SharedPreferences;
-
 import com.toshi.crypto.signal.ChatService;
 import com.toshi.crypto.signal.SignalPreferences;
 import com.toshi.crypto.signal.store.ProtocolStore;
@@ -27,7 +25,8 @@ import com.toshi.manager.network.IdService;
 import com.toshi.model.local.Recipient;
 import com.toshi.model.local.User;
 import com.toshi.model.network.UserSearchResults;
-import com.toshi.service.RegistrationIntentService;
+import com.toshi.util.GcmPrefsUtil;
+import com.toshi.util.GcmUtil;
 import com.toshi.util.LogUtil;
 import com.toshi.util.SharedPrefsUtil;
 import com.toshi.view.BaseApplication;
@@ -43,86 +42,72 @@ public class SofaMessageRegistration {
 
     private static final String ONBOARDING_BOT_NAME = "ToshiBot";
 
-    private final SharedPreferences sharedPreferences;
     private final ChatService chatService;
     private final ProtocolStore protocolStore;
-    private String gcmToken;
 
-    public SofaMessageRegistration(
-            final SharedPreferences sharedPreferences,
-            final ChatService chatService,
-            final ProtocolStore protocolStore) {
-        this.sharedPreferences = sharedPreferences;
+    public SofaMessageRegistration(final ChatService chatService, final ProtocolStore protocolStore) {
         this.chatService = chatService;
         this.protocolStore = protocolStore;
 
-        if (this.sharedPreferences == null || this.chatService == null || this.protocolStore == null) {
+        if (this.chatService == null || this.protocolStore == null) {
             throw new NullPointerException("Initialised with null");
         }
     }
 
-    public void setGcmToken(final String token) {
-        this.gcmToken = token;
-        tryRegisterGcm();
-    }
-
     public Completable registerIfNeeded() {
-        if (!haveRegisteredWithServer()) {
-            return registerWithServer();
+        if (!SignalPreferences.getRegisteredWithServer()) {
+            return this.chatService
+                    .registerKeys(this.protocolStore)
+                    .andThen(setRegisteredWithServer())
+                    .andThen(forceRegisterChatGcm())
+                    .doOnCompleted(this::tryTriggerOnboarding);
         } else {
-            tryRegisterGcm();
-            tryTriggerOnboarding();
-            return Completable.complete();
+            return registerChatGcm();
         }
     }
 
-    private Completable registerWithServer() {
-        return this.chatService
-                .registerKeys(this.protocolStore)
-                .doOnCompleted(SignalPreferences::setRegisteredWithServer)
-                .doOnCompleted(this::tryRegisterGcm)
-                .doOnCompleted(this::tryTriggerOnboarding);
+    private Completable setRegisteredWithServer() {
+        return Completable.fromAction(SignalPreferences::setRegisteredWithServer);
     }
 
-    private boolean haveRegisteredWithServer() {
-        return SignalPreferences.getRegisteredWithServer();
+    public Completable forceRegisterChatGcm() {
+        GcmPrefsUtil.setChatGcmTokenSentToServer(false);
+        return registerChatGcm();
     }
 
-    private void tryRegisterGcm() {
-        if (this.gcmToken == null) {
-            return;
-        }
+    private Completable registerChatGcm() {
+        if (GcmPrefsUtil.isChatGcmTokenSentToServer()) return Completable.complete();
+        return GcmUtil.getGcmToken()
+                .flatMapCompletable(this::tryRegisterChatGcm);
+    }
 
-        if (this.sharedPreferences.getBoolean(RegistrationIntentService.CHAT_SERVICE_SENT_TOKEN_TO_SERVER, false)) {
-            // Already registered
-            return;
-        }
-        try {
-            final Optional<String> optional = Optional.of(this.gcmToken);
-            this.chatService.setGcmId(optional);
-            this.sharedPreferences.edit().putBoolean
-                    (RegistrationIntentService.CHAT_SERVICE_SENT_TOKEN_TO_SERVER, true).apply();
-            this.gcmToken = null;
-        } catch (IOException e) {
-            this.sharedPreferences.edit().putBoolean
-                    (RegistrationIntentService.CHAT_SERVICE_SENT_TOKEN_TO_SERVER, false).apply();
-            LogUtil.d(getClass(), "Error during registering of GCM " + e.getMessage());
-        }
+    private Completable tryRegisterChatGcm(final String token) {
+        return Completable.fromAction(() -> {
+            try {
+                final Optional<String> optional = Optional.of(token);
+                this.chatService.setGcmId(optional);
+                GcmPrefsUtil.setChatGcmTokenSentToServer(true);
+            } catch (IOException e) {
+                LogUtil.exception(getClass(), "Error during registering of GCM " + e.getMessage());
+                GcmPrefsUtil.setChatGcmTokenSentToServer(false);
+                Completable.error(e);
+            }
+        })
+        .subscribeOn(Schedulers.io());
     }
 
     public Completable tryUnregisterGcm() {
         return Completable.fromAction(() -> {
-                try {
-                    this.chatService.setGcmId(Optional.absent());
-                    this.sharedPreferences.edit().putBoolean
-                            (RegistrationIntentService.CHAT_SERVICE_SENT_TOKEN_TO_SERVER, false).apply();
-                } catch (IOException e) {
-                    LogUtil.d(getClass(), "Error during unregistering of GCM " + e.getMessage());
-                }
-            })
-            .subscribeOn(Schedulers.io());
+            try {
+                this.chatService.setGcmId(Optional.absent());
+                GcmPrefsUtil.setChatGcmTokenSentToServer(false);
+            } catch (IOException e) {
+                LogUtil.d(getClass(), "Error during unregistering of GCM " + e.getMessage());
+                Completable.error(e);
+            }
+        })
+        .subscribeOn(Schedulers.io());
     }
-
 
     private void tryTriggerOnboarding() {
         if (SharedPrefsUtil.hasOnboarded()) return;
@@ -137,12 +122,12 @@ public class SofaMessageRegistration {
                 .filter(user -> user.getUsernameForEditing().equals(ONBOARDING_BOT_NAME))
                 .toSingle()
                 .subscribe(
-                        this::sendOnboardMessageToOnboardingBot,
+                        this::sendOnboardingMessageToOnboardingBot,
                         this::handleOnboardingBotError
                 );
     }
 
-    private void sendOnboardMessageToOnboardingBot(final User onboardingBot) {
+    private void sendOnboardingMessageToOnboardingBot(final User onboardingBot) {
         BaseApplication
                 .get()
                 .getUserManager()
@@ -163,5 +148,9 @@ public class SofaMessageRegistration {
                 .get()
                 .getSofaMessageManager()
                 .sendInitMessage(sender, onboardingBot);
+    }
+
+    public void clear() {
+        GcmPrefsUtil.clear();
     }
 }
