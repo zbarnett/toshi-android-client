@@ -132,7 +132,7 @@ public class SofaMessageRegistration {
                 .get()
                 .getUserManager()
                 .getCurrentUser()
-                .doOnSuccess(__ -> SharedPrefsUtil.setHasOnboarded())
+                .doOnSuccess(__ -> SharedPrefsUtil.setHasOnboarded(true))
                 .subscribe(
                         currentUser -> this.sendOnboardingMessage(currentUser, new Recipient(onboardingBot)),
                         this::handleOnboardingBotError
