@@ -21,7 +21,8 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/avatar_size_small"
     android:paddingLeft="@dimen/control_group_recycleview_padding"
-    android:paddingRight="@dimen/control_group_recycleview_padding">
+    android:paddingRight="@dimen/control_group_recycleview_padding"
+    android:background="?android:selectableItemBackground">
 
     <TextView
         android:id="@+id/label"
