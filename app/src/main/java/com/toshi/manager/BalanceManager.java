@@ -60,6 +60,7 @@ public class BalanceManager {
     private HDWallet wallet;
     private SharedPreferences prefs;
     private Networks networks;
+    private Subscription connectivitySub;
 
     /* package */ BalanceManager() {
     }
@@ -88,7 +89,10 @@ public class BalanceManager {
     }
 
     private void attachConnectivityObserver() {
-        BaseApplication
+        clearConnectivitySubscription();
+
+        this.connectivitySub =
+                BaseApplication
                 .get()
                 .isConnectedSubject()
                 .subscribeOn(Schedulers.io())
@@ -323,9 +327,15 @@ public class BalanceManager {
     }
 
     public void clear() {
+        clearConnectivitySubscription();
         this.prefs
                 .edit()
                 .clear()
                 .apply();
+    }
+
+    private void clearConnectivitySubscription() {
+        if (this.connectivitySub == null) return;
+        this.connectivitySub.unsubscribe();
     }
 }

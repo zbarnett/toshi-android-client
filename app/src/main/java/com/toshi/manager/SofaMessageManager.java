@@ -53,15 +53,14 @@ import java.util.concurrent.TimeoutException;
 import rx.Completable;
 import rx.Observable;
 import rx.Single;
+import rx.Subscription;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
-import rx.subscriptions.CompositeSubscription;
 
 public final class SofaMessageManager {
     private final ConversationStore conversationStore;
 
     private final SignalServiceUrl[] signalServiceUrls;
-    private final CompositeSubscription subscriptions;
     private final String userAgent;
 
     private ChatService chatService;
@@ -70,12 +69,12 @@ public final class SofaMessageManager {
     private SofaMessageRegistration sofaGcmRegister;
     private SofaMessageSender messageSender;
     private HDWallet wallet;
+    private Subscription connectivitySub;
 
     /*package*/ SofaMessageManager() {
         this.conversationStore = new ConversationStore();
         this.userAgent = "Android " + BuildConfig.APPLICATION_ID + " - " + BuildConfig.VERSION_NAME +  ":" + BuildConfig.VERSION_CODE;
         this.signalServiceUrls = new SignalServiceUrl[1];
-        this.subscriptions = new CompositeSubscription();
     }
 
     public final Completable init(final HDWallet wallet) {
@@ -203,7 +202,10 @@ public final class SofaMessageManager {
     }
 
     private void attachConnectivityObserver() {
-        BaseApplication
+        clearConnectivitySubscription();
+
+        this.connectivitySub =
+                BaseApplication
                 .get()
                 .isConnectedSubject()
                 .subscribeOn(Schedulers.io())
@@ -311,7 +313,7 @@ public final class SofaMessageManager {
         clearMessageReceiver();
         clearMessageSender();
         clearGcmRegistration();
-        clearSubscriptions();
+        clearConnectivitySubscription();
         this.protocolStore.deleteAllSessions();
         GcmPrefsUtil.clear();
     }
@@ -337,7 +339,8 @@ public final class SofaMessageManager {
         }
     }
 
-    private void clearSubscriptions() {
-        this.subscriptions.clear();
+    private void clearConnectivitySubscription() {
+        if (this.connectivitySub == null) return;
+        this.connectivitySub.unsubscribe();
     }
 }
