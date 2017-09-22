@@ -26,7 +26,7 @@ Making a new build for Play store (Dev only)
 5. Commit the changes to build.gradle, upload the APKs to Play store
 
 
-<a href='https://play.google.com/store/apps/details?id=com.tokenbrowser&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' width='220px'/></a>
+<a href='https://play.google.com/store/apps/details?id=org.toshi&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' width='220px'/></a>
 
 
 
