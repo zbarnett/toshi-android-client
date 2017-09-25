@@ -42,15 +42,14 @@ public class ChatNotification extends ToshiNotification {
     private final Recipient sender;
 
     public ChatNotification(final Recipient sender) {
-        super();
+        super(generateID(sender));
         this.sender = sender;
     }
 
-    @Override
-    /* package */ void generateId() {
-        this.id = this.sender == null
+    private static String generateID(final Recipient sender) {
+        return sender == null
                 ? UUID.randomUUID().toString()
-                : this.sender.getThreadId();
+                : sender.getThreadId();
     }
 
     @Override

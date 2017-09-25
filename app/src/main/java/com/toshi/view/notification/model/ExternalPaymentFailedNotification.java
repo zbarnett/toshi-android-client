@@ -24,14 +24,9 @@ public class ExternalPaymentFailedNotification extends ToshiNotification {
     private final String paymentAddress;
 
     public ExternalPaymentFailedNotification(final String paymentAddress) {
-        super();
+        super(paymentAddress);
         this.paymentAddress = paymentAddress;
         setDefaultLargeIcon();
-    }
-
-    @Override
-    /* package */ void generateId() {
-        this.id = this.paymentAddress;
     }
 
     @Override

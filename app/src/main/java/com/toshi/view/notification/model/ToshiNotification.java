@@ -29,17 +29,17 @@ import java.util.List;
 public abstract class ToshiNotification {
     public static final String DEFAULT_TAG = "unknown";
 
-    /* package */ String id;
+    private final String id;
     private final ArrayList<String> messages;
     private List<String> lastFewMessages;
     private CharSequence lastMessage;
     private static final int MAXIMUM_NUMBER_OF_SHOWN_MESSAGES = 5;
     /* package */ Bitmap largeIcon;
 
-    /* package */ ToshiNotification() {
+    /* package */ ToshiNotification(final String id) {
+        this.id = id;
         this.messages = new ArrayList<>();
         generateLatestMessages(this.messages);
-        generateId();
     }
 
     public void addUnreadMessage(final String unreadMessage) {
@@ -60,8 +60,6 @@ public abstract class ToshiNotification {
         final int start = Math.max(end - MAXIMUM_NUMBER_OF_SHOWN_MESSAGES, 0);
         this.lastFewMessages = messages.subList(start, end);
     }
-
-    /* package */ abstract void generateId();
 
     public String getId() {
         return this.id;
