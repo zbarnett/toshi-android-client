@@ -136,7 +136,7 @@ dependencies {
             'com.madgag.spongycastle:prov:1.54.0.0',
             //UI
             'com.beloo.widget:ChipsLayoutManager:0.3.4.1@aar',
-            'com.github.toshiapp:cropiwa:v1.0.1',
+            'com.github.toshiapp:cropiwa:v1.0.2',
             'com.github.toshiapp:ahbottomnavigation:v2.0.7',
             'com.vdurmont:emoji-java:3.3.0',
     )
@@ -186,7 +186,7 @@ dependencyVerification {
             'com.madgag.spongycastle:core:1e7fa4b19ccccd1011364ab838d0b4702470c178bbbdd94c5c90b2d4d749ea1e',
             'com.madgag.spongycastle:prov:cf89c550fda86c0f26858c3d851ac1d2ce49cd78dd144cd86f307b7ea3e6afd7',
             'com.beloo.widget:ChipsLayoutManager:27b6ad23e8ba18a6a6c43e279db126322601d93daf621946541e4b50dc988874',
-            'com.github.toshiapp:cropiwa:e011b1f928009368153578cb6a605928e4e70b44413213edf2381fd454d12840',
+            'com.github.toshiapp:cropiwa:5915ee657603d9db8894c430171328ad2d767f2ee22a8a53e9e92593719b10b0',
             'com.github.toshiapp:ahbottomnavigation:ea8d292b34e908659374183fa7d0fa259aa83e99eabefa1aa89a45ee4ef0e145',
             'com.vdurmont:emoji-java:71b1a7cb312533ddc132583c8f84e9bde9ebfb13282cd4462978334fa1c04e9a',
             'com.crashlytics.sdk.android:crashlytics:110212c02ece0c4471383e579d378be8b9ad8d5bf51a2c35ad0610d9166065c7',

@@ -39,7 +39,8 @@ public class ImageCropPresenter implements Presenter<ImageCropActivity> {
 
     private static final float MIN_SCALE_FACTOR = 0.2f;
     private static final float MAX_SCALE_FACTOR = 10f;
-    private static final int IMAGE_QUALITY = 50;
+    private static final int IMAGE_QUALITY = 100;
+    private static final int MAX_IMAGE_DIAMATER = 800;
 
     private ImageCropActivity activity;
     private CompositeSubscription subscriptions;
@@ -119,6 +120,8 @@ public class ImageCropPresenter implements Presenter<ImageCropActivity> {
                 .Builder(imageUri)
                 .setCompressFormat(Bitmap.CompressFormat.JPEG)
                 .setQuality(IMAGE_QUALITY)
+                .setWidth(MAX_IMAGE_DIAMATER)
+                .setHeight(MAX_IMAGE_DIAMATER)
                 .build();
 
         this.activity.getBinding()
