@@ -89,7 +89,7 @@ public final class SettingsPresenter implements
                 BaseApplication
                 .get()
                 .getUserManager()
-                .getUserObservable()
+                .getCurrentUserObservable()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

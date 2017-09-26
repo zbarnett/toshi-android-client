@@ -52,6 +52,11 @@ public interface IdInterface {
     @GET("/v1/user/{id}")
     Single<User> getUser(@Path("id") String userId);
 
+    // Works for username or toshiId
+    @Headers("Cache-control: no-cache")
+    @GET("/v1/user/{id}")
+    Single<User> forceGetUser(@Path("id") String userId);
+
     @Headers("Cache-control: no-store")
     @PUT("/v1/user/{id}")
     Single<User> updateUser(@Path("id") String userId,

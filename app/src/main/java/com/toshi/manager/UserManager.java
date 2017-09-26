@@ -40,6 +40,7 @@ import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.adapter.rxjava.HttpException;
+import rx.Observable;
 import rx.Single;
 import rx.schedulers.Schedulers;
 import rx.subjects.BehaviorSubject;
@@ -99,7 +100,7 @@ public class UserManager {
         } else if (SharedPrefsUtil.shouldForceUserUpdate()) {
             forceUpdateUser();
         } else {
-            getExistingUser();
+            fetchUserFromNetwork();
         }
     }
 
@@ -145,18 +146,23 @@ public class UserManager {
     private void handleUserRegistrationFailed(final Throwable throwable) {
         LogUtil.error(getClass(), throwable.toString());
         if (throwable instanceof HttpException && ((HttpException)throwable).code() == 400) {
-            getExistingUser();
+            fetchUserFromNetwork();
         }
     }
 
-    private void getExistingUser() {
+    private void fetchUserFromNetwork() {
         IdService
             .getApi()
-            .getUser(this.wallet.getOwnerAddress())
+            .forceGetUser(this.wallet.getOwnerAddress())
             .subscribe(
                     this::updateCurrentUser,
                     this::handleUserError
             );
+    }
+
+    public Observable<User> getCurrentUserObservable() {
+        fetchUserFromNetwork();
+        return this.userSubject.asObservable();
     }
 
     private void updateCurrentUser(final User user) {
