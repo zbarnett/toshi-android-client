@@ -996,6 +996,11 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         ChatNotificationManager.stopNotificationSuppression(this.recipient.getThreadId());
     }
 
+    public void onPause() {
+        if (this.recipient == null) return;
+        ChatNotificationManager.stopNotificationSuppression(this.recipient.getThreadId());
+    }
+
     public void onSaveInstanceState(final Bundle outState) {
         outState.putString(CAPTURE_FILENAME, this.captureImageFilename);
     }

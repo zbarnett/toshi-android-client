@@ -52,6 +52,12 @@ public final class ChatActivity extends BasePresenterActivity<ChatPresenter, Cha
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        if (this.presenter != null) this.presenter.onPause();
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         tryProcessResultHolder();
