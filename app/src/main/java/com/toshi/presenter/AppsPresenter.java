@@ -148,7 +148,7 @@ public class AppsPresenter implements Presenter<AppsFragment>{
     private void iniTopRatedAppsRecycleView() {
         initRecyclerView(
                 this.fragment.getBinding().topRatedApps,
-                new HorizontalAdapter<App>(),
+                new HorizontalAdapter<App>(5),
                 this::handleAppClicked
         );
     }
@@ -156,7 +156,7 @@ public class AppsPresenter implements Presenter<AppsFragment>{
     private void initLatestAppsRecycleView() {
         initRecyclerView(
                 this.fragment.getBinding().featuredApps,
-                new HorizontalAdapter<App>(),
+                new HorizontalAdapter<App>(4),
                 this::handleAppClicked
         );
     }
@@ -164,7 +164,7 @@ public class AppsPresenter implements Presenter<AppsFragment>{
     private void initTopRatedPublicUsersRecyclerView() {
         initRecyclerView(
                 this.fragment.getBinding().topRatedPublicUsers,
-                new HorizontalAdapter<User>(),
+                new HorizontalAdapter<User>(5),
                 this::handleUserClicked
         );
     }
@@ -172,7 +172,7 @@ public class AppsPresenter implements Presenter<AppsFragment>{
     private void initLatestPublicUsersRecyclerView() {
         initRecyclerView(
                 this.fragment.getBinding().latestPublicUsers,
-                new HorizontalAdapter<User>(),
+                new HorizontalAdapter<User>(6),
                 this::handleUserClicked
         );
     }
@@ -185,7 +185,7 @@ public class AppsPresenter implements Presenter<AppsFragment>{
     }
 
     private void handleAppClicked(final Object elem) {
-        if (this.fragment == null) return;
+        if (this.fragment == null || elem == null) return;
         startProfileActivity(((ToshiEntity)elem).getToshiId());
     }
 

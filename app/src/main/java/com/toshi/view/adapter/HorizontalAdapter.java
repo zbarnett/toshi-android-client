@@ -36,7 +36,14 @@ public class HorizontalAdapter<T extends ToshiEntity> extends RecyclerView.Adapt
     private OnItemClickListener<T> listener;
 
     public HorizontalAdapter() {
+        this(0);
+    }
+
+    public HorizontalAdapter(final int numberOfPlaceholders) {
         this.elements = new ArrayList<>();
+        for (int i = 0; i < numberOfPlaceholders; i++) {
+            this.elements.add(null);
+        }
     }
 
     public HorizontalAdapter setOnItemClickListener(final OnItemClickListener<T> listener) {

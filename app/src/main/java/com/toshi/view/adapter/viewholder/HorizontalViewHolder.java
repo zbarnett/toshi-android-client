@@ -44,16 +44,18 @@ public class HorizontalViewHolder<T extends ToshiEntity> extends RecyclerView.Vi
     public HorizontalViewHolder(View itemView) {
         super(itemView);
 
-        this.appLabel = (TextView) itemView.findViewById(R.id.app_label);
-        this.ratingView = (StarRatingView) itemView.findViewById(R.id.rating_view);
-        this.appImage = (CircleImageView) itemView.findViewById(R.id.app_image);
+        this.appLabel = itemView.findViewById(R.id.app_label);
+        this.ratingView = itemView.findViewById(R.id.rating_view);
+        this.appImage = itemView.findViewById(R.id.app_image);
         this.container = itemView.findViewById(R.id.container);
     }
 
     public HorizontalViewHolder setElement(final T elem) {
         setContainerSize();
-        renderName(elem);
-        loadImage(elem);
+        if (elem != null) {
+            renderName(elem);
+            loadImage(elem);
+        }
         return this;
     }
 

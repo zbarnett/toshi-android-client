@@ -29,7 +29,7 @@
             android:translateX="277.000000"
             android:translateY="478.000000">
             <path
-                android:fillColor="#D1D1D1"
+                android:fillColor="@color/placeholder"
                 android:strokeWidth="1"
                 android:pathData="M 48 8.8 L 51.71 11.5 L 50.29 7.14 L 54 4.5 L 49.45 4.5 L 48 0 L 46.55 4.5 L 42 4.5 L 45.71 7.14 L 44.29 11.5 Z" />
         </group>

@@ -36,7 +36,14 @@ public class BrowseAdapter<T extends ToshiEntity> extends RecyclerView.Adapter<T
     private OnItemClickListener<T> listener;
 
     public BrowseAdapter() {
+        this(0);
+    }
+
+    public BrowseAdapter(final int numberOfPlaceholders) {
         this.elems = new ArrayList<>();
+        for (int i = 0; i < numberOfPlaceholders; i++) {
+            this.elems.add(null);
+        }
     }
 
     public BrowseAdapter setOnItemClickListener(final OnItemClickListener<T> listener) {
@@ -59,6 +66,7 @@ public class BrowseAdapter<T extends ToshiEntity> extends RecyclerView.Adapter<T
     @Override
     public void onBindViewHolder(ToshiEntityViewHolder holder, int position) {
         final ToshiEntity elem = this.elems.get(position);
+        if (elem == null) return;
         holder.setToshiEntity(elem)
                 .setOnClickListener(this.listener, elem);
     }

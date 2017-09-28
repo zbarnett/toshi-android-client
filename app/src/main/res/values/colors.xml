@@ -48,6 +48,7 @@
     <color name="balance_bar__bg">#FFFFFF</color>
     <color name="divider">#E7E9EA</color>
     <color name="semiTransparentDivider">#80E7E9EA</color>
+    <color name="placeholder">#D1D1D1</color>
 
     <color name="control_border_color">#0D000000</color>
     <color name="control_text_color">#2DB5EE</color>

@@ -123,13 +123,14 @@ public class BrowsePresenter implements Presenter<BrowseActivity> {
                 || getViewType() == VIEW_TYPE_TOP_RATED_PUBLIC_USERS;
 
         final BrowseAdapter adapter = isPublicUserViewType
-                ? new BrowseAdapter<User>()
-                : new BrowseAdapter<App>();
+                ? new BrowseAdapter<User>(5)
+                : new BrowseAdapter<App>(6);
         adapter.setOnItemClickListener(this::handleItemClicked);
         recyclerView.setAdapter(adapter);
     }
 
     private void handleItemClicked(final Object elem) {
+        if (elem == null) return;
         final Intent intent = new Intent(this.activity, ViewUserActivity.class)
                 .putExtra(ViewUserActivity.EXTRA__USER_ADDRESS, ((ToshiEntity) elem).getToshiId());
         this.activity.startActivity(intent);

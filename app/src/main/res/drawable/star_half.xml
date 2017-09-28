@@ -34,7 +34,7 @@
                 android:pathData="M5.5,0 L4.17083333,4.125 L0,4.125 L3.40083333,6.545 L2.09916667,10.5416667
 L5.5,8.06666667 L5.5,1.11022302e-15 Z" />
             <path
-                android:fillColor="#D1D1D1"
+                android:fillColor="@color/placeholder"
                 android:strokeWidth="1"
                 android:pathData="M5.5,0 L6.82916667,4.125 L11,4.125 L7.59916667,6.545 L8.90083333,10.5416667
 L5.5,8.06666667 L5.5,0 Z" />
