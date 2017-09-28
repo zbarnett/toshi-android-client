@@ -53,7 +53,7 @@ public class ToshiEntityViewHolder<T extends ToshiEntity> extends RecyclerView.V
     }
 
     public ToshiEntityViewHolder setToshiEntity(final T elem) {
-        ImageUtil.loadFromNetwork(elem.getAvatar(), this.avatar);
+        ImageUtil.load(elem.getAvatar(), this.avatar);
         this.displayName.setText(elem.getDisplayName());
         setInfo(elem);
         setRatingView(elem);
