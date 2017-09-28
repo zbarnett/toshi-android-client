@@ -181,10 +181,7 @@ public final class PaymentRequestViewHolder extends RecyclerView.ViewHolder {
     }
 
     private boolean isSentByRemote() {
-        // See comment for method: __setIsFromRemote
-        // return this.request != null && this.sendState == SendState.STATE_RECEIVED;
-        return this.__isRemote
-                || (this.request != null && this.sendState == SendState.STATE_RECEIVED);
+        return this.request != null && this.sendState == SendState.STATE_RECEIVED;
     }
 
     private void handleApprovedClicked() {
@@ -204,15 +201,5 @@ public final class PaymentRequestViewHolder extends RecyclerView.ViewHolder {
                 : View.GONE;
         this.sentStatus.setVisibility(visibility);
         this.errorMessage.setVisibility(visibility);
-    }
-
-    // Todo. Remove this code after September 1st 2017
-    // This is a hack to make payment requests retroactively render correctly.
-    // After enough time this hack will no longer be needed as incoming
-    // messages will be correctly labelled as having been "received"
-    private boolean __isRemote = false;
-    public PaymentRequestViewHolder __setIsFromRemote(final boolean isRemote) {
-        this.__isRemote = isRemote;
-        return this;
     }
 }
