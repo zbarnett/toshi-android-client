@@ -117,7 +117,9 @@ public class GroupSetupPresenter implements Presenter<GroupSetupActivity> {
                     .get()
                     .getSofaMessageManager()
                     ::createGroup
-                ).subscribe(
+                )
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
                         this::handleGroupCreated,
                         this::handleGroupCreationFailed
                 );
