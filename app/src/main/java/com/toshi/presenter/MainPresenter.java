@@ -23,16 +23,11 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
-import android.text.SpannableString;
-import android.text.method.LinkMovementMethod;
-import android.text.util.Linkify;
-import android.widget.TextView;
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationAdapter;
 import com.toshi.R;
 import com.toshi.manager.SofaMessageManager;
-import com.toshi.model.local.User;
 import com.toshi.util.LogUtil;
 import com.toshi.util.SharedPrefsUtil;
 import com.toshi.util.SoundManager;
@@ -43,7 +38,6 @@ import com.toshi.view.adapter.NavigationAdapter;
 
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 
 public class MainPresenter implements Presenter<MainActivity> {
@@ -86,7 +80,6 @@ public class MainPresenter implements Presenter<MainActivity> {
         initNavBar();
         trySelectTabFromIntent();
         attachUnreadMessagesSubscription();
-        attachUserSubscription();
         handleHasBackedUpPhrase();
         showFirstRunDialog();
     }
@@ -159,46 +152,6 @@ public class MainPresenter implements Presenter<MainActivity> {
 
     private void hideUnreadBadge() {
         this.activity.getBinding().navBar.setNotification("", 1);
-    }
-
-    // ToDo:This code can be removed July 31st 2017
-    private void attachUserSubscription() {
-        final Subscription sub =
-                BaseApplication
-                        .get()
-                        .getUserManager()
-                        .getUserObservable()
-                        .filter(user -> user != null)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(
-                                this::tryShowMigrationDialog,
-                                ex -> LogUtil.e(getClass(), ex.toString())
-                        );
-
-        this.subscriptions.add(sub);
-    }
-
-    private void tryShowMigrationDialog(final User user) {
-        if (!SharedPrefsUtil.wasMigrated()) return;
-
-        final String message = BaseApplication.get().getString(R.string.dialog__migration_message);
-        final SpannableString clickableMessage = new SpannableString(message);
-        Linkify.addLinks(clickableMessage, Linkify.ALL);
-
-        try {
-            ((TextView) new AlertDialog.Builder(this.activity, R.style.AlertDialogCustom)
-                    .setTitle(R.string.dialog__migration_title)
-                    .setMessage(clickableMessage)
-                    .setPositiveButton(R.string.continue_, (dialog, __) -> dialog.dismiss())
-                    .show()
-                    .findViewById(android.R.id.message))
-                    .setMovementMethod(LinkMovementMethod.getInstance());
-        } catch (final NullPointerException ex) {
-            LogUtil.e(getClass(), "Error when rendering migration dialog.");
-        }
-
-        SharedPrefsUtil.setWasMigrated(false);
     }
 
     private void handleHasBackedUpPhrase() {
