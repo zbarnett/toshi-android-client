@@ -21,6 +21,7 @@ package com.toshi.manager;
 import com.toshi.crypto.HDWallet;
 import com.toshi.crypto.signal.SignalPreferences;
 import com.toshi.manager.store.DbMigration;
+import com.toshi.util.ImageUtil;
 import com.toshi.util.LogUtil;
 import com.toshi.util.SharedPrefsUtil;
 import com.toshi.view.BaseApplication;
@@ -203,6 +204,7 @@ public class ToshiManager {
         SignalPreferences.clear();
         SharedPrefsUtil.setSignedOut();
         SharedPrefsUtil.clear();
+        ImageUtil.clear();
         setWallet(null);
     }
 

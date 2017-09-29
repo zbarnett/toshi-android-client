@@ -48,6 +48,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
+import rx.Completable;
 import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -186,5 +187,20 @@ public class ImageUtil {
         final ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmap.compress(format, 100, stream);
         return stream.toByteArray();
+    }
+
+    public static void clear() {
+        Completable.fromAction(() -> {
+            Glide
+                    .get(BaseApplication.get())
+                    .clearDiskCache();
+        })
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(
+                () -> Glide.get(BaseApplication.get()).clearMemory(),
+                t -> LogUtil.e(ImageUtil.class, t.toString())
+        );
+
     }
 }
