@@ -22,8 +22,8 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.content.res.AppCompatResources;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.toshi.R;
@@ -32,16 +32,16 @@ import com.toshi.view.BaseApplication;
 import com.toshi.view.adapter.ControlAdapter;
 
 public class ControlGroupViewHolder extends RecyclerView.ViewHolder {
-    private FrameLayout item;
+    private LinearLayout item;
     private TextView label;
     private ImageView arrow;
     private boolean isFocused;
 
     public ControlGroupViewHolder(View itemView) {
         super(itemView);
-        this.item = (FrameLayout) itemView;
-        this.label = (TextView) itemView.findViewById(R.id.label);
-        this.arrow = (ImageView) itemView.findViewById(R.id.arrow);
+        this.item = (LinearLayout) itemView;
+        this.label = itemView.findViewById(R.id.label);
+        this.arrow = itemView.findViewById(R.id.arrow);
     }
 
     public void setText(final String text) {
@@ -49,12 +49,7 @@ public class ControlGroupViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(final int position, final ControlAdapter adapter) {
-        this.item.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                updateSelectedState(position, adapter);
-            }
-        });
+        this.item.setOnClickListener(view -> updateSelectedState(position, adapter));
     }
 
     private void updateSelectedState(final int position, final ControlAdapter adapter) {

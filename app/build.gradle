@@ -135,7 +135,7 @@ dependencies {
             'com.madgag.spongycastle:core:1.54.0.0',
             'com.madgag.spongycastle:prov:1.54.0.0',
             //UI
-            'com.beloo.widget:ChipsLayoutManager:0.3.4.1@aar',
+            'com.beloo.widget:ChipsLayoutManager:0.3.7@aar',
             'com.github.toshiapp:cropiwa:v1.0.2',
             'com.github.toshiapp:ahbottomnavigation:v2.0.7',
             'com.vdurmont:emoji-java:3.3.0',
@@ -180,12 +180,13 @@ dependencyVerification {
             'io.reactivex:rxandroid:78dd5de7459c3438c09cd1435baeb8b09665019b24054ffba21ec84d068f954e',
             'com.jakewharton.rxbinding:rxbinding:a0c6b79106edcdfa878d089722ba62081789c8f7d768dfddd52f2f3c16bbf4bc',
             'de.hdodenhof:circleimageview:bcbc588e19e6dcf8c120b1957776bfe229efba5d2fbe5da7156372eeacf65503',
+            'com.makeramen:roundedimageview:43156c0b863a99ee22abd6c5cf67aa7b6de4dd65a63adc89d69f3eff3737afd2',
             'com.journeyapps:zxing-android-embedded:bbece895a6367b638722f5b5fdc1ce8b62f27b0ab4b67ba94eb0854ff474159d',
             'org.bitcoinj:bitcoinj-core:4f3ee60916b677a94d3bd1f0983c32720c3bcc7ffc3b5622562cb05a158171ae',
             'com.github.WhisperSystems:libsignal-service-java:e998ba2dfef541a6e1ee7e2a45d16cc6c89c545781eaf1e262ab6d6a85ad3a6e',
             'com.madgag.spongycastle:core:1e7fa4b19ccccd1011364ab838d0b4702470c178bbbdd94c5c90b2d4d749ea1e',
             'com.madgag.spongycastle:prov:cf89c550fda86c0f26858c3d851ac1d2ce49cd78dd144cd86f307b7ea3e6afd7',
-            'com.beloo.widget:ChipsLayoutManager:27b6ad23e8ba18a6a6c43e279db126322601d93daf621946541e4b50dc988874',
+            'com.beloo.widget:ChipsLayoutManager:2fccf38d40a65b5f62610c366be797afda3497f430d59361f593e1f567aadedd',
             'com.github.toshiapp:cropiwa:5915ee657603d9db8894c430171328ad2d767f2ee22a8a53e9e92593719b10b0',
             'com.github.toshiapp:ahbottomnavigation:ea8d292b34e908659374183fa7d0fa259aa83e99eabefa1aa89a45ee4ef0e145',
             'com.vdurmont:emoji-java:71b1a7cb312533ddc132583c8f84e9bde9ebfb13282cd4462978334fa1c04e9a',
@@ -240,7 +241,6 @@ dependencyVerification {
             'com.android.support:support-media-compat:f1d796a7f17e70cc2873f2effd01bc5f3fd84508b22bd42fea6c8c4d714b047e',
             'com.android.support:support-core-utils:c1da145cb7224a82eda9c096223faf8f8623659ad08582184af8e8f655c3d0d0',
             'com.android.support:support-fragment:5e226349f8408d66fbd0d214741479c2983e56b78c12b2174e5ad80807fa4dd4',
-            'com.makeramen:roundedimageview:43156c0b863a99ee22abd6c5cf67aa7b6de4dd65a63adc89d69f3eff3737afd2',
     ]
 }
 

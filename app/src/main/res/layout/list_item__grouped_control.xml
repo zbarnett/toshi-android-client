@@ -16,22 +16,29 @@
   ~     along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     android:layout_width="wrap_content"
     android:layout_height="47dp"
-    android:minWidth="120dp"
-    android:paddingRight="11dp"
-    android:paddingLeft="11dp"
+    android:paddingRight="@dimen/control_spacing"
+    android:paddingLeft="@dimen/control_spacing"
     android:background="@drawable/control_background_with_border">
+
+    <android.support.v4.widget.Space
+        android:layout_width="@dimen/control_spacing"
+        android:layout_height="0dp"/>
 
     <TextView
         android:id="@+id/label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/control_text_color"
-        android:layout_gravity="center" />
+        android:layout_gravity="center_vertical"
+        android:textColor="@color/control_text_color" />
+
+    <android.support.v4.widget.Space
+        android:layout_width="@dimen/control_spacing"
+        android:layout_height="0dp"/>
 
     <ImageView
         android:id="@+id/arrow"
@@ -40,4 +47,4 @@
         android:layout_gravity="right|center_vertical"
         app:srcCompat="@drawable/ic_arrow_up"/>
 
-</FrameLayout>
+</LinearLayout>

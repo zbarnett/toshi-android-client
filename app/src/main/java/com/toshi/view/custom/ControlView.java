@@ -69,7 +69,7 @@ public class ControlView extends LinearLayout implements ControlAdapter.OnContro
     private void initControls() {
         final ChipsLayoutManager chipsLayoutManager = ChipsLayoutManager.newBuilder(this.getContext())
                 .setMaxViewsInRow(5)
-                .setRowStrategy(ChipsLayoutManager.STRATEGY_FILL_VIEW)
+                .setRowStrategy(ChipsLayoutManager.STRATEGY_CENTER_DENSE)
                 .withLastRow(true)
                 .build();
         final ControlAdapter adapter = new ControlAdapter(new ArrayList<>());
