@@ -25,6 +25,7 @@
 
     <dimen name="radiusSize">6dp</dimen>
     <dimen name="chatImageRadius">8dp</dimen>
+    <dimen name="controlRadiusSize">32dp</dimen>
 
     <dimen name="balance_bar_text_size">14sp</dimen>
     <dimen name="subTitleSize">16sp</dimen>
