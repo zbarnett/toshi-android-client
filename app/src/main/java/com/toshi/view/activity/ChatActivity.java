@@ -133,7 +133,6 @@ public final class ChatActivity extends BasePresenterActivity<ChatPresenter, Cha
     @Override
     public void onRestoreInstanceState(final Bundle savedInstanceState) {
         this.presenter.onRestoreInstanceState(savedInstanceState);
+        super.onRestoreInstanceState(savedInstanceState);
     }
-
-
 }
