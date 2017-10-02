@@ -49,7 +49,7 @@ public class ControlGroupViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(final int position, final ControlAdapter adapter) {
-        this.item.setOnClickListener(view -> updateSelectedState(position, adapter));
+        this.item.setOnClickListener(__ -> updateSelectedState(position, adapter));
     }
 
     private void updateSelectedState(final int position, final ControlAdapter adapter) {

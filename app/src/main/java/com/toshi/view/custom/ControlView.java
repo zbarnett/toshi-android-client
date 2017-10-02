@@ -24,7 +24,6 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.widget.LinearLayout;
 
-import com.beloo.widget.chipslayoutmanager.ChipsLayoutManager;
 import com.toshi.R;
 import com.toshi.model.sofa.Control;
 import com.toshi.view.BaseApplication;
@@ -67,16 +66,12 @@ public class ControlView extends LinearLayout implements ControlAdapter.OnContro
     }
 
     private void initControls() {
-        final ChipsLayoutManager chipsLayoutManager = ChipsLayoutManager.newBuilder(this.getContext())
-                .setMaxViewsInRow(5)
-                .setRowStrategy(ChipsLayoutManager.STRATEGY_CENTER_DENSE)
-                .withLastRow(true)
-                .build();
         final ControlAdapter adapter = new ControlAdapter(new ArrayList<>());
-        final int controlSpacing = BaseApplication.get().getResources().getDimensionPixelSize(R.dimen.control_spacing);
         final ControlRecyclerView controlRv = findViewById(R.id.control_recycle_view);
+        final int controlSpacing = BaseApplication.get().getResources().getDimensionPixelSize(R.dimen.control_spacing);
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(this.getContext(), LinearLayoutManager.HORIZONTAL, false);
 
-        controlRv.setLayoutManager(chipsLayoutManager);
+        controlRv.setLayoutManager(layoutManager);
         controlRv.setAdapter(adapter);
         controlRv.addItemDecoration(new SpaceDecoration(controlSpacing));
         controlRv.setVisibility(VISIBLE);
