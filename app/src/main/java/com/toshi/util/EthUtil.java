@@ -25,6 +25,7 @@ import java.math.BigInteger;
 
 public class EthUtil {
 
+    public static final int BIG_DECIMAL_SCALE = 16;
     private static final int NUM_DECIMAL_PLACES = 4;
     private static final String USER_VISIBLE_STRING_FORMATTING = "%.4f";
     private static final BigDecimal weiToEthRatio = new BigDecimal("1000000000000000000");
@@ -52,7 +53,7 @@ public class EthUtil {
         }
         return new BigDecimal(wei)
                 .divide(weiToEthRatio)
-                .setScale(NUM_DECIMAL_PLACES, BigDecimal.ROUND_DOWN);
+                .setScale(BIG_DECIMAL_SCALE, BigDecimal.ROUND_DOWN);
     }
 
     public static BigInteger ethToWei(final BigDecimal amountInEth) {

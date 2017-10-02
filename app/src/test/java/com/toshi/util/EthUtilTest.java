@@ -17,6 +17,8 @@
 
 package com.toshi.util;
 
+import com.toshi.crypto.util.TypeConverter;
+
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -86,5 +88,15 @@ public class EthUtilTest {
         final BigDecimal eth = new BigDecimal(0.0000000001);
         final BigInteger expected = new BigInteger("100000000");
         assertThat(EthUtil.ethToWei(eth), is(expected));
+    }
+
+    @Test
+    public void endToEndCurrencyTest() {
+        final BigDecimal ethAmount = new BigDecimal("0.1234567890123456");
+        final BigInteger weiAmount = EthUtil.ethToWei(ethAmount);
+        final String encodedEthAmount = TypeConverter.toJsonHex(weiAmount);
+        final BigInteger weiAmountDecoded = TypeConverter.StringHexToBigInteger(encodedEthAmount);
+        final BigDecimal ethAmountDecoded = EthUtil.weiToEth(weiAmountDecoded);
+        assertThat(ethAmountDecoded, is(ethAmount));
     }
 }

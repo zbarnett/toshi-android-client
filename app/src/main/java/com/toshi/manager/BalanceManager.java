@@ -52,6 +52,8 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subjects.BehaviorSubject;
 
+import static com.toshi.util.EthUtil.BIG_DECIMAL_SCALE;
+
 public class BalanceManager {
 
     private final static BehaviorSubject<Balance> balanceObservable = BehaviorSubject.create();
@@ -213,7 +215,8 @@ public class BalanceManager {
             if (marketRate.compareTo(BigDecimal.ZERO) == 0) {
                 return BigDecimal.ZERO;
             }
-            return localAmount.divide(marketRate, 8, RoundingMode.HALF_DOWN);
+
+            return localAmount.divide(marketRate, BIG_DECIMAL_SCALE, RoundingMode.HALF_DOWN);
         });
     }
 
