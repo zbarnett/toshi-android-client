@@ -187,7 +187,7 @@ public class PassphraseInputView extends FrameLayout {
     private boolean handleWrapperLongClicked() {
         final ClipboardManager clipboard = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
         final ClipData clipData = clipboard.getPrimaryClip();
-        if (clipData.getItemCount() == 0) return false;
+        if (clipData == null || clipData.getItemCount() == 0) return false;
         final ClipData.Item clipItem = clipData.getItemAt(0);
         if (clipItem == null || clipItem.getText() == null) return false;
         final List<String> wordList = Arrays.asList(clipItem.getText().toString().split(" "));
