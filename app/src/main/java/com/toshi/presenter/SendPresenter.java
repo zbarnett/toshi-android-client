@@ -144,24 +144,23 @@ public class SendPresenter implements Presenter<SendActivity> {
     private void generateAmount(final String amountAsEncodedEth) {
         final BigInteger weiAmount = TypeConverter.StringHexToBigInteger(amountAsEncodedEth);
         final BigDecimal ethAmount = EthUtil.weiToEth(weiAmount);
-        final String ethAmountString = EthUtil.weiAmountToUserVisibleString(weiAmount);
 
         final Subscription sub = BaseApplication
                 .get()
                 .getBalanceManager()
                 .convertEthToLocalCurrencyString(ethAmount)
                 .subscribe(
-                        localAmount -> renderAmount(localAmount, ethAmountString),
+                        this::renderAmount,
                         throwable -> LogUtil.exception(getClass(), throwable)
                 );
 
         this.subscriptions.add(sub);
     }
 
-    private void renderAmount(final String localAmount, final String ethAmount) {
+    private void renderAmount(final String localAmount) {
         if (this.activity == null) return;
-        final String usdEth = this.activity.getString(R.string.local_dot_eth_amount, localAmount, ethAmount);
-        this.activity.getBinding().amount.setText(usdEth);
+        final String usdEth = this.activity.getString(R.string.local_amount, localAmount);
+        this.activity.getBinding().title.setText(usdEth);
     }
 
     @NonNull
