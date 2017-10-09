@@ -200,7 +200,7 @@ public final class TextViewHolder extends RecyclerView.ViewHolder {
     }
 
     private List<String> getUsernames() {
-        final Pattern pattern = Pattern.compile("(?:^|\\s)@(\\w+)");
+        final Pattern pattern = Pattern.compile("(?:^|\\s|[^a-zA-Z])(@\\w+)");
         final Matcher matcher = pattern.matcher(this.text);
         final List<String> matches = new ArrayList<>();
 
@@ -221,7 +221,8 @@ public final class TextViewHolder extends RecyclerView.ViewHolder {
                         .subSequence(
                                 spannedString.getSpanStart(clickableSpan),
                                 spannedString.getSpanEnd(clickableSpan))
-                        .toString();
+                        .toString()
+                        .substring(1);
 
         listener.onItemClick(username);
     }
