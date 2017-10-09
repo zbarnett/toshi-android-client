@@ -34,6 +34,7 @@ import com.toshi.view.BaseApplication;
 public class RateDialog extends DialogFragment {
 
     public static final String TAG = "RateDialog";
+    private static final String RATING = "rating";
 
     private FragmentRateBinding binding;
     private int rating;
@@ -59,7 +60,13 @@ public class RateDialog extends DialogFragment {
             dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         }
         dialog.setCanceledOnTouchOutside(true);
+        restoreState(state);
         return dialog;
+    }
+
+    private void restoreState(final Bundle state) {
+        if (state == null) return;
+        this.rating = state.getInt(RATING, 0);
     }
 
     @Override
@@ -85,5 +92,11 @@ public class RateDialog extends DialogFragment {
         final String review = this.binding.reviewInput.getText().toString();
         this.listener.onRateClicked(this.rating, review);
         dismiss();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putInt(RATING, this.rating);
+        super.onSaveInstanceState(outState);
     }
 }

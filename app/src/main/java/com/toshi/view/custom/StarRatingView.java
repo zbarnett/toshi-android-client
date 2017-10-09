@@ -19,6 +19,8 @@ package com.toshi.view.custom;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -30,7 +32,11 @@ import com.toshi.view.adapter.listeners.OnItemClickListener;
 
 public class StarRatingView extends RecyclerView {
 
+    private static final String RATING = "rating";
+    private static final String BUNDLE__SUPER_STATE = "superState";
+
     private boolean bigMode;
+    private int rating;
 
     public StarRatingView(Context context) {
         super(context);
@@ -69,12 +75,34 @@ public class StarRatingView extends RecyclerView {
 
     public void setOnItemClickListener(final OnItemClickListener<Integer> listener) {
         final StarAdapter adapter = (StarAdapter) this.getAdapter();
-        adapter.setOnItemClickListener(listener);
+        adapter.setOnItemClickListener(rating -> {
+            this.rating = rating;
+            listener.onItemClick(this.rating);
+        });
     }
 
     public void setStars(final Double reputationScore) {
         if (this.getAdapter() == null) return;
         final StarAdapter adapter = (StarAdapter) this.getAdapter();
         adapter.setStars(reputationScore);
+    }
+
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        final Bundle bundle = new Bundle();
+        bundle.putInt(RATING, this.rating);
+        bundle.putParcelable(BUNDLE__SUPER_STATE, super.onSaveInstanceState());
+        return bundle;
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        if (state instanceof Bundle) {
+            final Bundle bundle = (Bundle) state;
+            this.rating = bundle.getInt(RATING, 0);
+            state = bundle.getParcelable(BUNDLE__SUPER_STATE);
+        }
+        super.onRestoreInstanceState(state);
+        setStars((double)this.rating);
     }
 }
