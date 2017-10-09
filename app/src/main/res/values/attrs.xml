@@ -31,6 +31,6 @@
     </declare-styleable>
     
     <declare-styleable name="StarRating">
-        <attr name="bigMode" format="boolean"/>
+        <attr name="clickable" format="boolean"/>
     </declare-styleable>
 </resources>

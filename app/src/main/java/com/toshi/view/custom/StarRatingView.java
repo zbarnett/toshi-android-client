@@ -34,8 +34,9 @@ public class StarRatingView extends RecyclerView {
 
     private static final String RATING = "rating";
     private static final String BUNDLE__SUPER_STATE = "superState";
+    private static final int MIN_SELECTABLE_STARS = 1;
 
-    private boolean bigMode;
+    private boolean clickable;
     private int rating;
 
     public StarRatingView(Context context) {
@@ -57,7 +58,7 @@ public class StarRatingView extends RecyclerView {
 
     private void parseAttributeSet(final Context context, final @Nullable AttributeSet attrs) {
         final TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.StarRating, 0, 0);
-        this.bigMode = a.getBoolean(R.styleable.StarRating_bigMode, false);
+        this.clickable = a.getBoolean(R.styleable.StarRating_clickable, false);
         a.recycle();
     }
 
@@ -70,7 +71,12 @@ public class StarRatingView extends RecyclerView {
         final int spacing = this.getResources().getDimensionPixelSize(R.dimen.star_right_margin);
         this.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         this.addItemDecoration(new SpaceDecoration(spacing));
-        this.setAdapter(new StarAdapter(this.bigMode));
+        final StarAdapter adapter = new StarAdapter(this.clickable ? StarAdapter.CLICKABLE : StarAdapter.READ_ONLY);
+        if (this.clickable) {
+            this.rating = MIN_SELECTABLE_STARS;
+            adapter.setStars(this.rating);
+        }
+        this.setAdapter(adapter);
     }
 
     public void setOnItemClickListener(final OnItemClickListener<Integer> listener) {

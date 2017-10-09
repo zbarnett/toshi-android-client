@@ -48,7 +48,8 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="24dp"
             android:layout_marginRight="24dp"
-            app:bigMode="true"/>
+            android:overScrollMode="never"
+            app:clickable="true"/>
 
         <android.support.v4.widget.Space
             android:layout_width="0dp"

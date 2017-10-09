@@ -17,6 +17,9 @@
 
 package com.toshi.view.adapter;
 
+import android.support.annotation.FloatRange;
+import android.support.annotation.IntDef;
+import android.support.annotation.IntRange;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,30 +31,33 @@ import com.toshi.view.adapter.viewholder.StarViewHolder;
 
 public class StarAdapter extends RecyclerView.Adapter<StarViewHolder> {
 
+    @IntDef({
+            READ_ONLY,
+            CLICKABLE
+    })
+    private @interface MODE {}
+    public static final int READ_ONLY = 0;
+    public static final int CLICKABLE = 1;
+
     private static final int MAX_STARS = 5;
-    private static final int MINIMUM_VALUE = 1;
+    private static final int MIN_STARS = 0;
+    private static final int MIN_SELECTABLE_STARS = 1;
 
     private double rating;
-    private boolean bigMode;
+    private @MODE int mode;
     private OnItemClickListener<Integer> listener;
 
     public void setOnItemClickListener(final OnItemClickListener<Integer> listener) {
         this.listener = listener;
     }
 
-    public StarAdapter(final boolean size) {
-        this.bigMode = size;
-        if (this.bigMode) this.rating = MINIMUM_VALUE;
-    }
-
-    public void setStars(final double rating) {
-        this.rating = rating;
-        this.notifyDataSetChanged();
+    public StarAdapter(final @MODE int mode) {
+        this.mode = mode;
     }
 
     @Override
     public StarViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        final View v = bigMode
+        final View v = mode == CLICKABLE
                 ? LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item__star_big, parent, false)
                 : LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item__star_small, parent, false);
         return new StarViewHolder(v);
@@ -69,15 +75,26 @@ public class StarAdapter extends RecyclerView.Adapter<StarViewHolder> {
             holder.setWholeGreyStar();
         }
 
-        if (this.bigMode && this.listener != null) {
-            holder.bind(position, this);
+        if (this.mode == CLICKABLE) {
+            holder.setOnItemClickListener(__ -> updateSelectedStars(position + 1));
         }
     }
 
-    public void updateSelectedStars(final int starsSelected) {
-        this.rating = starsSelected;
+    private void updateSelectedStars(final @IntRange(from = 1, to = 5) int starsSelected) {
+        if (starsSelected > MAX_STARS) this.rating = MAX_STARS;
+        else if (starsSelected < MIN_SELECTABLE_STARS) this.rating = MIN_SELECTABLE_STARS;
+        else this.rating = starsSelected;
+
         this.notifyDataSetChanged();
         this.listener.onItemClick(starsSelected);
+    }
+
+    public void setStars(final @FloatRange(from = 0, to = 5) double rating) {
+        if (rating > MAX_STARS) this.rating = MAX_STARS;
+        else if (rating < MIN_STARS) this.rating = MIN_STARS;
+        else this.rating = rating;
+
+        this.notifyDataSetChanged();
     }
 
     @Override

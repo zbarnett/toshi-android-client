@@ -35,10 +35,11 @@ public class RateDialog extends DialogFragment {
 
     public static final String TAG = "RateDialog";
     private static final String RATING = "rating";
+    private static final int MIN_RATE = 1;
 
     private FragmentRateBinding binding;
-    private int rating;
     public OnRateDialogClickListener listener;
+    private int rating = MIN_RATE;
 
     public interface OnRateDialogClickListener {
         void onRateClicked(final int rating, final String review);
@@ -66,7 +67,7 @@ public class RateDialog extends DialogFragment {
 
     private void restoreState(final Bundle state) {
         if (state == null) return;
-        this.rating = state.getInt(RATING, 0);
+        this.rating = state.getInt(RATING, MIN_RATE);
     }
 
     @Override

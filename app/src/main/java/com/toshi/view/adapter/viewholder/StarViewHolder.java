@@ -22,7 +22,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.toshi.R;
-import com.toshi.view.adapter.StarAdapter;
+import com.toshi.view.adapter.listeners.OnItemClickListener;
 
 public class StarViewHolder extends RecyclerView.ViewHolder {
     private ImageView imageView;
@@ -30,7 +30,7 @@ public class StarViewHolder extends RecyclerView.ViewHolder {
     public StarViewHolder(View itemView) {
         super(itemView);
 
-        imageView = (ImageView) itemView.findViewById(R.id.star);
+        imageView = itemView.findViewById(R.id.star);
     }
 
     public void setWholeStar() {
@@ -45,7 +45,7 @@ public class StarViewHolder extends RecyclerView.ViewHolder {
         imageView.setImageResource(R.drawable.star_grey);
     }
 
-    public void bind(final int position, final StarAdapter adapter) {
-        this.itemView.setOnClickListener(v -> adapter.updateSelectedStars(position + 1));
+    public void setOnItemClickListener(final OnItemClickListener<Void> listener) {
+        this.itemView.setOnClickListener(__ -> listener.onItemClick(null));
     }
 }
