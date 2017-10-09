@@ -22,13 +22,11 @@ import android.widget.Toast;
 
 import com.toshi.R;
 import com.toshi.model.local.Review;
-import com.toshi.model.local.User;
 import com.toshi.model.network.ServerTime;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.fragment.DialogFragment.RateDialog;
 
-import retrofit2.Response;
-import rx.Single;
+import rx.Completable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.subscriptions.CompositeSubscription;
@@ -39,50 +37,54 @@ public class RatingHandler {
     private CompositeSubscription subscriptions;
 
     private RateDialog rateDialog;
-    private User user;
+    private String userAddress;
 
-    public RatingHandler(final AppCompatActivity activity) {
+    public RatingHandler(final AppCompatActivity activity, final String userAddress) {
         this.activity = activity;
+        this.userAddress = userAddress;
         this.subscriptions = new CompositeSubscription();
+        this.rateDialog = (RateDialog) this.activity.getSupportFragmentManager().findFragmentByTag(RateDialog.TAG);
+        if (this.rateDialog != null) {
+            this.rateDialog.setOnRateDialogClickListener(this::addReview);
+        }
     }
 
-    public void rateUser(final User user) {
-        if (user == null) return;
-        this.user = user;
+    public void rateUser() {
         this.rateDialog = RateDialog.newInstance();
-        this.rateDialog.setOnRateDialogClickListener(this::onRateClicked);
+        this.rateDialog.setOnRateDialogClickListener(this::addReview);
         this.rateDialog.show(this.activity.getSupportFragmentManager(), RateDialog.TAG);
     }
 
-    private void onRateClicked(final int rating, final String reviewText) {
+    private void addReview(final int rating, final String reviewText) {
         final Review review = new Review()
                 .setRating(rating)
                 .setReview(reviewText)
-                .setReviewee(this.user.getToshiId());
+                .setReviewee(this.userAddress);
 
         final Subscription sub =
                 submitReview(review)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        __ -> handleSubmitSuccess(),
-                        this::handleSubmitError
+                        this::handleSubmitSuccess,
+                        throwable -> LogUtil.exception(getClass(), "Error when sending review", throwable)
                 );
 
         this.subscriptions.add(sub);
     }
 
-    private Single<Response<Void>> submitReview(final Review review) {
+    private Completable submitReview(final Review review) {
         return BaseApplication
                 .get()
                 .getRecipientManager()
                 .getTimestamp()
-                .flatMap(serverTime -> submitReview(review, serverTime));
+                .flatMapCompletable(serverTime -> submitReview(review, serverTime));
     }
 
-    private Single<Response<Void>> submitReview(final Review review, final ServerTime serverTime) {
+    private Completable submitReview(final Review review, final ServerTime serverTime) {
         return BaseApplication.get()
                 .getReputationManager()
-                .submitReview(review, serverTime.get());
+                .submitReview(review, serverTime.get())
+                .toCompletable();
     }
 
     private void handleSubmitSuccess() {
@@ -92,10 +94,6 @@ public class RatingHandler {
                 this.activity.getString(R.string.review_submitted),
                 Toast.LENGTH_SHORT
         ).show();
-    }
-
-    private void handleSubmitError(final Throwable throwable) {
-        LogUtil.exception(getClass(), "Error when sending review", throwable);
     }
 
     public void clear() {

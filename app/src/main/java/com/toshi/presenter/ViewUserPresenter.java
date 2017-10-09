@@ -107,7 +107,7 @@ public final class ViewUserPresenter implements
     }
 
     private void initHandlers() {
-        this.ratingHandler = new RatingHandler(this.activity);
+        this.ratingHandler = new RatingHandler(this.activity, this.userAddress);
         this.userReportingHandler = new UserReportingHandler(this.activity)
                 .setUserAddress(this.userAddress);
         this.userBlockingHandler = new UserBlockingHandler(this.activity)
@@ -321,7 +321,7 @@ public final class ViewUserPresenter implements
     public void handleActionMenuClicked(final MenuItem item) {
         switch (item.getItemId()) {
             case R.id.rate: {
-                this.ratingHandler.rateUser(this.user);
+                this.ratingHandler.rateUser();
                 break;
             }
             case R.id.block: {
