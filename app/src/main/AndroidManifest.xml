@@ -99,13 +99,14 @@
                   android:theme="@style/DarkTheme"/>
         <activity android:name="com.toshi.view.activity.CurrencyActivity" />
         <activity android:name="com.toshi.view.activity.LandingActivity"
-            android:theme="@style/DarkTheme"/>
+                  android:theme="@style/DarkTheme"/>
         <activity android:name="com.toshi.view.activity.GroupParticipantsActivity"/>
         <activity android:name="com.toshi.view.activity.GroupSetupActivity"/>
         <activity android:name="com.toshi.view.activity.BrowseActivity"/>
         <activity android:name="com.toshi.view.activity.AdvancedSettingsActivity"/>
         <activity android:name="com.toshi.view.activity.BalanceActivity"/>
-        <activity android:name="com.toshi.view.activity.SendActivity"/>
+        <activity android:name="com.toshi.view.activity.SendActivity"
+                  android:windowSoftInputMode="adjustResize"/>
         <activity android:name="com.toshi.view.activity.SignInInfoActivity"/>
 
         <meta-data
