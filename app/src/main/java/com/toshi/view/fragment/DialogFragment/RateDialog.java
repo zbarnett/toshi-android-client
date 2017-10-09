@@ -77,11 +77,13 @@ public class RateDialog extends DialogFragment {
 
     private void initClickListeners() {
         this.binding.ratingView.setOnItemClickListener(rating -> this.rating = rating);
-        this.binding.review.setOnClickListener(v -> {
-            final String review = this.binding.reviewInput.getText().toString();
-            this.listener.onRateClicked(this.rating, review);
-            dismiss();
-        });
-        this.binding.noThanks.setOnClickListener(v -> dismiss());
+        this.binding.rate.setOnClickListener(__ -> handleRateClicked());
+        this.binding.noThanks.setOnClickListener(__ -> dismiss());
+    }
+
+    private void handleRateClicked() {
+        final String review = this.binding.reviewInput.getText().toString();
+        this.listener.onRateClicked(this.rating, review);
+        dismiss();
     }
 }

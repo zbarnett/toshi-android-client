@@ -29,6 +29,8 @@ import com.toshi.view.adapter.viewholder.StarViewHolder;
 public class StarAdapter extends RecyclerView.Adapter<StarViewHolder> {
 
     private static final int MAX_STARS = 5;
+    private static final int MINIMUM_VALUE = 1;
+
     private double rating;
     private boolean bigMode;
     private OnItemClickListener<Integer> listener;
@@ -39,6 +41,7 @@ public class StarAdapter extends RecyclerView.Adapter<StarViewHolder> {
 
     public StarAdapter(final boolean size) {
         this.bigMode = size;
+        if (this.bigMode) this.rating = MINIMUM_VALUE;
     }
 
     public void setStars(final double rating) {
