@@ -171,20 +171,21 @@
 
                 <android.support.v4.widget.Space
                     android:layout_width="0dp"
-                    android:layout_height="20dp" />
+                    android:layout_height="10dp" />
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin">
+                    android:layout_marginLeft="35dp"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin">
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                        android:gravity="center">
+                        android:gravity="center"
+                        android:layout_gravity="center_vertical">
 
                         <TextView
                             android:id="@+id/reputation_score"
@@ -192,7 +193,8 @@
                             android:layout_height="wrap_content"
                             android:includeFontPadding="false"
                             android:textSize="49sp"
-                            android:textColor="@color/ratingPrimary" />
+                            android:textColor="@color/ratingPrimary"
+                            tools:text="5.0"/>
 
                         <com.toshi.view.custom.StarRatingView
                             android:id="@+id/rating_view"
@@ -208,23 +210,29 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="13sp"
-                            android:textColor="@color/textColorSecondary" />
+                            android:textColor="@color/textColorSecondary"
+                            tools:text="2 ratings"/>
 
                     </LinearLayout>
 
-                    <com.toshi.view.custom.RatingInfo
-                        android:id="@+id/rating_info"
-                        android:layout_width="match_parent"
-                        android:layout_height="110dp"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginLeft="40dp"
-                        android:layout_marginRight="@dimen/activity_horizontal_margin"/>
+                    <FrameLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="40dp">
+
+                        <com.toshi.view.custom.RatingInfo
+                            android:id="@+id/rating_info"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical" />
+
+                    </FrameLayout>
 
                 </LinearLayout>
 
                 <android.support.v4.widget.Space
                     android:layout_width="0dp"
-                    android:layout_height="@dimen/activity_horizontal_margin" />
+                    android:layout_height="30dp" />
 
             </LinearLayout>
         </ScrollView>
