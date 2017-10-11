@@ -35,6 +35,7 @@
         android:visibility="gone"
         app:cardUseCompatPadding="true"
         app:cardElevation="2dp"
+        app:cardCornerRadius="5dp"
         tools:visibility="visible">
 
         <android.support.v7.widget.RecyclerView
