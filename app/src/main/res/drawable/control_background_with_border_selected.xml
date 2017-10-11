@@ -16,24 +16,15 @@
   ~     along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:viewportWidth="10"
-    android:viewportHeight="5"
-    android:width="10dp"
-    android:height="5dp">
-    <group
-        android:translateX="-261"
-        android:translateY="-507">
-        <group
-            android:translateX="180"
-            android:translateY="492">
-            <group
-                android:translateX="74"
-                android:translateY="6">
-                <path
-                    android:pathData="M7 14l5 -5 5 5z"
-                    android:fillColor="@color/control_selected_color" />
-            </group>
-        </group>
-    </group>
-</vector>
+<shape
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid
+        android:color="@color/windowBackground" />
+    <corners
+        android:radius="@dimen/controlRadiusSize" />
+    <stroke
+        android:width="1dp"
+        android:color="@color/control_selected_color" />
+
+</shape>

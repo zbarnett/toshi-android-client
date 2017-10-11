@@ -74,10 +74,11 @@ public class ControlGroupViewHolder extends RecyclerView.ViewHolder {
     }
 
     private void select(final Control control, final ControlAdapter.OnControlClickListener listener) {
-        final int selectedColor = ContextCompat.getColor(BaseApplication.get(), R.color.control_selected_text_color);
+        final int selectedColor = ContextCompat.getColor(BaseApplication.get(), R.color.control_selected_color);
         final Drawable selectedDrawable = AppCompatResources.getDrawable(BaseApplication.get(), R.drawable.ic_arrow_up_selected);
         this.label.setTextColor(selectedColor);
         this.arrow.setImageDrawable(selectedDrawable);
+        this.itemView.setBackgroundResource(R.drawable.control_background_with_border_selected);
         isFocused = true;
         listener.onGroupedControlItemClicked(control);
     }
@@ -88,10 +89,11 @@ public class ControlGroupViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void unselectView() {
-        final int selectedColor = ContextCompat.getColor(BaseApplication.get(), R.color.control_text_color);
+        final int unselectedColor = ContextCompat.getColor(BaseApplication.get(), R.color.control_text_color);
         final Drawable unselectedDrawable = AppCompatResources.getDrawable(BaseApplication.get(), R.drawable.ic_arrow_up);
-        this.label.setTextColor(selectedColor);
+        this.label.setTextColor(unselectedColor);
         this.arrow.setImageDrawable(unselectedDrawable);
+        this.itemView.setBackgroundResource(R.drawable.control_background_with_border);
         isFocused = false;
     }
 }
