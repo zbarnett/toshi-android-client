@@ -18,27 +18,28 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal"
     android:layout_width="wrap_content"
-    android:layout_height="47dp"
-    android:paddingRight="@dimen/control_spacing"
-    android:paddingLeft="@dimen/control_spacing"
-    android:background="@drawable/control_background_with_border">
-
-    <android.support.v4.widget.Space
-        android:layout_width="@dimen/control_spacing"
-        android:layout_height="0dp"/>
+    android:layout_height="wrap_content"
+    android:paddingLeft="@dimen/bubbleHorizontalPadding"
+    android:paddingRight="@dimen/bubbleHorizontalPadding"
+    android:background="@drawable/control_background_with_border"
+    android:paddingTop="@dimen/bubbleVerticalPadding"
+    android:paddingBottom="@dimen/bubbleVerticalPadding">
 
     <TextView
         android:id="@+id/label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:textColor="@color/control_text_color" />
+        android:layout_gravity="center"
+        android:textColor="@color/control_text_color"
+        android:textSize="16sp"
+        tools:text="Click me"/>
 
     <android.support.v4.widget.Space
-        android:layout_width="@dimen/control_spacing"
-        android:layout_height="0dp"/>
+        android:layout_width="6dp"
+        android:layout_height="0dp" />
 
     <ImageView
         android:id="@+id/arrow"

@@ -22,6 +22,8 @@
     <dimen name="textBubbleHalfPadding">8dp</dimen>
     <dimen name="bubbleMargin">8dp</dimen>
     <dimen name="textBubbleTopMargin">4dp</dimen>
+    <dimen name="bubbleVerticalPadding">9dp</dimen>
+    <dimen name="bubbleHorizontalPadding">12dp</dimen>
 
     <dimen name="radiusSize">6dp</dimen>
     <dimen name="chatImageRadius">8dp</dimen>
@@ -31,7 +33,6 @@
     <dimen name="subTitleSize">16sp</dimen>
     <dimen name="qr_code_size">170dp</dimen>
 
-    <dimen name="control_horizontal_padding">20dp</dimen>
     <dimen name="control_spacing">8dp</dimen>
     <dimen name="control_group_recycleview_padding">24dp</dimen>
 
