@@ -151,13 +151,26 @@ public class UserManager {
     }
 
     private void fetchUserFromNetwork() {
-        IdService
-            .getApi()
-            .forceGetUser(this.wallet.getOwnerAddress())
-            .subscribe(
-                    this::updateCurrentUser,
-                    this::handleUserError
-            );
+        getWallet()
+                .flatMap(wallet ->
+                        IdService
+                        .getApi()
+                        .forceGetUser(wallet.getOwnerAddress())
+                )
+                .subscribe(
+                        this::updateCurrentUser,
+                        this::handleUserError
+                );
+    }
+
+    private Single<HDWallet> getWallet() {
+        return Single.fromCallable(() -> {
+            while (this.wallet == null) {
+                Thread.sleep(200);
+            }
+            return this.wallet;
+        })
+        .subscribeOn(Schedulers.io());
     }
 
     public Observable<User> getCurrentUserObservable() {
