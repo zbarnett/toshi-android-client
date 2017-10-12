@@ -93,6 +93,7 @@ public class LandingPresenter implements Presenter<LandingActivity> {
                 .getToshiManager()
                 .initNewWallet()
                 .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         this::startListeningToBotConversation,
                         this::handleWalletError
