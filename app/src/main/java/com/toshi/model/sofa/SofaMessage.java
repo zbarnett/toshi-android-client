@@ -21,6 +21,7 @@ import android.support.annotation.Nullable;
 
 import com.toshi.model.local.SendState;
 import com.toshi.model.local.User;
+import com.toshi.model.network.SofaError;
 import com.toshi.util.ImageUtil;
 
 import java.util.UUID;
@@ -40,6 +41,7 @@ public class SofaMessage extends RealmObject {
     private String payload;
     private String attachmentFilePath;
     private User sender;
+    private SofaError errorMessage;
 
     public SofaMessage() {
         this.creationTime = System.currentTimeMillis();
@@ -73,6 +75,11 @@ public class SofaMessage extends RealmObject {
         return this;
     }
 
+    public SofaMessage setErrorMessage(final SofaError errorMessage) {
+        this.errorMessage = errorMessage;
+        return this;
+    }
+
     // Getters
 
     public String getPrivateKey() {
@@ -89,6 +96,10 @@ public class SofaMessage extends RealmObject {
 
     public String getAttachmentFilePath() {
         return attachmentFilePath;
+    }
+
+    public SofaError getErrorMessage() {
+        return this.errorMessage;
     }
 
     public User getSender() {

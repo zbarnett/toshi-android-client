@@ -34,6 +34,7 @@ import com.toshi.model.local.User;
 import com.toshi.model.network.SentTransaction;
 import com.toshi.model.network.ServerTime;
 import com.toshi.model.network.SignedTransaction;
+import com.toshi.model.network.SofaError;
 import com.toshi.model.network.TransactionRequest;
 import com.toshi.model.network.UnsignedTransaction;
 import com.toshi.model.sofa.Payment;
@@ -49,6 +50,8 @@ import com.toshi.view.notification.ExternalPaymentNotificationManager;
 
 import java.io.IOException;
 
+import okhttp3.ResponseBody;
+import retrofit2.HttpException;
 import rx.Observable;
 import rx.Single;
 import rx.Subscription;
@@ -382,9 +385,25 @@ public class TransactionManager {
             final Throwable error,
             final User receiver,
             final SofaMessage storedSofaMessage) {
+        final SofaError errorMessage = parseErrorResponse(error);
+        storedSofaMessage.setErrorMessage(errorMessage);
         LogUtil.exception(getClass(), "Error creating transaction", error);
         updateMessageState(receiver, storedSofaMessage, SendState.STATE_FAILED);
         showOutgoingPaymentFailedNotification(receiver);
+    }
+
+    private SofaError parseErrorResponse(final Throwable error) {
+        if (error instanceof HttpException) {
+            try {
+                final ResponseBody body = ((HttpException) error).response().errorBody();
+                return SofaAdapters.get().sofaErrorsFrom(body.string());
+            } catch (IOException e) {
+                LogUtil.e(getClass(), "Error while parsing payment error response");
+                return null;
+            }
+        } else {
+            return new SofaError().createNotDeliveredMessage(BaseApplication.get());
+        }
     }
 
     private void showOutgoingPaymentFailedNotification(final User user) {

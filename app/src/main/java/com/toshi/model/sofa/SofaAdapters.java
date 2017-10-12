@@ -22,6 +22,8 @@ import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.JsonDataException;
 import com.squareup.moshi.Moshi;
 import com.toshi.model.local.UnsignedW3Transaction;
+import com.toshi.model.network.SofaError;
+import com.toshi.model.network.SofaErrors;
 
 import java.io.IOException;
 
@@ -37,6 +39,7 @@ public class SofaAdapters {
     private final JsonAdapter<Init> initAdapter;
     private final JsonAdapter<InitRequest> initRequestJsonAdapter;
     private final JsonAdapter<UnsignedW3Transaction> unsignedW3TransactionAdapter;
+    private final JsonAdapter<SofaErrors> errorAdapter;
 
     public static SofaAdapters get() {
         if (instance == null) {
@@ -54,6 +57,7 @@ public class SofaAdapters {
         this.initAdapter = moshi.adapter(Init.class);
         this.initRequestJsonAdapter = moshi.adapter(InitRequest.class);
         this.unsignedW3TransactionAdapter = moshi.adapter(UnsignedW3Transaction.class);
+        this.errorAdapter = moshi.adapter(SofaErrors.class);
     }
 
     public String toJson(final Message sofaMessage) {
@@ -110,6 +114,16 @@ public class SofaAdapters {
     public InitRequest initRequestFrom(final String payload) throws IOException {
         try {
             return initRequestJsonAdapter.fromJson(payload);
+        } catch (final JsonDataException ex) {
+            throw new IOException(ex);
+        }
+    }
+
+    public SofaError sofaErrorsFrom(final String payload) throws IOException {
+        try {
+            final SofaErrors sofaErrors = errorAdapter.fromJson(payload);
+            if (sofaErrors.getErrors().size() == 0) return null;
+            return sofaErrors.getErrors().get(0);
         } catch (final JsonDataException ex) {
             throw new IOException(ex);
         }
