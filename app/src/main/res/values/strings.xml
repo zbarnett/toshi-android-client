@@ -269,4 +269,5 @@
     <string name="agree">Agree</string>
     <string name="unable_to_send_money">Unable to send money to %s</string>
     <string name="payment_failed">Payment failed</string>
+    <string name="insufficient_funds">Insufficient funds</string>
 </resources>

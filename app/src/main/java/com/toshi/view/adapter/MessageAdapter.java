@@ -290,6 +290,7 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
                         .setPayment(payment)
                         .setAvatarUri(sofaMessage.getSenderAvatar())
                         .setSendState(sofaMessage.getSendState())
+                        .setSofaError(sofaMessage.getErrorMessage())
                         .draw();
                 break;
             }

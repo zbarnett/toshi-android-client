@@ -26,6 +26,7 @@ import android.widget.TextView;
 
 import com.toshi.R;
 import com.toshi.model.local.SendState;
+import com.toshi.model.network.SofaError;
 import com.toshi.model.sofa.Payment;
 import com.toshi.util.EthUtil;
 import com.toshi.util.ImageUtil;
@@ -43,6 +44,7 @@ public final class PaymentViewHolder extends RecyclerView.ViewHolder {
     private Payment payment;
     private @SendState.State int sendState;
     private String avatarUri;
+    private SofaError sofaError;
 
     public PaymentViewHolder(final View v) {
         super(v);
@@ -66,6 +68,11 @@ public final class PaymentViewHolder extends RecyclerView.ViewHolder {
 
     public PaymentViewHolder setAvatarUri(final String avatarUri) {
         this.avatarUri = avatarUri;
+        return this;
+    }
+
+    public PaymentViewHolder setSofaError(final SofaError sofaError) {
+        this.sofaError = sofaError;
         return this;
     }
 
@@ -96,5 +103,13 @@ public final class PaymentViewHolder extends RecyclerView.ViewHolder {
                 : View.GONE;
         this.sendStatus.setVisibility(visibility);
         this.errorMessage.setVisibility(visibility);
+        setErrorMessage();
+    }
+
+    private void setErrorMessage() {
+        if (this.sofaError == null || this.errorMessage == null) return;
+        final String errorMessage = this.sofaError.getUserReadableErrorMessage(this.errorMessage.getContext());
+        this.errorMessage.setText(errorMessage);
+        this.sofaError = null;
     }
 }

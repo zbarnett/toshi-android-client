@@ -93,6 +93,6 @@
         android:textSize="13sp"
         android:visibility="gone"
         tools:visibility="visible"
-        android:text="@string/not_delivered" />
+        tools:text="@string/not_delivered" />
 
 </LinearLayout>
