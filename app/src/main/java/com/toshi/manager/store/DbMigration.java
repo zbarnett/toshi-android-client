@@ -249,6 +249,16 @@ public class DbMigration implements RealmMigration {
             oldVersion++;
         }
 
+        if (oldVersion == 16) {
+            schema.create("SofaError")
+                    .addField("id", String.class, FieldAttribute.PRIMARY_KEY)
+                    .addField("message", String.class);
+
+            schema.get("SofaMessage")
+                    .addRealmObjectField("errorMessage", schema.get("SofaError"));
+
+            oldVersion++;
+        }
     }
 
     @Override
