@@ -31,6 +31,7 @@ import com.toshi.model.local.User;
 import com.toshi.model.network.ServerTime;
 import com.toshi.model.network.UserSearchResults;
 import com.toshi.util.LogUtil;
+import com.toshi.view.BaseApplication;
 
 import java.io.IOException;
 import java.util.List;
@@ -71,15 +72,21 @@ public class RecipientManager {
     }
 
     public Single<User> getUserFromToshiId(final String toshiId) {
-        return Observable
+        return Single
                 .concat(
-                        this.userStore.loadForToshiId(toshiId),
+                        this.userStore.loadForToshiId(toshiId).toSingle(),
                         this.fetchAndCacheFromNetworkByToshiId(toshiId))
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
-                .first(user -> user != null && !user.needsRefresh())
+                .first(this::isUserFresh)
                 .doOnError(t -> LogUtil.exception(getClass(), "getUserFromToshiId", t))
                 .toSingle();
+    }
+
+    private boolean isUserFresh(final User user) {
+        if (user == null) return false;
+        if (!BaseApplication.get().isConnected()) return true;
+        return user.needsRefresh();
     }
 
     public Single<User> getUserFromPaymentAddress(final String paymentAddress) {
@@ -93,17 +100,15 @@ public class RecipientManager {
                 .first(user -> user != null && !user.needsRefresh())
                 .doOnError(t -> LogUtil.exception(getClass(), "getUserFromPaymentAddress", t))
                 .toSingle();
-
     }
 
-    private Observable<User> fetchAndCacheFromNetworkByToshiId(final String userAddress) {
+    private Single<User> fetchAndCacheFromNetworkByToshiId(final String userAddress) {
         return IdService
                 .getApi()
                 .getUser(userAddress)
-                .toObservable()
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
-                .doOnNext(this::cacheUser);
+                .doOnSuccess(this::cacheUser);
     }
 
     private Observable<User> fetchAndCacheFromNetworkByPaymentAddress(final String paymentAddress) {
@@ -120,10 +125,6 @@ public class RecipientManager {
     }
 
     private void cacheUser(final User user) {
-        if (this.userStore == null) {
-            return;
-        }
-
         this.userStore.save(user);
     }
 
@@ -190,8 +191,6 @@ public class RecipientManager {
                 )
                 .subscribeOn(Schedulers.io());
     }
-
-
 
     public Single<ServerTime> getTimestamp() {
         return IdService

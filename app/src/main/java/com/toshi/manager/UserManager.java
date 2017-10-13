@@ -77,7 +77,20 @@ public class UserManager {
         this.wallet = wallet;
         this.prefs = BaseApplication.get().getSharedPreferences(FileNames.USER_PREFS, Context.MODE_PRIVATE);
         attachConnectivityListener();
+        initCurrentUser();
         return this;
+    }
+
+    private void initCurrentUser() {
+        final String toshiId = this.prefs.getString(USER_ID, null);
+        BaseApplication
+                .get()
+                .getRecipientManager()
+                .getUserFromToshiId(toshiId)
+                .subscribe(
+                        this::updateCurrentUser,
+                        throwable -> LogUtil.e(getClass(), "Error initiating current user")
+                );
     }
 
     private void attachConnectivityListener() {
@@ -141,6 +154,7 @@ public class UserManager {
                     this::updateCurrentUser,
                     this::handleUserRegistrationFailed
             );
+
         SharedPrefsUtil.setForceUserUpdate(false);
     }
 
@@ -180,10 +194,10 @@ public class UserManager {
     }
 
     private void updateCurrentUser(final User user) {
-        prefs
-            .edit()
+        this.prefs.edit()
             .putString(USER_ID, user.getToshiId())
             .apply();
+
         this.userSubject.onNext(user);
     }
 
