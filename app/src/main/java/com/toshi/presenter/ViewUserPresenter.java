@@ -349,13 +349,13 @@ public final class ViewUserPresenter implements
     }
 
     public boolean shouldCreateOptionsMenu() {
-        final boolean isLocalUser = getLocalUser().getToshiId().equals(this.userAddress);
-        if (isLocalUser) {
-            return false;
-        }
-
         isUserBlocked();
-        return true;
+        return !isLocalUser();
+    }
+
+    private boolean isLocalUser() {
+        final User localUser = getLocalUser();
+        return localUser != null && localUser.getToshiId().equals(this.userAddress);
     }
 
     private User getLocalUser() {
