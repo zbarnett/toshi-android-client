@@ -56,7 +56,9 @@ public class UserManager {
     private SharedPreferences prefs;
     private HDWallet wallet;
 
-    /* package */ UserManager() {}
+    /* package */ UserManager() {
+        this.userSubject.onNext(null);
+    }
 
     public final BehaviorSubject<User> getUserObservable() {
         return this.userSubject;
@@ -65,7 +67,6 @@ public class UserManager {
     public final Single<User> getCurrentUser() {
         return
                 this.userSubject
-                .filter(user -> user != null)
                 .first()
                 .toSingle()
                 .doOnError(t -> LogUtil.exception(getClass(), "getCurrentUser", t))
