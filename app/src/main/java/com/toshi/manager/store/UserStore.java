@@ -71,4 +71,12 @@ public class UserStore {
         realm.close();
         return result;
     }
+
+    public void clear() {
+        final Realm realm = BaseApplication.get().getRealm();
+        realm.beginTransaction();
+        realm.deleteAll();
+        realm.commitTransaction();
+        realm.close();
+    }
 }
