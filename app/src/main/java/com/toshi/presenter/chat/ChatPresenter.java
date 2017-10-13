@@ -358,8 +358,15 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     private void sendMessage(final String userInput) {
         final Message message = new Message().setBody(userInput);
         final String messageBody = SofaAdapters.get().toJson(message);
-        final SofaMessage sofaMessage = new SofaMessage().makeNew(getCurrentLocalUser(), messageBody);
-        this.outgoingMessageQueue.send(sofaMessage);
+
+        final User localUser = getCurrentLocalUser();
+        if (localUser != null) {
+            final SofaMessage sofaMessage = new SofaMessage().makeNew(localUser, messageBody);
+            this.outgoingMessageQueue.send(sofaMessage);
+        } else {
+            Toast.makeText(this.activity, this.activity.getString(R.string.sending_message_error), Toast.LENGTH_SHORT).show();
+            LogUtil.error(getClass(), "User is null when sending message");
+        }
     }
 
     private void checkExternalStoragePermission() {
@@ -425,8 +432,14 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
                 .setBody(control.getLabel())
                 .setValue(control.getValue());
         final String commandPayload = SofaAdapters.get().toJson(command);
-        final SofaMessage sofaMessage = new SofaMessage().makeNew(getCurrentLocalUser(), commandPayload);
-        this.outgoingMessageQueue.send(sofaMessage);
+        final User localUser = getCurrentLocalUser();
+        if (localUser != null) {
+            final SofaMessage sofaMessage = new SofaMessage().makeNew(localUser, commandPayload);
+            this.outgoingMessageQueue.send(sofaMessage);
+        } else {
+            Toast.makeText(BaseApplication.get(), R.string.sending_message_error, Toast.LENGTH_LONG).show();
+            LogUtil.error(getClass(), "User is null when sending command message");
+        }
     }
 
     private void initControlView() {
@@ -622,8 +635,14 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
 
     private void sendPaymentRequest(final PaymentRequest request) {
         final String messageBody = SofaAdapters.get().toJson(request);
-        final SofaMessage message = new SofaMessage().makeNew(getCurrentLocalUser(), messageBody);
-        this.outgoingMessageQueue.send(message);
+        final User localUser = getCurrentLocalUser();
+        if (localUser != null) {
+            final SofaMessage message = new SofaMessage().makeNew(localUser, messageBody);
+            this.outgoingMessageQueue.send(message);
+        } else {
+            Toast.makeText(this.activity, this.activity.getString(R.string.sending_payment_request_error), Toast.LENGTH_SHORT).show();
+            LogUtil.error(getClass(), "User is null when sending payment request");
+        }
     }
 
     private void initLoadingSpinner() {
@@ -727,10 +746,12 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     private void tryInitAppConversation() {
         if (this.recipient.isGroup() || !this.recipient.getUser().isApp()) return;
 
+        final User localUser = getCurrentLocalUser();
+        if (localUser == null) return;
         BaseApplication
                 .get()
                 .getSofaMessageManager()
-                .sendInitMessage(getCurrentLocalUser(), this.recipient);
+                .sendInitMessage(localUser, this.recipient);
     }
 
     private void initMessageObservables() {
@@ -943,10 +964,17 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     private void sendMediaMessage(final String filePath) {
         final Message message = new Message();
         final String messageBody = SofaAdapters.get().toJson(message);
-        final SofaMessage sofaMessage = new SofaMessage()
-                .makeNew(getCurrentLocalUser(), messageBody)
-                .setAttachmentFilePath(filePath);
-        sendMediaMessage(sofaMessage);
+
+        final User localUser = getCurrentLocalUser();
+        if (localUser != null) {
+            final SofaMessage sofaMessage = new SofaMessage()
+                    .makeNew(localUser, messageBody)
+                    .setAttachmentFilePath(filePath);
+            sendMediaMessage(sofaMessage);
+        } else {
+            Toast.makeText(this.activity, this.activity.getString(R.string.sending_message_error), Toast.LENGTH_SHORT).show();
+            LogUtil.error(getClass(), "User is null when sending media message");
+        }
     }
 
     private void sendMediaMessage(final SofaMessage sofaMessage) {
