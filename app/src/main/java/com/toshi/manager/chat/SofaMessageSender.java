@@ -193,7 +193,7 @@ public class SofaMessageSender {
         }
 
         if (!BaseApplication.get().isConnected() && saveMessageToDatabase) {
-            message.setSendState(SendState.STATE_PENDING);
+            message.setSendState(SendState.STATE_FAILED);
             updateExistingMessage(receiver, message);
             savePendingMessage(receiver, message);
             return;
@@ -229,7 +229,7 @@ public class SofaMessageSender {
         }
 
         if (!BaseApplication.get().isConnected() && saveMessageToDatabase) {
-            message.setSendState(SendState.STATE_PENDING);
+            message.setSendState(SendState.STATE_FAILED);
             updateExistingMessage(receiver, message);
             savePendingMessage(receiver, message);
             return;
