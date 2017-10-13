@@ -140,8 +140,11 @@ public class ConversationStore {
 
             if (message != null) {
                 final SofaMessage storedMessage = realm.copyToRealmOrUpdate(message);
-                conversationToStore.setLatestMessage(storedMessage);
-                conversationToStore.setNumberOfUnread(calculateNumberOfUnread(conversationToStore));
+                if(conversationToStore.getThreadId().equals(watchedThreadId)) {
+                    conversationToStore.setLatestMessage(storedMessage);
+                } else {
+                    conversationToStore.setLatestMessageAndUpdateUnreadCounter(storedMessage);
+                }
             }
 
             final Conversation storedConversation = realm.copyToRealmOrUpdate(conversationToStore);
@@ -185,16 +188,6 @@ public class ConversationStore {
         return newMessageTimestamp - latestMessageTimestamp > FIFTEEN_MINUTES;
     }
 
-    private int calculateNumberOfUnread(final Conversation conversationToStore) {
-        // If we are watching the current thread the message is automatically read.
-        if (   conversationToStore == null
-            || conversationToStore.getThreadId().equals(watchedThreadId)) {
-            return 0;
-        }
-        final int currentNumberOfUnread = conversationToStore.getNumberOfUnread();
-        return currentNumberOfUnread + 1;
-    }
-
     private void resetUnreadMessageCounter(final String threadId) {
         Single.fromCallable(() -> {
             final Conversation storedConversation = loadWhere(THREAD_ID_FIELD, threadId);
@@ -204,7 +197,7 @@ public class ConversationStore {
 
             final Realm realm = BaseApplication.get().getRealm();
             realm.beginTransaction();
-            storedConversation.setNumberOfUnread(0);
+            storedConversation.resetUnreadCounter();
             realm.insertOrUpdate(storedConversation);
             realm.commitTransaction();
             realm.close();

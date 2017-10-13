@@ -57,10 +57,22 @@ public class Conversation extends RealmObject {
         return latestMessage;
     }
 
+    public Conversation setLatestMessageAndUpdateUnreadCounter(final SofaMessage latestMessage) {
+        if (isDuplicateMessage(latestMessage)) {
+            return this;
+        }
+        this.numberOfUnread++;
+        return addLatestMessage(latestMessage);
+    }
+
     public Conversation setLatestMessage(final SofaMessage latestMessage) {
         if (isDuplicateMessage(latestMessage)) {
             return this;
         }
+        return addLatestMessage(latestMessage);
+    }
+
+    private Conversation addLatestMessage(final SofaMessage latestMessage) {
         this.latestMessage = latestMessage;
         this.updatedTime = latestMessage.getCreationTime();
         addMessage(latestMessage);
@@ -87,8 +99,8 @@ public class Conversation extends RealmObject {
         return numberOfUnread;
     }
 
-    public void setNumberOfUnread(final int numberOfUnread) {
-        this.numberOfUnread = numberOfUnread;
+    public void resetUnreadCounter() {
+        this.numberOfUnread = 0;
     }
 
     // Helper functions
