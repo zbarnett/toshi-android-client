@@ -20,6 +20,8 @@ package com.toshi.view.notification;
 
 import android.app.NotificationManager;
 import android.content.Context;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.RemoteInput;
 
@@ -131,15 +133,19 @@ public class ChatNotificationManager extends ToshiNotificationBuilder {
     }
 
     private static NotificationCompat.Builder getChatNotificationBuilder(final ChatNotification activeChatNotification) {
-        return buildNotification(activeChatNotification)
+        final NotificationCompat.Builder builder = buildNotification(activeChatNotification)
                 .setDeleteIntent(activeChatNotification.getDeleteIntent())
-                .setContentIntent(activeChatNotification.getPendingIntent())
-                .addAction(buildDirectReplyAction(activeChatNotification));
+                .setContentIntent(activeChatNotification.getPendingIntent());
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && !activeChatNotification.isUnknownSender()) {
+            builder.addAction(buildDirectReplyAction(activeChatNotification));
+        }
+
+        return builder;
     }
 
+    @RequiresApi(24)
     private static NotificationCompat.Action buildDirectReplyAction(final ChatNotification activeChatNotification) {
-        if (activeChatNotification.isUnknownSender()) return null;
-
         final String replyLabel = BaseApplication.get().getResources().getString(R.string.reply_label);
         final RemoteInput remoteInput = new RemoteInput.Builder(KEY_TEXT_REPLY)
                 .setLabel(replyLabel)

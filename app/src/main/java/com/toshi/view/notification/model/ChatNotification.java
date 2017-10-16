@@ -25,6 +25,7 @@ import android.support.v4.app.TaskStackBuilder;
 import com.bumptech.glide.Glide;
 import com.toshi.R;
 import com.toshi.model.local.Recipient;
+import com.toshi.presenter.chat.DirectReplyService;
 import com.toshi.service.NotificationDismissedReceiver;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.activity.ChatActivity;
@@ -98,10 +99,13 @@ public class ChatNotification extends ToshiNotification {
     public PendingIntent getDirectReplyIntent() {
         if (isUnknownSender()) return null;
 
+        final Intent directReplyIntent = new Intent(BaseApplication.get(), DirectReplyService.class)
+                .putExtra(DirectReplyService.TOSHI_ID, this.sender.getUser().getToshiId());
+
         return PendingIntent.getService(
                 BaseApplication.get(),
-                0,
-                null,
+                DirectReplyService.REQUEST_CODE,
+                directReplyIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT
         );
     }

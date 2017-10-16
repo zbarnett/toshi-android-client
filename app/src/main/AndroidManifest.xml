@@ -150,6 +150,10 @@
             android:exported="false">
         </service>
 
+        <service
+            android:name="com.toshi.presenter.chat.DirectReplyService"
+            android:exported="false"/>
+
         <!-- Content provider for taking photos with the camera -->
         <provider
             android:name="android.support.v4.content.FileProvider"
