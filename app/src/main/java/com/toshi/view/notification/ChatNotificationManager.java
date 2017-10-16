@@ -21,7 +21,9 @@ package com.toshi.view.notification;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.RemoteInput;
 
+import com.toshi.R;
 import com.toshi.crypto.signal.model.DecryptedSignalMessage;
 import com.toshi.model.local.Recipient;
 import com.toshi.model.local.User;
@@ -37,6 +39,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ChatNotificationManager extends ToshiNotificationBuilder {
+
+    public static final String KEY_TEXT_REPLY = "key_text_reply";
 
     private static String currentlyOpenConversation;
     private static final Map<String, ChatNotification> activeNotifications = new HashMap<>();
@@ -129,6 +133,22 @@ public class ChatNotificationManager extends ToshiNotificationBuilder {
     private static NotificationCompat.Builder getChatNotificationBuilder(final ChatNotification activeChatNotification) {
         return buildNotification(activeChatNotification)
                 .setDeleteIntent(activeChatNotification.getDeleteIntent())
-                .setContentIntent(activeChatNotification.getPendingIntent());
+                .setContentIntent(activeChatNotification.getPendingIntent())
+                .addAction(buildDirectReplyAction(activeChatNotification));
+    }
+
+    private static NotificationCompat.Action buildDirectReplyAction(final ChatNotification activeChatNotification) {
+        if (activeChatNotification.isUnknownSender()) return null;
+
+        final String replyLabel = BaseApplication.get().getResources().getString(R.string.reply_label);
+        final RemoteInput remoteInput = new RemoteInput.Builder(KEY_TEXT_REPLY)
+                .setLabel(replyLabel)
+                .build();
+
+        return new NotificationCompat.Action.Builder(
+                R.drawable.ic_send,
+                BaseApplication.get().getString(R.string.reply_label),
+                activeChatNotification.getDirectReplyIntent()
+        ).addRemoteInput(remoteInput).build();
     }
 }

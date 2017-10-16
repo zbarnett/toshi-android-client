@@ -95,6 +95,17 @@ public class ChatNotification extends ToshiNotification {
                 PendingIntent.FLAG_ONE_SHOT);
     }
 
+    public PendingIntent getDirectReplyIntent() {
+        if (isUnknownSender()) return null;
+
+        return PendingIntent.getService(
+                BaseApplication.get(),
+                0,
+                null,
+                PendingIntent.FLAG_UPDATE_CURRENT
+        );
+    }
+
     public PendingIntent getDeleteIntent() {
         final Intent intent =
                 new Intent(BaseApplication.get(), NotificationDismissedReceiver.class)
@@ -134,5 +145,9 @@ public class ChatNotification extends ToshiNotification {
         return this.sender == null
                 ? null
                 : this.sender.getAvatar();
+    }
+
+    public boolean isUnknownSender() {
+        return this.sender == null;
     }
 }
