@@ -51,6 +51,7 @@ import com.toshi.model.sofa.SofaAdapters;
 import com.toshi.model.sofa.SofaMessage;
 import com.toshi.presenter.AmountPresenter;
 import com.toshi.presenter.Presenter;
+import com.toshi.manager.messageQueue.AsyncOutgoingMessageQueue;
 import com.toshi.util.BuildTypes;
 import com.toshi.util.ChatNavigation;
 import com.toshi.util.FileUtil;
@@ -95,7 +96,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
 
     private ChatActivity activity;
     private ChatNavigation chatNavigation;
-    private OutgoingMessageQueue outgoingMessageQueue;
+    private AsyncOutgoingMessageQueue outgoingMessageQueue;
     private MessageAdapter messageAdapter;
     private PendingTransactionsObservable pendingTransactionsObservable;
     private SpeedyLinearLayoutManager layoutManager;
@@ -128,7 +129,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
 
     private void initLongLivingObjects() {
         this.subscriptions = new CompositeSubscription();
-        this.outgoingMessageQueue = new OutgoingMessageQueue();
+        this.outgoingMessageQueue = new AsyncOutgoingMessageQueue();
         this.pendingTransactionsObservable = new PendingTransactionsObservable();
         initMessageAdapter();
     }

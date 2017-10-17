@@ -15,7 +15,7 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.toshi.presenter.chat;
+package com.toshi.manager.messageQueue;
 
 
 import com.toshi.model.local.Recipient;
@@ -54,6 +54,7 @@ queue.clear(); // Cleans up all state, and unsubscribes everything.
     private final List<SofaMessage> preInitMessagesQueue;
     private final CompositeSubscription subscriptions;
     private Recipient recipient;
+    private final boolean isAsync;
 
     /**
      * Constructs OutgoingMessageQueue.
@@ -62,11 +63,13 @@ queue.clear(); // Cleans up all state, and unsubscribes everything.
      * to queue messages already via {@link #send(SofaMessage)}.
      *
      * @return the constructed OutgoingMessageQueue
+     * @param isAsync
      */
-    /* package */ OutgoingMessageQueue() {
+    /* package */ OutgoingMessageQueue(final boolean isAsync) {
         this.messagesReadyForSending = PublishSubject.create();
         this.preInitMessagesQueue = new ArrayList<>();
         this.subscriptions = new CompositeSubscription();
+        this.isAsync = isAsync;
     }
 
     /**
@@ -80,7 +83,7 @@ queue.clear(); // Cleans up all state, and unsubscribes everything.
      * @param message
      *              The message to be sent.
      */
-    /* package */ void send(final SofaMessage message) {
+    public void send(final SofaMessage message) {
         // If we already know who to send the message to; send it.
         // If not, queue it until we know where to send the message.
         if (this.recipient != null) {
@@ -96,7 +99,7 @@ queue.clear(); // Cleans up all state, and unsubscribes everything.
      * Any messages not yet sent will be lost. It is wise to call this method when possible to
      * clear any state, and release memory.
      */
-    /* package */ void clear() {
+    public void clear() {
         this.subscriptions.clear();
         this.recipient = null;
     }
@@ -116,7 +119,7 @@ queue.clear(); // Cleans up all state, and unsubscribes everything.
      * @param recipient
      *              The Recipient who the messages will be sent to.
      */
-    /* package */ void init(final Recipient recipient) {
+    public void init(final Recipient recipient) {
         if (recipient == this.recipient) {
             LogUtil.print(getClass(), "Suppressing a double subscription");
             return;
@@ -133,10 +136,14 @@ queue.clear(); // Cleans up all state, and unsubscribes everything.
     }
 
     private void attachMessagesReadyForSendingSubscriber() {
+        if (this.isAsync) {
+            this.messagesReadyForSending
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(Schedulers.io());
+        }
+
         final Subscription subscription =
                 this.messagesReadyForSending
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
                 .subscribe(
                         this::sendAndSaveMessage,
                         this::handleSendingMessageError

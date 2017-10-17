@@ -11,6 +11,7 @@ import com.toshi.model.local.User;
 import com.toshi.model.sofa.Message;
 import com.toshi.model.sofa.SofaAdapters;
 import com.toshi.model.sofa.SofaMessage;
+import com.toshi.manager.messageQueue.SyncOutgoingMessageQueue;
 import com.toshi.util.LogUtil;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.notification.ChatNotificationManager;
@@ -23,7 +24,7 @@ public class DirectReplyService extends IntentService {
     public static final int REQUEST_CODE = 0;
     public static final String TOSHI_ID = "toshiId";
 
-    private OutgoingMessageQueue outgoingMessageQueue;
+    private SyncOutgoingMessageQueue outgoingMessageQueue;
 
     public DirectReplyService() {
         super("DirectReplyService");
@@ -41,7 +42,7 @@ public class DirectReplyService extends IntentService {
     private String getUserInputFromIntent(final Intent intent) {
         final Bundle remoteInput = RemoteInput.getResultsFromIntent(intent);
         final CharSequence replyText = remoteInput.getCharSequence(KEY_TEXT_REPLY);
-        return replyText == null ? "" : replyText.toString();
+        return replyText != null ? replyText.toString() : null;
     }
 
     private void tryInit(final String toshiId, final String userInput) {
@@ -91,12 +92,13 @@ public class DirectReplyService extends IntentService {
         final SofaMessage sofaMessage = new SofaMessage().makeNew(localUser, messageBody);
 
         this.outgoingMessageQueue.send(sofaMessage);
+        this.outgoingMessageQueue.clear();
         ChatNotificationManager.showChatNotification(recipient, userInput);
     }
 
     private void initOutgoingMessageQueue(final Recipient recipient) {
         if (this.outgoingMessageQueue != null) return;
-        this.outgoingMessageQueue = new OutgoingMessageQueue();
+        this.outgoingMessageQueue = new SyncOutgoingMessageQueue();
         this.outgoingMessageQueue.init(recipient);
     }
 }
