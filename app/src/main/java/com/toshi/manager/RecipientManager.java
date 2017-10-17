@@ -86,7 +86,7 @@ public class RecipientManager {
     private boolean isUserFresh(final User user) {
         if (user == null) return false;
         if (!BaseApplication.get().isConnected()) return true;
-        return user.needsRefresh();
+        return !user.needsRefresh();
     }
 
     public Single<User> getUserFromPaymentAddress(final String paymentAddress) {
