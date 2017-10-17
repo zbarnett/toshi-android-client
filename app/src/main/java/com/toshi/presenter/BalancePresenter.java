@@ -61,6 +61,7 @@ public class BalancePresenter implements Presenter<BalanceActivity> {
 
     private void initShortLivingObjects() {
         initClickListeners();
+        initRefreshListener();
         attachBalanceSubscriber();
     }
 
@@ -70,11 +71,35 @@ public class BalancePresenter implements Presenter<BalanceActivity> {
         this.activity.getBinding().depositMoney.setOnClickListener(__ -> goToActivity(DepositActivity.class));
     }
 
+    private void initRefreshListener() {
+        this.activity.getBinding().refresh.setOnRefreshListener(this::refreshBalance);
+    }
+
+    private void refreshBalance() {
+        final Subscription sub =
+                BaseApplication
+                .get()
+                .getBalanceManager()
+                .refreshBalanceCompletable()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        this::stopRefreshing,
+                        __ -> stopRefreshing()
+                );
+
+        this.subscriptions.add(sub);
+    }
+
+    private void stopRefreshing() {
+        if (this.activity == null) return;
+        this.activity.getBinding().refresh.setRefreshing(false);
+    }
+
     private void startPaymentActivityForResult() {
         if (this.activity == null) return;
         final Intent intent = new Intent(this.activity, AmountActivity.class)
                 .putExtra(AmountActivity.VIEW_TYPE, PaymentType.TYPE_SEND);
-        activity.startActivityForResult(intent, SEND_REQUEST_CODE);
+        this.activity.startActivityForResult(intent, SEND_REQUEST_CODE);
     }
 
     public boolean handleActivityResult(final ActivityResultHolder resultHolder) {
@@ -98,28 +123,29 @@ public class BalancePresenter implements Presenter<BalanceActivity> {
     private void attachBalanceSubscriber() {
         final Subscription sub =
                 BaseApplication
-                        .get()
-                        .getBalanceManager()
-                        .getBalanceObservable()
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .filter(balance -> balance != null)
-                        .map(this::renderBalance)
-                        .flatMap(balance -> balance.getFormattedLocalBalance().toObservable())
-                        .subscribe(
-                                this::renderFormattedBalance,
-                                ex -> LogUtil.exception(getClass(), "Error during fetching balance", ex)
-                        );
+                .get()
+                .getBalanceManager()
+                .getBalanceObservable()
+                .observeOn(AndroidSchedulers.mainThread())
+                .filter(balance -> balance != null)
+                .doOnNext(this::renderBalance)
+                .flatMap(balance -> balance.getFormattedLocalBalance().toObservable())
+                .subscribe(
+                        this::renderFormattedBalance,
+                        ex -> LogUtil.exception(getClass(), "Error during fetching balance", ex)
+                );
 
         this.subscriptions.add(sub);
     }
 
-    private Balance renderBalance(final Balance balance) {
-        if (this.activity != null) this.activity.getBinding().ethBalance.setText(balance.getFormattedUnconfirmedBalance());
-        return balance;
+    private void renderBalance(final Balance balance) {
+        if (this.activity == null) return;
+        this.activity.getBinding().ethBalance.setText(balance.getFormattedUnconfirmedBalance());
     }
 
     private void renderFormattedBalance(final String formattedBalance) {
-        if (this.activity != null) this.activity.getBinding().localCurrencyBalance.setText(formattedBalance);
+        if (this.activity == null) return;
+        this.activity.getBinding().localCurrencyBalance.setText(formattedBalance);
     }
 
     private void goToActivity(final Class clz) {

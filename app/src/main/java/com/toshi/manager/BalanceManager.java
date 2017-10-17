@@ -117,15 +117,25 @@ public class BalanceManager {
     }
 
     public void refreshBalance() {
-        EthereumService
-                .getApi()
-                .getBalance(this.wallet.getPaymentAddress())
-                .subscribeOn(Schedulers.io())
+        getBalance()
                 .observeOn(Schedulers.io())
                 .subscribe(
                         this::handleNewBalance,
                         this::handleBalanceError
                 );
+    }
+
+    public Completable refreshBalanceCompletable() {
+        return getBalance()
+                .doOnSuccess(this::handleNewBalance)
+                .toCompletable();
+    }
+
+    private Single<Balance> getBalance() {
+        return EthereumService
+                .getApi()
+                .getBalance(this.wallet.getPaymentAddress())
+                .subscribeOn(Schedulers.io());
     }
 
     private void handleNewBalance(final Balance balance) {
