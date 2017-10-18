@@ -26,8 +26,8 @@ import java.math.BigInteger;
 public class EthUtil {
 
     public static final int BIG_DECIMAL_SCALE = 16;
-    private static final int NUM_DECIMAL_PLACES = 4;
-    private static final String USER_VISIBLE_STRING_FORMATTING = "%.4f";
+    private static final int NUM_DECIMAL_PLACES = 5;
+    private static final String USER_VISIBLE_STRING_FORMATTING = "%.5f";
     private static final BigDecimal weiToEthRatio = new BigDecimal("1000000000000000000");
 
     public static String hexAmountToUserVisibleString(final String hexEncodedWei) {
@@ -62,5 +62,9 @@ public class EthUtil {
 
     public static String encodeToHex(final String value) throws NumberFormatException, NullPointerException {
         return String.format("%s%s", "0x", new BigInteger(value).toString(16));
+    }
+
+    public static boolean isLargeEnoughForSending(final BigDecimal eth) {
+        return eth.setScale(NUM_DECIMAL_PLACES, BigDecimal.ROUND_DOWN).compareTo(BigDecimal.ZERO) == 1;
     }
 }

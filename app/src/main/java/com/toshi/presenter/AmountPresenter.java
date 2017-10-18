@@ -244,7 +244,7 @@ public class AmountPresenter implements Presenter<AmountActivity> {
 
     private void handleEth(final BigDecimal ethAmount) {
         this.activity.getBinding().ethValue.setText(EthUtil.ethAmountToUserVisibleString(ethAmount));
-        this.activity.getBinding().btnContinue.setEnabled(ethAmount.compareTo(BigDecimal.ZERO) != 0);
+        this.activity.getBinding().btnContinue.setEnabled(EthUtil.isLargeEnoughForSending(ethAmount));
 
         final BigInteger weiAmount = EthUtil.ethToWei(ethAmount);
         this.encodedEthAmount = TypeConverter.toJsonHex(weiAmount);
