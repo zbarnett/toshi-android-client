@@ -225,16 +225,13 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
     public void onViewDetached() {
         this.subscriptions.clear();
         this.activity = null;
-        // WebView doesn't handle orientation change so
-        // we can destroy it. This seems to be an Android issue.
-        // this kinda sucks.
-        destroy();
     }
 
     @Override
     public void onDestroyed() {
         this.subscriptions = null;
         this.activity = null;
+        destroy();
     }
 
     private void destroy() {
