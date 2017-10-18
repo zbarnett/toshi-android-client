@@ -19,7 +19,7 @@ package com.toshi.model.network;
 
 import com.squareup.moshi.Json;
 import com.toshi.model.local.ToshiEntity;
-import com.toshi.view.adapter.SearchAppAdapter;
+import com.toshi.view.adapter.ToshiEntityAdapter;
 
 public class App implements ToshiEntity {
     private String toshi_id;
@@ -89,7 +89,7 @@ public class App implements ToshiEntity {
         return username;
     }
 
-    public @SearchAppAdapter.ViewType int getViewType() {
-        return SearchAppAdapter.ITEM;
+    public @ToshiEntityAdapter.ViewType int getViewType() {
+        return ToshiEntityAdapter.ITEM;
     }
 }

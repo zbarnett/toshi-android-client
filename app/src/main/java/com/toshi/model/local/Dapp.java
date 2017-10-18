@@ -19,7 +19,7 @@ package com.toshi.model.local;
 
 
 import com.toshi.model.network.App;
-import com.toshi.view.adapter.SearchAppAdapter;
+import com.toshi.view.adapter.ToshiEntityAdapter;
 
 public class Dapp extends App {
 
@@ -34,7 +34,7 @@ public class Dapp extends App {
     }
 
     @Override
-    public @SearchAppAdapter.ViewType int getViewType() {
-        return SearchAppAdapter.DAPP_LINK;
+    public @ToshiEntityAdapter.ViewType int getViewType() {
+        return ToshiEntityAdapter.DAPP_LINK;
     }
 }
