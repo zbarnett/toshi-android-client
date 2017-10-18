@@ -131,8 +131,13 @@ public class RecipientManager {
     public Single<List<Contact>> loadAllContacts() {
         return this.contactStore
                 .loadAll()
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io());
+                .subscribeOn(Schedulers.io());
+    }
+
+    public Single<List<Contact>> searchContacts(final String query) {
+        return this.contactStore
+                .searchByName(query)
+                .subscribeOn(Schedulers.io());
     }
 
     public Single<List<User>> searchOnlineUsers(final String query) {
