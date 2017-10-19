@@ -23,10 +23,10 @@ import android.support.annotation.NonNull;
 
 import com.toshi.R;
 import com.toshi.databinding.ActivityContactSearchBinding;
-import com.toshi.presenter.ContactSearchPresenter;
 import com.toshi.presenter.LoaderIds;
 import com.toshi.presenter.factory.ContactSearchPresenterFactory;
 import com.toshi.presenter.factory.PresenterFactory;
+import com.toshi.presenter.ContactSearchPresenter;
 
 public class ContactSearchActivity extends BasePresenterActivity<ContactSearchPresenter, ContactSearchActivity> {
 
