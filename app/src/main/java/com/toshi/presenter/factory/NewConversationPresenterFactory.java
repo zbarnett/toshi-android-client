@@ -15,13 +15,16 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.toshi.util;
+package com.toshi.presenter.factory;
 
-import android.support.annotation.IntDef;
+import com.toshi.presenter.NewConversationPresenter;
 
-public class UserSearchType {
-    @IntDef({CONVERSATION, PROFILE})
-    public @interface Type {}
-    public static final int CONVERSATION = 1;
-    public static final int PROFILE = 2;
+public final class NewConversationPresenterFactory implements PresenterFactory<NewConversationPresenter> {
+
+    public NewConversationPresenterFactory() {}
+
+    @Override
+    public NewConversationPresenter create() {
+        return new NewConversationPresenter();
+    }
 }

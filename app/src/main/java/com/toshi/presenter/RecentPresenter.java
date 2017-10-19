@@ -27,10 +27,9 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import com.toshi.R;
 import com.toshi.model.local.Conversation;
 import com.toshi.util.LogUtil;
-import com.toshi.util.UserSearchType;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.activity.ChatActivity;
-import com.toshi.view.activity.UserSearchActivity;
+import com.toshi.view.activity.NewConversationActivity;
 import com.toshi.view.adapter.RecentAdapter;
 import com.toshi.view.adapter.listeners.OnItemClickListener;
 import com.toshi.view.custom.HorizontalLineDivider;
@@ -187,8 +186,7 @@ public final class RecentPresenter implements
 
     private void goToUserSearchActivity() {
         if (this.fragment == null || this.fragment.getContext() == null) return;
-        final Intent intent = new Intent(this.fragment.getContext(), UserSearchActivity.class)
-                .putExtra(UserSearchActivity.VIEW_TYPE, UserSearchType.CONVERSATION);
+        final Intent intent = new Intent(this.fragment.getContext(), NewConversationActivity.class);
         this.fragment.startActivity(intent);
     }
 

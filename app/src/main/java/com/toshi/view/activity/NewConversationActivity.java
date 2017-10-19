@@ -22,17 +22,15 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 
 import com.toshi.R;
-import com.toshi.databinding.ActivityUserSearchBinding;
+import com.toshi.databinding.ActivityNewConversationBinding;
 import com.toshi.presenter.LoaderIds;
-import com.toshi.presenter.UserSearchPresenter;
+import com.toshi.presenter.NewConversationPresenter;
+import com.toshi.presenter.factory.NewConversationPresenterFactory;
 import com.toshi.presenter.factory.PresenterFactory;
-import com.toshi.presenter.factory.UserSearchPresenterFactory;
 
-public class UserSearchActivity extends BasePresenterActivity<UserSearchPresenter, UserSearchActivity> {
+public class NewConversationActivity extends BasePresenterActivity<NewConversationPresenter, NewConversationActivity> {
 
-    public static final String VIEW_TYPE = "view_type";
-
-    private ActivityUserSearchBinding binding;
+    private ActivityNewConversationBinding binding;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -41,21 +39,21 @@ public class UserSearchActivity extends BasePresenterActivity<UserSearchPresente
     }
 
     private void init() {
-        this.binding = DataBindingUtil.setContentView(this, R.layout.activity_user_search);
+        this.binding = DataBindingUtil.setContentView(this, R.layout.activity_new_conversation);
     }
 
-    public ActivityUserSearchBinding getBinding() {
+    public ActivityNewConversationBinding getBinding() {
         return this.binding;
     }
 
     @NonNull
     @Override
-    protected PresenterFactory<UserSearchPresenter> getPresenterFactory() {
-        return new UserSearchPresenterFactory();
+    protected PresenterFactory<NewConversationPresenter> getPresenterFactory() {
+        return new NewConversationPresenterFactory();
     }
 
     @Override
-    protected void onPresenterPrepared(@NonNull final UserSearchPresenter presenter) {}
+    protected void onPresenterPrepared(@NonNull final NewConversationPresenter presenter) {}
 
     @Override
     protected int loaderId() {
