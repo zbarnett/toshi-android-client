@@ -28,7 +28,7 @@ import com.toshi.util.ImageUtil;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.custom.StarRatingView;
 
-public class ContactViewHolder extends ClickableViewHolder {
+public class UserViewHolder extends ClickableViewHolder {
 
     private static final int MAX_NAME_LENGHT = 25;
 
@@ -38,7 +38,7 @@ public class ContactViewHolder extends ClickableViewHolder {
     private StarRatingView ratingView;
     private TextView reviewCount;
 
-    public ContactViewHolder(final View view) {
+    public UserViewHolder(final View view) {
         super(view);
         this.name = (TextView) view.findViewById(R.id.name);
         this.username = (TextView) view.findViewById(R.id.username);

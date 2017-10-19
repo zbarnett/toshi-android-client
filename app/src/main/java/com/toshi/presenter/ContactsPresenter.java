@@ -34,7 +34,7 @@ import com.toshi.view.BaseApplication;
 import com.toshi.view.activity.ContactSearchActivity;
 import com.toshi.view.activity.ScannerActivity;
 import com.toshi.view.activity.ViewUserActivity;
-import com.toshi.view.adapter.ContactsAdapter;
+import com.toshi.view.adapter.UserAdapter;
 import com.toshi.view.adapter.listeners.OnItemClickListener;
 import com.toshi.view.custom.HorizontalLineDivider;
 import com.toshi.view.fragment.toplevel.ContactsFragment;
@@ -51,7 +51,7 @@ public final class ContactsPresenter implements
 
     private ContactsFragment fragment;
     private boolean firstTimeAttaching = true;
-    private ContactsAdapter adapter;
+    private UserAdapter adapter;
     private CompositeSubscription subscriptions;
 
     @Override
@@ -119,7 +119,7 @@ public final class ContactsPresenter implements
 
     private void initLongLivingObjects() {
         this.subscriptions = new CompositeSubscription();
-        this.adapter = new ContactsAdapter()
+        this.adapter = new UserAdapter()
                 .setOnItemClickListener(this);
     }
 

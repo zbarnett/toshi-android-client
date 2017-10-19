@@ -28,17 +28,17 @@ import com.toshi.model.local.User;
 import com.toshi.R;
 import com.toshi.view.adapter.listeners.OnItemClickListener;
 import com.toshi.view.adapter.viewholder.ClickableViewHolder;
-import com.toshi.view.adapter.viewholder.ContactViewHolder;
+import com.toshi.view.adapter.viewholder.UserViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ContactsAdapter extends RecyclerView.Adapter<ContactViewHolder> implements ClickableViewHolder.OnClickListener {
+public class UserAdapter extends RecyclerView.Adapter<UserViewHolder> implements ClickableViewHolder.OnClickListener {
 
     private List<User> users;
     private OnItemClickListener<User> onItemClickListener;
 
-    public ContactsAdapter() {
+    public UserAdapter() {
         this.users = new ArrayList<>(0);
     }
 
@@ -50,20 +50,20 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactViewHolder> imp
         notifyDataSetChanged();
     }
 
-    public ContactsAdapter setUsers(final List<User> users) {
+    public UserAdapter setUsers(final List<User> users) {
         this.users = users;
         notifyDataSetChanged();
         return this;
     }
 
     @Override
-    public ContactViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
-        final View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item__contact, parent, false);
-        return new ContactViewHolder(itemView);
+    public UserViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
+        final View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item__user, parent, false);
+        return new UserViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(final ContactViewHolder holder, final int position) {
+    public void onBindViewHolder(final UserViewHolder holder, final int position) {
         final User user = this.users.get(position);
         holder.setUser(user);
         holder.setOnClickListener(this);
@@ -81,7 +81,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactViewHolder> imp
         this.onItemClickListener.onItemClick(clickedUser);
     }
 
-    public ContactsAdapter setOnItemClickListener(final OnItemClickListener<User> onItemClickListener) {
+    public UserAdapter setOnItemClickListener(final OnItemClickListener<User> onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
         return this;
     }
