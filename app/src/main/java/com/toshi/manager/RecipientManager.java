@@ -135,13 +135,6 @@ public class RecipientManager {
                 .observeOn(Schedulers.io());
     }
 
-    public Single<List<User>> searchOfflineUsers(final String query) {
-        return this.userStore
-                .queryUsername(query)
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io());
-    }
-
     public Single<List<User>> searchOnlineUsers(final String query) {
         return IdService
                 .getApi()
