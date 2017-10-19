@@ -303,6 +303,20 @@ public class ConversationStore {
         return areUnreadMessages;
     }
 
+    public Single<SofaMessage> getSofaMessageById(final String id) {
+        return Single.fromCallable(() -> {
+            final Realm realm = BaseApplication.get().getRealm();
+            final SofaMessage result =
+                    realm
+                            .where(SofaMessage.class)
+                            .equalTo("privateKey", id)
+                            .findFirst();
+            final SofaMessage sofaMessage = realm.copyFromRealm(result);
+            realm.close();
+            return sofaMessage;
+        });
+    }
+
     private void broadcastNewChatMessage(final String threadId, final SofaMessage newMessage) {
         if (watchedThreadId == null || !watchedThreadId.equals(threadId)) {
             return;

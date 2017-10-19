@@ -35,6 +35,7 @@ import com.toshi.BuildConfig;
 import com.toshi.R;
 import com.toshi.crypto.HDWallet;
 import com.toshi.exception.PermissionException;
+import com.toshi.manager.messageQueue.AsyncOutgoingMessageQueue;
 import com.toshi.model.local.ActivityResultHolder;
 import com.toshi.model.local.Conversation;
 import com.toshi.model.local.Group;
@@ -51,7 +52,6 @@ import com.toshi.model.sofa.SofaAdapters;
 import com.toshi.model.sofa.SofaMessage;
 import com.toshi.presenter.AmountPresenter;
 import com.toshi.presenter.Presenter;
-import com.toshi.manager.messageQueue.AsyncOutgoingMessageQueue;
 import com.toshi.util.BuildTypes;
 import com.toshi.util.ChatNavigation;
 import com.toshi.util.FileUtil;
@@ -480,12 +480,16 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     }
 
     private void loadRecipient() {
-        final String threadId = this.activity.getIntent().getStringExtra(ChatActivity.EXTRA__THREAD_ID);
+        final String threadId = getThreadIdFromIntent();
         if (isGroup(threadId)) {
             loadGroupRecipient(threadId);
         } else {
             loadUserRecipient(threadId);
         }
+    }
+
+    private String getThreadIdFromIntent() {
+        return this.activity.getIntent().getStringExtra(ChatActivity.EXTRA__THREAD_ID);
     }
 
     private void loadGroupRecipient(final String groupId) {
@@ -585,14 +589,14 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         final Subscription sub =
                 getRecipient()
                 .subscribe(
-                        recipient -> confirmPayment(recipient, value),
+                        recipient -> showPaymentConfirmationDialog(recipient, value),
                         this::handleError
                 );
 
         this.subscriptions.add(sub);
     }
 
-    private void confirmPayment(final Recipient recipient, final String amount) {
+    private void showPaymentConfirmationDialog(final Recipient recipient, final String amount) {
         final User receiver = recipient.getUser();
         final PaymentConfirmationDialog dialog =
                 PaymentConfirmationDialog.newInstanceToshiPayment(

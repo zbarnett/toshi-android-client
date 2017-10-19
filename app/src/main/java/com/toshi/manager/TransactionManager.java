@@ -62,6 +62,7 @@ import rx.subscriptions.CompositeSubscription;
 import static com.toshi.manager.model.PaymentTask.INCOMING;
 import static com.toshi.manager.model.PaymentTask.OUTGOING;
 import static com.toshi.manager.model.PaymentTask.OUTGOING_EXTERNAL;
+import static com.toshi.manager.model.PaymentTask.OUTGOING_RESEND;
 
 public class TransactionManager {
 
@@ -122,21 +123,36 @@ public class TransactionManager {
     }
 
     private void processNewOutgoingPayment(final PaymentTask paymentTask) {
-        final Single<Pair<Payment, SofaMessage>> storePaymentSingle = getUpdatedPayment(paymentTask);
         switch (paymentTask.getAction()) {
+            case OUTGOING_RESEND:
+                getSofaMessageFromId(paymentTask.getPrivateKey())
+                        .subscribe(
+                                sofaMessage -> handleOutgoingResendPayment(paymentTask, sofaMessage),
+                                throwable -> LogUtil.e(getClass(), "Error while fetching user " + throwable)
+                        );
+                break;
             case OUTGOING:
-                storePaymentSingle.subscribe(
-                        pair -> handleOutgoingPayment(paymentTask.getUser(), pair.first, pair.second),
-                        this::handleNonFatalError
-                );
+                final Single<Pair<Payment, SofaMessage>> storePaymentSingle = getUpdatedPayment(paymentTask);
+                storePaymentSingle
+                        .subscribe(
+                                pair -> handleOutgoingPayment(paymentTask.getUser(), pair.first, pair.second),
+                                this::handleNonFatalError
+                        );
                 break;
             case OUTGOING_EXTERNAL:
-                storePaymentSingle.subscribe(
+                final Single<Pair<Payment, SofaMessage>> storeExternalPaymentSingle = getUpdatedPayment(paymentTask);
+                storeExternalPaymentSingle
+                        .subscribe(
                         pair -> handleOutgoingExternalPayment(pair.first, pair.second),
                         this::handleNonFatalError
                 );
                 break;
         }
+    }
+
+    private void handleOutgoingResendPayment(final PaymentTask paymentTask, final SofaMessage sofaMessage) {
+        updateMessageState(paymentTask.getUser(), sofaMessage, SendState.STATE_SENDING);
+        handleOutgoingPayment(paymentTask.getUser(), paymentTask.getPayment(), sofaMessage);
     }
 
     private void attachNewIncomingPaymentSubscriber() {
@@ -166,13 +182,7 @@ public class TransactionManager {
         final User receiver = getReceiverFromTask(paymentTask);
         return payment
                 .generateLocalPrice()
-                .flatMap(updatedPayment ->
-                        Single.zip(
-                                Single.just(updatedPayment),
-                                Single.just(storePayment(receiver, updatedPayment, sender)),
-                                Pair::new
-                        )
-                )
+                .map(updatedPayment -> new Pair<>(updatedPayment, storePayment(receiver, updatedPayment, sender)))
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io());
     }
@@ -214,7 +224,21 @@ public class TransactionManager {
             );
     }
 
-    private void addOutgoingPaymentTask(final User receiver, final Payment payment, final @PaymentTask.Action int action) {
+    public void resendPayment(final User receiver, final Payment payment, final String privateKey) {
+        addOutgoingPaymentTask(receiver, payment, OUTGOING_RESEND, privateKey);
+    }
+
+    private void addOutgoingPaymentTask(final User receiver,
+                                        final Payment payment,
+                                        final @PaymentTask.Action int action,
+                                        final String privateKey) {
+        final PaymentTask task = new PaymentTask(receiver, payment, action, privateKey);
+        this.newOutgoingPaymentQueue.onNext(task);
+    }
+
+    private void addOutgoingPaymentTask(final User receiver,
+                                        final Payment payment,
+                                        final @PaymentTask.Action int action) {
         final PaymentTask task = new PaymentTask(receiver, payment, action);
         this.newOutgoingPaymentQueue.onNext(task);
     }
@@ -386,10 +410,9 @@ public class TransactionManager {
                 .sendMessage(recipient, storedSofaMessage);
     }
 
-    private void handleOutgoingPaymentError(
-            final Throwable error,
-            final User receiver,
-            final SofaMessage storedSofaMessage) {
+    private void handleOutgoingPaymentError(final Throwable error,
+                                            final User receiver,
+                                            final SofaMessage storedSofaMessage) {
         final SofaError errorMessage = parseErrorResponse(error);
         storedSofaMessage.setErrorMessage(errorMessage);
         LogUtil.exception(getClass(), "Error creating transaction", error);
@@ -509,9 +532,17 @@ public class TransactionManager {
                 .sendSignedTransaction(timestamp, signedTransaction);
     }
 
-    private void updateMessageState(final User user, final SofaMessage message, final @SendState.State int sendState) {
-        message.setSendState(sendState);
-        updateMessage(user, message);
+    private Single<SofaMessage> getSofaMessageFromId(final String privateKey) {
+        return BaseApplication
+                .get()
+                .getSofaMessageManager()
+                .getSofaMessageById(privateKey)
+                .subscribeOn(Schedulers.io());
+    }
+
+    private void updateMessageState(final User user, final SofaMessage sofaMessage, final @SendState.State int sendState) {
+        sofaMessage.setSendState(sendState);
+        updateMessage(user, sofaMessage);
     }
 
     private void updateMessage(final User user, final SofaMessage message) {

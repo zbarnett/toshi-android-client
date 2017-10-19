@@ -26,15 +26,17 @@ import com.toshi.model.sofa.Payment;
 public class PaymentTask {
 
 
-    @IntDef({INCOMING, OUTGOING, OUTGOING_EXTERNAL})
+    @IntDef({INCOMING, OUTGOING, OUTGOING_EXTERNAL, OUTGOING_RESEND})
     public @interface Action {}
     public static final int INCOMING = 0;
     public static final int OUTGOING = 1;
     public static final int OUTGOING_EXTERNAL = 2;
+    public static final int OUTGOING_RESEND = 3;
 
     private final User user;
     private final Payment payment;
     private final @Action int action;
+    private String privateKey;
 
     public PaymentTask(
             final User user,
@@ -43,6 +45,17 @@ public class PaymentTask {
         this.user = user;
         this.payment = payment;
         this.action = action;
+    }
+
+    public PaymentTask(
+            final User user,
+            final Payment payment,
+            final @Action int action,
+            final String privateKey) {
+        this.user = user;
+        this.payment = payment;
+        this.action = action;
+        this.privateKey = privateKey;
     }
 
     public User getUser() {
@@ -55,5 +68,9 @@ public class PaymentTask {
 
     public int getAction() {
         return this.action;
+    }
+
+    public String getPrivateKey() {
+        return this.privateKey;
     }
 }
