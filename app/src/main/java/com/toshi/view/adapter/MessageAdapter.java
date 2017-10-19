@@ -65,6 +65,7 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
     private OnItemClickListener<String> onImageClickListener;
     private OnItemClickListener<String> onFileClickListener;
     private OnItemClickListener<SofaMessage> onResendListener;
+    private OnItemClickListener<SofaMessage> onResendPaymentListener;
     private Recipient recipient;
 
     public MessageAdapter() {
@@ -98,6 +99,11 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     public final MessageAdapter addOnResendListener(final OnItemClickListener<SofaMessage> listener) {
         this.onResendListener = listener;
+        return this;
+    }
+
+    public final MessageAdapter addOnResendPaymentListener(final OnItemClickListener<SofaMessage> listener) {
+        this.onResendPaymentListener = listener;
         return this;
     }
 
@@ -291,6 +297,7 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
                         .setAvatarUri(sofaMessage.getSenderAvatar())
                         .setSendState(sofaMessage.getSendState())
                         .setSofaError(sofaMessage.getErrorMessage())
+                        .setOnResendPaymentListener(this.onResendPaymentListener, sofaMessage)
                         .draw();
                 break;
             }

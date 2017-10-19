@@ -28,9 +28,11 @@ import com.toshi.R;
 import com.toshi.model.local.SendState;
 import com.toshi.model.network.SofaError;
 import com.toshi.model.sofa.Payment;
+import com.toshi.model.sofa.SofaMessage;
 import com.toshi.util.EthUtil;
 import com.toshi.util.ImageUtil;
 import com.toshi.view.BaseApplication;
+import com.toshi.view.adapter.listeners.OnItemClickListener;
 
 public final class PaymentViewHolder extends RecyclerView.ViewHolder {
 
@@ -48,12 +50,12 @@ public final class PaymentViewHolder extends RecyclerView.ViewHolder {
 
     public PaymentViewHolder(final View v) {
         super(v);
-        this.avatar = (ImageView) v.findViewById(R.id.avatar);
-        this.title = (TextView) v.findViewById(R.id.title);
-        this.ethereumAmount = (TextView) v.findViewById(R.id.eth_amount);
-        this.body = (TextView) v.findViewById(R.id.body);
-        this.sendStatus = (ImageView) v.findViewById(R.id.sent_status);
-        this.errorMessage = (TextView) v.findViewById(R.id.error_message);
+        this.avatar = v.findViewById(R.id.avatar);
+        this.title = v.findViewById(R.id.title);
+        this.ethereumAmount = v.findViewById(R.id.eth_amount);
+        this.body = v.findViewById(R.id.body);
+        this.sendStatus = v.findViewById(R.id.sent_status);
+        this.errorMessage = v.findViewById(R.id.error_message);
     }
 
     public PaymentViewHolder setPayment(final Payment payment) {
@@ -73,6 +75,14 @@ public final class PaymentViewHolder extends RecyclerView.ViewHolder {
 
     public PaymentViewHolder setSofaError(final SofaError sofaError) {
         this.sofaError = sofaError;
+        return this;
+    }
+
+    public PaymentViewHolder setOnResendPaymentListener(final OnItemClickListener<SofaMessage> listener,
+                                                        final SofaMessage sofaMessage) {
+        if (this.sendState == SendState.STATE_FAILED) {
+            this.itemView.setOnClickListener(v -> listener.onItemClick(sofaMessage));
+        }
         return this;
     }
 
