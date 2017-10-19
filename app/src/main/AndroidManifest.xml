@@ -109,6 +109,7 @@
         <activity android:name="com.toshi.view.activity.SendActivity"
                   android:windowSoftInputMode="adjustResize"/>
         <activity android:name="com.toshi.view.activity.SignInInfoActivity"/>
+        <activity android:name="com.toshi.view.activity.ContactSearchActivity"/>
 
         <meta-data
             android:name="io.fabric.ApiKey"

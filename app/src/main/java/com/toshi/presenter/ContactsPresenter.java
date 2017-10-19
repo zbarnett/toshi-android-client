@@ -30,10 +30,9 @@ import com.toshi.model.local.Contact;
 import com.toshi.model.local.User;
 import com.toshi.util.LogUtil;
 import com.toshi.util.OnSingleClickListener;
-import com.toshi.util.UserSearchType;
 import com.toshi.view.BaseApplication;
+import com.toshi.view.activity.ContactSearchActivity;
 import com.toshi.view.activity.ScannerActivity;
-import com.toshi.view.activity.UserSearchActivity;
 import com.toshi.view.activity.ViewUserActivity;
 import com.toshi.view.adapter.ContactsAdapter;
 import com.toshi.view.adapter.listeners.OnItemClickListener;
@@ -177,9 +176,8 @@ public final class ContactsPresenter implements
 
     private void startUserSearchActivity() {
         if (this.fragment == null) return;
-        final Intent intent = new Intent(this.fragment.getActivity(), UserSearchActivity.class)
-                .putExtra(UserSearchActivity.VIEW_TYPE, UserSearchType.PROFILE);
-        fragment.startActivity(intent);
+        final Intent intent = new Intent(this.fragment.getActivity(), ContactSearchActivity.class);
+        this.fragment.startActivity(intent);
     }
 
     private void startScanQrActivity() {
