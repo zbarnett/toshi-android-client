@@ -112,8 +112,6 @@ public final class TextViewHolder extends RecyclerView.ViewHolder {
     }
 
     private void renderText() {
-        if (this.text == null) return;
-
         if (isOnlyEmojis()) {
             this.message.setVisibility(View.GONE);
             this.emojiMessage.setVisibility(View.VISIBLE);
@@ -148,7 +146,9 @@ public final class TextViewHolder extends RecyclerView.ViewHolder {
 
     private boolean isOnlyEmojis() {
         // Returns true even if there is whitespace between emojis
-        return EmojiParser.removeAllEmojis(this.text).trim().length() == 0;
+        return     this.text != null
+                && this.text.trim().length() > 0
+                && EmojiParser.removeAllEmojis(this.text).trim().length() == 0;
     }
 
     private void renderAvatar() {
