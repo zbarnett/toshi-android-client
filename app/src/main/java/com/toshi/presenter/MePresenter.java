@@ -40,7 +40,7 @@ import com.toshi.view.activity.QrCodeActivity;
 import com.toshi.view.activity.SignOutActivity;
 import com.toshi.view.activity.TrustedFriendsActivity;
 import com.toshi.view.activity.ViewProfileActivity;
-import com.toshi.view.adapter.SettingsAdapter;
+import com.toshi.view.adapter.MeAdapter;
 import com.toshi.view.custom.HorizontalLineDivider;
 import com.toshi.view.fragment.toplevel.MeFragment;
 
@@ -131,7 +131,7 @@ public final class MePresenter implements
     }
 
     private void initRecyclerView() {
-        final SettingsAdapter adapter = new SettingsAdapter();
+        final MeAdapter adapter = new MeAdapter();
         adapter.setOnItemClickListener(this::handleItemClickListener);
         final RecyclerView recyclerView = this.fragment.getBinding().settings;
         final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this.fragment.getContext());
@@ -148,15 +148,15 @@ public final class MePresenter implements
 
     private void handleItemClickListener(final int option) {
         switch (option) {
-            case SettingsAdapter.LOCAL_CURRENCY: {
+            case MeAdapter.LOCAL_CURRENCY: {
                 goToCurrencyActivity();
                 break;
             }
-            case SettingsAdapter.ADVANCED: {
+            case MeAdapter.ADVANCED: {
                 goToDevelopActivity();
                 break;
             }
-            case SettingsAdapter.SIGN_OUT: {
+            case MeAdapter.SIGN_OUT: {
                 dialogHandler();
                 break;
             }

@@ -31,7 +31,7 @@ import com.toshi.view.BaseApplication;
 import com.toshi.view.adapter.listeners.OnItemClickListener;
 import com.toshi.view.adapter.viewholder.ClickableViewHolder;
 
-public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.ViewHolder> {
+public class MeAdapter extends RecyclerView.Adapter<MeAdapter.ViewHolder> {
 
     public static final int LOCAL_CURRENCY = 0;
     public static final int ADVANCED = 1;
@@ -40,7 +40,7 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.ViewHo
     private final String[] settings;
     private OnItemClickListener<Integer> listener;
 
-    public SettingsAdapter() {
+    public MeAdapter() {
         this.settings = BaseApplication.get().getResources().getStringArray(R.array.settings_options);
     }
 
@@ -86,7 +86,7 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.ViewHo
 
         private ViewHolder(final View view) {
             super(view);
-            this.label = (TextView) view.findViewById(R.id.label);
+            this.label = view.findViewById(R.id.label);
         }
 
         public void bind(final int position, final OnItemClickListener<Integer> listener) {
