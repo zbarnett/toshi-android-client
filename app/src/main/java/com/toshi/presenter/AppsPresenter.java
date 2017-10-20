@@ -35,7 +35,7 @@ import com.toshi.model.network.App;
 import com.toshi.util.BrowseType;
 import com.toshi.util.LogUtil;
 import com.toshi.view.BaseApplication;
-import com.toshi.view.activity.BrowseActivity;
+import com.toshi.view.activity.BrowseMoreActivity;
 import com.toshi.view.activity.ViewUserActivity;
 import com.toshi.view.activity.WebViewActivity;
 import com.toshi.view.adapter.HorizontalAdapter;
@@ -121,8 +121,8 @@ public class AppsPresenter implements Presenter<AppsFragment>{
     }
 
     private void startBrowseActivity(final @BrowseType.Type int viewType) {
-        final Intent intent = new Intent(this.fragment.getActivity(), BrowseActivity.class)
-                .putExtra(BrowseActivity.VIEW_TYPE, viewType);
+        final Intent intent = new Intent(this.fragment.getActivity(), BrowseMoreActivity.class)
+                .putExtra(BrowseMoreActivity.VIEW_TYPE, viewType);
         this.fragment.startActivity(intent);
     }
 

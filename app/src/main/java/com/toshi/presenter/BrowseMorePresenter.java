@@ -32,7 +32,7 @@ import com.toshi.model.network.App;
 import com.toshi.util.BrowseType;
 import com.toshi.util.LogUtil;
 import com.toshi.view.BaseApplication;
-import com.toshi.view.activity.BrowseActivity;
+import com.toshi.view.activity.BrowseMoreActivity;
 import com.toshi.view.activity.ViewUserActivity;
 import com.toshi.view.adapter.BrowseAdapter;
 import com.toshi.view.custom.HorizontalLineDivider;
@@ -49,9 +49,9 @@ import static com.toshi.util.BrowseType.VIEW_TYPE_LATEST_PUBLIC_USERS;
 import static com.toshi.util.BrowseType.VIEW_TYPE_TOP_RATED_APPS;
 import static com.toshi.util.BrowseType.VIEW_TYPE_TOP_RATED_PUBLIC_USERS;
 
-public class BrowsePresenter implements Presenter<BrowseActivity> {
+public class BrowseMorePresenter implements Presenter<BrowseMoreActivity> {
 
-    private BrowseActivity activity;
+    private BrowseMoreActivity activity;
     private CompositeSubscription subscriptions;
     private List<? extends ToshiEntity> browseList;
 
@@ -59,7 +59,7 @@ public class BrowsePresenter implements Presenter<BrowseActivity> {
     private int scrollPosition = 0;
 
     @Override
-    public void onViewAttached(BrowseActivity view) {
+    public void onViewAttached(BrowseMoreActivity view) {
         this.activity = view;
 
         if (this.firstTimeAttaching) {
@@ -150,7 +150,7 @@ public class BrowsePresenter implements Presenter<BrowseActivity> {
 
     @SuppressWarnings("WrongConstant")
     private @BrowseType.Type int getViewType() {
-        return this.activity.getIntent().getIntExtra(BrowseActivity.VIEW_TYPE, VIEW_TYPE_LATEST_PUBLIC_USERS);
+        return this.activity.getIntent().getIntExtra(BrowseMoreActivity.VIEW_TYPE, VIEW_TYPE_LATEST_PUBLIC_USERS);
     }
 
     private void fetchTopRatedApps() {

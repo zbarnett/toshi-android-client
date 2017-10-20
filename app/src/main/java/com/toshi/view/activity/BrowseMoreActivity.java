@@ -22,17 +22,17 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 
 import com.toshi.R;
-import com.toshi.databinding.ActivityBrowseBinding;
-import com.toshi.presenter.BrowsePresenter;
+import com.toshi.databinding.ActivityBrowseMoreBinding;
+import com.toshi.presenter.BrowseMorePresenter;
 import com.toshi.presenter.LoaderIds;
-import com.toshi.presenter.factory.BrowsePresenterFactory;
 import com.toshi.presenter.factory.PresenterFactory;
+import com.toshi.presenter.factory.BrowseMorePresenterFactory;
 
-public class BrowseActivity extends BasePresenterActivity<BrowsePresenter, BrowseActivity> {
+public class BrowseMoreActivity extends BasePresenterActivity<BrowseMorePresenter, BrowseMoreActivity> {
 
     public static final String VIEW_TYPE = "VIEW_TYPE";
 
-    private ActivityBrowseBinding binding;
+    private ActivityBrowseMoreBinding binding;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -41,21 +41,21 @@ public class BrowseActivity extends BasePresenterActivity<BrowsePresenter, Brows
     }
 
     private void init() {
-        this.binding = DataBindingUtil.setContentView(this, R.layout.activity_browse);
+        this.binding = DataBindingUtil.setContentView(this, R.layout.activity_browse_more);
     }
 
-    public final ActivityBrowseBinding getBinding() {
+    public final ActivityBrowseMoreBinding getBinding() {
         return this.binding;
     }
 
     @NonNull
     @Override
-    protected PresenterFactory<BrowsePresenter> getPresenterFactory() {
-        return new BrowsePresenterFactory();
+    protected PresenterFactory<BrowseMorePresenter> getPresenterFactory() {
+        return new BrowseMorePresenterFactory();
     }
 
     @Override
-    protected void onPresenterPrepared(@NonNull BrowsePresenter presenter) {}
+    protected void onPresenterPrepared(@NonNull BrowseMorePresenter presenter) {}
 
     @Override
     protected int loaderId() {

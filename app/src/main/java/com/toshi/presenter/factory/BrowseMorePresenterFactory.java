@@ -17,11 +17,11 @@
 
 package com.toshi.presenter.factory;
 
-import com.toshi.presenter.BrowsePresenter;
+import com.toshi.presenter.BrowseMorePresenter;
 
-public class BrowsePresenterFactory implements PresenterFactory<BrowsePresenter> {
+public class BrowseMorePresenterFactory implements PresenterFactory<BrowseMorePresenter> {
     @Override
-    public BrowsePresenter create() {
-        return new BrowsePresenter();
+    public BrowseMorePresenter create() {
+        return new BrowseMorePresenter();
     }
 }
