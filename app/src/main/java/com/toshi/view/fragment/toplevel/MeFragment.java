@@ -27,19 +27,19 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.toshi.R;
-import com.toshi.databinding.FragmentSettingsBinding;
+import com.toshi.databinding.FragmentMeBinding;
 import com.toshi.presenter.LoaderIds;
-import com.toshi.presenter.SettingsPresenter;
+import com.toshi.presenter.MePresenter;
 import com.toshi.presenter.factory.PresenterFactory;
-import com.toshi.presenter.factory.SettingsPresenterFactory;
+import com.toshi.presenter.factory.MePresenterFactory;
 import com.toshi.view.fragment.BasePresenterFragment;
 
-public class SettingsFragment extends BasePresenterFragment<SettingsPresenter, SettingsFragment> {
+public class MeFragment extends BasePresenterFragment<MePresenter, MeFragment> {
 
-    private FragmentSettingsBinding binding;
+    private FragmentMeBinding binding;
 
-    public static SettingsFragment newInstance() {
-        return new SettingsFragment();
+    public static MeFragment newInstance() {
+        return new MeFragment();
     }
 
     @Nullable
@@ -47,22 +47,22 @@ public class SettingsFragment extends BasePresenterFragment<SettingsPresenter, S
     public View onCreateView(final LayoutInflater inflater,
                              final ViewGroup container,
                              final Bundle inState) {
-        this.binding = DataBindingUtil.inflate(inflater, R.layout.fragment_settings, container, false);
+        this.binding = DataBindingUtil.inflate(inflater, R.layout.fragment_me, container, false);
         return binding.getRoot();
     }
 
-    public FragmentSettingsBinding getBinding() {
+    public FragmentMeBinding getBinding() {
         return this.binding;
     }
 
     @NonNull
     @Override
-    protected PresenterFactory<SettingsPresenter> getPresenterFactory() {
-        return new SettingsPresenterFactory();
+    protected PresenterFactory<MePresenter> getPresenterFactory() {
+        return new MePresenterFactory();
     }
 
     @Override
-    protected void onPresenterPrepared(@NonNull final SettingsPresenter presenter) {
+    protected void onPresenterPrepared(@NonNull final MePresenter presenter) {
 
     }
 

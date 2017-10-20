@@ -17,14 +17,14 @@
 
 package com.toshi.presenter.factory;
 
-import com.toshi.presenter.SettingsPresenter;
+import com.toshi.presenter.MePresenter;
 
-public final class SettingsPresenterFactory implements PresenterFactory<SettingsPresenter> {
+public final class MePresenterFactory implements PresenterFactory<MePresenter> {
 
-    public SettingsPresenterFactory() {}
+    public MePresenterFactory() {}
 
     @Override
-    public SettingsPresenter create() {
-        return new SettingsPresenter();
+    public MePresenter create() {
+        return new MePresenter();
     }
 }

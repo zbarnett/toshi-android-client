@@ -42,7 +42,7 @@ import com.toshi.view.activity.TrustedFriendsActivity;
 import com.toshi.view.activity.ViewProfileActivity;
 import com.toshi.view.adapter.SettingsAdapter;
 import com.toshi.view.custom.HorizontalLineDivider;
-import com.toshi.view.fragment.toplevel.SettingsFragment;
+import com.toshi.view.fragment.toplevel.MeFragment;
 
 import java.math.BigInteger;
 
@@ -51,16 +51,16 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 
-public final class SettingsPresenter implements
-        Presenter<SettingsFragment> {
+public final class MePresenter implements
+        Presenter<MeFragment> {
 
     private User localUser;
-    private SettingsFragment fragment;
+    private MeFragment fragment;
     private CompositeSubscription subscriptions;
     private boolean firstTimeAttaching = true;
 
     @Override
-    public void onViewAttached(final SettingsFragment fragment) {
+    public void onViewAttached(final MeFragment fragment) {
         this.fragment = fragment;
 
         if (this.firstTimeAttaching) {

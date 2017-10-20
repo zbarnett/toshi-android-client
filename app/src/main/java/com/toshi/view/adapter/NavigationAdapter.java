@@ -27,7 +27,7 @@ import android.view.Menu;
 import com.toshi.view.fragment.toplevel.BrowseFragment;
 import com.toshi.view.fragment.toplevel.ContactsFragment;
 import com.toshi.view.fragment.toplevel.RecentFragment;
-import com.toshi.view.fragment.toplevel.SettingsFragment;
+import com.toshi.view.fragment.toplevel.MeFragment;
 
 import java.util.ArrayList;
 
@@ -47,7 +47,7 @@ public class NavigationAdapter extends FragmentPagerAdapter {
         fragments.add(RecentFragment.newInstance());
         fragments.add(RecentFragment.newInstance()); // <-- This can be anything. In reality it is the Scan functionality
         fragments.add(ContactsFragment.newInstance());
-        fragments.add(SettingsFragment.newInstance());
+        fragments.add(MeFragment.newInstance());
     }
 
     @Override
