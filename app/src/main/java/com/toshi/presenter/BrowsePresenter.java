@@ -42,7 +42,7 @@ import com.toshi.view.adapter.HorizontalAdapter;
 import com.toshi.view.adapter.ToshiEntityAdapter;
 import com.toshi.view.adapter.listeners.OnItemClickListener;
 import com.toshi.view.custom.HorizontalLineDivider;
-import com.toshi.view.fragment.toplevel.AppsFragment;
+import com.toshi.view.fragment.toplevel.BrowseFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,9 +60,9 @@ import static com.toshi.util.BrowseType.VIEW_TYPE_LATEST_PUBLIC_USERS;
 import static com.toshi.util.BrowseType.VIEW_TYPE_TOP_RATED_APPS;
 import static com.toshi.util.BrowseType.VIEW_TYPE_TOP_RATED_PUBLIC_USERS;
 
-public class AppsPresenter implements Presenter<AppsFragment>{
+public class BrowsePresenter implements Presenter<BrowseFragment>{
 
-    private AppsFragment fragment;
+    private BrowseFragment fragment;
     private CompositeSubscription subscriptions;
     private boolean firstTimeAttaching = true;
 
@@ -77,7 +77,7 @@ public class AppsPresenter implements Presenter<AppsFragment>{
     private int latestUsersScrollPosition = 0;
 
     @Override
-    public void onViewAttached(AppsFragment view) {
+    public void onViewAttached(BrowseFragment view) {
         this.fragment = view;
 
         if (this.firstTimeAttaching) {

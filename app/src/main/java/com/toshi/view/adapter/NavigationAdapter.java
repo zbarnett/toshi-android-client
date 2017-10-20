@@ -24,7 +24,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
 import android.view.Menu;
 
-import com.toshi.view.fragment.toplevel.AppsFragment;
+import com.toshi.view.fragment.toplevel.BrowseFragment;
 import com.toshi.view.fragment.toplevel.ContactsFragment;
 import com.toshi.view.fragment.toplevel.RecentFragment;
 import com.toshi.view.fragment.toplevel.SettingsFragment;
@@ -43,7 +43,7 @@ public class NavigationAdapter extends FragmentPagerAdapter {
         activity.getMenuInflater().inflate(menuRes, menu);
 
         fragments.clear();
-        fragments.add(AppsFragment.newInstance());
+        fragments.add(BrowseFragment.newInstance());
         fragments.add(RecentFragment.newInstance());
         fragments.add(RecentFragment.newInstance()); // <-- This can be anything. In reality it is the Scan functionality
         fragments.add(ContactsFragment.newInstance());

@@ -26,40 +26,40 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.toshi.R;
-import com.toshi.databinding.FragmentAppsBinding;
-import com.toshi.presenter.AppsPresenter;
+import com.toshi.databinding.FragmentBrowseBinding;
+import com.toshi.presenter.BrowsePresenter;
 import com.toshi.presenter.LoaderIds;
-import com.toshi.presenter.factory.AppsPresenterFactory;
+import com.toshi.presenter.factory.BrowsePresenterFactory;
 import com.toshi.presenter.factory.PresenterFactory;
 import com.toshi.view.fragment.BasePresenterFragment;
 
-public class AppsFragment extends BasePresenterFragment<AppsPresenter, AppsFragment> {
+public class BrowseFragment extends BasePresenterFragment<BrowsePresenter, BrowseFragment> {
 
-    private FragmentAppsBinding binding;
+    private FragmentBrowseBinding binding;
 
-    public static AppsFragment newInstance() {
-        return new AppsFragment();
+    public static BrowseFragment newInstance() {
+        return new BrowseFragment();
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, final @Nullable Bundle inState) {
-        this.binding = DataBindingUtil.inflate(inflater, R.layout.fragment_apps, container, false);
+        this.binding = DataBindingUtil.inflate(inflater, R.layout.fragment_browse, container, false);
         return binding.getRoot();
     }
 
-    public FragmentAppsBinding getBinding() {
+    public FragmentBrowseBinding getBinding() {
         return this.binding;
     }
 
     @NonNull
     @Override
-    protected PresenterFactory<AppsPresenter> getPresenterFactory() {
-        return new AppsPresenterFactory();
+    protected PresenterFactory<BrowsePresenter> getPresenterFactory() {
+        return new BrowsePresenterFactory();
     }
 
     @Override
-    protected void onPresenterPrepared(@NonNull AppsPresenter presenter) {
+    protected void onPresenterPrepared(@NonNull BrowsePresenter presenter) {
 
     }
 
