@@ -141,7 +141,7 @@ dependencies {
             'com.vdurmont:emoji-java:3.3.0',
     )
 
-    compile('com.crashlytics.sdk.android:crashlytics:2.6.2@aar') {
+    compile('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
         transitive = true;
     }
     testCompile(
@@ -190,7 +190,7 @@ dependencyVerification {
             'com.github.toshiapp:cropiwa:5915ee657603d9db8894c430171328ad2d767f2ee22a8a53e9e92593719b10b0',
             'com.github.toshiapp:ahbottomnavigation:ea8d292b34e908659374183fa7d0fa259aa83e99eabefa1aa89a45ee4ef0e145',
             'com.vdurmont:emoji-java:71b1a7cb312533ddc132583c8f84e9bde9ebfb13282cd4462978334fa1c04e9a',
-            'com.crashlytics.sdk.android:crashlytics:110212c02ece0c4471383e579d378be8b9ad8d5bf51a2c35ad0610d9166065c7',
+            'com.crashlytics.sdk.android:crashlytics:8fd52c8fd857e67fb015de4f7eaa2510223a19bb308c59d8264f08f7dd641372',
             'com.google.firebase:firebase-core:558cda4b5421d0ad206a7c14247b649579aebc37259082e80579e14199042ea0',
             'com.android.databinding:library:f172550208c2e86973271cdc1d9b527545d923527abed2daa894cf1499619869',
             'com.android.databinding:adapters:9894e5c9f53f931360e9782ac95eb63534597bc57009d70ca68b841eb4b380d3',
@@ -221,10 +221,10 @@ dependencyVerification {
             'org.apache.httpcomponents:httpclient:c50eafa5477af2fa8217d3f729b815ff3c669dbc467552c0feeedc61be965523',
             'org.whispersystems:signal-protocol-java:720eba8d75f14b1c91198c21843326b9d487e60479929a0dfa550ad4ffea3492',
             'org.json:json:8e5aa0a368bee60347b5a4ad861d9f68c7793f60deeea89efd449eb70d5ae622',
-            'com.crashlytics.sdk.android:answers:ba189c18ae6675280c106a88af96789f94283feacbb6cda1aa4af6f7a961e8a8',
-            'com.crashlytics.sdk.android:beta:0c30c2b47eccde6d3cf5212b4f07c56ca16afcadfdc5ef0e1075d97d20e9c325',
-            'com.crashlytics.sdk.android:crashlytics-core:6043026b2d6761d3d51cc3bc5eb4f99329d56bdfb93c24db82a9acead7355ef3',
-            'io.fabric.sdk.android:fabric:a8d81fcc8c66c40843dbce7be4794e2b5a5dde2b06cc06c2948e20b44c0df4c4',
+            'com.crashlytics.sdk.android:beta:5045a1dcfd4461ef398ea999a94d8f7fa31ab589d296cb849ea0b751e91d75ca',
+            'com.crashlytics.sdk.android:crashlytics-core:8ea320d38abcb9d1aea7f2b9895781137925babb17c40a4ae9c298570670ec93',
+            'io.fabric.sdk.android:fabric:2d2e8b920042bc59b7610639885314718b53ac3f3f9744587d04d0304880a557',
+            'com.crashlytics.sdk.android:answers:8ac7ec5ae3977f2e8e59889853f958d818b60f751973ea3b8108a8695a1de6c5',
             'com.google.firebase:firebase-analytics:c1d6a7b33c98cf32365d729107f2ebcaad1ebf30fd14406d72c931486d057f8c',
             'com.google.android.gms:play-services-tasks:5e6282abad30e5c5c9cb581a378e4c048f404c8ac30d690e0061c2a2acf8dfc2',
             'com.squareup.okio:okio:8c5436cadfab36bbd97db5f5c43b7bfdb5bf2f5f894ec8709b1929f14bdd010c',
