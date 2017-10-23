@@ -99,6 +99,7 @@ android {
 }
 
 def supportLibVersion = '26.1.0'
+def retrofitVersion = '2.3.0'
 
 dependencies {
     compile(
@@ -113,10 +114,10 @@ dependencies {
             // Push notifications
             'com.google.android.gms:play-services-gcm:10.0.1',
             // Networking
-            'com.squareup.retrofit2:retrofit:2.2.0',
-            'com.squareup.retrofit2:converter-moshi:2.2.0',
-            'com.squareup.retrofit2:adapter-rxjava:2.2.0',
-            'com.squareup.retrofit2:converter-scalars:2.2.0',
+            "com.squareup.retrofit2:retrofit:${retrofitVersion}",
+            "com.squareup.retrofit2:converter-moshi:${retrofitVersion}",
+            "com.squareup.retrofit2:adapter-rxjava:${retrofitVersion}",
+            "com.squareup.retrofit2:converter-scalars:${retrofitVersion}",
             'com.squareup.okhttp3:logging-interceptor:3.5.0',
             'com.artemzin.rxjava:proguard-rules:1.1.9.0',
             'com.github.bumptech.glide:glide:3.7.0',
@@ -169,10 +170,10 @@ dependencyVerification {
             'com.android.support:multidex:54cb7e9cfdd81c8880c40aa693a0a36da973e96554d5a19293703bfc33d843be',
             'com.google.android:flexbox:695c5bd359b41aa253c4a2dec48781ae76bb0ab3e3de29cb757adc033b4910ea',
             'com.google.android.gms:play-services-gcm:a1248b3444f413e30eed5c50a0f4c392ebf5ce428c7a4f061732f47f045d7d4d',
-            'com.squareup.retrofit2:retrofit:1fc97ad6a98cd79bc5308bd95b9933df5db8365bf6eab5d19af9512599a481fd',
-            'com.squareup.retrofit2:converter-moshi:9f0d8217c1d39b91fcdff4633b28815717aa8b4b5aae0fb0d36481f9dd72c034',
-            'com.squareup.retrofit2:adapter-rxjava:2d75311f6ba82689e6687706eb4ad00cb06cd593674ec2d09854927faa300ebc',
-            'com.squareup.retrofit2:converter-scalars:8d5f33a7f13056d2383d17184a89b27de999394b20f2073edc5c3ba6fd738135',
+            'com.squareup.retrofit2:retrofit:c0295f38b3c1a48bb71a8ed2ea69ddeb2e49a830b11862385a403355c6a94643',
+            'com.squareup.retrofit2:converter-moshi:9623b53c71e7305ab1eb8b9e68a4ea57152420de9e2646e3676fbe851fc0371a',
+            'com.squareup.retrofit2:adapter-rxjava:06bca44e5c8f1a1b09e2d4d013989245b4faf6a0a9c9d4add564e10e828cae81',
+            'com.squareup.retrofit2:converter-scalars:4396c9e3a7cf6299c77c59384fd6db52ef7a337e4b5c308b5b63f00f0b400677',
             'com.squareup.okhttp3:logging-interceptor:2f77bb4b1b2ecf1c330a54295b0b112f65a56d2c16b7937303ad601b1de18fde',
             'com.artemzin.rxjava:proguard-rules:7f1d15f39c3b58cedb8327becdd23ad8a914210feb021a4fa37150c4acb2b6f7',
             'com.github.bumptech.glide:glide:76ef123957b5fbaebb05fcbe6606dd58c3bc3fcdadb257f99811d0ac9ea9b88b',
@@ -205,8 +206,9 @@ dependencyVerification {
             'com.google.android.gms:play-services-base:5b133d72af1a411e390e08b3620e313dcfee4a7e96fbcb3bd1c7959dc513598c',
             'com.google.android.gms:play-services-basement:061cd433950b380db407782c2a254752c78209900f5eb19fb07ec1ff7dd32557',
             'com.google.android.gms:play-services-iid:9cf55a8f316bcee4f0b7f0db651ef3100f5bf69246c07ef6cdafe145fee08877',
-            'com.squareup.okhttp3:okhttp:a992938d7203ca557cd7a116f002e8c427ec9cdae7ea852441abb8aec891f948',
+            'com.squareup.okhttp3:okhttp:19e1db51787716ff0046fa19e408fb34ed32a6274baa0c07475bf724b4eb6800',
             'com.squareup.moshi:moshi:d8ef4da48b59790d587904c4ef2245ee6f64dedec780f1250d00ab136160dcce',
+            'io.reactivex:rxjava:01f668de83ebc77dba53df49567063eaaa93f02f1d1593a8cd4c842e35ee5200',
             'com.google.zxing:core:bba7724e02a997cec38213af77133ee8e24b0d5cf5fa7ecbc16a4fa93f11ee0d',
             'com.google.protobuf:protobuf-java:55aa554843983f431df5616112cf688d38aa17c132357afd1c109435bfdac4e6',
             'com.google.guava:guava:d664fbfc03d2e5ce9cab2a44fb01f1d0bf9dfebeccc1a473b1f9ea31f79f6f99',
@@ -227,7 +229,6 @@ dependencyVerification {
             'com.crashlytics.sdk.android:answers:8ac7ec5ae3977f2e8e59889853f958d818b60f751973ea3b8108a8695a1de6c5',
             'com.google.firebase:firebase-analytics:c1d6a7b33c98cf32365d729107f2ebcaad1ebf30fd14406d72c931486d057f8c',
             'com.google.android.gms:play-services-tasks:5e6282abad30e5c5c9cb581a378e4c048f404c8ac30d690e0061c2a2acf8dfc2',
-            'com.squareup.okio:okio:8c5436cadfab36bbd97db5f5c43b7bfdb5bf2f5f894ec8709b1929f14bdd010c',
             'com.fasterxml.jackson.core:jackson-annotations:0ca408c24202a7626ec8b861e99d85eca5e38b73311dd6dd12e3e9deecc3fe94',
             'com.fasterxml.jackson.core:jackson-core:cbf4604784b4de226262845447a1ad3bb38a6728cebe86562e2c5afada8be2c0',
             'org.apache.httpcomponents:httpcore:1ef8db5d30b7741ab5fdf6df876a090a7dd51623e83f3736d0bb8fb1b5ead32f',
@@ -240,10 +241,10 @@ dependencyVerification {
             'android.arch.lifecycle:runtime:e4e34e5d02bd102e8d39ddbc29f9ead8a15a61e367993d02238196ac48509ad8',
             'android.arch.lifecycle:common:86bf301a20ad0cd0a391e22a52e6fbf90575c096ff83233fa9fd0d52b3219121',
             'android.arch.core:common:5192934cd73df32e2c15722ed7fc488dde90baaec9ae030010dd1a80fb4e74e1',
-            'io.reactivex:rxjava:0c777715c86d5b579fbf5079ee176a817f7caca112ec000b1923acdda48d6d05',
             'com.android.support:support-media-compat:9d8cee7cd40eff22ebdeb90c8e70f5ee96c5bd25cb2c3e3b3940e27285a3e98a',
             'com.android.support:support-core-utils:4fda6d4eb430971e3b1dad7456988333f374b0f4ba15f99839ca1a0ab5155c8a',
             'com.android.support:support-fragment:a0ab3369ef40fe199160692f0463a5f63f1277ebfb64dd587c76fdb128d76b32',
+            'com.squareup.okio:okio:734269c3ebc5090e3b23566db558f421f0b4027277c79ad5d176b8ec168bb850',
     ]
 }
 
