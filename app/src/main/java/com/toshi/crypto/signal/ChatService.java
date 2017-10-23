@@ -18,6 +18,7 @@
 package com.toshi.crypto.signal;
 
 
+import com.squareup.moshi.Moshi;
 import com.toshi.crypto.HDWallet;
 import com.toshi.crypto.signal.model.SignalBootstrap;
 import com.toshi.crypto.signal.network.ChatInterface;
@@ -25,7 +26,6 @@ import com.toshi.crypto.signal.store.ProtocolStore;
 import com.toshi.manager.network.interceptor.LoggingInterceptor;
 import com.toshi.manager.network.interceptor.SigningInterceptor;
 import com.toshi.manager.network.interceptor.UserAgentInterceptor;
-import com.squareup.moshi.Moshi;
 import com.toshi.util.LogUtil;
 
 import org.whispersystems.libsignal.IdentityKey;
@@ -35,8 +35,10 @@ import org.whispersystems.libsignal.state.PreKeyRecord;
 import org.whispersystems.libsignal.state.SignedPreKeyRecord;
 import org.whispersystems.signalservice.api.SignalServiceAccountManager;
 import org.whispersystems.signalservice.api.push.SignedPreKeyEntity;
+import org.whispersystems.signalservice.internal.configuration.SignalCdnUrl;
+import org.whispersystems.signalservice.internal.configuration.SignalServiceConfiguration;
+import org.whispersystems.signalservice.internal.configuration.SignalServiceUrl;
 import org.whispersystems.signalservice.internal.push.PreKeyEntity;
-import org.whispersystems.signalservice.internal.push.SignalServiceUrl;
 import org.whispersystems.signalservice.internal.util.JsonUtil;
 
 import java.io.IOException;
@@ -74,7 +76,10 @@ public final class ChatService extends SignalServiceAccountManager {
                         final String user,
                         final String password,
                         final String userAgent) {
-        super(urls, user, password, userAgent);
+        super(new SignalServiceConfiguration(urls, new SignalCdnUrl[0]),
+                user,
+                password,
+                userAgent);
         this.url = urls[0].getUrl();
         this.client = new OkHttpClient.Builder();
         this.chatInterface = generateSignalInterface();

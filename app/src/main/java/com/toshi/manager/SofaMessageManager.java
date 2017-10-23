@@ -45,7 +45,7 @@ import com.toshi.util.LocaleUtil;
 import com.toshi.util.LogUtil;
 import com.toshi.view.BaseApplication;
 
-import org.whispersystems.signalservice.internal.push.SignalServiceUrl;
+import org.whispersystems.signalservice.internal.configuration.SignalServiceUrl;
 
 import java.util.List;
 import java.util.concurrent.TimeoutException;

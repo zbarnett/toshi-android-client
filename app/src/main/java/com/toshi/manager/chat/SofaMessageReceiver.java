@@ -59,7 +59,9 @@ import org.whispersystems.signalservice.api.messages.SignalServiceDataMessage;
 import org.whispersystems.signalservice.api.messages.SignalServiceEnvelope;
 import org.whispersystems.signalservice.api.messages.SignalServiceGroup;
 import org.whispersystems.signalservice.api.push.SignalServiceAddress;
-import org.whispersystems.signalservice.internal.push.SignalServiceUrl;
+import org.whispersystems.signalservice.internal.configuration.SignalCdnUrl;
+import org.whispersystems.signalservice.internal.configuration.SignalServiceConfiguration;
+import org.whispersystems.signalservice.internal.configuration.SignalServiceUrl;
 
 import java.io.File;
 import java.io.IOException;
@@ -91,7 +93,7 @@ public class SofaMessageReceiver {
 
         this.messageReceiver =
                 new SignalServiceMessageReceiver(
-                        urls,
+                        new SignalServiceConfiguration(urls, new SignalCdnUrl[0]),
                         this.wallet.getOwnerAddress(),
                         this.protocolStore.getPassword(),
                         this.protocolStore.getSignalingKey(),
