@@ -140,7 +140,7 @@ public final class ViewUserPresenter implements
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         this::handleReputationResponse,
-                        this::handleReputationError
+                        throwable -> LogUtil.exception(getClass(), "Error during reputation fetching", throwable)
                 );
 
         this.subscriptions.add(reputationSub);
@@ -160,10 +160,6 @@ public final class ViewUserPresenter implements
         this.activity.getBinding().ratingView.setStars(reputationScore.getAverageRating());
         this.activity.getBinding().reputationScore.setText(String.valueOf(reputationScore.getAverageRating()));
         this.activity.getBinding().ratingInfo.setRatingInfo(reputationScore);
-    }
-
-    private void handleReputationError(final Throwable throwable) {
-        LogUtil.exception(getClass(), "Error during reputation fetching", throwable);
     }
 
     private void handleUserLoadingFailed(final Throwable throwable) {
@@ -349,8 +345,9 @@ public final class ViewUserPresenter implements
     }
 
     public boolean shouldCreateOptionsMenu() {
-        isUserBlocked();
-        return !isLocalUser();
+        final boolean shouldCreateOptionsMenu = !isLocalUser();
+        if (shouldCreateOptionsMenu) isUserBlocked();
+        return shouldCreateOptionsMenu;
     }
 
     private boolean isLocalUser() {
@@ -377,14 +374,10 @@ public final class ViewUserPresenter implements
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         this::handleBlockedUser,
-                        this::handleError
+                        throwable -> LogUtil.exception(getClass(), "Error during fetching user blocked state", throwable)
                 );
 
         this.subscriptions.add(sub);
-    }
-
-    private void handleError(final Throwable throwable) {
-        LogUtil.exception(getClass(), "Error during fetching user blocked state", throwable);
     }
 
     private void handleBlockedUser(final boolean isBlocked) {
