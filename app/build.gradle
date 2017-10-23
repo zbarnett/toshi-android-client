@@ -160,8 +160,8 @@ dependencies {
 
 dependencyVerification {
     verify = [
-            'io.realm:realm-android-library:2c7bc312cf818e699126fb8dcd9910cc8c87e7c54aaca7e93861be323027f70a',
-            'io.realm:realm-annotations:a1233926486411ea35caa1e927d07640a072d5d81afa2b5983a0e5aa2cf570be',
+            'io.realm:realm-android-library:2c56c9024634688efef6d07668678e336077a1fd710ef6bb8c84aea6b57123e9',
+            'io.realm:realm-annotations:dbe5d37cc4662af0f137503af148c8409ea2e2d3a93b9339f1d969f292cde6ed',
             'com.android.support:appcompat-v7:9d44e7bf343dfd19a55e3e6f4c4e733b68d32509e0b0af5b32f2981f4f1dedd8',
             'com.android.support:recyclerview-v7:389cb47a7dabca4fb8c23657ff7c85ebc651428580d3a5ea0349eeb43ddea94b',
             'com.android.support:gridlayout-v7:6fe57dd164f2e1d99ad650a56f686ddecd02bfbfabbfbd451e81a23eada5e564',
@@ -195,6 +195,7 @@ dependencyVerification {
             'com.google.firebase:firebase-core:558cda4b5421d0ad206a7c14247b649579aebc37259082e80579e14199042ea0',
             'com.android.databinding:library:f172550208c2e86973271cdc1d9b527545d923527abed2daa894cf1499619869',
             'com.android.databinding:adapters:9894e5c9f53f931360e9782ac95eb63534597bc57009d70ca68b841eb4b380d3',
+            'com.google.code.findbugs:jsr305:766ad2a0783f2687962c8ad74ceecc38a28b9f72a2d085ee438b7813e928d0c7',
             'com.getkeepsafe.relinker:relinker:b3edab0c22e3d46c43e3e9cdfe34e247ae3fd9306160ec1505794d375ed5261f',
             'com.android.support:support-annotations:99d6199ad5a09a0e5e8a49a4cc08f818483ddcfd7eedea2f9923412daf982309',
             'com.android.support:support-v4:36d8385de1be7791231acb933b757198f97cb53bc7d046e8c4bc403d214caaca',
@@ -212,7 +213,6 @@ dependencyVerification {
             'com.google.zxing:core:bba7724e02a997cec38213af77133ee8e24b0d5cf5fa7ecbc16a4fa93f11ee0d',
             'com.google.protobuf:protobuf-java:55aa554843983f431df5616112cf688d38aa17c132357afd1c109435bfdac4e6',
             'com.google.guava:guava:d664fbfc03d2e5ce9cab2a44fb01f1d0bf9dfebeccc1a473b1f9ea31f79f6f99',
-            'com.google.code.findbugs:jsr305:1e7f53fa5b8b5c807e986ba335665da03f18d660802d8bf061823089d1bee468',
             'net.jcip:jcip-annotations:be5805392060c71474bf6c9a67a099471274d30b83eef84bfc4e0889a4f1dcc0',
             'com.lambdaworks:scrypt:9a82d218099fb14c10c0e86e7eefeebd8c104de920acdc47b8b4b7a686fb73b4',
             'org.bitcoinj:orchid:f836325cfa0466a011cb755c9b0fee6368487a2352eb45f4306ad9e4c18de080',
