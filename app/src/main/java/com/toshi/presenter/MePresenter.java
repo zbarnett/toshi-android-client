@@ -54,7 +54,6 @@ import rx.subscriptions.CompositeSubscription;
 public final class MePresenter implements
         Presenter<MeFragment> {
 
-    private User localUser;
     private MeFragment fragment;
     private CompositeSubscription subscriptions;
     private boolean firstTimeAttaching = true;
@@ -74,7 +73,6 @@ public final class MePresenter implements
     private void initShortLivingObjects() {
         fetchUser();
         initRecyclerView();
-        updateUi();
         setSecurityState();
         attachBalanceSubscriber();
         initClickListeners();
@@ -94,7 +92,7 @@ public final class MePresenter implements
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         this::handleUserLoaded,
-                        this::handleUserError
+                        throwable -> LogUtil.exception(getClass(), "Error during fetching user", throwable)
                 );
 
         if (!BaseApplication.get()
@@ -112,18 +110,20 @@ public final class MePresenter implements
             handleNoUser();
             return;
         }
-        this.localUser = user;
-        updateUi();
+
+        updateUi(user);
     }
 
-    private void handleUserError(final Throwable throwable) {
-        LogUtil.exception(getClass(), "Error during fetching user", throwable);
+    private void updateUi(final User user) {
+        if (this.fragment == null || user == null) return;
+
+        this.fragment.getBinding().name.setText(user.getDisplayName());
+        this.fragment.getBinding().username.setText(user.getUsername());
+        ImageUtil.load(user.getAvatar(), this.fragment.getBinding().avatar);
     }
 
     private void handleNoUser() {
-        if (this.fragment == null) {
-            return;
-        }
+        if (this.fragment == null) return;
 
         this.fragment.getBinding().name.setText(this.fragment.getString(R.string.profile__unknown_name));
         this.fragment.getBinding().username.setText("");
@@ -253,14 +253,6 @@ public final class MePresenter implements
         final Intent intent = new Intent(this.fragment.getActivity(), SignOutActivity.class);
         this.fragment.getActivity().startActivity(intent);
         this.fragment.getActivity().finish();
-    }
-
-    private void updateUi() {
-        if (this.localUser == null || this.fragment == null) return;
-
-        this.fragment.getBinding().name.setText(this.localUser.getDisplayName());
-        this.fragment.getBinding().username.setText(this.localUser.getUsername());
-        ImageUtil.load(this.localUser.getAvatar(), this.fragment.getBinding().avatar);
     }
 
     private void setSecurityState() {
