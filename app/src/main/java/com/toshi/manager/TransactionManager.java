@@ -72,6 +72,9 @@ public class TransactionManager {
     private HDWallet wallet;
     private PendingTransactionStore pendingTransactionStore;
     private CompositeSubscription subscriptions;
+    private Subscription outgoingPaymentSub;
+    private Subscription incomingPaymentSub;
+    private Subscription updatePaymentSub;
 
     /*package */ TransactionManager() {
         initDatabase();
@@ -98,13 +101,15 @@ public class TransactionManager {
     }
 
     private void attachSubscribers() {
+        // Explicitly clear first to avoid double subscription
+        clearSubscriptions();
         attachNewOutgoingPaymentSubscriber();
         attachNewIncomingPaymentSubscriber();
         attachUpdatePaymentSubscriber();
     }
 
     private void attachNewOutgoingPaymentSubscriber() {
-        final Subscription sub =
+        this.outgoingPaymentSub =
                 this.newOutgoingPaymentQueue
                 .observeOn(Schedulers.io())
                 .subscribeOn(Schedulers.io())
@@ -113,7 +118,7 @@ public class TransactionManager {
                         this::handleNonFatalError
                 );
 
-        this.subscriptions.add(sub);
+        this.subscriptions.add(this.outgoingPaymentSub);
     }
 
     private void processNewOutgoingPayment(final PaymentTask paymentTask) {
@@ -135,7 +140,7 @@ public class TransactionManager {
     }
 
     private void attachNewIncomingPaymentSubscriber() {
-        final Subscription sub =
+        this.incomingPaymentSub =
                 this.newIncomingPaymentQueue
                 .observeOn(Schedulers.io())
                 .subscribeOn(Schedulers.io())
@@ -144,7 +149,7 @@ public class TransactionManager {
                         this::handleNonFatalError
                 );
 
-        this.subscriptions.add(sub);
+        this.subscriptions.add(this.incomingPaymentSub);
     }
 
     private void processNewIncomingPayment(final PaymentTask paymentTask) {
@@ -173,7 +178,7 @@ public class TransactionManager {
     }
 
     private void attachUpdatePaymentSubscriber() {
-        final Subscription sub =
+        this.updatePaymentSub =
                 this.updatePaymentQueue
                 .observeOn(Schedulers.io())
                 .subscribeOn(Schedulers.io())
@@ -183,7 +188,7 @@ public class TransactionManager {
                         this::handleUpdatePaymentError
                 );
 
-        this.subscriptions.add(sub);
+        this.subscriptions.add(this.updatePaymentSub);
     }
 
     private void processUpdatedPayment(final Payment payment) {
@@ -590,6 +595,13 @@ public class TransactionManager {
     }
 
     public void clear() {
+        clearSubscriptions();
         this.subscriptions.clear();
+    }
+
+    private void clearSubscriptions() {
+        if (this.outgoingPaymentSub != null) this.outgoingPaymentSub.unsubscribe();
+        if (this.incomingPaymentSub != null) this.incomingPaymentSub.unsubscribe();
+        if (this.updatePaymentSub != null) this.updatePaymentSub.unsubscribe();
     }
 }

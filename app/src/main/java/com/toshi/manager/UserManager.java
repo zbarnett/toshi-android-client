@@ -42,6 +42,7 @@ import okhttp3.RequestBody;
 import retrofit2.adapter.rxjava.HttpException;
 import rx.Observable;
 import rx.Single;
+import rx.Subscription;
 import rx.schedulers.Schedulers;
 import rx.subjects.BehaviorSubject;
 
@@ -55,6 +56,7 @@ public class UserManager {
     private final BehaviorSubject<User> userSubject = BehaviorSubject.create();
     private SharedPreferences prefs;
     private HDWallet wallet;
+    private Subscription connectivitySub;
 
     /* package */ UserManager() {
         this.userSubject.onNext(null);
@@ -97,7 +99,8 @@ public class UserManager {
         // Whenever the network changes init the user.
         // This is dumb and potentially inefficient but it shouldn't have
         // any adverse effects and it is easy to improve later.
-        BaseApplication
+        clearSubscriptions();
+        this.connectivitySub = BaseApplication
                 .get()
                 .isConnectedSubject()
                 .subscribe(
@@ -290,10 +293,15 @@ public class UserManager {
     }
 
     public void clear() {
+        clearSubscriptions();
         this.prefs
                 .edit()
                 .putString(USER_ID, null)
                 .apply();
         this.userSubject.onNext(null);
+    }
+
+    private void clearSubscriptions() {
+        if (this.connectivitySub != null) this.connectivitySub.unsubscribe();
     }
 }
