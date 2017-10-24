@@ -47,7 +47,7 @@
             android:id="@+id/app_label"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:maxLines="3"
+            android:maxLines="2"
             android:ellipsize="end"
             tools:text="App name - which just so happens to go over several lines"/>
     </FrameLayout>
