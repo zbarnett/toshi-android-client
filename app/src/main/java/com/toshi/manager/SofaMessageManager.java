@@ -196,6 +196,11 @@ public final class SofaMessageManager {
                 .subscribeOn(Schedulers.io());
     }
 
+    public Single<SofaMessage> getSofaMessageById(final String id) {
+        return this.conversationStore.getSofaMessageById(id)
+                .subscribeOn(Schedulers.io());
+    }
+
     private Completable initEverything() {
         generateStores();
         initMessageReceiver();

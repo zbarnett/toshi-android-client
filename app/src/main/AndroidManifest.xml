@@ -79,7 +79,6 @@
         <activity android:name="com.toshi.view.activity.AmountActivity" />
         <activity android:name="com.toshi.view.activity.ScannerActivity"
                   android:theme="@style/FullScreenTheme"/>
-        <activity android:name="com.toshi.view.activity.ChooseContactsActivity" />
         <activity android:name="com.toshi.view.activity.LicenseListActivity" />
         <activity android:name="com.toshi.view.activity.LicenseActivity" />
         <activity android:name="com.toshi.view.activity.TrustedFriendsActivity" />
@@ -155,6 +154,9 @@
         <service
             android:name="com.toshi.presenter.chat.DirectReplyService"
             android:exported="false"/>
+
+        <service android:name="com.toshi.service.RejectPaymentRequestService"
+            android:exported="false" />
 
         <!-- Content provider for taking photos with the camera -->
         <provider

@@ -27,6 +27,7 @@ import com.toshi.R;
 import com.toshi.model.local.Recipient;
 import com.toshi.presenter.chat.DirectReplyService;
 import com.toshi.service.NotificationDismissedReceiver;
+import com.toshi.service.RejectPaymentRequestService;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.activity.ChatActivity;
 import com.toshi.view.activity.MainActivity;
@@ -120,6 +121,19 @@ public class ChatNotification extends ToshiNotification {
                 1,
                 intent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
+    public PendingIntent getRejectPaymentRequestIntent(final String messageId) {
+        if (isUnknownSender()) return null;
+        final Intent rejectIntent = new Intent(BaseApplication.get(), RejectPaymentRequestService.class)
+                .putExtra(RejectPaymentRequestService.MESSAGE_ID, messageId);
+
+        return PendingIntent.getService(
+                BaseApplication.get(),
+                RejectPaymentRequestService.REJECT_REQUEST_CODE,
+                rejectIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT
+        );
     }
 
     public Completable generateLargeIcon() {
