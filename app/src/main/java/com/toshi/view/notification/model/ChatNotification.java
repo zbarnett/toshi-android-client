@@ -28,6 +28,7 @@ import com.toshi.model.local.Recipient;
 import com.toshi.presenter.chat.DirectReplyService;
 import com.toshi.service.NotificationDismissedReceiver;
 import com.toshi.service.RejectPaymentRequestService;
+import com.toshi.util.PaymentType;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.activity.ChatActivity;
 import com.toshi.view.activity.MainActivity;
@@ -40,6 +41,9 @@ import java.util.concurrent.ExecutionException;
 import rx.Completable;
 
 public class ChatNotification extends ToshiNotification {
+
+    private static final String NO_ACTION = "noAction";
+    private static final String PAYMENT_REQUEST_ACTION = "paymentRequestAction";
 
     private final Recipient sender;
 
@@ -67,32 +71,68 @@ public class ChatNotification extends ToshiNotification {
     }
 
     public PendingIntent getPendingIntent() {
-        final Intent mainIntent = new Intent(BaseApplication.get(), MainActivity.class);
-        mainIntent.putExtra(MainActivity.EXTRA__ACTIVE_TAB, 1);
+        final Intent mainIntent = getMainIntent();
 
         if (this.sender == null || this.sender.getThreadId() == null) {
-            return TaskStackBuilder.create(BaseApplication.get())
-                    .addParentStack(MainActivity.class)
-                    .addNextIntent(mainIntent)
-                    .getPendingIntent(0, PendingIntent.FLAG_ONE_SHOT);
+            return getFallbackPendingIntent(mainIntent);
         }
 
-        final Intent chatIntent = new Intent(BaseApplication.get(), ChatActivity.class)
-                .putExtra(ChatActivity.EXTRA__THREAD_ID, this.sender.getThreadId())
-                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        final Intent chatIntent = getChatIntent();
+        return getPendingIntent(mainIntent, chatIntent);
+    }
 
+    public PendingIntent getAcceptPaymentRequestIntent(final String messageId) {
+        final Intent mainIntent = getMainIntent();
+
+        if (this.sender == null || this.sender.getThreadId() == null) {
+            return getFallbackPendingIntent(mainIntent);
+        }
+
+        final Intent chatIntent = getChatIntentWithPaymentRequestAction(messageId);
+        return getPendingIntent(mainIntent, chatIntent);
+    }
+
+    private Intent getMainIntent() {
+        return new Intent(BaseApplication.get(), MainActivity.class)
+                .putExtra(MainActivity.EXTRA__ACTIVE_TAB, 1);
+    }
+
+    private PendingIntent getFallbackPendingIntent(final Intent mainIntent) {
+        return TaskStackBuilder.create(BaseApplication.get())
+                .addParentStack(MainActivity.class)
+                .addNextIntent(mainIntent)
+                .getPendingIntent(0, PendingIntent.FLAG_ONE_SHOT);
+    }
+
+    private Intent getChatIntent() {
+        return new Intent(BaseApplication.get(), ChatActivity.class)
+                .putExtra(ChatActivity.EXTRA__THREAD_ID, this.sender.getThreadId())
+                .setAction(NO_ACTION)
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+    }
+
+    private Intent getChatIntentWithPaymentRequestAction(final String messageId) {
+        return new Intent(BaseApplication.get(), ChatActivity.class)
+                .putExtra(ChatActivity.EXTRA__THREAD_ID, this.sender.getThreadId())
+                .putExtra(ChatActivity.EXTRA__PAYMENT_ACTION, PaymentType.TYPE_SEND)
+                .putExtra(ChatActivity.EXTRA__MESSAGE_ID, messageId)
+                .setAction(PAYMENT_REQUEST_ACTION)
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+    }
+
+    private PendingIntent getPendingIntent(final Intent mainIntent, final Intent chatIntent) {
         final PendingIntent nextIntent = TaskStackBuilder.create(BaseApplication.get())
                 .addParentStack(MainActivity.class)
                 .addNextIntent(mainIntent)
                 .addNextIntent(chatIntent)
                 .getPendingIntent(getTitle().hashCode(), PendingIntent.FLAG_ONE_SHOT);
 
-        final Intent splashIntent = new Intent(BaseApplication.get(), SplashActivity.class);
-        splashIntent.putExtra(SplashActivity.EXTRA__NEXT_INTENT, nextIntent);
+        final Intent splashIntent =  new Intent(BaseApplication.get(), SplashActivity.class)
+                .putExtra(SplashActivity.EXTRA__NEXT_INTENT, nextIntent);
 
         return PendingIntent.getActivity(
                 BaseApplication.get(),
-                getTitle().hashCode(),
+                UUID.randomUUID().hashCode(),
                 splashIntent,
                 PendingIntent.FLAG_ONE_SHOT);
     }

@@ -19,6 +19,7 @@ package com.toshi.view.notification;
 
 
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
@@ -165,9 +166,34 @@ public class ChatNotificationManager extends ToshiNotificationBuilder {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && !activeChatNotification.isUnknownSender()) {
             builder.addAction(buildDirectReplyAction(activeChatNotification));
+
+            if (activeChatNotification.getTypeOfLastMessage() == SofaType.PAYMENT_REQUEST) {
+                builder.addAction(buildAcceptPaymentRequestAction(messageId, activeChatNotification))
+                        .addAction(buildRejectPaymentRequestAction(messageId, activeChatNotification));
+            }
         }
 
         return builder;
+    }
+
+    private static NotificationCompat.Action buildAcceptPaymentRequestAction(final String messageId,
+                                                                             final ChatNotification activeChatNotification) {
+        final PendingIntent acceptIntent = activeChatNotification.getAcceptPaymentRequestIntent(messageId);
+        return new NotificationCompat.Action.Builder(
+                0,
+                BaseApplication.get().getString(R.string.button_accept),
+                acceptIntent
+        ).build();
+    }
+
+    private static NotificationCompat.Action buildRejectPaymentRequestAction(final String messageId,
+                                                                             final ChatNotification activeChatNotification) {
+        final PendingIntent rejectIntent = activeChatNotification.getRejectPaymentRequestIntent(messageId);
+        return new NotificationCompat.Action.Builder(
+                0,
+                BaseApplication.get().getString(R.string.button_decline),
+                rejectIntent
+        ).build();
     }
 
     @RequiresApi(24)
