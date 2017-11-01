@@ -146,14 +146,14 @@ public class ChatNotificationManager extends ToshiNotificationBuilder {
 
     @RequiresApi(24)
     private static NotificationCompat.Action buildDirectReplyAction(final ChatNotification activeChatNotification) {
-        final String replyLabel = BaseApplication.get().getResources().getString(R.string.reply_label);
+        final String messageLabel = BaseApplication.get().getString(R.string.message);
         final RemoteInput remoteInput = new RemoteInput.Builder(KEY_TEXT_REPLY)
-                .setLabel(replyLabel)
+                .setLabel(messageLabel)
                 .build();
 
         return new NotificationCompat.Action.Builder(
                 R.drawable.ic_send,
-                BaseApplication.get().getString(R.string.reply_label),
+                messageLabel,
                 activeChatNotification.getDirectReplyIntent()
         ).addRemoteInput(remoteInput).build();
     }
