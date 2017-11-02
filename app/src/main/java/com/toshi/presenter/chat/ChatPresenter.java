@@ -22,13 +22,11 @@ import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.BottomSheetDialog;
 import android.text.TextUtils;
 import android.util.Pair;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.toshi.BuildConfig;
@@ -47,6 +45,7 @@ import com.toshi.model.local.User;
 import com.toshi.model.sofa.Command;
 import com.toshi.model.sofa.Control;
 import com.toshi.model.sofa.Message;
+import com.toshi.model.sofa.Payment;
 import com.toshi.model.sofa.PaymentRequest;
 import com.toshi.model.sofa.SofaAdapters;
 import com.toshi.model.sofa.SofaMessage;
@@ -61,15 +60,14 @@ import com.toshi.util.LogUtil;
 import com.toshi.util.OnSingleClickListener;
 import com.toshi.util.PaymentType;
 import com.toshi.util.PermissionUtil;
+import com.toshi.util.ResendHandler;
 import com.toshi.util.SoundManager;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.activity.AttachmentConfirmationActivity;
 import com.toshi.view.activity.ChatActivity;
 import com.toshi.view.adapter.MessageAdapter;
-import com.toshi.view.adapter.listeners.OnItemClickListener;
 import com.toshi.view.custom.ChatInputView;
 import com.toshi.view.custom.SpeedyLinearLayoutManager;
-import com.toshi.view.fragment.DialogFragment.PaymentConfirmationDialog;
 import com.toshi.view.notification.ChatNotificationManager;
 
 import java.io.File;
@@ -117,6 +115,8 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     private Recipient recipient;
     private Conversation conversation;
 
+    private ResendHandler resendHandler;
+
     @Override
     public void onViewAttached(final ChatActivity activity) {
         this.activity = activity;
@@ -132,6 +132,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         this.subscriptions = new CompositeSubscription();
         this.outgoingMessageQueue = new AsyncOutgoingMessageQueue();
         this.pendingTransactionsObservable = new PendingTransactionsObservable();
+        this.resendHandler = new ResendHandler(this.activity);
         initMessageAdapter();
     }
 
@@ -142,8 +143,12 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
                 .addOnUsernameClickListener(this::handleUsernameClicked)
                 .addOnImageClickListener(this::handleImageClicked)
                 .addOnFileClickListener(path -> this.chatNavigation.startAttachmentPicker(this.activity, path))
-                .addOnResendListener(sofaMessage -> showResendDialog(sofaMessage, this::resendMessage))
-                .addOnResendPaymentListener(sofaMessage -> showResendDialog(sofaMessage, this::resendPayment));
+                .addOnResendListener(sofaMessage -> {
+                    this.resendHandler.showResendDialog(() -> resendMessage(sofaMessage), () -> deleteMessage(sofaMessage));
+                })
+                .addOnResendPaymentListener(sofaMessage -> {
+                    this.resendHandler.showResendDialog(() -> showResendPaymentConfirmationDialog(sofaMessage), () -> deleteMessage(sofaMessage));
+                });
     }
 
     private void handleUsernameClicked(final String username) {
@@ -165,23 +170,6 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         this.chatNavigation.startImageActivity(this.activity, filePath);
     }
 
-    private void showResendDialog(final SofaMessage sofaMessage, final OnItemClickListener<SofaMessage> listener) {
-        final BottomSheetDialog dialog = new BottomSheetDialog(this.activity);
-        final View sheetView = this.activity.getLayoutInflater().inflate(R.layout.view_chat_resend, null);
-        final LinearLayout deleteView = sheetView.findViewById(R.id.deleteMessage);
-        deleteView.setOnClickListener(view -> {
-            deleteMessage(sofaMessage);
-            dialog.dismiss();
-        });
-        final LinearLayout retryView = sheetView.findViewById(R.id.retry);
-        retryView.setOnClickListener(__ -> {
-            listener.onItemClick(sofaMessage);
-            dialog.dismiss();
-        });
-        dialog.setContentView(sheetView);
-        dialog.show();
-    }
-
     private void resendMessage(final SofaMessage sofaMessage) {
         BaseApplication
                 .get()
@@ -189,8 +177,6 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
                 .getSofaMessageManager()
                 .resendPendingMessage(sofaMessage);
     }
-
-    private void resendPayment(final SofaMessage sofaMessage) {}
 
     private void deleteMessage(final SofaMessage sofaMessage) {
         BaseApplication
@@ -203,15 +189,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     private void showPaymentRequestConfirmationDialog(final SofaMessage existingMessage) {
         try {
             final PaymentRequest paymentRequest = SofaAdapters.get().txRequestFrom(existingMessage.getPayload());
-            final PaymentConfirmationDialog dialog =
-                    PaymentConfirmationDialog.newInstanceToshiPayment(
-                            existingMessage.getSender().getToshiId(),
-                            paymentRequest.getValue(),
-                            null,
-                            PaymentType.TYPE_REQUEST
-                    );
-            dialog.show(this.activity.getSupportFragmentManager(), PaymentConfirmationDialog.TAG);
-            dialog.setOnPaymentConfirmationApprovedListener(__ -> {
+            this.resendHandler.showPaymentRequestConfirmationDialog(existingMessage.getSender(), paymentRequest, () -> {
                 updatePaymentRequestState(existingMessage, PaymentRequest.ACCEPTED);
                 sendPayment(paymentRequest.getDestinationAddresss(), paymentRequest.getValue(), existingMessage.getSender());
             });
@@ -585,30 +563,32 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         }
     }
 
-    private void sendPaymentWithValue(final String value) {
+    private void showResendPaymentConfirmationDialog(final SofaMessage sofaMessage) {
         final Subscription sub =
                 getRecipient()
                 .subscribe(
-                        recipient -> showPaymentConfirmationDialog(recipient, value),
+                        recipient -> showResendPaymentConfirmationDialog(recipient.getUser(), sofaMessage),
                         this::handleError
                 );
 
         this.subscriptions.add(sub);
     }
 
-    private void showPaymentConfirmationDialog(final Recipient recipient, final String amount) {
-        final User receiver = recipient.getUser();
-        final PaymentConfirmationDialog dialog =
-                PaymentConfirmationDialog.newInstanceToshiPayment(
-                        receiver.getToshiId(),
-                        amount,
-                        null,
-                        PaymentType.TYPE_SEND
+    private void sendPaymentWithValue(final String value) {
+        final Subscription sub =
+                getRecipient()
+                .subscribe(
+                        recipient -> showPaymentConfirmationDialog(recipient.getUser(), value),
+                        this::handleError
                 );
-        dialog.show(this.activity.getSupportFragmentManager(), PaymentConfirmationDialog.TAG);
-        dialog.setOnPaymentConfirmationApprovedListener(__ ->
-                sendPayment(receiver.getPaymentAddress(), amount, recipient.getUser())
-        );
+
+        this.subscriptions.add(sub);
+    }
+
+    private void showPaymentConfirmationDialog(final User receiver, final String amount) {
+        this.resendHandler.showPaymentConfirmationDialog(receiver, amount, () -> {
+            sendPayment(receiver.getPaymentAddress(), amount, recipient.getUser());
+        });
     }
 
     private void sendPayment(final String paymentAddress, final String value, final User receiver) {
@@ -616,6 +596,26 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
                 .get()
                 .getTransactionManager()
                 .sendPayment(receiver, paymentAddress, value);
+    }
+
+    private void showResendPaymentConfirmationDialog(final User receiver, final SofaMessage sofaMessage) {
+        try {
+            final Payment payment = SofaAdapters.get().paymentFrom(sofaMessage.getPayload());
+            this.resendHandler.showResendPaymentConfirmationDialog(receiver, payment, () -> {
+                resendPayment(receiver, payment, sofaMessage.getPrivateKey());
+            });
+        } catch (IOException e) {
+            LogUtil.e(getClass(), "Error while resending payment " + e);
+        }
+    }
+
+    private void resendPayment(final User receiver,
+                               final Payment payment,
+                               final String privateKey) {
+        BaseApplication
+                .get()
+                .getTransactionManager()
+                .resendPayment(receiver, payment, privateKey);
     }
 
     private void sendPaymentRequestWithValue(final String value) {
