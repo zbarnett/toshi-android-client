@@ -21,8 +21,14 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import com.toshi.R;
+import com.toshi.model.sofa.PaymentRequest;
+import com.toshi.model.sofa.SofaAdapters;
+import com.toshi.model.sofa.SofaMessage;
+import com.toshi.model.sofa.SofaType;
+import com.toshi.util.LogUtil;
 import com.toshi.view.BaseApplication;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,9 +36,9 @@ public abstract class ToshiNotification {
     public static final String DEFAULT_TAG = "unknown";
 
     private final String id;
-    private final ArrayList<String> messages;
-    private List<String> lastFewMessages;
-    private CharSequence lastMessage;
+    private final ArrayList<SofaMessage> messages;
+    private List<SofaMessage> lastFewMessages;
+    private SofaMessage lastMessage;
     private static final int MAXIMUM_NUMBER_OF_SHOWN_MESSAGES = 5;
     /* package */ Bitmap largeIcon;
 
@@ -42,19 +48,19 @@ public abstract class ToshiNotification {
         generateLatestMessages(this.messages);
     }
 
-    public void addUnreadMessage(final String unreadMessage) {
+    public void addUnreadMessage(final SofaMessage unreadMessage) {
         this.messages.add(unreadMessage);
         generateLatestMessages(this.messages);
     }
 
-    private synchronized void generateLatestMessages(final ArrayList<String> messages) {
+    private synchronized void generateLatestMessages(final ArrayList<SofaMessage> messages) {
         if (messages.size() == 0) {
-            this.lastMessage = "";
+            this.lastMessage = new SofaMessage().makeNew("");
             this.lastFewMessages = new ArrayList<>(0);
             return;
         }
 
-        this.lastMessage = messages.get(messages.size() -1);
+        this.lastMessage = messages.get(messages.size() - 1);
 
         final int end = Math.max(messages.size(), 0);
         final int start = Math.max(end - MAXIMUM_NUMBER_OF_SHOWN_MESSAGES, 0);
@@ -75,19 +81,60 @@ public abstract class ToshiNotification {
         return this.largeIcon;
     }
 
-    public CharSequence getLastMessage() {
-        return this.lastMessage;
-    }
-
-    public List<String> getLastFewMessages() {
-        return new ArrayList<>(this.lastFewMessages);
-    }
-
     public int getNumberOfUnreadMessages() {
         return this.messages.size();
     }
 
     /* package */ Bitmap setDefaultLargeIcon() {
         return this.largeIcon = BitmapFactory.decodeResource(BaseApplication.get().getResources(), R.mipmap.ic_launcher);
+    }
+
+    public List<String> getLastFewMessages() {
+        final List<String> messages = new ArrayList<>();
+        for (final SofaMessage sofaMessage : this.lastFewMessages) {
+            final String message = getMessage(sofaMessage);
+            messages.add(message);
+        }
+        return messages;
+    }
+
+    public String getLastMessage() {
+        return getMessage(this.lastMessage);
+    }
+
+    private String getMessage(final SofaMessage sofaMessage) {
+        final @SofaType.Type int sofaType = sofaMessage.hasAttachment() ? sofaMessage.getAttachmentType() : sofaMessage.getType();
+        if (sofaType == SofaType.PAYMENT_REQUEST) {
+            final PaymentRequest paymentRequest = getPaymentRequestFromSofaMessage(sofaMessage);
+            return paymentRequest != null && paymentRequest.getLocalPrice() != null
+                    ? BaseApplication.get().getString(R.string.latest_message__payment_request, paymentRequest.getLocalPrice())
+                    : null;
+        } else if (sofaType == SofaType.IMAGE || sofaType == SofaType.FILE) {
+            return BaseApplication.get().getString(R.string.latest_received_attachment);
+        }  else {
+            return getBodyFromSofaMessage(sofaMessage);
+        }
+    }
+
+    private PaymentRequest getPaymentRequestFromSofaMessage(final SofaMessage sofaMessage) {
+        try {
+            return SofaAdapters.get().txRequestFrom(sofaMessage.getPayload());
+        } catch (IOException e) {
+            LogUtil.e(getTag(), "Error while parsing payment request " + e);
+        }
+        return null;
+    }
+
+    private String getBodyFromSofaMessage(final SofaMessage sofaMessage) {
+        try {
+            return SofaAdapters.get().messageFrom(sofaMessage.getPayload()).getBody();
+        } catch (final IOException ex) {
+            LogUtil.e("ChatNotificationManager", "Error while parsing message " + ex);
+        }
+        return null;
+    }
+
+    public @SofaType.Type int getTypeOfLastMessage() {
+        return this.lastMessage.getType();
     }
 }

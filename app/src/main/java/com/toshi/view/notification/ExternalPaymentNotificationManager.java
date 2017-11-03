@@ -18,6 +18,7 @@
 package com.toshi.view.notification;
 
 import com.toshi.R;
+import com.toshi.model.sofa.SofaMessage;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.notification.model.ExternalPaymentFailedNotification;
 
@@ -25,7 +26,8 @@ public class ExternalPaymentNotificationManager extends ToshiNotificationBuilder
 
     public static void showExternalPaymentFailed(final String paymentAddress) {
         final ExternalPaymentFailedNotification notification = new ExternalPaymentFailedNotification(paymentAddress);
-        notification.addUnreadMessage(BaseApplication.get().getString(R.string.unable_to_send_money, paymentAddress));
+        final SofaMessage sofaMessage = new SofaMessage().makeNew(BaseApplication.get().getString(R.string.unable_to_send_money, paymentAddress));
+        notification.addUnreadMessage(sofaMessage);
         showNotification(notification, buildNotification(notification));
     }
 }
