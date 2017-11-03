@@ -93,7 +93,7 @@ public class DirectReplyService extends IntentService {
 
         this.outgoingMessageQueue.send(sofaMessage);
         this.outgoingMessageQueue.clear();
-        ChatNotificationManager.showChatNotification(recipient, userInput);
+        ChatNotificationManager.showChatNotification(recipient, sofaMessage);
     }
 
     private void initOutgoingMessageQueue(final Recipient recipient) {

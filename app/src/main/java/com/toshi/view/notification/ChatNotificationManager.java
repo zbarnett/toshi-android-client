@@ -26,9 +26,9 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.RemoteInput;
 
 import com.toshi.R;
-import com.toshi.crypto.signal.model.DecryptedSignalMessage;
 import com.toshi.model.local.Recipient;
-import com.toshi.model.local.User;
+import com.toshi.model.sofa.Message;
+import com.toshi.model.sofa.PaymentRequest;
 import com.toshi.model.sofa.SofaAdapters;
 import com.toshi.model.sofa.SofaMessage;
 import com.toshi.model.sofa.SofaType;
@@ -36,9 +36,11 @@ import com.toshi.util.LogUtil;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.notification.model.ChatNotification;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class ChatNotificationManager extends ToshiNotificationBuilder {
 
@@ -67,56 +69,83 @@ public class ChatNotificationManager extends ToshiNotificationBuilder {
         }
     }
 
-    public static void showNotification(final DecryptedSignalMessage signalMessage) {
-        if (signalMessage == null) return;
-
-        BaseApplication
-            .get()
-            .getRecipientManager()
-            .getUserFromToshiId(signalMessage.getSource())
-            .subscribe(
-                    (user) -> handleUserLookup(user, signalMessage),
-                    ChatNotificationManager::handleUserError
-            );
+    public static void showNotification(final SofaMessage sofaMessage) {
+        if (sofaMessage == null) return;
+        final Recipient recipient = new Recipient(sofaMessage.getSender());
+        showChatNotification(recipient, sofaMessage);
     }
 
-    private static void handleUserLookup(final User user, final DecryptedSignalMessage signalMessage) {
-        final String body = getBodyFromMessage(signalMessage);
-        if (body == null) {
-            // This wasn't a SOFA::Message. Do not render.
-            LogUtil.i(ChatNotificationManager.class, "Not rendering PN");
-            return;
+    public static void showChatNotification(final Recipient sender, final String content) {
+        final Message message = new Message().setBody(content);
+        final String messageBody = SofaAdapters.get().toJson(message);
+        final SofaMessage newSofaMessage = new SofaMessage().makeNew(sender.getUser(), messageBody);
+        showChatNotification(sender, newSofaMessage);
+    }
+
+    public static void showChatNotification(final Recipient sender, final SofaMessage sofaMessage) {
+        final ChatNotification activeChatNotification = getAndCacheChatNotification(sender);
+        if (activeChatNotification == null) return;
+
+        if (sofaMessage.getType() == SofaType.PLAIN_TEXT) {
+            activeChatNotification.addUnreadMessage(sofaMessage);
+            generateIconAndShowNotification(activeChatNotification, null);
+        } else if (sofaMessage.getType() == SofaType.PAYMENT_REQUEST) {
+            final PaymentRequest paymentRequest = getPaymentRequestFromMessage(sofaMessage);
+            if (paymentRequest == null) return;
+            getLocalPriceAndShowPaymentRequestNotification(sender, paymentRequest, sofaMessage);
         }
-        final Recipient recipient = new Recipient(user);
-        // Todo - pass group avatar here (if it's a group)
-        showChatNotification(recipient, body);
     }
 
-    private static void handleUserError(final Throwable throwable) {
-        LogUtil.exception(ChatNotificationManager.class, "Error during fetching user", throwable);
-    }
-
-    private static String getBodyFromMessage(final DecryptedSignalMessage dsm) {
-        final SofaMessage sofaMessage = new SofaMessage().makeNew(dsm.getBody());
+    private static PaymentRequest getPaymentRequestFromMessage(final SofaMessage sofaMessage) {
         try {
-            if (sofaMessage.getType() == SofaType.PLAIN_TEXT) {
-                return SofaAdapters.get().messageFrom(sofaMessage.getPayload()).getBody();
-            }
-        } catch (final IOException ex) {
-            // Nop
+            return SofaAdapters.get().txRequestFrom(sofaMessage.getPayload());
+        } catch (Exception e) {
+            LogUtil.e("ChatNotificationManager", "Error while parsing sofa message " + e);
         }
         return null;
     }
 
-    public static void showChatNotification(
-            final Recipient sender,
-            final String content) {
+    private static void getLocalPriceAndShowPaymentRequestNotification(final Recipient sender,
+                                                                       final PaymentRequest paymentRequest,
+                                                                       final SofaMessage sofaMessage) {
+        paymentRequest
+                .generateLocalPrice()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .map(pr -> addLocalPriceToSofaMessage(pr, sofaMessage))
+                .subscribe(
+                        sofaMessageWithLocalPrice -> showPaymentRequestNotification(sender, sofaMessageWithLocalPrice),
+                        throwable -> LogUtil.e("ChatNotificationManager", "Error " + throwable)
+                );
+    }
 
+    private static SofaMessage addLocalPriceToSofaMessage(final PaymentRequest paymentRequest,
+                                                          final SofaMessage sofaMessage) {
+        final String payload = SofaAdapters.get().toJson(paymentRequest);
+        return sofaMessage.setPayload(payload);
+    }
+
+    private static void showPaymentRequestNotification(final Recipient sender, final SofaMessage sofaMessage) {
+        final ChatNotification activeChatNotification = getAndCacheChatNotification(sender);
+        if (activeChatNotification == null) return;
+        activeChatNotification.addUnreadMessage(sofaMessage);
+        generateIconAndShowNotification(activeChatNotification, sofaMessage.getPrivateKey());
+    }
+
+    private static void generateIconAndShowNotification(final ChatNotification activeChatNotification, final String messageId) {
+        activeChatNotification
+                .generateLargeIcon()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> showNotification(activeChatNotification, getChatNotificationBuilder(messageId, activeChatNotification)));
+    }
+
+    private static ChatNotification getAndCacheChatNotification(final Recipient sender) {
         // Sender will be null if the transaction came from outside of the Toshi platform.
         final String notificationKey = sender == null ? ChatNotification.DEFAULT_TAG : sender.getThreadId();
 
         if (notificationKey.equals(currentlyOpenConversation) && !BaseApplication.get().isInBackground()) {
-            return;
+            return null;
         }
 
         final ChatNotification activeChatNotification
@@ -126,13 +155,10 @@ public class ChatNotificationManager extends ToshiNotificationBuilder {
 
         activeNotifications.put(notificationKey, activeChatNotification);
 
-        activeChatNotification.addUnreadMessage(content);
-        activeChatNotification
-                .generateLargeIcon()
-                .subscribe(() -> showNotification(activeChatNotification, getChatNotificationBuilder(activeChatNotification)));
+        return activeChatNotification;
     }
 
-    private static NotificationCompat.Builder getChatNotificationBuilder(final ChatNotification activeChatNotification) {
+    private static NotificationCompat.Builder getChatNotificationBuilder(final String messageId, final ChatNotification activeChatNotification) {
         final NotificationCompat.Builder builder = buildNotification(activeChatNotification)
                 .setDeleteIntent(activeChatNotification.getDeleteIntent())
                 .setContentIntent(activeChatNotification.getPendingIntent());
