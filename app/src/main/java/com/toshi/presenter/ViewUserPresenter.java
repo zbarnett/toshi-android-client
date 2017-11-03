@@ -84,22 +84,10 @@ public final class ViewUserPresenter implements
     }
 
     private void initShortLivingObjects() {
-        initToolbar();
-        initClickListeners();
         processIntentData();
         initHandlers();
-        loadUser();
-        fetchUserReputation();
-    }
-
-    private void initToolbar() {
-        this.activity.setSupportActionBar(this.activity.getBinding().toolbar);
-        final ActionBar actionBar = this.activity.getSupportActionBar();
-        if (actionBar != null) actionBar.setDisplayShowTitleEnabled(false);
-    }
-
-    private void initClickListeners() {
-        this.activity.getBinding().closeButton.setOnClickListener((View v) -> this.activity.onBackPressed());
+        initUi();
+        initUser();
     }
 
     private void processIntentData() {
@@ -113,6 +101,33 @@ public final class ViewUserPresenter implements
         this.userBlockingHandler = new UserBlockingHandler(this.activity)
                 .setUserAddress(this.userAddress)
                 .setOnBlockingListener(this);
+    }
+
+    private void initUi() {
+        initToolbar();
+        initClickListeners();
+        setRateButtonVisibility();
+    }
+
+    private void initToolbar() {
+        this.activity.setSupportActionBar(this.activity.getBinding().toolbar);
+        final ActionBar actionBar = this.activity.getSupportActionBar();
+        if (actionBar != null) actionBar.setDisplayShowTitleEnabled(false);
+    }
+
+    private void initClickListeners() {
+        this.activity.getBinding().closeButton.setOnClickListener((View v) -> this.activity.onBackPressed());
+        this.activity.getBinding().rateUser.setOnClickListener((View v) -> this.ratingHandler.rateUser());
+    }
+    
+    private void setRateButtonVisibility() {
+        this.activity.getBinding().rateUser.setVisibility(isLocalUser() ? View.GONE : View.VISIBLE);
+    }
+
+    private void initUser() {
+        loadUser();
+        fetchUserReputation();
+        checkIfUserBlocked();
     }
 
     private void loadUser() {
@@ -345,9 +360,7 @@ public final class ViewUserPresenter implements
     }
 
     public boolean shouldCreateOptionsMenu() {
-        final boolean shouldCreateOptionsMenu = !isLocalUser();
-        if (shouldCreateOptionsMenu) isUserBlocked();
-        return shouldCreateOptionsMenu;
+        return !isLocalUser();
     }
 
     private boolean isLocalUser() {
@@ -365,7 +378,7 @@ public final class ViewUserPresenter implements
                 .value();
     }
 
-    private void isUserBlocked() {
+    private void checkIfUserBlocked() {
         final Subscription sub =
                 BaseApplication
                 .get()
