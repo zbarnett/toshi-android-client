@@ -38,7 +38,6 @@ import android.os.Bundle;
 import com.google.android.gms.gcm.GcmListenerService;
 import com.toshi.R;
 import com.toshi.crypto.HDWallet;
-import com.toshi.crypto.signal.model.DecryptedSignalMessage;
 import com.toshi.crypto.util.TypeConverter;
 import com.toshi.model.local.Recipient;
 import com.toshi.model.local.User;
@@ -162,7 +161,7 @@ public class GcmMessageReceiver extends GcmListenerService {
     }
 
     private void tryShowSignalMessage() {
-        final DecryptedSignalMessage signalMessage;
+        final SofaMessage signalMessage;
         try {
             signalMessage = BaseApplication
                 .get()

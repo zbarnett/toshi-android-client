@@ -25,7 +25,6 @@ import com.toshi.R;
 import com.toshi.crypto.HDWallet;
 import com.toshi.crypto.signal.ChatService;
 import com.toshi.crypto.signal.SignalPreferences;
-import com.toshi.crypto.signal.model.DecryptedSignalMessage;
 import com.toshi.crypto.signal.store.ProtocolStore;
 import com.toshi.crypto.signal.store.SignalTrustStore;
 import com.toshi.manager.chat.SofaMessageReceiver;
@@ -303,7 +302,7 @@ public final class SofaMessageManager {
         this.messageSender.sendPendingMessage(sofaMessage);
     }
 
-    public DecryptedSignalMessage fetchLatestMessage() throws TimeoutException {
+    public SofaMessage fetchLatestMessage() throws TimeoutException {
         try {
             while (this.messageReceiver == null) {
                 Thread.sleep(200);
