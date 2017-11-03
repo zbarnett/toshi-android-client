@@ -87,7 +87,7 @@ public class ThreadViewHolder extends ClickableViewHolder {
         final Calendar now = Calendar.getInstance();
 
         if (now.get(Calendar.DAY_OF_YEAR) == lastMessageCreationTime.get(Calendar.DAY_OF_YEAR)) {
-            return new SimpleDateFormat("H:mm a", LocaleUtil.getLocale()).format(new Date(creationTime));
+            return new SimpleDateFormat("h:mm a", LocaleUtil.getLocale()).format(new Date(creationTime));
         } else if (now.get(Calendar.WEEK_OF_YEAR) == lastMessageCreationTime.get(Calendar.WEEK_OF_YEAR)){
             return new SimpleDateFormat("EEE", LocaleUtil.getLocale()).format(new Date(creationTime));
         } else {
