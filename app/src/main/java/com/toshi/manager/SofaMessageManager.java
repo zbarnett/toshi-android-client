@@ -167,11 +167,6 @@ public final class SofaMessageManager {
                 .deleteMessageById(recipient, sofaMessage);
     }
 
-    public Single<SofaMessage> getSofaMessageById(final String id) {
-        return this.conversationStore.getSofaMessageById(id)
-                .subscribeOn(Schedulers.io());
-    }
-
     public final Observable<Conversation> registerForAllConversationChanges() {
         return this.conversationStore.getConversationChangedObservable();
     }

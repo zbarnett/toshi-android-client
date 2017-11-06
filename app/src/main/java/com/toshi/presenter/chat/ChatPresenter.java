@@ -547,27 +547,32 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         if (this.recipient == null) return;
 
         final String value = this.activity.getIntent().getStringExtra(ChatActivity.EXTRA__ETH_AMOUNT);
-        final int paymentAction = this.activity.getIntent().getIntExtra(ChatActivity.EXTRA__PAYMENT_ACTION, 0);
+        final int paymentAction = this.activity.getIntent().getIntExtra(ChatActivity.EXTRA__PAYMENT_ACTION, -1);
+        final String messageId = this.activity.getIntent().getStringExtra(ChatActivity.EXTRA__MESSAGE_ID);
 
         this.activity.getIntent().removeExtra(ChatActivity.EXTRA__ETH_AMOUNT);
         this.activity.getIntent().removeExtra(ChatActivity.EXTRA__PAYMENT_ACTION);
+        this.activity.getIntent().removeExtra(ChatActivity.EXTRA__MESSAGE_ID);
 
-        if (value == null || paymentAction == 0) {
-            return;
-        }
+        if (paymentAction == -1) return;
 
-        if (paymentAction == PaymentType.TYPE_SEND) {
+        if (messageId != null && paymentAction == PaymentType.TYPE_SEND) {
+            respondToPaymentRequest(messageId);
+        } else if (value != null && paymentAction == PaymentType.TYPE_SEND) {
             sendPaymentWithValue(value);
-        } else if (paymentAction == PaymentType.TYPE_REQUEST) {
+        } else if (value != null && paymentAction == PaymentType.TYPE_REQUEST) {
             sendPaymentRequestWithValue(value);
         }
     }
 
-    private void showResendPaymentConfirmationDialog(final SofaMessage sofaMessage) {
+    private void respondToPaymentRequest(final String messageId) {
         final Subscription sub =
-                getRecipient()
+                BaseApplication
+                .get()
+                .getSofaMessageManager()
+                .getSofaMessageById(messageId)
                 .subscribe(
-                        recipient -> showResendPaymentConfirmationDialog(recipient.getUser(), sofaMessage),
+                        this::showPaymentRequestConfirmationDialog,
                         this::handleError
                 );
 
@@ -596,6 +601,17 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
                 .get()
                 .getTransactionManager()
                 .sendPayment(receiver, paymentAddress, value);
+    }
+
+    private void showResendPaymentConfirmationDialog(final SofaMessage sofaMessage) {
+        final Subscription sub =
+                getRecipient()
+                .subscribe(
+                        recipient -> showResendPaymentConfirmationDialog(recipient.getUser(), sofaMessage),
+                        this::handleError
+                );
+
+        this.subscriptions.add(sub);
     }
 
     private void showResendPaymentConfirmationDialog(final User receiver, final SofaMessage sofaMessage) {
