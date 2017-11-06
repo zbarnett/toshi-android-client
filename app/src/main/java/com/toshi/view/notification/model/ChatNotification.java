@@ -125,7 +125,7 @@ public class ChatNotification extends ToshiNotification {
                 .addParentStack(MainActivity.class)
                 .addNextIntent(mainIntent)
                 .addNextIntent(chatIntent)
-                .getPendingIntent(getTitle().hashCode(), PendingIntent.FLAG_ONE_SHOT);
+                .getPendingIntent(getTitle().hashCode(), PendingIntent.FLAG_UPDATE_CURRENT);
 
         final Intent splashIntent =  new Intent(BaseApplication.get(), SplashActivity.class)
                 .putExtra(SplashActivity.EXTRA__NEXT_INTENT, nextIntent);
@@ -134,7 +134,7 @@ public class ChatNotification extends ToshiNotification {
                 BaseApplication.get(),
                 UUID.randomUUID().hashCode(),
                 splashIntent,
-                PendingIntent.FLAG_ONE_SHOT);
+                PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     public PendingIntent getDirectReplyIntent() {
