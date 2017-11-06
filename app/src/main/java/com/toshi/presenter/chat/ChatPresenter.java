@@ -862,7 +862,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     }
 
     private void updateControlView() {
-        final SofaMessage sofaMessage = this.messageAdapter.getLastNonPaymentMessage();
+        final SofaMessage sofaMessage = this.messageAdapter.getLastPlainTextSofaMessage();
         if (sofaMessage == null || TextUtils.isEmpty(sofaMessage.getPayload()) || this.activity == null) {
             return;
         }
