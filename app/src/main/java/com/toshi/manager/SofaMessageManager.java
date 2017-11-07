@@ -153,7 +153,18 @@ public final class SofaMessageManager {
 
     public final Single<Conversation> loadConversation(final String threadId) {
         return this.conversationStore.loadByThreadId(threadId)
+                .flatMap(conversation -> createEmptyConversationIfNull(conversation, threadId))
                 .subscribeOn(Schedulers.io());
+    }
+
+    private Single<Conversation> createEmptyConversationIfNull(final Conversation conversation, final String threadId) {
+        if (conversation != null) return Single.just(conversation);
+        return BaseApplication
+                .get()
+                .getRecipientManager()
+                .getUserFromToshiId(threadId)
+                .map(Recipient::new)
+                .flatMap(this.conversationStore::createEmptyConversation);
     }
 
     public Completable deleteConversation(final Conversation conversation) {

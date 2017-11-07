@@ -317,6 +317,18 @@ public class ConversationStore {
         });
     }
 
+    public Single<Conversation> createEmptyConversation(final Recipient recipient) {
+        return Single.fromCallable(() -> {
+            final Realm realm = BaseApplication.get().getRealm();
+            realm.beginTransaction();
+            final Conversation conversation = new Conversation(recipient);
+            realm.copyToRealmOrUpdate(conversation);
+            realm.commitTransaction();
+            realm.close();
+            return conversation;
+        });
+    }
+
     private void broadcastNewChatMessage(final String threadId, final SofaMessage newMessage) {
         if (watchedThreadId == null || !watchedThreadId.equals(threadId)) {
             return;
