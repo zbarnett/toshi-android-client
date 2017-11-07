@@ -213,7 +213,9 @@ public class ConversationStore {
 
     public List<Conversation> loadAll() {
         final Realm realm = BaseApplication.get().getRealm();
-        final RealmQuery<Conversation> query = realm.where(Conversation.class);
+        final RealmQuery<Conversation> query =
+                realm.where(Conversation.class)
+                     .isNotEmpty("allMessages");
         final RealmResults<Conversation> results = query.findAllSorted("updatedTime", Sort.DESCENDING);
         final List<Conversation> allConversations = realm.copyFromRealm(results);
         realm.close();
