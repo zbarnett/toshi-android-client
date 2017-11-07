@@ -75,7 +75,7 @@ public class ToshiNotificationBuilder {
         final int notificationColor = ContextCompat.getColor(BaseApplication.get(), R.color.colorPrimary);
         final Uri notificationSound = Uri.parse("android.resource://" + BaseApplication.get().getPackageName() + "/" + R.raw.notification);
 
-        final NotificationChannel notificationChannel = new NotificationChannel(id, channelName, android.app.NotificationManager.IMPORTANCE_HIGH);
+        final NotificationChannel notificationChannel = new NotificationChannel(id, channelName, NotificationManager.IMPORTANCE_HIGH);
         notificationChannel.enableLights(true);
         notificationChannel.setLightColor(notificationColor);
         notificationChannel.enableVibration(true);
@@ -86,7 +86,8 @@ public class ToshiNotificationBuilder {
                         .build()
         );
 
-        final android.app.NotificationManager manager = (android.app.NotificationManager) BaseApplication.get().getSystemService(Context.NOTIFICATION_SERVICE);
+        final NotificationManager manager = (NotificationManager) BaseApplication.get().getSystemService(Context.NOTIFICATION_SERVICE);
+        if (manager == null) return;
         manager.createNotificationChannel(notificationChannel);
     }
 
@@ -111,8 +112,9 @@ public class ToshiNotificationBuilder {
         return style;
     }
 
-    public static void showNotification(final ToshiNotification notification, final NotificationCompat.Builder builder) {
+    /* package */ static void showNotification(final ToshiNotification notification, final NotificationCompat.Builder builder) {
         final NotificationManager manager = (NotificationManager) BaseApplication.get().getSystemService(Context.NOTIFICATION_SERVICE);
+        if (manager == null) return;
         manager.notify(notification.getTag(), 1, builder.build());
     }
 }
