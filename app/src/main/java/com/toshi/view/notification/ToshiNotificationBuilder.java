@@ -28,18 +28,23 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 
 import com.toshi.R;
+import com.toshi.model.sofa.SofaType;
 import com.toshi.util.SharedPrefsUtil;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.notification.model.ToshiNotification;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class ToshiNotificationBuilder {
 
+    private static final String MESSAGES_CHANNEL_NAME = "Messages";
+    private static final String PAYMENTS_CHANNEL_NAME = "Payments";
+
     /* package */ static NotificationCompat.Builder buildNotification(final ToshiNotification notification) {
         if (Build.VERSION.SDK_INT >= 26) {
             clearNotificationChannelsIfNeeded();
-            createNotificationChannel(notification.getTitle(), notification.getId());
+            createNotificationChannels();
         }
 
         final int lightOnRate = 1000 * 2;
@@ -48,8 +53,9 @@ public class ToshiNotificationBuilder {
         final Uri notificationSound = Uri.parse("android.resource://" + BaseApplication.get().getPackageName() + "/" + R.raw.notification);
         final NotificationCompat.Style style = generateNotificationStyle(notification);
         final CharSequence contextText = notification.getLastMessage();
+        final String channelId = getChannelId(notification);
 
-        final NotificationCompat.Builder builder = new NotificationCompat.Builder(BaseApplication.get(), notification.getId())
+        final NotificationCompat.Builder builder = new NotificationCompat.Builder(BaseApplication.get(), channelId)
                 .setSmallIcon(R.drawable.ic_notification)
                 .setLargeIcon(notification.getLargeIcon())
                 .setContentTitle(notification.getTitle())
@@ -73,12 +79,40 @@ public class ToshiNotificationBuilder {
         return builder;
     }
 
+    private static String getChannelId(final ToshiNotification toshiNotification) {
+        if (toshiNotification.getTypeOfLastMessage() == SofaType.PAYMENT) {
+            return String.valueOf(SofaType.PAYMENT);
+        } else {
+            return String.valueOf(SofaType.PLAIN_TEXT);
+        }
+    }
+
     @RequiresApi(api = 26)
-    private static void createNotificationChannel(final String channelName, final String id) {
+    private static void createNotificationChannels() {
+        final NotificationManager manager = (NotificationManager) BaseApplication.get().getSystemService(Context.NOTIFICATION_SERVICE);
+        if (manager == null) return;
+        manager.createNotificationChannels(Arrays.asList(createMessagesChannel(), createPaymentsChannel()));
+    }
+
+    @RequiresApi(api = 26)
+    private static NotificationChannel createMessagesChannel() {
+        final String id = String.valueOf(SofaType.PLAIN_TEXT);
+        final NotificationChannel notificationChannel = new NotificationChannel(id, MESSAGES_CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH);
+        return addNotificationAttributes(notificationChannel);
+    }
+
+    @RequiresApi(api = 26)
+    private static NotificationChannel createPaymentsChannel() {
+        final String id = String.valueOf(SofaType.PAYMENT);
+        final NotificationChannel notificationChannel = new NotificationChannel(id, PAYMENTS_CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH);
+        return addNotificationAttributes(notificationChannel);
+    }
+
+    @RequiresApi(api = 26)
+    private static NotificationChannel addNotificationAttributes(final NotificationChannel notificationChannel) {
         final int notificationColor = ContextCompat.getColor(BaseApplication.get(), R.color.colorPrimary);
         final Uri notificationSound = Uri.parse("android.resource://" + BaseApplication.get().getPackageName() + "/" + R.raw.notification);
 
-        final NotificationChannel notificationChannel = new NotificationChannel(id, channelName, NotificationManager.IMPORTANCE_HIGH);
         notificationChannel.enableLights(true);
         notificationChannel.setLightColor(notificationColor);
         notificationChannel.enableVibration(true);
@@ -89,9 +123,7 @@ public class ToshiNotificationBuilder {
                         .build()
         );
 
-        final NotificationManager manager = (NotificationManager) BaseApplication.get().getSystemService(Context.NOTIFICATION_SERVICE);
-        if (manager == null) return;
-        manager.createNotificationChannel(notificationChannel);
+        return notificationChannel;
     }
 
     //TODO: can be deleted 8th Feb 2018
