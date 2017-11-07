@@ -36,24 +36,16 @@ package com.toshi.service;
 import android.os.Bundle;
 
 import com.google.android.gms.gcm.GcmListenerService;
-import com.toshi.R;
-import com.toshi.crypto.HDWallet;
-import com.toshi.crypto.util.TypeConverter;
-import com.toshi.model.local.Recipient;
 import com.toshi.model.local.User;
 import com.toshi.model.sofa.Payment;
 import com.toshi.model.sofa.SofaAdapters;
 import com.toshi.model.sofa.SofaMessage;
 import com.toshi.model.sofa.SofaType;
-import com.toshi.util.EthUtil;
 import com.toshi.util.LogUtil;
 import com.toshi.util.SharedPrefsUtil;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.notification.ChatNotificationManager;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.Locale;
 import java.util.concurrent.TimeoutException;
 
 import rx.Completable;
@@ -148,7 +140,6 @@ public class GcmMessageReceiver extends GcmListenerService {
             case Payment.TO_LOCAL_USER:
                 addIncomingPayment(payment);
                 refreshBalance();
-                showPaymentNotification(payment);
                 return;
             default:
             case Payment.NOT_RELEVANT:
@@ -199,62 +190,10 @@ public class GcmMessageReceiver extends GcmListenerService {
                 .refreshBalance();
     }
 
-    private void showPaymentNotification(final Payment payment) {
-        if (payment.getStatus().equals(SofaType.CONFIRMED)) {
-            return;
-        }
-
-        BaseApplication
-                .get()
-                .getToshiManager()
-                .getWallet()
-                .subscribe(
-                        (wallet) -> showOnlyIncomingPaymentNotification(wallet, payment),
-                        this::handleError
-                );
-    }
-
-    private void showOnlyIncomingPaymentNotification(final HDWallet wallet, final Payment payment) {
-        if (wallet.getPaymentAddress().equals(payment.getFromAddress())) {
-            // This payment was sent by us. Show no notification.
-            LogUtil.i(getClass(), "Suppressing payment notification. Payment sent by local user.");
-            return;
-        }
-        renderNotificationForPayment(payment);
-    }
-
-    private void renderNotificationForPayment(final Payment payment) {
-        final BigInteger weiAmount = TypeConverter.StringHexToBigInteger(payment.getValue());
-        final BigDecimal ethAmount = EthUtil.weiToEth(weiAmount);
-
-        BaseApplication
-                .get()
-                .getBalanceManager()
-                .convertEthToLocalCurrencyString(ethAmount)
-                .subscribe(
-                        (localCurrency) -> handleLocalCurrency(payment, localCurrency),
-                        this::handleError
-                );
-    }
-
-    private void handleLocalCurrency(final Payment payment, final String localCurrency) {
-        final String content = String.format(Locale.getDefault(), this.getString(R.string.latest_message__payment_incoming), localCurrency);
-        getUserFromPaymentAddress(payment.getFromAddress())
-                .map(Recipient::new)
-                .subscribe(
-                        (sender) -> ChatNotificationManager.showChatNotification(sender, content),
-                        __ -> ChatNotificationManager.showChatNotification(null, content)
-                );
-    }
-
     private Single<User> getUserFromPaymentAddress(final String paymentAddress) {
         return BaseApplication
                 .get()
                 .getRecipientManager()
                 .getUserFromPaymentAddress(paymentAddress);
-    }
-
-    private void handleError(final Throwable throwable) {
-        LogUtil.exception(getClass(), throwable);
     }
 }

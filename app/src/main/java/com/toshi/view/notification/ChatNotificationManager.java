@@ -27,8 +27,10 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.RemoteInput;
 
 import com.toshi.R;
+import com.toshi.crypto.HDWallet;
 import com.toshi.model.local.Recipient;
 import com.toshi.model.sofa.Message;
+import com.toshi.model.sofa.Payment;
 import com.toshi.model.sofa.PaymentRequest;
 import com.toshi.model.sofa.SofaAdapters;
 import com.toshi.model.sofa.SofaMessage;
@@ -40,6 +42,7 @@ import com.toshi.view.notification.model.ChatNotification;
 import java.util.HashMap;
 import java.util.Map;
 
+import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -94,12 +97,25 @@ public class ChatNotificationManager extends ToshiNotificationBuilder {
             final PaymentRequest paymentRequest = getPaymentRequestFromMessage(sofaMessage);
             if (paymentRequest == null) return;
             getLocalPriceAndShowPaymentRequestNotification(sender, paymentRequest, sofaMessage);
+        } else if (sofaMessage.getType() == SofaType.PAYMENT) {
+            final Payment payment = getPaymentFromMessage(sofaMessage);
+            if (payment == null) return;
+            getLocalPriceAndShowPaymentNotification(sender, payment, sofaMessage);
         }
     }
 
     private static PaymentRequest getPaymentRequestFromMessage(final SofaMessage sofaMessage) {
         try {
             return SofaAdapters.get().txRequestFrom(sofaMessage.getPayload());
+        } catch (Exception e) {
+            LogUtil.e("ChatNotificationManager", "Error while parsing sofa message " + e);
+        }
+        return null;
+    }
+
+    private static Payment getPaymentFromMessage(final SofaMessage sofaMessage) {
+        try {
+            return SofaAdapters.get().paymentFrom(sofaMessage.getPayload());
         } catch (Exception e) {
             LogUtil.e("ChatNotificationManager", "Error while parsing sofa message " + e);
         }
@@ -120,13 +136,55 @@ public class ChatNotificationManager extends ToshiNotificationBuilder {
                 );
     }
 
+    private static void getLocalPriceAndShowPaymentNotification(final Recipient sender,
+                                                                final Payment payment,
+                                                                final SofaMessage sofaMessage) {
+        if (payment.getStatus().equals(SofaType.CONFIRMED)) return;
+        getWallet()
+                .toObservable()
+                .filter(wallet -> paymentNotSentByLocalUser(wallet, payment))
+                .toSingle()
+                .flatMap(__ -> payment.generateLocalPrice())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .map(paymentWithLocalPrice -> addLocalPriceToSofaMessage(paymentWithLocalPrice, sofaMessage))
+                .subscribe(
+                        sofaMessageWithLocalPrice -> showPaymentNotification(sender, sofaMessageWithLocalPrice),
+                        throwable -> LogUtil.e("ChatNotificationManager", "Error while fetching local price " + throwable)
+                );
+    }
+
+    private static boolean paymentNotSentByLocalUser(final HDWallet wallet, final Payment payment) {
+        return !wallet.getPaymentAddress().equals(payment.getFromAddress());
+    }
+
+    private static Single<HDWallet> getWallet() {
+        return BaseApplication
+                .get()
+                .getToshiManager()
+                .getWallet();
+    }
+
     private static SofaMessage addLocalPriceToSofaMessage(final PaymentRequest paymentRequest,
                                                           final SofaMessage sofaMessage) {
         final String payload = SofaAdapters.get().toJson(paymentRequest);
         return sofaMessage.setPayload(payload);
     }
 
+    private static SofaMessage addLocalPriceToSofaMessage(final Payment payment,
+                                                          final SofaMessage sofaMessage) {
+        final String payload = SofaAdapters.get().toJson(payment);
+        return sofaMessage.setPayload(payload);
+    }
+
     private static void showPaymentRequestNotification(final Recipient sender, final SofaMessage sofaMessage) {
+        final ChatNotification activeChatNotification = getAndCacheChatNotification(sender);
+        if (activeChatNotification == null) return;
+        activeChatNotification.addUnreadMessage(sofaMessage);
+        generateIconAndShowNotification(activeChatNotification, sofaMessage.getPrivateKey());
+    }
+
+    private static void showPaymentNotification(final Recipient sender, final SofaMessage sofaMessage) {
         final ChatNotification activeChatNotification = getAndCacheChatNotification(sender);
         if (activeChatNotification == null) return;
         activeChatNotification.addUnreadMessage(sofaMessage);

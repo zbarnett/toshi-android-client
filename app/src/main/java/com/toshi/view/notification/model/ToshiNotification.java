@@ -21,6 +21,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import com.toshi.R;
+import com.toshi.model.sofa.Payment;
 import com.toshi.model.sofa.PaymentRequest;
 import com.toshi.model.sofa.SofaAdapters;
 import com.toshi.model.sofa.SofaMessage;
@@ -109,6 +110,11 @@ public abstract class ToshiNotification {
             return paymentRequest != null && paymentRequest.getLocalPrice() != null
                     ? BaseApplication.get().getString(R.string.latest_message__payment_request, paymentRequest.getLocalPrice())
                     : null;
+        } else if (sofaType == SofaType.PAYMENT) {
+            final Payment payment = getPaymentFromSofaMessage(sofaMessage);
+            return payment != null && payment.getLocalPrice() != null
+                    ? BaseApplication.get().getString(R.string.latest_message__payment_incoming, payment.getLocalPrice())
+                    : null;
         } else if (sofaType == SofaType.IMAGE || sofaType == SofaType.FILE) {
             return BaseApplication.get().getString(R.string.latest_received_attachment);
         }  else {
@@ -121,6 +127,15 @@ public abstract class ToshiNotification {
             return SofaAdapters.get().txRequestFrom(sofaMessage.getPayload());
         } catch (IOException e) {
             LogUtil.e(getTag(), "Error while parsing payment request " + e);
+        }
+        return null;
+    }
+
+    private Payment getPaymentFromSofaMessage(final SofaMessage sofaMessage) {
+        try {
+            return SofaAdapters.get().paymentFrom(sofaMessage.getPayload());
+        } catch (IOException e) {
+            LogUtil.e(getTag(), "Error while parsing payment " + e);
         }
         return null;
     }
