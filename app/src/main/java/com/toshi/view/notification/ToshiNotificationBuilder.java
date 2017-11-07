@@ -22,11 +22,13 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.media.AudioAttributes;
 import android.net.Uri;
+import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 
 import com.toshi.R;
+import com.toshi.util.SharedPrefsUtil;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.notification.model.ToshiNotification;
 
@@ -35,7 +37,8 @@ import java.util.List;
 public class ToshiNotificationBuilder {
 
     /* package */ static NotificationCompat.Builder buildNotification(final ToshiNotification notification) {
-        if (android.os.Build.VERSION.SDK_INT >= 26) {
+        if (Build.VERSION.SDK_INT >= 26) {
+            clearNotificationChannelsIfNeeded();
             createNotificationChannel(notification.getTitle(), notification.getId());
         }
 
@@ -89,6 +92,22 @@ public class ToshiNotificationBuilder {
         final NotificationManager manager = (NotificationManager) BaseApplication.get().getSystemService(Context.NOTIFICATION_SERVICE);
         if (manager == null) return;
         manager.createNotificationChannel(notificationChannel);
+    }
+
+    //TODO: can be deleted 8th Feb 2018
+    @RequiresApi(api = 26)
+    private static void clearNotificationChannelsIfNeeded() {
+        final boolean hasClearedNotificationChannels = SharedPrefsUtil.hasClearedNotificationChannels();
+        if (hasClearedNotificationChannels) return;
+
+        final NotificationManager manager = (NotificationManager) BaseApplication.get().getSystemService(Context.NOTIFICATION_SERVICE);
+        if (manager == null) return;
+
+        for (NotificationChannel channel : manager.getNotificationChannels()) {
+            manager.deleteNotificationChannel(channel.getId());
+        }
+
+        SharedPrefsUtil.setHasClearedNotificationChannels();
     }
 
     private static NotificationCompat.Style generateNotificationStyle(final ToshiNotification notification) {

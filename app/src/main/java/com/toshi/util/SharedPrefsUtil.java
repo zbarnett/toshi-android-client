@@ -34,6 +34,7 @@ public class SharedPrefsUtil {
     private static final String WAS_MIGRATED = "wasMigrated";
     private static final String FORCE_USER_UPDATE = "forceUserUpdate_2";
     private static final String CURRENT_NETWORK = "currentNetwork";
+    private static final String HAS_CLEARED_NOTIFICATION_CHANNELS = "hasClearedNotificationChannels";
 
     public static boolean hasOnboarded() {
         final SharedPreferences prefs = BaseApplication.get().getSharedPreferences(FileNames.USER_PREFS, Context.MODE_PRIVATE);
@@ -136,6 +137,18 @@ public class SharedPrefsUtil {
     public static String getCurrentNetworkId() {
         final SharedPreferences prefs = BaseApplication.get().getSharedPreferences(FileNames.USER_PREFS, Context.MODE_PRIVATE);
         return prefs.getString(CURRENT_NETWORK, null);
+    }
+
+    public static void setHasClearedNotificationChannels() {
+        final SharedPreferences prefs = BaseApplication.get().getSharedPreferences(FileNames.USER_PREFS, Context.MODE_PRIVATE);
+        prefs.edit()
+                .putBoolean(HAS_CLEARED_NOTIFICATION_CHANNELS, true)
+                .apply();
+    }
+
+    public static Boolean hasClearedNotificationChannels() {
+        final SharedPreferences prefs = BaseApplication.get().getSharedPreferences(FileNames.USER_PREFS, Context.MODE_PRIVATE);
+        return prefs.getBoolean(HAS_CLEARED_NOTIFICATION_CHANNELS, false);
     }
 
     // INFO: Does not clear all preferences.
