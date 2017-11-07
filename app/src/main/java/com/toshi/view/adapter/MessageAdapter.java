@@ -267,12 +267,14 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
 
             case SofaType.IMAGE: {
                 final ImageViewHolder vh = (ImageViewHolder) holder;
+                final Message message = SofaAdapters.get().messageFrom(payload);
                 vh
                         .setAvatarUri(sofaMessage.getSenderAvatar())
                         .setSendState(sofaMessage.getSendState())
                         .setAttachmentFilePath(sofaMessage.getAttachmentFilePath())
                         .setClickableImage(this.onImageClickListener, sofaMessage.getAttachmentFilePath())
                         .setOnResendListener(this.onResendListener, sofaMessage)
+                        .setText(message.getBody())
                         .draw();
                 break;
             }

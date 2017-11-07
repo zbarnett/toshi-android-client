@@ -38,20 +38,25 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public final class ImageViewHolder extends RecyclerView.ViewHolder {
 
     private @Nullable CircleImageView avatar;
+    private @Nullable CircleImageView messageAvatar;
     private @Nullable ImageView sentStatus;
     private @Nullable TextView errorMessage;
     private @NonNull RoundedImageView image;
+    private @NonNull TextView message;
 
     private @SendState.State int sendState;
     private String attachmentFilePath;
     private String avatarUri;
+    private String text;
 
     public ImageViewHolder(final View v) {
         super(v);
-        this.avatar = (CircleImageView) v.findViewById(R.id.avatar);
-        this.image = (RoundedImageView) v.findViewById(R.id.image);
-        this.sentStatus = (ImageView) v.findViewById(R.id.sent_status);
-        this.errorMessage = (TextView) v.findViewById(R.id.error_message);
+        this.avatar = v.findViewById(R.id.avatar);
+        this.messageAvatar = v.findViewById(R.id.messageAvatar);
+        this.image = v.findViewById(R.id.image);
+        this.sentStatus = v.findViewById(R.id.sent_status);
+        this.errorMessage = v.findViewById(R.id.error_message);
+        this.message = v.findViewById(R.id.message);
     }
 
     public ImageViewHolder setAvatarUri(final String uri) {
@@ -77,16 +82,17 @@ public final class ImageViewHolder extends RecyclerView.ViewHolder {
         return this;
     }
 
-    public ImageViewHolder draw() {
-        showImage();
-        renderAvatar();
-        setSendState();
+    public ImageViewHolder setText(final String text) {
+        this.text = text;
         return this;
     }
 
-    private void renderAvatar() {
-        if (this.avatar == null) return;
-        ImageUtil.load(this.avatarUri, this.avatar);
+    public ImageViewHolder draw() {
+        showImage();
+        renderAvatar();
+        renderText();
+        setSendState();
+        return this;
     }
 
     private void showImage() {
@@ -98,6 +104,40 @@ public final class ImageViewHolder extends RecyclerView.ViewHolder {
 
     private void resetImage() {
         this.image.layout(0,0,0,0);
+    }
+
+    private void renderText() {
+        if (this.text != null) {
+            this.message.setVisibility(View.VISIBLE);
+            this.message.setText(this.text);
+        } else {
+            this.message.setVisibility(View.GONE);
+        }
+    }
+
+    private void renderAvatar() {
+        if (this.text != null) showTextAvatar();
+        else showImageAvatar();
+    }
+
+    private void showTextAvatar() {
+        if (this.messageAvatar != null) {
+            this.messageAvatar.setVisibility(View.VISIBLE);
+            ImageUtil.load(this.avatarUri, messageAvatar);
+        }
+        if (this.avatar != null) {
+            this.avatar.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    private void showImageAvatar() {
+        if (this.avatar != null) {
+            this.avatar.setVisibility(View.VISIBLE);
+            ImageUtil.load(this.avatarUri, avatar);
+        }
+        if (this.messageAvatar != null) {
+            this.messageAvatar.setVisibility(View.GONE);
+        }
     }
 
     private void setSendState() {
