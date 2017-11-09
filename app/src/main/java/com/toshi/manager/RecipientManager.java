@@ -22,6 +22,7 @@ import com.toshi.manager.network.IdService;
 import com.toshi.manager.store.BlockedUserStore;
 import com.toshi.manager.store.ContactStore;
 import com.toshi.manager.store.GroupStore;
+import com.toshi.manager.store.MutedConversationStore;
 import com.toshi.manager.store.UserStore;
 import com.toshi.model.local.BlockedUser;
 import com.toshi.model.local.Contact;
@@ -43,20 +44,18 @@ import rx.schedulers.Schedulers;
 
 public class RecipientManager {
 
-    private ContactStore contactStore;
-    private GroupStore groupStore;
-    private UserStore userStore;
-    private BlockedUserStore blockedUserStore;
+    private final ContactStore contactStore;
+    private final GroupStore groupStore;
+    private final UserStore userStore;
+    private final BlockedUserStore blockedUserStore;
+    private final MutedConversationStore mutedConversationStore;
 
     /* package */ RecipientManager() {
-        initDatabases();
-    }
-
-    private void initDatabases() {
         this.contactStore = new ContactStore();
         this.groupStore = new GroupStore();
         this.userStore = new UserStore();
         this.blockedUserStore = new BlockedUserStore();
+        this.mutedConversationStore = new MutedConversationStore();
     }
 
     public Single<Group> getGroupFromId(final String id) {
@@ -189,6 +188,21 @@ public class RecipientManager {
     public Completable unblockUser(final String ownerAddress) {
         return Completable.fromAction(() ->
                 this.blockedUserStore.delete(ownerAddress))
+                .subscribeOn(Schedulers.io());
+    }
+
+    public final Single<Boolean> isConversationMuted(final String threadId) {
+        return this.mutedConversationStore.isMuted(threadId)
+                .subscribeOn(Schedulers.io());
+    }
+
+    public final Completable muteConveration(final String threadId) {
+        return this.mutedConversationStore.save(threadId)
+                .subscribeOn(Schedulers.io());
+    }
+
+    public final Completable unmuteConversation(final String threadId) {
+        return this.mutedConversationStore.delete(threadId)
                 .subscribeOn(Schedulers.io());
     }
 

@@ -263,6 +263,12 @@ public class DbMigration implements RealmMigration {
 
             oldVersion++;
         }
+
+        if (oldVersion == 17) {
+            final RealmObjectSchema mutedConversationSchema = schema.create("MutedConversation");
+            mutedConversationSchema.addField("threadId", String.class, FieldAttribute.PRIMARY_KEY);
+            oldVersion++;
+        }
     }
 
     @Override
