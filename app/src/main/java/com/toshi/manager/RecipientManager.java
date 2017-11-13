@@ -59,16 +59,23 @@ public class RecipientManager {
         this.blockedUserStore = new BlockedUserStore();
     }
 
-    public Single<User> getUserFromUsername(final String username) {
-        // It's the same endpoint
-        return getUserFromToshiId(username);
-    }
-
     public Single<Group> getGroupFromId(final String id) {
         return this.groupStore.loadForId(id)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .doOnError(t -> LogUtil.exception(getClass(), "getGroupFromId", t));
+    }
+
+    public Single<User> getUserFromUsername(final String username) {
+        return Single
+                .concat(
+                        this.userStore.loadForUsername(username).toSingle(),
+                        this.fetchAndCacheFromNetworkByUsername(username))
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .first(this::isUserFresh)
+                .doOnError(t -> LogUtil.exception(getClass(), "getUserFromUsername", t))
+                .toSingle();
     }
 
     public Single<User> getUserFromToshiId(final String toshiId) {
@@ -100,6 +107,11 @@ public class RecipientManager {
                 .first(user -> user != null && !user.needsRefresh())
                 .doOnError(t -> LogUtil.exception(getClass(), "getUserFromPaymentAddress", t))
                 .toSingle();
+    }
+
+    private Single<User> fetchAndCacheFromNetworkByUsername(final String username) {
+        // It's the same endpoint
+        return fetchAndCacheFromNetworkByToshiId(username);
     }
 
     private Single<User> fetchAndCacheFromNetworkByToshiId(final String userAddress) {
