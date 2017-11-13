@@ -92,7 +92,8 @@ public abstract class ToshiNotification {
 
     public List<String> getLastFewMessages() {
         final List<String> messages = new ArrayList<>();
-        for (final SofaMessage sofaMessage : this.lastFewMessages) {
+        final List<SofaMessage> lastFewMessagesCopy = new ArrayList<>(this.lastFewMessages);
+        for (final SofaMessage sofaMessage : lastFewMessagesCopy) {
             final String message = getMessage(sofaMessage);
             messages.add(message);
         }
