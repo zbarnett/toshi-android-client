@@ -25,7 +25,7 @@ import android.support.v7.widget.PopupMenu;
 import android.view.Menu;
 
 import com.toshi.view.fragment.toplevel.BrowseFragment;
-import com.toshi.view.fragment.toplevel.ContactsFragment;
+import com.toshi.view.fragment.toplevel.FavoritesFragment;
 import com.toshi.view.fragment.toplevel.MeFragment;
 import com.toshi.view.fragment.toplevel.RecentFragment;
 import com.toshi.view.fragment.toplevel.ScanFragment;
@@ -47,7 +47,7 @@ public class NavigationAdapter extends FragmentPagerAdapter {
         fragments.add(new BrowseFragment());
         fragments.add(new RecentFragment());
         fragments.add(new ScanFragment());
-        fragments.add(ContactsFragment.newInstance());
+        fragments.add(new FavoritesFragment());
         fragments.add(MeFragment.newInstance());
     }
 

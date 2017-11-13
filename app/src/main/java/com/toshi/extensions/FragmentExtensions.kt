@@ -30,3 +30,5 @@ inline fun <reified T> Fragment.startActivity() = startActivity(Intent(activity,
 fun Fragment.getPxSize(@DimenRes id: Int) = resources.getDimensionPixelSize(id)
 
 fun Fragment.getColorById(@ColorRes id: Int) = ContextCompat.getColor(activity, id)
+
+fun Fragment.startExternalActivity(func: Intent.() -> Intent) = startActivity(Intent().func(), null)

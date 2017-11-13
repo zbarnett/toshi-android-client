@@ -23,9 +23,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.toshi.model.local.Contact;
-import com.toshi.model.local.User;
 import com.toshi.R;
+import com.toshi.model.local.User;
 import com.toshi.view.adapter.listeners.OnItemClickListener;
 import com.toshi.view.adapter.viewholder.ClickableViewHolder;
 import com.toshi.view.adapter.viewholder.UserViewHolder;
@@ -36,18 +35,10 @@ import java.util.List;
 public class UserAdapter extends RecyclerView.Adapter<UserViewHolder> implements ClickableViewHolder.OnClickListener {
 
     private List<User> users;
-    private OnItemClickListener<User> onItemClickListener;
+    public OnItemClickListener<User> onItemClickListener;
 
     public UserAdapter() {
         this.users = new ArrayList<>(0);
-    }
-
-    public void mapContactsToUsers(final List<Contact> contacts) {
-        this.users = new ArrayList<>(contacts.size());
-        for (final Contact contact : contacts) {
-            this.users.add(contact.getUser());
-        }
-        notifyDataSetChanged();
     }
 
     public UserAdapter setUsers(final List<User> users) {
