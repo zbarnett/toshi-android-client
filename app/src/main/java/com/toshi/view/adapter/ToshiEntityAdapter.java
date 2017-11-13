@@ -45,22 +45,12 @@ public class ToshiEntityAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     private List<ToshiEntity> toshiEntities;
     private Dapp dapp;
-    private OnItemClickListener<ToshiEntity> listener;
-    private OnItemClickListener<Dapp> dappLaunchClicked;
+    public OnItemClickListener<ToshiEntity> itemClickListener;
+    public OnItemClickListener<Dapp> dappLaunchClicked;
 
     public ToshiEntityAdapter() {
         this.toshiEntities = new ArrayList<>();
         addExtras();
-    }
-
-    public ToshiEntityAdapter setOnItemClickListener(final OnItemClickListener<ToshiEntity> listener) {
-        this.listener = listener;
-        return this;
-    }
-
-    public ToshiEntityAdapter setOnDappLaunchListener(final OnItemClickListener<Dapp> listener) {
-        this.dappLaunchClicked = listener;
-        return this;
     }
 
     public void addItems(final List<ToshiEntity> apps) {
@@ -125,7 +115,7 @@ public class ToshiEntityAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 final ToshiEntity toshiEntity = this.toshiEntities.get(position);
 
                 vh.setToshiEntity(toshiEntity)
-                        .setOnClickListener(this.listener, toshiEntity);
+                        .setOnClickListener(this.itemClickListener, toshiEntity);
                 break;
             }
         }

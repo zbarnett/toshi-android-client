@@ -44,7 +44,7 @@ public class NavigationAdapter extends FragmentPagerAdapter {
         activity.getMenuInflater().inflate(menuRes, menu);
 
         fragments.clear();
-        fragments.add(BrowseFragment.newInstance());
+        fragments.add(new BrowseFragment());
         fragments.add(new RecentFragment());
         fragments.add(new ScanFragment());
         fragments.add(ContactsFragment.newInstance());

@@ -18,11 +18,15 @@
 package com.toshi.extensions
 
 import android.content.Intent
+import android.support.annotation.ColorRes
 import android.support.annotation.DimenRes
 import android.support.v4.app.Fragment
+import android.support.v4.content.ContextCompat
 
 inline fun <reified T> Fragment.startActivity(func: Intent.() -> Intent) = startActivity(Intent(activity, T::class.java).func())
 
 inline fun <reified T> Fragment.startActivity() = startActivity(Intent(activity, T::class.java))
 
 fun Fragment.getPxSize(@DimenRes id: Int) = resources.getDimensionPixelSize(id)
+
+fun Fragment.getColorById(@ColorRes id: Int) = ContextCompat.getColor(activity, id)
