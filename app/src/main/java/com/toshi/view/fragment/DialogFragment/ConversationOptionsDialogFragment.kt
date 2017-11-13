@@ -21,7 +21,6 @@ import android.app.Dialog
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,6 +28,7 @@ import android.view.Window
 import com.toshi.R
 import com.toshi.model.local.ConversationInfo
 import com.toshi.view.adapter.ConversationOptionsAdapter
+import kotlinx.android.synthetic.main.fragment_conversation_options.*
 
 class ConversationOptionsDialogFragment: DialogFragment() {
 
@@ -65,10 +65,12 @@ class ConversationOptionsDialogFragment: DialogFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val v = inflater?.inflate(R.layout.fragment_conversation_options, container)
+        return inflater?.inflate(R.layout.fragment_conversation_options, container)
+    }
+
+    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         getOptionList()
-        initView(v)
-        return v
+        initView()
     }
 
     private fun getOptionList() {
@@ -84,10 +86,9 @@ class ConversationOptionsDialogFragment: DialogFragment() {
         return options.toList()
     }
 
-    private fun initView(v: View?) {
-        val optionsList = v?.findViewById<RecyclerView>(R.id.options)
-        optionsList?.adapter = ConversationOptionsAdapter(optionList, { handleOptionClicked(it) })
-        optionsList?.layoutManager = LinearLayoutManager(context)
+    private fun initView() {
+        options.adapter = ConversationOptionsAdapter(optionList, { handleOptionClicked(it) })
+        options.layoutManager = LinearLayoutManager(context)
     }
 
     private fun handleOptionClicked(option: String) {
