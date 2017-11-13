@@ -38,14 +38,14 @@ public class MeAdapter extends RecyclerView.Adapter<MeAdapter.ViewHolder> {
     public static final int SIGN_OUT = 2;
 
     private final String[] settings;
-    private OnItemClickListener<Integer> listener;
+    public OnItemClickListener<Integer> onItemClickListener;
 
     public MeAdapter() {
         this.settings = BaseApplication.get().getResources().getStringArray(R.array.settings_options);
     }
 
     public void setOnItemClickListener(final OnItemClickListener<Integer> listener) {
-        this.listener = listener;
+        this.onItemClickListener = listener;
     }
 
     @Override
@@ -65,7 +65,7 @@ public class MeAdapter extends RecyclerView.Adapter<MeAdapter.ViewHolder> {
         }
 
         holder.label.setText(label);
-        holder.bind(position, listener);
+        holder.bind(position, onItemClickListener);
     }
 
     private String getCurrency() {

@@ -48,7 +48,7 @@ public class NavigationAdapter extends FragmentPagerAdapter {
         fragments.add(new RecentFragment());
         fragments.add(new ScanFragment());
         fragments.add(new FavoritesFragment());
-        fragments.add(MeFragment.newInstance());
+        fragments.add(new MeFragment());
     }
 
     @Override

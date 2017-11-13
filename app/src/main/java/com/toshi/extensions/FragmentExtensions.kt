@@ -20,8 +20,10 @@ package com.toshi.extensions
 import android.content.Intent
 import android.support.annotation.ColorRes
 import android.support.annotation.DimenRes
+import android.support.annotation.StringRes
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
+import android.widget.Toast
 
 inline fun <reified T> Fragment.startActivity(func: Intent.() -> Intent) = startActivity(Intent(activity, T::class.java).func())
 
@@ -32,3 +34,12 @@ fun Fragment.getPxSize(@DimenRes id: Int) = resources.getDimensionPixelSize(id)
 fun Fragment.getColorById(@ColorRes id: Int) = ContextCompat.getColor(activity, id)
 
 fun Fragment.startExternalActivity(func: Intent.() -> Intent) = startActivity(Intent().func(), null)
+
+inline fun <reified T> Fragment.startActivityAndFinish() {
+    startActivity(Intent(activity, T::class.java))
+    activity.finish()
+}
+
+fun Fragment.toast(@StringRes id: Int) = Toast.makeText(context, id, Toast.LENGTH_SHORT).show()
+
+fun Fragment.getColor(@ColorRes id: Int) = ContextCompat.getColor(context, id)
