@@ -50,8 +50,8 @@ public class RecentAdapter extends RecyclerView.Adapter<ThreadViewHolder> implem
 
     private final ArrayList<Conversation> conversationsToDelete;
     private List<Conversation> conversations;
-    private OnItemClickListener<Conversation> onItemClickListener;
-    private OnItemClickListener<Conversation> onItemLongClickListener;
+    public OnItemClickListener<Conversation> onItemClickListener;
+    public OnItemClickListener<Conversation> onItemLongClickListener;
 
     public RecentAdapter() {
         this.conversations = new ArrayList<>(0);
@@ -95,16 +95,6 @@ public class RecentAdapter extends RecyclerView.Adapter<ThreadViewHolder> implem
         notifyDataSetChanged();
     }
 
-    public RecentAdapter setOnItemClickListener(final OnItemClickListener<Conversation> onItemClickListener) {
-        this.onItemClickListener = onItemClickListener;
-        return this;
-    }
-
-    public RecentAdapter setOnItemLongClickListener(final OnItemClickListener<Conversation> onItemLongClickListener) {
-        this.onItemLongClickListener = onItemLongClickListener;
-        return this;
-    }
-
     public void updateConversation(final Conversation conversation) {
         final int position = this.conversations.indexOf(conversation);
         if (position == -1) {
@@ -115,6 +105,11 @@ public class RecentAdapter extends RecyclerView.Adapter<ThreadViewHolder> implem
 
         this.conversations.set(position, conversation);
         notifyItemChanged(position);
+    }
+
+    public void removeItem(final Conversation conversation, final RecyclerView parentView) {
+        final int index = this.conversations.indexOf(conversation);
+        removeItemAtWithUndo(index, parentView);
     }
 
     public void removeItemAtWithUndo(final int position, final RecyclerView parentView) {
@@ -129,12 +124,6 @@ public class RecentAdapter extends RecyclerView.Adapter<ThreadViewHolder> implem
         conversationsToDelete.add(removedConversation);
     }
 
-    public void removeItem(final Conversation conversation) {
-        final int index = this.conversations.indexOf(conversation);
-        this.conversations.remove(conversation);
-        notifyItemRemoved(index);
-    }
-
     @NonNull
     private Snackbar generateSnackbar(final RecyclerView parentView) {
         final Snackbar snackbar = Snackbar
@@ -142,7 +131,7 @@ public class RecentAdapter extends RecyclerView.Adapter<ThreadViewHolder> implem
                 .setActionTextColor(ContextCompat.getColor(BaseApplication.get(), R.color.colorAccent));
 
         final View snackbarView = snackbar.getView();
-        final TextView snackbarTextView = (TextView)snackbarView.findViewById(android.support.design.R.id.snackbar_text);
+        final TextView snackbarTextView = snackbarView.findViewById(android.support.design.R.id.snackbar_text);
         snackbarTextView.setTextColor(ContextCompat.getColor(BaseApplication.get(), R.color.textColorContrast));
         return snackbar;
     }

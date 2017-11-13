@@ -27,6 +27,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import com.toshi.R
+import com.toshi.model.local.ConversationInfo
 import com.toshi.view.adapter.ConversationOptionsAdapter
 
 class ConversationOptionsDialogFragment: DialogFragment() {
@@ -36,11 +37,11 @@ class ConversationOptionsDialogFragment: DialogFragment() {
         private const val IS_MUTED = "isMuted"
         private const val IS_BLOCKED = "isBlocked"
 
-        fun newInstance(isMuted: Boolean, isBlocked: Boolean): ConversationOptionsDialogFragment {
+        fun newInstance(conversationInfo: ConversationInfo): ConversationOptionsDialogFragment {
             val bundle = Bundle()
             bundle.apply {
-                putBoolean(IS_MUTED, isMuted)
-                putBoolean(IS_BLOCKED, isBlocked)
+                putBoolean(IS_MUTED, conversationInfo.isMuted)
+                putBoolean(IS_BLOCKED, conversationInfo.isBlocked)
             }
             return ConversationOptionsDialogFragment().apply { arguments = bundle }
         }
