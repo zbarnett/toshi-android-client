@@ -275,4 +275,5 @@
     <string name="payment_request_rejected">Payment request rejected</string>
     <string name="options">Options</string>
     <string name="unmute">Unmute</string>
+    <string name="unknown_address">Unknown Address</string>
 </resources>

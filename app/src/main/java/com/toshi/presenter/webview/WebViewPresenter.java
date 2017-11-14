@@ -30,6 +30,7 @@ import android.widget.Toast;
 import com.toshi.R;
 import com.toshi.presenter.Presenter;
 import com.toshi.util.LogUtil;
+import com.toshi.view.BaseApplication;
 import com.toshi.view.activity.WebViewActivity;
 import com.toshi.view.custom.listener.OnLoadListener;
 
@@ -109,8 +110,12 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
     }
 
     private void initToolbar() {
-        final String address = getAddress();
-        this.activity.getBinding().title.setText(address);
+        try {
+            final String address = getAddress();
+            this.activity.getBinding().title.setText(address);
+        } catch (final IllegalArgumentException ex) {
+            this.activity.getBinding().title.setText(BaseApplication.get().getString(R.string.unknown_address));
+        }
         this.activity.getBinding().closeButton.setOnClickListener(__ -> handleBackButtonClicked());
     }
 
@@ -142,7 +147,7 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
                 final String address = getAddress();
                 loadUrlFromAddress(address);
             } catch (IllegalArgumentException e) {
-                showToast(R.string.unsupported_format);
+                onError(e);
             }
         }
 
