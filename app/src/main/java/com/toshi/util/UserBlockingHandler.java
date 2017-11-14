@@ -201,8 +201,10 @@ public class UserBlockingHandler {
 
     public void clear() {
         closeDialogs();
-        this.subscriptions.clear();
-        this.subscriptions = null;
+        if (this.subscriptions != null) {
+            this.subscriptions.clear();
+            this.subscriptions = null;
+        }
         this.context = null;
     }
 
