@@ -9,3 +9,7 @@ dependencies:
     - /usr/local/android-sdk-linux/platforms/android-26
     - /usr/local/android-sdk-linux/build-tools/26.1.0
     - /usr/local/android-sdk-linux/extras/android/m2repository
+
+test:
+  post:
+    - bash ./migrationTest.sh
