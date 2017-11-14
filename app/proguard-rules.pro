@@ -79,3 +79,7 @@
 -keep public class * extends java.lang.Exception
 
 -keep class com.toshi.manager.network.image.GlideOkHttpStack
+
+-dontwarn org.apache.commons.**
+-keep class org.apache.http.** { *; }
+-dontwarn org.apache.http.**
