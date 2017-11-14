@@ -438,7 +438,9 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     }
 
     private String getThreadIdFromIntent() {
-        return this.activity.getIntent().getStringExtra(ChatActivity.EXTRA__THREAD_ID);
+        final String threadId = this.activity.getIntent().getStringExtra(ChatActivity.EXTRA__THREAD_ID);
+        if (threadId == null) handleRecipientLoadFailed(new IllegalArgumentException("ThreadId is null"));
+        return threadId;
     }
 
     private void loadGroupRecipient(final String groupId) {
