@@ -19,7 +19,6 @@ package com.toshi.presenter.webview;
 
 import android.os.Build;
 import android.support.annotation.StringRes;
-import android.support.multidex.BuildConfig;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -27,6 +26,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Toast;
 
+import com.toshi.BuildConfig;
 import com.toshi.R;
 import com.toshi.presenter.Presenter;
 import com.toshi.util.LogUtil;
@@ -94,8 +94,8 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
         webSettings.setUseWideViewPort(false);
         webSettings.setDomStorageEnabled(true);
 
-        if (BuildConfig.DEBUG && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            WebView.setWebContentsDebuggingEnabled(true);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            WebView.setWebContentsDebuggingEnabled(BuildConfig.WEB_DEBUG_ENABLED);
         }
     }
 

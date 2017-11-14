@@ -39,12 +39,15 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
+    def webDebugEnabled = 'WEB_DEBUG_ENABLED'
+
     buildTypes {
         debug {
             applicationIdSuffix ".debug"
             multiDexEnabled true
             debuggable true
             minifyEnabled false
+            buildConfigField "boolean", webDebugEnabled, "true"
         }
         developer {
             applicationIdSuffix ".developer"
@@ -53,6 +56,7 @@ android {
             shrinkResources true
             debuggable false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField "boolean", webDebugEnabled, "true"
         }
         release {
             multiDexEnabled true
@@ -60,6 +64,7 @@ android {
             shrinkResources true
             debuggable false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField "boolean", webDebugEnabled, "false"
         }
     }
 
