@@ -39,6 +39,12 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
+    configurations.all {
+        exclude module: 'httpclient' // from com.github.WhisperSystems:libsignal-service-java
+        exclude module: 'commons-logging' // from com.github.WhisperSystems:libsignal-service-java
+        exclude module: 'json' // from com.vdurmont:emoji-java
+    }
+
     def webDebugEnabled = 'WEB_DEBUG_ENABLED'
 
     buildTypes {
@@ -234,8 +240,6 @@ dependencyVerification {
             'org.slf4j:slf4j-api:2967c337180f6dca88a8a6140495b9f0b8a85b8527d02b0089bdbf9cdb34d40b',
             'com.googlecode.libphonenumber:libphonenumber:be23ec6195df9f328364a3122ddd111e30f42d18a841dd06f84d2685c7fabb9f',
             'com.fasterxml.jackson.core:jackson-databind:835097bcdd11f5bc8a08378c70d4c8054dfa4b911691cc2752063c75534d198d',
-            'org.apache.httpcomponents:httpclient:c50eafa5477af2fa8217d3f729b815ff3c669dbc467552c0feeedc61be965523',
-            'org.json:json:8e5aa0a368bee60347b5a4ad861d9f68c7793f60deeea89efd449eb70d5ae622',
             'com.crashlytics.sdk.android:beta:5045a1dcfd4461ef398ea999a94d8f7fa31ab589d296cb849ea0b751e91d75ca',
             'com.crashlytics.sdk.android:crashlytics-core:8ea320d38abcb9d1aea7f2b9895781137925babb17c40a4ae9c298570670ec93',
             'com.crashlytics.sdk.android:answers:8ac7ec5ae3977f2e8e59889853f958d818b60f751973ea3b8108a8695a1de6c5',
@@ -244,9 +248,6 @@ dependencyVerification {
             'com.fasterxml.jackson.core:jackson-annotations:0ca408c24202a7626ec8b861e99d85eca5e38b73311dd6dd12e3e9deecc3fe94',
             'com.fasterxml.jackson.core:jackson-core:cbf4604784b4de226262845447a1ad3bb38a6728cebe86562e2c5afada8be2c0',
             'org.whispersystems:curve25519-java:7dd659d8822c06c3aea1a47f18fac9e5761e29cab8100030b877db445005f03e',
-            'org.apache.httpcomponents:httpcore:1ef8db5d30b7741ab5fdf6df876a090a7dd51623e83f3736d0bb8fb1b5ead32f',
-            'commons-logging:commons-logging:daddea1ea0be0f56978ab3006b8ac92834afeefbd9b7e4e6316fca57df0fa636',
-            'commons-codec:commons-codec:ad19d2601c3abf0b946b5c3a4113e226a8c1e3305e395b90013b78dd94a723ce',
             'android.arch.lifecycle:runtime:e4e34e5d02bd102e8d39ddbc29f9ead8a15a61e367993d02238196ac48509ad8',
             'android.arch.lifecycle:common:86bf301a20ad0cd0a391e22a52e6fbf90575c096ff83233fa9fd0d52b3219121',
             'android.arch.core:common:5192934cd73df32e2c15722ed7fc488dde90baaec9ae030010dd1a80fb4e74e1',
