@@ -132,7 +132,6 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         this.subscriptions = new CompositeSubscription();
         this.outgoingMessageQueue = new AsyncOutgoingMessageQueue();
         this.pendingTransactionsObservable = new PendingTransactionsObservable();
-        this.resendHandler = new ResendHandler(this.activity);
         initMessageAdapter();
     }
 
@@ -220,6 +219,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     }
 
     private void initShortLivingObjects() {
+        initResendHandler();
         initChatNavigation();
         initNetworkView();
         getWallet();
@@ -229,6 +229,10 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         initControlView();
         loadOrUseRecipient();
         initLoadingSpinner();
+    }
+
+    private void initResendHandler() {
+        this.resendHandler = new ResendHandler(this.activity);
     }
 
     private void initChatNavigation() {
