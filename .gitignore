@@ -40,6 +40,8 @@ app/class_files.txt
 release/version
 crashlytics-build.properties
 com_crashlytics_export_strings.xml
+app/release
+app/developer
 
 # Screenshot related
 AndroidManifest.xml-e
