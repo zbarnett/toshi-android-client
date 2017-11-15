@@ -526,6 +526,11 @@ public class TransactionManager {
         return Single.just(signedTransaction);
     }
 
+    public Single<SentTransaction> sendSignedTransaction(final SignedTransaction signedTransaction) {
+        return getServerTime()
+                .flatMap(serverTime -> sendSignedTransaction(signedTransaction, serverTime));
+    }
+
     private Single<SentTransaction> sendSignedTransaction(final SignedTransaction signedTransaction, final ServerTime serverTime) {
         final long timestamp = serverTime.get();
         return EthereumService

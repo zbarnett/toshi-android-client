@@ -33,10 +33,9 @@ public class SignTransactionCallback {
         return this;
     }
 
-
     public String toJsonEncodedString() {
         return String.format(
-                "{\\\"result\\\":[\\\"%s\\\",\\\"%s\\\"]}",
+                "{\\\"result\\\":{\\\"tx\\\":\\\"%s\\\",\\\"signature\\\":\\\"%s\\\"}}",
                 skeleton,
                 signature
         );

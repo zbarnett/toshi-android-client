@@ -45,6 +45,13 @@ public class TypeConverter {
         return Hex.decode(x);
     }
 
+    public static String jsonStringToString(final String jsonString) {
+        if (jsonString.startsWith("\"") && jsonString.endsWith("\"")) return jsonString.substring(1, jsonString.length() - 1);
+        if (jsonString.startsWith("\"")) return jsonString.substring(1);
+        if (jsonString.endsWith("\"")) return jsonString.substring(0, jsonString.length() - 1);
+        return jsonString;
+    }
+
     public static String toJsonHex(final byte[] x) {
         return "0x"+Hex.toHexString(x);
     }

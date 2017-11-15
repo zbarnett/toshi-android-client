@@ -55,4 +55,35 @@ public class TypeConverterTest {
         final BigInteger actual = TypeConverter.StringHexToBigInteger("notHex");
         assertThat(actual, is(expected));
     }
+
+    @Test
+    public void jsonStringToStringWithStringReturnsString() {
+        final String expected = "just a string";
+        final String actual = TypeConverter.jsonStringToString(expected);
+        assertThat(expected, is(actual));
+    }
+
+    @Test
+    public void jsonStringToStringWithJsonStringReturnsString() {
+        final String expected = "just a string";
+        final String input = "\"" + expected + "\"";
+        final String actual = TypeConverter.jsonStringToString(input);
+        assertThat(expected, is(actual));
+    }
+
+    @Test
+    public void jsonStringWithMissingClosingQuoteReturnsString() {
+        final String expected = "just a string";
+        final String input = "\"" + expected;
+        final String actual = TypeConverter.jsonStringToString(input);
+        assertThat(expected, is(actual));
+    }
+
+    @Test
+    public void jsonStringWithMissingOpeningQuoteReturnsString() {
+        final String expected = "just a string";
+        final String input = expected + "\"";
+        final String actual = TypeConverter.jsonStringToString(input);
+        assertThat(expected, is(actual));
+    }
 }

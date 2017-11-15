@@ -43,4 +43,9 @@ import android.webkit.JavascriptInterface;
     public void signTransaction(final String id, final String unsignedTransaction) {
         this.listener.signTransaction(id, unsignedTransaction);
     }
+
+    @JavascriptInterface
+    public void publishTransaction(final String id, final String signedTransaction) {
+        this.listener.publishTransaction(id, signedTransaction);
+    }
 }

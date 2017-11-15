@@ -27,7 +27,9 @@ import android.webkit.WebView;
 
 import com.toshi.R;
 import com.toshi.crypto.HDWallet;
+import com.toshi.crypto.util.TypeConverter;
 import com.toshi.model.local.UnsignedW3Transaction;
+import com.toshi.model.network.SentTransaction;
 import com.toshi.model.network.SignedTransaction;
 import com.toshi.model.sofa.SofaAdapters;
 import com.toshi.presenter.webview.model.ApproveTransactionCallback;
@@ -152,6 +154,28 @@ import java.io.IOException;
                 new RejectTransactionCallback()
                         .setError(BaseApplication.get().getString(R.string.error__reject_transaction));
         doCallBack(callbackId, callback.toJsonEncodedString());
+    }
+
+    public void publishTransaction(final String callbackId, final String signedTransactionPayload) {
+        final String cleanPayload = TypeConverter.jsonStringToString(signedTransactionPayload);
+        final SignedTransaction transaction = new SignedTransaction()
+                .setEncodedTransaction(cleanPayload);
+
+        BaseApplication
+                .get()
+                .getTransactionManager()
+                .sendSignedTransaction(transaction)
+                .subscribe(
+                        sentTransaction -> handleSentTransaction(callbackId, sentTransaction),
+                        throwable -> LogUtil.exception(getClass(), throwable)
+                );
+    }
+
+    private void handleSentTransaction(final String callbackId, final SentTransaction sentTransaction) {
+        doCallBack(callbackId, String.format(
+                "{\\\"result\\\":\\\"%s\\\"}",
+                sentTransaction.getTxHash()
+        ));
     }
 
     private void doCallBack(final String id, final String encodedCallback) {
