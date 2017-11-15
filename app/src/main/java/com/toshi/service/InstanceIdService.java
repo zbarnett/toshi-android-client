@@ -35,10 +35,10 @@ package com.toshi.service;
 
 import android.content.Intent;
 
+import com.google.firebase.iid.FirebaseInstanceIdService;
 import com.toshi.util.LogUtil;
-import com.google.android.gms.iid.InstanceIDListenerService;
 
-public class InstanceIdService extends InstanceIDListenerService {
+public class InstanceIdService extends FirebaseInstanceIdService {
     /**
      * Called if InstanceID token is updated. This may occur if the security of
      * the previous token had been compromised. This call is initiated by the

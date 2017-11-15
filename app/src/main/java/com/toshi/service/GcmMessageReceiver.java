@@ -33,9 +33,8 @@
 
 package com.toshi.service;
 
-import android.os.Bundle;
-
-import com.google.android.gms.gcm.GcmListenerService;
+import com.google.firebase.messaging.FirebaseMessagingService;
+import com.google.firebase.messaging.RemoteMessage;
 import com.toshi.model.local.User;
 import com.toshi.model.sofa.Payment;
 import com.toshi.model.sofa.SofaAdapters;
@@ -46,20 +45,21 @@ import com.toshi.util.SharedPrefsUtil;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.notification.ChatNotificationManager;
 
+import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
 import rx.Completable;
 import rx.Single;
 
-public class GcmMessageReceiver extends GcmListenerService {
+public class GcmMessageReceiver extends FirebaseMessagingService {
 
     @Override
-    public void onMessageReceived(final String from, final Bundle data) {
+    public void onMessageReceived(final RemoteMessage message) {
         if (SharedPrefsUtil.hasSignedOut()) return;
 
         tryInitApp()
         .subscribe(
-                () -> handleIncomingMessage(data),
+                () -> handleIncomingMessage(message.getData()),
                 this::handleIncomingMessageError
         );
     }
@@ -75,9 +75,9 @@ public class GcmMessageReceiver extends GcmListenerService {
                 .tryInit();
     }
 
-    private void handleIncomingMessage(final Bundle data) {
+    private void handleIncomingMessage(final Map data) {
         try {
-            final String messageBody = data.getString("message");
+            final String messageBody = (String) data.get("message");
             LogUtil.i(getClass(), "Incoming PN: " + messageBody);
 
             if (messageBody == null) {

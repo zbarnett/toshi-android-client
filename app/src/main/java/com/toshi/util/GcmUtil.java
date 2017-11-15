@@ -17,13 +17,7 @@
 
 package com.toshi.util;
 
-import com.google.android.gms.gcm.GoogleCloudMessaging;
-import com.google.android.gms.iid.InstanceID;
-import com.toshi.R;
-import com.toshi.exception.InvalidGcmTokenException;
-import com.toshi.view.BaseApplication;
-
-import java.io.IOException;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import rx.Single;
 import rx.schedulers.Schedulers;
@@ -31,18 +25,7 @@ import rx.schedulers.Schedulers;
 public class GcmUtil {
 
     public static Single<String> getGcmToken() {
-        return Single.fromCallable(() -> {
-            final InstanceID instanceID = InstanceID.getInstance(BaseApplication.get());
-            try {
-                final String token =  instanceID.getToken(BaseApplication.get().getString(R.string.gcm_defaultSenderId),
-                        GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
-                if (token != null) return token;
-                else throw new IOException();
-            } catch (IOException e) {
-                LogUtil.e("GcmUtil", "Error finding Gcm token " + e.toString());
-                throw new InvalidGcmTokenException(e);
-            }
-        })
+        return Single.fromCallable(() -> FirebaseInstanceId.getInstance().getToken())
         .subscribeOn(Schedulers.io());
     }
 }
