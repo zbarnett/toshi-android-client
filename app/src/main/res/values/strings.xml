@@ -189,6 +189,7 @@
     <string name="local_currency">Local currency</string>
     <string name="currencies">Currencies</string>
     <string name="review_submitted">Review submitted</string>
+    <string name="review_not_submitted">Review not submitted</string>
     <string name="scan_info_text">Scan QR Code</string>
     <string name="search">Search</string>
     <string name="new_chat">New chat</string>

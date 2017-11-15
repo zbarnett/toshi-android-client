@@ -160,7 +160,8 @@ public class RecipientManager {
     }
 
     public Single<Boolean> isUserAContact(final User user) {
-        return this.contactStore.userIsAContact(user);
+        return this.contactStore.userIsAContact(user)
+                .subscribeOn(Schedulers.io());
     }
 
     public Completable deleteContact(final User user) {
@@ -206,14 +207,15 @@ public class RecipientManager {
                 .subscribeOn(Schedulers.io());
     }
 
-    public Single<Void> reportUser(final Report report) {
+    public Completable reportUser(final Report report) {
         return getTimestamp()
                 .flatMap(serverTime ->
                         IdService
                         .getApi()
                         .reportUser(report, serverTime.get())
                 )
-                .subscribeOn(Schedulers.io());
+                .subscribeOn(Schedulers.io())
+                .toCompletable();
     }
 
     public Single<ServerTime> getTimestamp() {

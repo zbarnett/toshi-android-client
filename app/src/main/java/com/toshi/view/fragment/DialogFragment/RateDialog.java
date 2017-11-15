@@ -38,15 +38,11 @@ public class RateDialog extends DialogFragment {
     private static final int MIN_RATE = 1;
 
     private FragmentRateBinding binding;
-    public OnRateDialogClickListener listener;
+    public OnRateDialogClickListener onRateClicked;
     private int rating = MIN_RATE;
 
     public interface OnRateDialogClickListener {
         void onRateClicked(final int rating, final String review);
-    }
-
-    public void setOnRateDialogClickListener(final OnRateDialogClickListener listener) {
-        this.listener = listener;
     }
 
     public static RateDialog newInstance() {
@@ -91,7 +87,7 @@ public class RateDialog extends DialogFragment {
 
     private void handleRateClicked() {
         final String review = this.binding.reviewInput.getText().toString();
-        this.listener.onRateClicked(this.rating, review);
+        this.onRateClicked.onRateClicked(this.rating, review);
         dismiss();
     }
 
