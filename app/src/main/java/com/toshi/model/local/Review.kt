@@ -15,25 +15,10 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.toshi.model.local;
+package com.toshi.model.local
 
-public class Review {
-    private int rating;
-    private String reviewee;
-    private String review;
-
-    public Review setRating(int rating) {
-        this.rating = rating;
-        return this;
-    }
-
-    public Review setReviewee(String reviewee) {
-        this.reviewee = reviewee;
-        return this;
-    }
-
-    public Review setReview(String review) {
-        this.review = review;
-        return this;
-    }
-}
+data class Review(
+        val rating: Int = 1,
+        val reviewee: String? = null,
+        val review: String? = null
+)
