@@ -39,7 +39,10 @@ import com.toshi.presenter.factory.ContactsPresenterFactory;
 import com.toshi.presenter.factory.PresenterFactory;
 import com.toshi.view.fragment.BasePresenterFragment;
 
-public class ContactsFragment extends BasePresenterFragment<ContactsPresenter, ContactsFragment> {
+public class ContactsFragment extends BasePresenterFragment<ContactsPresenter, ContactsFragment> implements TopLevelFragment {
+
+    private static final String TAG = "ContactsFragment";
+
     private FragmentContactsBinding binding;
     private ContactsPresenter presenter;
 
@@ -93,5 +96,10 @@ public class ContactsFragment extends BasePresenterFragment<ContactsPresenter, C
     public boolean onOptionsItemSelected(final MenuItem item) {
         this.presenter.handleActionMenuClicked(item);
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public String getFragmentTag() {
+        return TAG;
     }
 }

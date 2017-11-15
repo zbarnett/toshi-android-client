@@ -75,8 +75,8 @@ public class MainActivity
     }
 
     @Override
-    public void onRestoreInstanceState(final Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        this.presenter.onRestoreInstanceState(savedInstanceState);
+    public void onRestoreInstanceState(final Bundle inState) {
+        super.onRestoreInstanceState(inState);
+        this.presenter.onRestoreInstanceState(inState);
     }
 }

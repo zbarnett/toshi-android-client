@@ -20,6 +20,7 @@ package com.toshi.presenter;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -35,6 +36,7 @@ import com.toshi.view.BaseApplication;
 import com.toshi.view.activity.MainActivity;
 import com.toshi.view.activity.ScannerActivity;
 import com.toshi.view.adapter.NavigationAdapter;
+import com.toshi.view.fragment.toplevel.TopLevelFragment;
 
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -57,8 +59,12 @@ public class MainPresenter implements Presenter<MainActivity> {
                 openScanActivity();
                 return false;
             }
-            final FragmentTransaction transaction = activity.getSupportFragmentManager().beginTransaction();
-            transaction.replace(activity.getBinding().fragmentContainer.getId(), adapter.getItem(position)).commit();
+
+            final Fragment existingFragment = getExistingFragment(position);
+            if (existingFragment == null) {
+                final TopLevelFragment selectedFragment = (TopLevelFragment) adapter.getItem(position);
+                transitionToSelectedFragment(selectedFragment);
+            }
 
             if (!wasSelected) {
                 SoundManager.getInstance().playSound(SoundManager.TAB_BUTTON);
@@ -66,6 +72,20 @@ public class MainPresenter implements Presenter<MainActivity> {
             return true;
         }
     };
+
+    private Fragment getExistingFragment(final int position) {
+        final TopLevelFragment selectedFragment = (TopLevelFragment) adapter.getItem(position);
+        return this.activity.getSupportFragmentManager().findFragmentByTag(selectedFragment.getFragmentTag());
+    }
+
+    private void transitionToSelectedFragment(final TopLevelFragment selectedFragment) {
+        final FragmentTransaction transaction = activity.getSupportFragmentManager().beginTransaction();
+        transaction.replace(
+                this.activity.getBinding().fragmentContainer.getId(),
+                (Fragment) selectedFragment,
+                selectedFragment.getFragmentTag()
+        ).commit();
+    }
 
     @Override
     public void onViewAttached(final MainActivity activity) {

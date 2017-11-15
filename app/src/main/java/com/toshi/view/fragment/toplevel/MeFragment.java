@@ -30,11 +30,13 @@ import com.toshi.R;
 import com.toshi.databinding.FragmentMeBinding;
 import com.toshi.presenter.LoaderIds;
 import com.toshi.presenter.MePresenter;
-import com.toshi.presenter.factory.PresenterFactory;
 import com.toshi.presenter.factory.MePresenterFactory;
+import com.toshi.presenter.factory.PresenterFactory;
 import com.toshi.view.fragment.BasePresenterFragment;
 
-public class MeFragment extends BasePresenterFragment<MePresenter, MeFragment> {
+public class MeFragment extends BasePresenterFragment<MePresenter, MeFragment> implements TopLevelFragment {
+
+    private static final String TAG = "MeFragment";
 
     private FragmentMeBinding binding;
 
@@ -69,5 +71,10 @@ public class MeFragment extends BasePresenterFragment<MePresenter, MeFragment> {
     @Override
     protected int loaderId() {
         return LoaderIds.get(this.getClass().getCanonicalName());
+    }
+
+    @Override
+    public String getFragmentTag() {
+        return TAG;
     }
 }

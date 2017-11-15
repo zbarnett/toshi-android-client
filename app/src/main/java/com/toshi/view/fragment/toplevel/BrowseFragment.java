@@ -33,7 +33,9 @@ import com.toshi.presenter.factory.BrowsePresenterFactory;
 import com.toshi.presenter.factory.PresenterFactory;
 import com.toshi.view.fragment.BasePresenterFragment;
 
-public class BrowseFragment extends BasePresenterFragment<BrowsePresenter, BrowseFragment> {
+public class BrowseFragment extends BasePresenterFragment<BrowsePresenter, BrowseFragment> implements TopLevelFragment {
+
+    private static final String TAG = "BrowseFragment";
 
     private FragmentBrowseBinding binding;
 
@@ -66,5 +68,10 @@ public class BrowseFragment extends BasePresenterFragment<BrowsePresenter, Brows
     @Override
     protected int loaderId() {
         return LoaderIds.get(this.getClass().getCanonicalName());
+    }
+
+    @Override
+    public String getFragmentTag() {
+        return TAG;
     }
 }
