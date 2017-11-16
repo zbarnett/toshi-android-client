@@ -704,7 +704,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
                 BaseApplication
                 .get()
                 .getSofaMessageManager()
-                .loadConversation(this.recipient.getThreadId())
+                .loadConversationAndResetUnreadCounter(this.recipient.getThreadId())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         this::handleConversationLoaded,

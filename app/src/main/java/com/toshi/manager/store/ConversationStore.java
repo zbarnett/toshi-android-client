@@ -196,7 +196,7 @@ public class ConversationStore {
         return newMessageTimestamp - latestMessageTimestamp > FIFTEEN_MINUTES;
     }
 
-    private void resetUnreadMessageCounter(final String threadId) {
+    public void resetUnreadMessageCounter(final String threadId) {
         Single.fromCallable(() -> {
             final Conversation storedConversation = loadWhere(THREAD_ID_FIELD, threadId);
             if (storedConversation == null) {
@@ -235,10 +235,7 @@ public class ConversationStore {
     }
 
     public Single<Conversation> loadByThreadId(final String threadId) {
-        return Single.fromCallable(() -> {
-            resetUnreadMessageCounter(threadId);
-            return loadWhere(THREAD_ID_FIELD, threadId);
-        });
+        return Single.fromCallable(() -> loadWhere(THREAD_ID_FIELD, threadId));
     }
 
     private Conversation loadWhere(final String fieldName, final String value) {

@@ -155,6 +155,11 @@ public final class SofaMessageManager {
                 .subscribeOn(Schedulers.io());
     }
 
+    public final Single<Conversation> loadConversationAndResetUnreadCounter(final String threadId) {
+        return loadConversation(threadId)
+                .doOnSuccess(conversation -> this.conversationStore.resetUnreadMessageCounter(conversation.getThreadId()));
+    }
+
     private Single<Conversation> createEmptyConversationIfNull(final Conversation conversation, final String threadId) {
         if (conversation != null) return Single.just(conversation);
         return BaseApplication
