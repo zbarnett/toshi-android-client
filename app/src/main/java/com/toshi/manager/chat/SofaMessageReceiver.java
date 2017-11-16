@@ -178,7 +178,7 @@ public class SofaMessageReceiver {
         new Group()
                 .initFromSignalGroup(signalGroup)
                 .subscribe(
-                        this.conversationStore::saveNewGroup,
+                        this.conversationStore::saveGroup,
                         ex -> LogUtil.e(getClass(), "Error creating incoming group. " + ex)
                 );
         return null;

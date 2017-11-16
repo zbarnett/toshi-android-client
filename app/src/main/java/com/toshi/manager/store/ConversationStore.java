@@ -83,14 +83,22 @@ public class ConversationStore {
                 .filter(thread -> thread != null);
     }
 
-    public void saveNewGroup(@NonNull final Group group) {
-        saveGroup(group)
+    public void saveGroup(@NonNull final Group group) {
+        copyOrUpdateGroup(group)
                 .observeOn(Schedulers.immediate())
                 .subscribeOn(Schedulers.from(dbThread))
                 .subscribe(
                         this::broadcastConversationChanged,
                         this::handleError
                 );
+    }
+
+    public Single<Conversation> saveConversationFromGroup(@NonNull final Group group) {
+        return copyOrUpdateGroup(group)
+                .observeOn(Schedulers.immediate())
+                .subscribeOn(Schedulers.from(dbThread))
+                .doOnSuccess(this::broadcastConversationChanged)
+                .doOnError(this::handleError);
     }
 
     public void saveNewMessage(
@@ -108,7 +116,7 @@ public class ConversationStore {
         );
     }
 
-    private Single<Conversation> saveGroup(@NonNull final Group group) {
+    private Single<Conversation> copyOrUpdateGroup(@NonNull final Group group) {
         return Single.fromCallable(() -> {
             final Conversation conversationToStore = getOrCreateConversation(group);
             final Realm realm = BaseApplication.get().getRealm();

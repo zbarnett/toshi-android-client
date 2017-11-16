@@ -487,7 +487,8 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     }
 
     private void handleGroupLoaded(final Group group) {
-        handleRecipientLoaded(new Recipient(group));
+        if (group != null) handleRecipientLoaded(new Recipient(group));
+        else handleRecipientLoadFailed(new NullPointerException("Group is null"));
     }
 
     private void handleUserLoaded(final User user) {

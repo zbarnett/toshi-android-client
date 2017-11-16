@@ -107,12 +107,10 @@ public final class SofaMessageManager {
     }
 
     // Create a new group
-    public final Single<Group> createGroup(final Group group) {
-        return
-                this.messageSender.createGroup(group)
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .doOnSuccess(this.conversationStore::saveNewGroup);
+    public final Single<Conversation> createConversationFromGroup(final Group group) {
+        return this.messageSender
+                .createGroup(group)
+                .flatMap(this.conversationStore::saveConversationFromGroup);
     }
 
     // Will store a transaction in the local database

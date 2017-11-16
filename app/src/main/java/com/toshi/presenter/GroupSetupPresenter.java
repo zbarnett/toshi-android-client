@@ -25,6 +25,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -39,6 +40,7 @@ import com.toshi.BuildConfig;
 import com.toshi.R;
 import com.toshi.exception.PermissionException;
 import com.toshi.model.local.ActivityResultHolder;
+import com.toshi.model.local.Conversation;
 import com.toshi.model.local.Group;
 import com.toshi.model.local.PermissionResultHolder;
 import com.toshi.model.local.User;
@@ -110,26 +112,43 @@ public class GroupSetupPresenter implements Presenter<GroupSetupActivity> {
     private void handleCreateClicked() {
         final Subscription subscription =
                 generateAvatar()
-                .map(this::createGroup)
-                .flatMap(this::addCurrentUserToGroup)
-                .flatMap(
-                    BaseApplication
-                    .get()
-                    .getSofaMessageManager()
-                    ::createGroup
-                )
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        this::handleGroupCreated,
-                        this::handleGroupCreationFailed
-                );
+                        .map(this::createGroupObject)
+                        .flatMap(this::addCurrentUserToGroup)
+                        .flatMap(this::createConversationFromGroup)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                this::handleConversationCreated,
+                                this::handleGroupCreationFailed
+                        );
         this.subscriptions.add(subscription);
     }
 
-    private void handleGroupCreated(final Group group) {
+    private Group createGroupObject(final Bitmap avatar) {
+        return new Group(this.getGroupParticipantAdapter().getUsers())
+                .setTitle(this.activity.getBinding().groupName.getText().toString())
+                .setAvatar(avatar);
+    }
+
+    private Single<Group> addCurrentUserToGroup(final Group group) {
+        return BaseApplication
+                .get()
+                .getUserManager()
+                .getCurrentUser()
+                .map(group::addMember);
+    }
+
+    @NonNull
+    private Single<Conversation> createConversationFromGroup(final Group group) {
+        return BaseApplication
+                .get()
+                .getSofaMessageManager()
+                .createConversationFromGroup(group);
+    }
+
+    private void handleConversationCreated(final Conversation conversation) {
         if (this.activity == null) return;
         final Intent intent = new Intent(this.activity, ChatActivity.class)
-                .putExtra(ChatActivity.EXTRA__THREAD_ID, group.getId());
+                .putExtra(ChatActivity.EXTRA__THREAD_ID, conversation.getThreadId());
 
         this.activity.startActivity(intent);
         this.activity.finish();
@@ -145,19 +164,7 @@ public class GroupSetupPresenter implements Presenter<GroupSetupActivity> {
         return ImageUtil.loadAsBitmap(this.avatarUri, this.activity);
     }
 
-    private Group createGroup(final Bitmap avatar) {
-        return new Group(this.getGroupParticipantAdapter().getUsers())
-                        .setTitle(this.activity.getBinding().groupName.getText().toString())
-                        .setAvatar(avatar);
-    }
 
-    private Single<Group> addCurrentUserToGroup(final Group group) {
-        return BaseApplication
-                .get()
-                .getUserManager()
-                .getCurrentUser()
-                .map(group::addMember);
-    }
 
     private void initRecyclerView() {
         final RecyclerView recyclerView = this.activity.getBinding().participants;
