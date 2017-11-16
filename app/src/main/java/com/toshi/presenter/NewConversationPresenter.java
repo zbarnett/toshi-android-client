@@ -33,6 +33,7 @@ import com.toshi.util.KeyboardUtil;
 import com.toshi.util.LogUtil;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.activity.ChatActivity;
+import com.toshi.view.activity.GroupParticipantsActivity;
 import com.toshi.view.activity.NewConversationActivity;
 import com.toshi.view.adapter.UserAdapter;
 import com.toshi.view.custom.HorizontalLineDivider;
@@ -81,12 +82,18 @@ public final class NewConversationPresenter implements Presenter<NewConversation
     private void initClickListeners() {
         this.activity.getBinding().closeButton.setOnClickListener(this::handleCloseClicked);
         this.activity.getBinding().clearButton.setOnClickListener(__ -> this.activity.getBinding().search.setText(null));
+        this.activity.getBinding().newGroup.setOnClickListener(__ -> handleNewGroupClicked());
     }
 
     private void handleCloseClicked(final View v) {
         if (v == null || this.activity == null) return;
         KeyboardUtil.hideKeyboard(v);
         this.activity.onBackPressed();
+    }
+
+    private void handleNewGroupClicked() {
+        final Intent intent = new Intent(this.activity, GroupParticipantsActivity.class);
+        this.activity.startActivity(intent);
     }
 
     private void initRecyclerView() {
