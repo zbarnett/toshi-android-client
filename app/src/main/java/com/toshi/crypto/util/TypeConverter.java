@@ -37,7 +37,7 @@ public class TypeConverter {
         }
     }
 
-    public static byte[] StringHexToByteArray(String x) throws Exception {
+    public static byte[] StringHexToByteArray(String x) {
         if (x.startsWith("0x")) {
             x = x.substring(2);
         }
@@ -66,5 +66,40 @@ public class TypeConverter {
 
     public static String toJsonHex(final BigInteger n) {
         return "0x"+ n.toString(16);
+    }
+
+    public static String skeletonAndSignatureToRLPEncodedHex(final String skeleton, final String signature) {
+        final Object[] decoded = (Object[])RLP.decode(TypeConverter.StringHexToByteArray(skeleton), 0).getDecoded();
+
+        if (decoded.length != 9) {
+            throw new IllegalStateException("Invalid Transaction Skeleton: Decoded RLP length is wrong");
+        }
+
+        if (!isEmptyString(decoded[decoded.length - 2])
+            ||!isEmptyString(decoded[decoded.length - 1])) {
+            throw new IllegalStateException("Transaction is already signed!");
+        }
+
+        final BigInteger r = TypeConverter.StringHexToBigInteger(signature.substring(2, 66));
+        final BigInteger s = TypeConverter.StringHexToBigInteger(signature.substring(66, 130));
+        final int v = TypeConverter.StringHexToBigInteger(signature.substring(130)).intValue();
+        final int vee = getVee(decoded[decoded.length - 3]);
+
+        decoded[decoded.length - 3] = v + vee;
+        decoded[decoded.length - 2] = r;
+        decoded[decoded.length - 1] = s;
+        return TypeConverter.toJsonHex(RLP.encode(decoded));
+    }
+
+    private static int getVee(final Object obj) {
+        if (obj instanceof byte[]) {
+            int networkId = RLP.decodeInt((byte[]) obj, 0);
+            return 35 + networkId * 2;
+        }
+        return 27;
+    }
+
+    private static boolean isEmptyString(final Object obj) {
+        return obj instanceof String && ((String) obj).length() == 0;
     }
 }

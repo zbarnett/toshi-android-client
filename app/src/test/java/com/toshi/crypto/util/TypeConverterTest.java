@@ -86,4 +86,12 @@ public class TypeConverterTest {
         final String actual = TypeConverter.jsonStringToString(input);
         assertThat(expected, is(actual));
     }
+
+    public void skeletonAndSignatureToRLPEncodedHexEncodesCorrectly() throws Exception {
+        final String expected = "0xf8af85746f6b6682832dc6c0832dc6c094dc0a63a5bdb165640661709569816bf08594dfd780b844a9059cbb0000000000000000000000002278562760cf038cb33b7b405c295a4c50db4fdd00000000000000000000000000000000000000000000000000000002540be40082010ca0a343b0140fb8497e86a37e3b4a8329616675cdefed2e3e29654425bd10d749d7a04c22ba969436fced1d5d41d48a1c9e11f059caf54ac5704fa4443ec0aa5cc989";
+        final String skeleton = "0xf86d85746f6b6682832dc6c0832dc6c094dc0a63a5bdb165640661709569816bf08594dfd780b844a9059cbb0000000000000000000000002278562760cf038cb33b7b405c295a4c50db4fdd00000000000000000000000000000000000000000000000000000002540be400748080";
+        final String signature = "0xa343b0140fb8497e86a37e3b4a8329616675cdefed2e3e29654425bd10d749d74c22ba969436fced1d5d41d48a1c9e11f059caf54ac5704fa4443ec0aa5cc98901";
+        final String actual = TypeConverter.skeletonAndSignatureToRLPEncodedHex(skeleton, signature);
+        assertThat(actual, is(expected));
+    }
 }

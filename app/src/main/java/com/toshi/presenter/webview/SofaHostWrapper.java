@@ -145,7 +145,12 @@ import java.io.IOException;
                 new SignTransactionCallback()
                         .setSkeleton(signedTransaction.getSkeleton())
                         .setSignature(signedTransaction.getSignature());
-        doCallBack(callbackId, callback.toJsonEncodedString());
+        try {
+            doCallBack(callbackId, callback.toJsonEncodedString());
+        } catch (Exception e) {
+            LogUtil.exception(getClass(), e);
+            doCallBack(callbackId, String.format("{\\\"error\\\":\\\"%s\\\"}", e.getMessage()));
+        }
     }
 
     private void handleAcceptedCanceled(final Bundle bundle) {

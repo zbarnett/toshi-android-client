@@ -18,6 +18,8 @@
 package com.toshi.presenter.webview.model;
 
 
+import com.toshi.crypto.util.TypeConverter;
+
 public class SignTransactionCallback {
 
     private String signature;
@@ -33,11 +35,10 @@ public class SignTransactionCallback {
         return this;
     }
 
-    public String toJsonEncodedString() {
+    public String toJsonEncodedString() throws Exception {
         return String.format(
-                "{\\\"result\\\":{\\\"tx\\\":\\\"%s\\\",\\\"signature\\\":\\\"%s\\\"}}",
-                skeleton,
-                signature
+                "{\\\"result\\\":\\\"%s\\\"}",
+                TypeConverter.skeletonAndSignatureToRLPEncodedHex(skeleton, signature)
         );
     }
 }
