@@ -219,15 +219,17 @@ public class ConversationStore {
         );
     }
 
-    public List<Conversation> loadAll() {
-        final Realm realm = BaseApplication.get().getRealm();
-        final RealmQuery<Conversation> query =
-                realm.where(Conversation.class)
-                     .isNotEmpty("allMessages");
-        final RealmResults<Conversation> results = query.findAllSorted("updatedTime", Sort.DESCENDING);
-        final List<Conversation> allConversations = realm.copyFromRealm(results);
-        realm.close();
-        return allConversations;
+    public Single<List<Conversation>> loadAll() {
+        return Single.fromCallable(() -> {
+            final Realm realm = BaseApplication.get().getRealm();
+            final RealmQuery<Conversation> query =
+                    realm.where(Conversation.class)
+                            .isNotEmpty("allMessages");
+            final RealmResults<Conversation> results = query.findAllSorted("updatedTime", Sort.DESCENDING);
+            final List<Conversation> allConversations = realm.copyFromRealm(results);
+            realm.close();
+            return allConversations;
+        });
     }
 
     private void broadcastConversationChanged(final Conversation conversation) {
@@ -329,6 +331,18 @@ public class ConversationStore {
             final Realm realm = BaseApplication.get().getRealm();
             realm.beginTransaction();
             final Conversation conversation = new Conversation(recipient);
+            realm.copyToRealmOrUpdate(conversation);
+            realm.commitTransaction();
+            realm.close();
+            return conversation;
+        });
+    }
+
+    public Single<Conversation> muteConversation(final Conversation conversation, final boolean mute) {
+        return Single.fromCallable(() -> {
+            final Realm realm = BaseApplication.get().getRealm();
+            realm.beginTransaction();
+            conversation.getConversationStatus().setMuted(mute);
             realm.copyToRealmOrUpdate(conversation);
             realm.commitTransaction();
             realm.close();

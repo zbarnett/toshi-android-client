@@ -87,7 +87,7 @@ class RecentViewModel: ViewModel() {
 
     private fun isBlocked(threadId: String) = getRecipientManager().isUserBlocked(threadId)
 
-    private fun isMuted(threadId: String) = getRecipientManager().isConversationMuted(threadId)
+    private fun isMuted(threadId: String) = getSofaMessageManager().isConversationMuted(threadId)
 
     fun handleSelectedOption(conversation: Conversation, option: Option) {
         when (option) {
@@ -101,8 +101,8 @@ class RecentViewModel: ViewModel() {
 
     private fun setMute(conversation: Conversation, mute: Boolean) {
         val muteAction =
-                if (mute) getRecipientManager().muteConversation(conversation.threadId)
-                else getRecipientManager().unmuteConversation(conversation.threadId)
+                if (mute) getSofaMessageManager().muteConversation(conversation)
+                else getSofaMessageManager().unmuteConversation(conversation)
 
         val sub = muteAction
                 .observeOn(AndroidSchedulers.mainThread())

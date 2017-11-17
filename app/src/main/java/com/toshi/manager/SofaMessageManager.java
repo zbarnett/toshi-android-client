@@ -145,8 +145,7 @@ public final class SofaMessageManager {
     }
 
     public final Single<List<Conversation>> loadAllConversations() {
-        return Single
-                .fromCallable(conversationStore::loadAll)
+        return this.conversationStore.loadAll()
                 .subscribeOn(Schedulers.io());
     }
 
@@ -208,6 +207,22 @@ public final class SofaMessageManager {
 
     public Single<SofaMessage> getSofaMessageById(final String id) {
         return this.conversationStore.getSofaMessageById(id)
+                .subscribeOn(Schedulers.io());
+    }
+
+    public Single<Boolean> isConversationMuted(final String threadId) {
+        return this.conversationStore.loadByThreadId(threadId)
+                .map(conversation -> conversation.getConversationStatus().isMuted())
+                .subscribeOn(Schedulers.io());
+    }
+
+    public Single<Conversation> muteConversation(final Conversation conversation) {
+        return this.conversationStore.muteConversation(conversation, true)
+                .subscribeOn(Schedulers.io());
+    }
+
+    public Single<Conversation> unmuteConversation(final Conversation conversation) {
+        return this.conversationStore.muteConversation(conversation, false)
                 .subscribeOn(Schedulers.io());
     }
 

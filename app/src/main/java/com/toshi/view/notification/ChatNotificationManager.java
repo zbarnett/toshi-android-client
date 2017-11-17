@@ -120,7 +120,7 @@ public class ChatNotificationManager extends ToshiNotificationBuilder {
     private static Single<Boolean> checkIfConversationIsMuted(final String threadId) {
         return BaseApplication
                 .get()
-                .getRecipientManager()
+                .getSofaMessageManager()
                 .isConversationMuted(threadId);
     }
 
