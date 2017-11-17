@@ -37,12 +37,14 @@ public class Conversation extends RealmObject {
     private long updatedTime;
     private RealmList<SofaMessage> allMessages;
     private int numberOfUnread;
+    private ConversationStatus conversationStatus;
 
     public Conversation() {}
 
     public Conversation(final Recipient recipient) {
         this.recipient = recipient;
         this.threadId = recipient.getThreadId();
+        this.conversationStatus = new ConversationStatus(this.threadId);
     }
 
     public String getThreadId() {
@@ -111,6 +113,10 @@ public class Conversation extends RealmObject {
     @NonNull
     public Recipient getRecipient() {
         return this.recipient;
+    }
+
+    public ConversationStatus getConversationStatus() {
+        return conversationStatus;
     }
 
     @Override

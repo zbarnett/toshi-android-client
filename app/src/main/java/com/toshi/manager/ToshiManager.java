@@ -132,7 +132,7 @@ public class ToshiManager {
         Realm.init(BaseApplication.get());
         this.realmConfig = new RealmConfiguration
                 .Builder()
-                .schemaVersion(18)
+                .schemaVersion(19)
                 .migration(new DbMigration(this.wallet))
                 .name(this.wallet.getOwnerAddress())
                 .encryptionKey(key)

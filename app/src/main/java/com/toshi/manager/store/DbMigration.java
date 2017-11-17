@@ -21,6 +21,7 @@ package com.toshi.manager.store;
 import com.toshi.crypto.HDWallet;
 
 import java.io.File;
+import java.util.List;
 import java.util.UUID;
 
 import io.realm.DynamicRealm;
@@ -267,6 +268,39 @@ public class DbMigration implements RealmMigration {
         if (oldVersion == 17) {
             final RealmObjectSchema mutedConversationSchema = schema.create("MutedConversation");
             mutedConversationSchema.addField("threadId", String.class, FieldAttribute.PRIMARY_KEY);
+            oldVersion++;
+        }
+
+        if (oldVersion == 18) {
+            if (schema.contains("MutedConversation")) {
+                schema.rename("MutedConversation", "ConversationStatus")
+                        .addField("isMuted", boolean.class)
+                        .addField("isAccepted", boolean.class)
+                        .transform(obj -> obj.set("isMuted", true));
+            }
+
+            schema.get("Conversation")
+                    .addRealmObjectField("conversationStatus", schema.get("ConversationStatus"));
+
+            final List<DynamicRealmObject> conversations = realm
+                    .where("Conversation")
+                    .findAll();
+
+            for (final DynamicRealmObject conversation : conversations) {
+                final String conversationThreadId = conversation.getString("threadId");
+
+                DynamicRealmObject conversationStatus = realm
+                        .where("ConversationStatus")
+                        .equalTo("threadId", conversationThreadId)
+                        .findFirst();
+
+                conversationStatus = conversationStatus != null
+                        ? conversationStatus
+                        : realm.createObject("ConversationStatus", conversationThreadId);
+                conversationStatus.set("isAccepted", true);
+                conversation.set("conversationStatus", conversationStatus);
+            }
+
             oldVersion++;
         }
     }
