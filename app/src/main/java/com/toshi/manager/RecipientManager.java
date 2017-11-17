@@ -23,7 +23,6 @@ import com.toshi.manager.network.IdService;
 import com.toshi.manager.store.BlockedUserStore;
 import com.toshi.manager.store.ContactStore;
 import com.toshi.manager.store.GroupStore;
-import com.toshi.manager.store.MutedConversationStore;
 import com.toshi.manager.store.UserStore;
 import com.toshi.model.local.BlockedUser;
 import com.toshi.model.local.Contact;
@@ -50,14 +49,12 @@ public class RecipientManager {
     private final GroupStore groupStore;
     private final UserStore userStore;
     private final BlockedUserStore blockedUserStore;
-    private final MutedConversationStore mutedConversationStore;
 
     /* package */ RecipientManager() {
         this.contactStore = new ContactStore();
         this.groupStore = new GroupStore();
         this.userStore = new UserStore();
         this.blockedUserStore = new BlockedUserStore();
-        this.mutedConversationStore = new MutedConversationStore();
     }
 
     public Single<Recipient> getFromId(final String recipientId) {
@@ -198,21 +195,6 @@ public class RecipientManager {
     public Completable unblockUser(final String ownerAddress) {
         return Completable.fromAction(() ->
                 this.blockedUserStore.delete(ownerAddress))
-                .subscribeOn(Schedulers.io());
-    }
-
-    public final Single<Boolean> isConversationMuted(final String threadId) {
-        return this.mutedConversationStore.isMuted(threadId)
-                .subscribeOn(Schedulers.io());
-    }
-
-    public final Completable muteConversation(final String threadId) {
-        return this.mutedConversationStore.save(threadId)
-                .subscribeOn(Schedulers.io());
-    }
-
-    public final Completable unmuteConversation(final String threadId) {
-        return this.mutedConversationStore.delete(threadId)
                 .subscribeOn(Schedulers.io());
     }
 
