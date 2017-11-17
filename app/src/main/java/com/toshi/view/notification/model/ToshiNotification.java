@@ -38,7 +38,6 @@ public abstract class ToshiNotification {
 
     private final String id;
     private final ArrayList<SofaMessage> messages;
-    private List<SofaMessage> lastFewMessages;
     private SofaMessage lastMessage;
     private static final int MAXIMUM_NUMBER_OF_SHOWN_MESSAGES = 5;
     /* package */ Bitmap largeIcon;
@@ -46,26 +45,18 @@ public abstract class ToshiNotification {
     /* package */ ToshiNotification(final String id) {
         this.id = id;
         this.messages = new ArrayList<>();
-        generateLatestMessages(this.messages);
+        this.lastMessage = new SofaMessage().makeNew("");
     }
 
     public void addUnreadMessage(final SofaMessage unreadMessage) {
-        this.messages.add(unreadMessage);
-        generateLatestMessages(this.messages);
+        synchronized (this.messages) {
+            this.messages.add(unreadMessage);
+            generateLatestMessages(this.messages);
+        }
     }
 
-    private synchronized void generateLatestMessages(final ArrayList<SofaMessage> messages) {
-        if (messages.size() == 0) {
-            this.lastMessage = new SofaMessage().makeNew("");
-            this.lastFewMessages = new ArrayList<>(0);
-            return;
-        }
-
+    private void generateLatestMessages(final ArrayList<SofaMessage> messages) {
         this.lastMessage = messages.get(messages.size() - 1);
-
-        final int end = Math.max(messages.size(), 0);
-        final int start = Math.max(end - MAXIMUM_NUMBER_OF_SHOWN_MESSAGES, 0);
-        this.lastFewMessages = messages.subList(start, end);
     }
 
     public String getId() {
@@ -91,13 +82,17 @@ public abstract class ToshiNotification {
     }
 
     public List<String> getLastFewMessages() {
-        final List<String> messages = new ArrayList<>();
-        final List<SofaMessage> lastFewMessagesCopy = new ArrayList<>(this.lastFewMessages);
-        for (final SofaMessage sofaMessage : lastFewMessagesCopy) {
-            final String message = getMessage(sofaMessage);
-            messages.add(message);
+        synchronized (this.messages) {
+            final int end = Math.max(messages.size(), 0);
+            final int start = Math.max(end - MAXIMUM_NUMBER_OF_SHOWN_MESSAGES, 0);
+            final List<SofaMessage> sofaMessages = this.messages.subList(start, end);
+            final List<String> messages = new ArrayList<>(sofaMessages.size());
+            for (final SofaMessage sofaMessage : sofaMessages) {
+                final String message = getMessage(sofaMessage);
+                messages.add(message);
+            }
+            return messages;
         }
-        return messages;
     }
 
     public String getLastMessage() {

@@ -145,9 +145,11 @@ public class ToshiNotificationTest {
 
     @Test
     public void canCallGetLastFewMessagesWhilstAddingUnreadMessagesInASeparateThread() throws InterruptedException {
-        new Thread(() -> addMultipleUnreadMessages(1000)).start();
-        Thread.sleep(1);
-        this.notification.getLastFewMessages();
+        for (int i = 0; i < 5; i++) {
+            new Thread(() -> addMultipleUnreadMessages(1000)).start();
+            Thread.sleep(1);
+            this.notification.getLastFewMessages();
+        }
     }
 
     private void addMultipleUnreadMessages(final int numberToCreate) {
