@@ -292,6 +292,9 @@ public class BalanceManager {
     }
 
     public Completable forceRegisterEthGcm() {
+        if (this.wallet == null || this.networks == null) {
+            return Completable.error(new IllegalStateException("Unable to register GCM as class hasn't been initialised yet"));
+        }
         final String currentNetworkId = this.networks.getCurrentNetwork().getId();
         GcmPrefsUtil.setEthGcmTokenSentToServer(currentNetworkId, false);
         return registerEthGcm();
