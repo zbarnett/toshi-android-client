@@ -19,4 +19,7 @@
     <dimen name="chat_image__max_width">300dp</dimen>
     <dimen name="chat_payment_width">261dp</dimen>
     <dimen name="chat_file_width">261dp</dimen>
+
+    <item name="num_horizontal_items__portrait" format="float" type="dimen">4.5</item>
+    <item name="num_horizontal_items__landscape" format="float" type="dimen">6.5</item>
 </resources>

@@ -18,6 +18,7 @@
 package com.toshi.view.adapter.viewholder;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.TextView;
 
@@ -25,15 +26,13 @@ import com.toshi.R;
 import com.toshi.model.local.ToshiEntity;
 import com.toshi.util.ImageUtil;
 import com.toshi.util.ScreenUtil;
+import com.toshi.view.BaseApplication;
 import com.toshi.view.adapter.listeners.OnItemClickListener;
 import com.toshi.view.custom.StarRatingView;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class HorizontalViewHolder<T extends ToshiEntity> extends RecyclerView.ViewHolder {
-
-    private static final double NUMBER_OF_PORTRAIT_APPS = 4.5;
-    private static final double NUMBER_OF_LANDSCAPE_APPS = 6.5;
     private static final double MINIMAL_SCREEN_RATIO = 1.4;
 
     private TextView appLabel;
@@ -75,11 +74,17 @@ public class HorizontalViewHolder<T extends ToshiEntity> extends RecyclerView.Vi
     private int getContainerSize() {
         final int screenWidth = ScreenUtil.getWidthOfScreen();
         final int horizontalMargin = this.appImage.getContext().getResources().getDimensionPixelSize(R.dimen.activity_horizontal_margin);
-        final double numberOfVisibleApps =
-                ScreenUtil.isPortrait() || ScreenUtil.getScreenRatio() < MINIMAL_SCREEN_RATIO
-                        ? NUMBER_OF_PORTRAIT_APPS
-                        : NUMBER_OF_LANDSCAPE_APPS;
+        final float numberOfVisibleApps = getNumberOfVisibleApps();
         return (int)(screenWidth / numberOfVisibleApps) - horizontalMargin;
+    }
+
+    private float getNumberOfVisibleApps() {
+        final int resourceId = ScreenUtil.isPortrait() || ScreenUtil.getScreenRatio() < MINIMAL_SCREEN_RATIO
+                ? R.dimen.num_horizontal_items__portrait
+                : R.dimen.num_horizontal_items__landscape;
+        final TypedValue actualValue = new TypedValue();
+        BaseApplication.get().getResources().getValue(resourceId, actualValue, true);
+        return actualValue.getFloat();
     }
 
     private void loadImage(final T elem) {
