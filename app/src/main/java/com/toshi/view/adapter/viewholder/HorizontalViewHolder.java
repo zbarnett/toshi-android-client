@@ -32,8 +32,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class HorizontalViewHolder<T extends ToshiEntity> extends RecyclerView.ViewHolder {
 
-    private static final double NUMBER_OF_PORTRAIT_APPS = 3.5;
-    private static final double NUMBER_OF_LANDSCAPE_APPS = 5.5;
+    private static final double NUMBER_OF_PORTRAIT_APPS = 4.5;
+    private static final double NUMBER_OF_LANDSCAPE_APPS = 6.5;
     private static final double MINIMAL_SCREEN_RATIO = 1.4;
 
     private TextView appLabel;
