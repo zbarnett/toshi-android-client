@@ -87,7 +87,7 @@ public class ChatNotificationManager extends ToshiNotificationBuilder {
     }
 
     public static void showChatNotification(final Recipient sender, final SofaMessage sofaMessage) {
-        checkIfConversationIsMuted(sofaMessage.getSender().getToshiId())
+        checkIfConversationIsMuted(sender.getThreadId())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         isMuted -> tryShowNotification(sender, sofaMessage, isMuted),
@@ -117,11 +117,11 @@ public class ChatNotificationManager extends ToshiNotificationBuilder {
         }
     }
 
-    private static Single<Boolean> checkIfConversationIsMuted(final String toshiId) {
+    private static Single<Boolean> checkIfConversationIsMuted(final String threadId) {
         return BaseApplication
                 .get()
                 .getRecipientManager()
-                .isConversationMuted(toshiId);
+                .isConversationMuted(threadId);
     }
 
     private static PaymentRequest getPaymentRequestFromMessage(final SofaMessage sofaMessage) {
