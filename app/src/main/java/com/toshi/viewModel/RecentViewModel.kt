@@ -101,7 +101,7 @@ class RecentViewModel: ViewModel() {
 
     private fun setMute(conversation: Conversation, mute: Boolean) {
         val muteAction =
-                if (mute) getRecipientManager().muteConveration(conversation.threadId)
+                if (mute) getRecipientManager().muteConversation(conversation.threadId)
                 else getRecipientManager().unmuteConversation(conversation.threadId)
 
         val sub = muteAction

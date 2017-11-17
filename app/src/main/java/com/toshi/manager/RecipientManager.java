@@ -197,7 +197,7 @@ public class RecipientManager {
                 .subscribeOn(Schedulers.io());
     }
 
-    public final Completable muteConveration(final String threadId) {
+    public final Completable muteConversation(final String threadId) {
         return this.mutedConversationStore.save(threadId)
                 .subscribeOn(Schedulers.io());
     }
