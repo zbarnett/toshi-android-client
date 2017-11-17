@@ -18,8 +18,10 @@
 package com.toshi.manager.chat;
 
 
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.WorkerThread;
 
 import com.toshi.BuildConfig;
 import com.toshi.crypto.HDWallet;
@@ -27,6 +29,7 @@ import com.toshi.crypto.signal.model.DecryptedSignalMessage;
 import com.toshi.crypto.signal.store.ProtocolStore;
 import com.toshi.manager.store.ConversationStore;
 import com.toshi.model.local.Group;
+import com.toshi.model.local.IncomingMessage;
 import com.toshi.model.local.Recipient;
 import com.toshi.model.local.SendState;
 import com.toshi.model.local.User;
@@ -110,8 +113,8 @@ public class SofaMessageReceiver {
         new Thread(() -> {
             while (isReceivingMessages) {
                 try {
-                    final SofaMessage sofaMessage = fetchLatestMessage();
-                    ChatNotificationManager.showNotification(sofaMessage);
+                    final IncomingMessage incomingMessage = fetchLatestMessage();
+                    ChatNotificationManager.showNotification(incomingMessage);
                 } catch (TimeoutException e) {
                     // Nop -- this is expected to happen
                 }
@@ -119,7 +122,8 @@ public class SofaMessageReceiver {
         }).start();
     }
 
-    public SofaMessage fetchLatestMessage() throws TimeoutException {
+    @WorkerThread
+    public IncomingMessage fetchLatestMessage() throws TimeoutException {
         if (this.messagePipe == null) {
             this.messagePipe = messageReceiver.createMessagePipe();
         }
@@ -135,7 +139,7 @@ public class SofaMessageReceiver {
         return null;
     }
 
-    private SofaMessage decryptIncomingSignalServiceEnvelope(final SignalServiceEnvelope envelope) throws InvalidVersionException, InvalidMessageException, InvalidKeyException, DuplicateMessageException, InvalidKeyIdException, org.whispersystems.libsignal.UntrustedIdentityException, LegacyMessageException, NoSessionException {
+    private IncomingMessage decryptIncomingSignalServiceEnvelope(final SignalServiceEnvelope envelope) throws InvalidVersionException, InvalidMessageException, InvalidKeyException, DuplicateMessageException, InvalidKeyIdException, org.whispersystems.libsignal.UntrustedIdentityException, LegacyMessageException, NoSessionException {
         // ToDo -- When do we need to create new keys?
  /*       if (envelope.getType() == SignalServiceProtos.Envelope.Type.PREKEY_BUNDLE_VALUE) {
             // New keys need to be registered with the server.
@@ -145,7 +149,7 @@ public class SofaMessageReceiver {
         return handleIncomingSofaMessage(envelope);
     }
 
-    private SofaMessage handleIncomingSofaMessage(final SignalServiceEnvelope envelope) throws InvalidVersionException, InvalidMessageException, InvalidKeyException, DuplicateMessageException, InvalidKeyIdException, org.whispersystems.libsignal.UntrustedIdentityException, LegacyMessageException, NoSessionException {
+    private IncomingMessage handleIncomingSofaMessage(final SignalServiceEnvelope envelope) throws InvalidVersionException, InvalidMessageException, InvalidKeyException, DuplicateMessageException, InvalidKeyIdException, org.whispersystems.libsignal.UntrustedIdentityException, LegacyMessageException, NoSessionException {
         final SignalServiceAddress localAddress = new SignalServiceAddress(this.wallet.getOwnerAddress());
         final SignalServiceCipher cipher = new SignalServiceCipher(localAddress, this.protocolStore);
         final SignalServiceContent content = cipher.decrypt(envelope);
@@ -165,7 +169,7 @@ public class SofaMessageReceiver {
     }
 
     @Nullable
-    private SofaMessage handleTextMessage(final String messageSource, final SignalServiceDataMessage dataMessage) {
+    private IncomingMessage handleTextMessage(final String messageSource, final SignalServiceDataMessage dataMessage) {
         final Optional<SignalServiceGroup> signalGroup = dataMessage.getGroupInfo();
         final Optional<String> messageBody = dataMessage.getBody();
         final Optional<List<SignalServiceAttachment>> attachments = dataMessage.getAttachments();
@@ -173,7 +177,7 @@ public class SofaMessageReceiver {
         return saveIncomingMessageToDatabase(decryptedMessage);
     }
 
-    private SofaMessage handleGroupUpdate(final SignalServiceDataMessage dataMessage) {
+    private IncomingMessage handleGroupUpdate(final SignalServiceDataMessage dataMessage) {
         final SignalServiceGroup signalGroup = dataMessage.getGroupInfo().get();
         new Group()
                 .initFromSignalGroup(signalGroup)
@@ -193,7 +197,7 @@ public class SofaMessageReceiver {
                 .value();
     }
 
-    private SofaMessage saveIncomingMessageToDatabase(final DecryptedSignalMessage signalMessage) {
+    private IncomingMessage saveIncomingMessageToDatabase(final DecryptedSignalMessage signalMessage) {
         if (signalMessage == null || signalMessage.getBody() == null || signalMessage.getSource() == null) {
             LogUtil.w(getClass(), "Attempt to save invalid DecryptedSignalMessage to database.");
             return null;
@@ -240,19 +244,22 @@ public class SofaMessageReceiver {
         return attachmentFile != null ? attachmentFile.getAbsolutePath() : null;
     }
 
-    private SofaMessage saveIncomingMessageToDatabase(final User sender, final DecryptedSignalMessage signalMessage) {
+    private IncomingMessage saveIncomingMessageToDatabase(final User sender, final DecryptedSignalMessage signalMessage) throws IllegalStateException{
+        if (Looper.myLooper() == Looper.getMainLooper()) throw new IllegalStateException("Running a blocking DB call on main thread!");
+
         final SofaMessage remoteMessage = new SofaMessage()
                 .makeNew(sender, signalMessage.getBody())
                 .setAttachmentFilePath(signalMessage.getAttachmentFilePath())
                 .setSendState(SendState.STATE_RECEIVED);
 
-        generateRecipientFromSignalMessage(sender, signalMessage)
-                .subscribe(
-                        senderRecipient -> this.saveIncomingMessageToDatabase(sender, remoteMessage, senderRecipient),
-                        ex -> LogUtil.e(getClass(), "Error saving incoming message to database. " + ex)
-                );
+        final Recipient recipient = generateRecipientFromSignalMessage(sender, signalMessage)
+                .timeout(30, TimeUnit.SECONDS)
+                .toBlocking()
+                .value();
 
-        return remoteMessage;
+        if (recipient == null) throw new IllegalStateException("Failure to generate Recipient");
+        this.saveIncomingMessageToDatabase(sender, remoteMessage, recipient);
+        return new IncomingMessage(remoteMessage, recipient);
     }
 
     private void saveIncomingMessageToDatabase(final User sender, final SofaMessage remoteMessage, final Recipient senderRecipient) {

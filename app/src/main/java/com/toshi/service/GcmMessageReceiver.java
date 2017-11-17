@@ -35,6 +35,7 @@ package com.toshi.service;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.toshi.model.local.IncomingMessage;
 import com.toshi.model.local.User;
 import com.toshi.model.sofa.Payment;
 import com.toshi.model.sofa.SofaAdapters;
@@ -81,7 +82,7 @@ public class GcmMessageReceiver extends FirebaseMessagingService {
             LogUtil.i(getClass(), "Incoming PN: " + messageBody);
 
             if (messageBody == null) {
-                tryShowSignalMessage();
+                tryShowIncomingMessage();
                 return;
             }
 
@@ -91,7 +92,7 @@ public class GcmMessageReceiver extends FirebaseMessagingService {
                 final Payment payment = SofaAdapters.get().paymentFrom(sofaMessage.getPayload());
                 checkIfUserIsBlocked(payment);
             } else {
-                tryShowSignalMessage();
+                tryShowIncomingMessage();
             }
 
         } catch (final Exception ex) {
@@ -151,10 +152,10 @@ public class GcmMessageReceiver extends FirebaseMessagingService {
         LogUtil.exception(getClass(), "Invalid payment", throwable);
     }
 
-    private void tryShowSignalMessage() {
-        final SofaMessage signalMessage;
+    private void tryShowIncomingMessage() {
+        final IncomingMessage incomingMessage;
         try {
-            signalMessage = BaseApplication
+            incomingMessage = BaseApplication
                 .get()
                 .getSofaMessageManager()
                 .fetchLatestMessage();
@@ -163,9 +164,9 @@ public class GcmMessageReceiver extends FirebaseMessagingService {
             return;
         }
 
-        ChatNotificationManager.showNotification(signalMessage);
+        ChatNotificationManager.showNotification(incomingMessage);
         // There may be more messages.
-        tryShowSignalMessage();
+        tryShowIncomingMessage();
 
     }
 

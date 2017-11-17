@@ -18,6 +18,7 @@
 package com.toshi.manager;
 
 
+import com.toshi.extensions.StringUtils;
 import com.toshi.manager.network.IdService;
 import com.toshi.manager.store.BlockedUserStore;
 import com.toshi.manager.store.ContactStore;
@@ -27,6 +28,7 @@ import com.toshi.manager.store.UserStore;
 import com.toshi.model.local.BlockedUser;
 import com.toshi.model.local.Contact;
 import com.toshi.model.local.Group;
+import com.toshi.model.local.Recipient;
 import com.toshi.model.local.Report;
 import com.toshi.model.local.User;
 import com.toshi.model.network.ServerTime;
@@ -56,6 +58,13 @@ public class RecipientManager {
         this.userStore = new UserStore();
         this.blockedUserStore = new BlockedUserStore();
         this.mutedConversationStore = new MutedConversationStore();
+    }
+
+    public Single<Recipient> getFromId(final String recipientId) {
+        if (StringUtils.isGroupId(recipientId)) {
+            return getGroupFromId(recipientId).map(Recipient::new);
+        }
+        return getUserFromToshiId(recipientId).map(Recipient::new);
     }
 
     public Single<Group> getGroupFromId(final String id) {

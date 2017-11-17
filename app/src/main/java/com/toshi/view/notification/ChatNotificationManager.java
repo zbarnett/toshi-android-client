@@ -28,6 +28,7 @@ import android.support.v4.app.RemoteInput;
 
 import com.toshi.R;
 import com.toshi.crypto.HDWallet;
+import com.toshi.model.local.IncomingMessage;
 import com.toshi.model.local.Recipient;
 import com.toshi.model.sofa.Message;
 import com.toshi.model.sofa.Payment;
@@ -73,10 +74,9 @@ public class ChatNotificationManager extends ToshiNotificationBuilder {
         }
     }
 
-    public static void showNotification(final SofaMessage sofaMessage) {
-        if (sofaMessage == null) return;
-        final Recipient recipient = new Recipient(sofaMessage.getSender());
-        showChatNotification(recipient, sofaMessage);
+    public static void showNotification(final IncomingMessage incomingMessage) {
+        if (incomingMessage == null) return;
+        showChatNotification(incomingMessage.getRecipient(), incomingMessage.getSofaMessage());
     }
 
     public static void showChatNotification(final Recipient sender, final String content) {

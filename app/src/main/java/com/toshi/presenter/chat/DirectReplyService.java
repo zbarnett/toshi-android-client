@@ -49,7 +49,7 @@ public class DirectReplyService extends IntentService {
         try {
             tryInit();
 
-            final User recipient = getRecipient(toshiId);
+            final Recipient recipient = getRecipient(toshiId);
             final User localUser = getLocalUser();
             sendMessage(recipient, localUser, userInput);
         } catch (Exception e) {
@@ -65,11 +65,11 @@ public class DirectReplyService extends IntentService {
                 .await();
     }
 
-    private User getRecipient(final String recipientId) throws Exception {
+    private Recipient getRecipient(final String recipientId) throws Exception {
         return BaseApplication
                 .get()
                 .getRecipientManager()
-                .getUserFromToshiId(recipientId)
+                .getFromId(recipientId)
                 .toBlocking()
                 .value();
     }
@@ -83,9 +83,8 @@ public class DirectReplyService extends IntentService {
                 .value();
     }
 
-    private void sendMessage(final User receiver, final User localUser, final String userInput) {
-        final Recipient recipient = new Recipient(receiver);
-        initOutgoingMessageQueue(recipient);
+    private void sendMessage(final Recipient receiver, final User localUser, final String userInput) {
+        initOutgoingMessageQueue(receiver);
 
         final Message message = new Message().setBody(userInput);
         final String messageBody = SofaAdapters.get().toJson(message);
@@ -93,7 +92,7 @@ public class DirectReplyService extends IntentService {
 
         this.outgoingMessageQueue.send(sofaMessage);
         this.outgoingMessageQueue.clear();
-        ChatNotificationManager.showChatNotification(recipient, sofaMessage);
+        ChatNotificationManager.showChatNotification(receiver, sofaMessage);
     }
 
     private void initOutgoingMessageQueue(final Recipient recipient) {

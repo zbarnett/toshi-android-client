@@ -141,7 +141,7 @@ public class ChatNotification extends ToshiNotification {
         if (isUnknownSender()) return null;
 
         final Intent directReplyIntent = new Intent(BaseApplication.get(), DirectReplyService.class)
-                .putExtra(DirectReplyService.TOSHI_ID, this.sender.getUser().getToshiId());
+                .putExtra(DirectReplyService.TOSHI_ID, this.sender.getThreadId());
 
         return PendingIntent.getService(
                 BaseApplication.get(),

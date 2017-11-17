@@ -33,6 +33,7 @@ import com.toshi.BuildConfig;
 import com.toshi.R;
 import com.toshi.crypto.HDWallet;
 import com.toshi.exception.PermissionException;
+import com.toshi.extensions.StringUtils;
 import com.toshi.manager.messageQueue.AsyncOutgoingMessageQueue;
 import com.toshi.model.local.ActivityResultHolder;
 import com.toshi.model.local.Conversation;
@@ -80,8 +81,6 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 import rx.subscriptions.CompositeSubscription;
-
-import static com.toshi.model.local.Group.GROUP_ID_LENGTH;
 
 
 public final class ChatPresenter implements Presenter<ChatActivity> {
@@ -436,7 +435,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         final String threadId = getThreadIdFromIntent();
         if (threadId == null) return;
         
-        if (isGroup(threadId)) {
+        if (StringUtils.isGroupId(threadId)) {
             loadGroupRecipient(threadId);
         } else {
             loadUserRecipient(threadId);
@@ -479,11 +478,6 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
                 );
 
         this.subscriptions.add(sub);
-    }
-
-    private boolean isGroup(final String threadId) {
-        // Todo - check compatability with other clients (i.e. iOS)
-        return threadId.length() == GROUP_ID_LENGTH;
     }
 
     private void handleGroupLoaded(final Group group) {

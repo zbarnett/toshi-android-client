@@ -34,6 +34,7 @@ import com.toshi.manager.model.SofaMessageTask;
 import com.toshi.manager.store.ConversationStore;
 import com.toshi.model.local.Conversation;
 import com.toshi.model.local.Group;
+import com.toshi.model.local.IncomingMessage;
 import com.toshi.model.local.Recipient;
 import com.toshi.model.local.User;
 import com.toshi.model.sofa.Init;
@@ -316,7 +317,7 @@ public final class SofaMessageManager {
         this.messageSender.sendPendingMessage(sofaMessage);
     }
 
-    public SofaMessage fetchLatestMessage() throws TimeoutException {
+    public IncomingMessage fetchLatestMessage() throws TimeoutException {
         try {
             while (this.messageReceiver == null) {
                 Thread.sleep(200);
