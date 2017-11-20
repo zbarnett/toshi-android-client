@@ -17,42 +17,29 @@
 
 package com.toshi.view.activity
 
-import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.DefaultItemAnimator
-import android.support.v7.widget.LinearLayoutManager
-import android.text.Editable
-import android.text.TextWatcher
-import android.view.View
-import com.toshi.BuildConfig
 import com.toshi.R
-import com.toshi.extensions.addHorizontalLineDivider
-import com.toshi.extensions.isVisible
 import com.toshi.extensions.startActivity
 import com.toshi.extensions.startActivityAndFinish
 import com.toshi.model.local.User
-import com.toshi.util.KeyboardUtil
-import com.toshi.view.adapter.UserAdapter
+import com.toshi.view.fragment.newconversation.UserParticipantsFragment
 import com.toshi.viewModel.NewConversationViewModel
-import kotlinx.android.synthetic.main.activity_new_conversation.*
 
 class NewConversationActivity : AppCompatActivity() {
 
     private lateinit var viewModel: NewConversationViewModel
-    private lateinit var userAdapter: UserAdapter
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         init()
+        if (savedInstanceState == null) openFirstFragment()
     }
 
     private fun init() {
         initViewModel()
         initView()
-        initClickListeners()
-        initObservers()
     }
 
     private fun initViewModel() {
@@ -61,56 +48,21 @@ class NewConversationActivity : AppCompatActivity() {
 
     private fun initView() {
         setContentView(R.layout.activity_new_conversation)
-        newGroup.isVisible(BuildConfig.DEBUG)
-        initRecyclerView()
+    }
+    private fun openFirstFragment() {
+        supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.container, UserParticipantsFragment())
+                .commit()
     }
 
-    private fun initClickListeners() {
-        closeButton.setOnClickListener { handleCloseClicked(it) }
-        clearButton.setOnClickListener { search.text = null }
-        newGroup.setOnClickListener { startActivity<GroupParticipantsActivity>() }
-    }
-
-    private fun handleCloseClicked(v: View?) {
-        KeyboardUtil.hideKeyboard(v)
-        onBackPressed()
-    }
-
-    private fun initRecyclerView() {
-        userAdapter = UserAdapter().setOnItemClickListener(this::handleUserClicked)
-        searchResults.apply {
-            layoutManager = LinearLayoutManager(this.context)
-            itemAnimator = DefaultItemAnimator()
-            adapter = userAdapter
-            addHorizontalLineDivider()
-        }
-    }
-
-    private fun handleUserClicked(user: User) {
+    fun openConversation(user: User) {
         startActivityAndFinish<ChatActivity> {
             putExtra(ChatActivity.EXTRA__THREAD_ID, user.toshiId)
         }
     }
 
-    private fun initObservers() {
-        initSearch()
-        viewModel.searchResults.observe(this, Observer { searchResults ->
-            searchResults?.let { handleSearchResults(it) }
-        })
+    fun openNewGroupFlow() {
+        startActivity<GroupParticipantsActivity>()
     }
-
-    private fun initSearch() {
-        search.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable) = updateSearchUi(s.toString().isEmpty())
-            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) = viewModel.queryUpdated(s)
-        })
-    }
-
-    private fun updateSearchUi(isQueryEmpty: Boolean) {
-        clearButton.isVisible(isQueryEmpty)
-        if (isQueryEmpty) userAdapter.clear()
-    }
-
-    private fun handleSearchResults(searchResults: List<User>) = userAdapter.setUsers(searchResults)
 }

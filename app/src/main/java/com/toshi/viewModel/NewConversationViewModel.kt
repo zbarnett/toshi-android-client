@@ -18,58 +18,5 @@
 package com.toshi.viewModel
 
 import android.arch.lifecycle.ViewModel
-import com.toshi.model.local.User
-import com.toshi.util.LogUtil
-import com.toshi.util.SingleLiveEvent
-import com.toshi.view.BaseApplication
-import rx.Single
-import rx.android.schedulers.AndroidSchedulers
-import rx.subjects.PublishSubject
-import rx.subscriptions.CompositeSubscription
-import java.util.concurrent.TimeUnit
 
-class NewConversationViewModel : ViewModel() {
-
-    private val subscriptions by lazy { CompositeSubscription() }
-    private val querySubject by lazy { PublishSubject.create<String>() }
-
-    val searchResults by lazy { SingleLiveEvent<List<User>>() }
-
-    init {
-        subscribeForQueryChanges()
-    }
-
-    private fun subscribeForQueryChanges() {
-        subscriptions.add(
-            querySubject.debounce(500, TimeUnit.MILLISECONDS)
-                .filter { it.length > 1 }
-                .subscribe(
-                        { runSearchQuery(it) },
-                        { LogUtil.e(javaClass, "Error whilst listening to query changes $it") }
-                ))
-    }
-
-    fun queryUpdated(query: CharSequence) = querySubject.onNext(query.toString())
-
-    private fun runSearchQuery(query: String) {
-        val searchSub = searchOnlineUsers(query)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        { searchResults.value = it },
-                        { LogUtil.e(javaClass, "Error while search for user $it") }
-                )
-
-        this.subscriptions.add(searchSub)
-    }
-
-    private fun searchOnlineUsers(query: String): Single<List<User>> {
-        return BaseApplication
-                .get()
-                .recipientManager
-                .searchOnlineUsers(query)
-    }
-
-    override fun onCleared() {
-        this.subscriptions.clear()
-    }
-}
+class NewConversationViewModel : ViewModel()
