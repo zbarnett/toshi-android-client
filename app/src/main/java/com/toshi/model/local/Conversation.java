@@ -28,7 +28,7 @@ import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
-public class Conversation extends RealmObject {
+public class Conversation extends RealmObject implements ConversationItem {
 
     @PrimaryKey
     private String threadId;
