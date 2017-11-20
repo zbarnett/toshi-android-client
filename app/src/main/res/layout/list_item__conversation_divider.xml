@@ -15,22 +15,8 @@
   ~     You should have received a copy of the GNU General Public License
   ~     along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
-
-<resources>
-    <plurals name="ratings">
-        <item quantity="one">%d rating</item>
-        <item quantity="other">%d ratings</item>
-    </plurals>
-    <plurals name="participants">
-        <item quantity="one">%s Participant</item>
-        <item quantity="other">%s Participants</item>
-    </plurals>
-    <plurals name="words">
-        <item quantity="one">%d more word</item>
-        <item quantity="other">%d more words</item>
-    </plurals>
-    <plurals name="conversation_request">
-        <item quantity="one">A person wants to start a chat</item>
-        <item quantity="other">%d people want to start a chat</item>
-    </plurals>
-</resources>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="54dp"
+    style="@style/listSubTitleStyle"
+    android:text="@string/messages"/>

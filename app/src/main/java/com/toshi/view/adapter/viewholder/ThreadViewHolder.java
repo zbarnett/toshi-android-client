@@ -17,6 +17,7 @@
 
 package com.toshi.view.adapter.viewholder;
 
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -34,9 +35,7 @@ import java.util.Date;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
-public class ThreadViewHolder extends ClickableViewHolder {
-
-    private static final int MAX_NAME_LENGHT = 25;
+public class ThreadViewHolder extends RecyclerView.ViewHolder {
 
     private ImageView avatar;
     private TextView name;
@@ -46,11 +45,11 @@ public class ThreadViewHolder extends ClickableViewHolder {
 
     public ThreadViewHolder(final View view) {
         super(view);
-        this.name = (TextView) view.findViewById(R.id.name);
-        this.avatar = (ImageView) view.findViewById(R.id.avatar);
-        this.latestMessage = (TextView) view.findViewById(R.id.latest_message);
-        this.time = (TextView) view.findViewById(R.id.time);
-        this.unreadCounter = (TextView) view.findViewById(R.id.unread_counter);
+        this.name = view.findViewById(R.id.name);
+        this.avatar = view.findViewById(R.id.avatar);
+        this.latestMessage = view.findViewById(R.id.latest_message);
+        this.time = view.findViewById(R.id.time);
+        this.unreadCounter = view.findViewById(R.id.unread_counter);
     }
 
     public void setThread(final Conversation conversation) {
@@ -93,6 +92,10 @@ public class ThreadViewHolder extends ClickableViewHolder {
         } else {
             return new SimpleDateFormat("d MMM", LocaleUtil.getLocale()).format(new Date(creationTime));
         }
+    }
+
+    public void setOnItemClickListener(final Conversation conversation, final OnItemClickListener<Conversation> listener) {
+        this.itemView.setOnClickListener(__ -> listener.onItemClick(conversation));
     }
 
     public void setOnItemLongClickListener(final Conversation conversation, final OnItemClickListener<Conversation> listener) {

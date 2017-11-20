@@ -29,6 +29,9 @@ import android.widget.TextView;
 
 import com.toshi.R;
 import com.toshi.model.local.Conversation;
+import com.toshi.model.local.ConversationDividerItem;
+import com.toshi.model.local.ConversationItem;
+import com.toshi.model.local.ConversationRequestsItem;
 import com.toshi.model.local.User;
 import com.toshi.model.sofa.Message;
 import com.toshi.model.sofa.Payment;
@@ -39,72 +42,145 @@ import com.toshi.model.sofa.SofaType;
 import com.toshi.util.LogUtil;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.adapter.listeners.OnItemClickListener;
-import com.toshi.view.adapter.viewholder.ClickableViewHolder;
+import com.toshi.view.adapter.listeners.OnUpdateListener;
+import com.toshi.view.adapter.viewholder.ConversationDividerViewHolder;
+import com.toshi.view.adapter.viewholder.ConversationRequestsViewHolder;
 import com.toshi.view.adapter.viewholder.ThreadViewHolder;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RecentAdapter extends RecyclerView.Adapter<ThreadViewHolder> implements ClickableViewHolder.OnClickListener {
+import static com.toshi.model.local.ConversationItemType.CONVERSATION;
+import static com.toshi.model.local.ConversationItemType.DIVIDER;
+import static com.toshi.model.local.ConversationItemType.REQUESTS;
+
+public class RecentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+    private static final int REQUESTS_POSITION = 0;
+    private static final int DIVIDER_POSITION = 1;
+    private static final int FIRST_CONVERSATION_POSITION = 2;
 
     private final ArrayList<Conversation> conversationsToDelete;
-    private List<Conversation> conversations;
+    private final List<ConversationItem> conversations;
+    private final List<ConversationItem> unacceptedConversations;
+
     public OnItemClickListener<Conversation> onItemClickListener;
     public OnItemClickListener<Conversation> onItemLongClickListener;
+    public OnUpdateListener onRequestsClickListener;
 
     public RecentAdapter() {
         this.conversations = new ArrayList<>(0);
+        this.unacceptedConversations = new ArrayList<>(0);
         this.conversationsToDelete = new ArrayList<>();
     }
 
     @Override
-    public ThreadViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
-        final View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item__recent, parent, false);
-        return new ThreadViewHolder(itemView);
-    }
-
-    @Override
-    public void onBindViewHolder(final ThreadViewHolder holder, final int position) {
-        final Conversation conversation = this.conversations.get(position);
-        holder.setThread(conversation);
-
-        final String formattedLatestMessage = formatLastMessage(conversation.getLatestMessage());
-        holder.setLatestMessage(formattedLatestMessage);
-        holder.setOnClickListener(this);
-        holder.setOnItemLongClickListener(conversation, this.onItemLongClickListener);
-    }
-
-    @Override
-    public int getItemCount() {
-        return this.conversations.size();
-    }
-
-    @Override
-    public void onClick(final int position) {
-        if (this.onItemClickListener == null) {
-            return;
+    public int getItemViewType(final int position) {
+        if (this.unacceptedConversations.size() == 0) {
+            return CONVERSATION.getValue();
+        } else {
+            if (position == REQUESTS_POSITION) return REQUESTS.getValue();
+            else if (position == DIVIDER_POSITION) return DIVIDER.getValue();
+            else return CONVERSATION.getValue();
         }
+    }
 
-        final Conversation clickedConversation = conversations.get(position);
-        this.onItemClickListener.onItemClick(clickedConversation);
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
+        if (viewType == REQUESTS.getValue()) {
+            final View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item__conversation_requests, parent, false);
+            return new ConversationRequestsViewHolder(itemView);
+        } else if (viewType == DIVIDER.getValue()) {
+            final View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item__conversation_divider, parent, false);
+            return new ConversationDividerViewHolder(itemView);
+        } else {
+            final View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item__recent, parent, false);
+            return new ThreadViewHolder(itemView);
+        }
+    }
+
+    @Override
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
+        final ConversationItem conversationItem = this.conversations.get(position);
+        final int viewType = holder.getItemViewType();
+
+        if (viewType == REQUESTS.getValue()) {
+            final ConversationRequestsViewHolder viewHolder = (ConversationRequestsViewHolder) holder;
+            viewHolder.setNumberOfConversationRequests(this.unacceptedConversations.size())
+                    .setOnItemClickListener(this.onRequestsClickListener);
+        } else if (viewType == CONVERSATION.getValue()) {
+            final ThreadViewHolder viewHolder = (ThreadViewHolder) holder;
+            final Conversation conversation = (Conversation) conversationItem;
+            final String formattedLatestMessage = formatLastMessage(conversation.getLatestMessage());
+            viewHolder.setThread(conversation);
+            viewHolder.setLatestMessage(formattedLatestMessage);
+            viewHolder.setOnItemClickListener(conversation, this.onItemClickListener);
+            viewHolder.setOnItemLongClickListener(conversation, this.onItemLongClickListener);
+        }
     }
 
     public void setConversations(final List<Conversation> conversations) {
-        this.conversations = conversations;
+        if (conversations.isEmpty()) return;
+        this.conversations.clear();
+        this.conversations.addAll(conversations);
+        addRequestsViewAndDivider();
         notifyDataSetChanged();
     }
 
-    public void updateConversation(final Conversation conversation) {
+    public void setUnacceptedConversations(final List<Conversation> unacceptedConversations) {
+        if (unacceptedConversations.isEmpty()) {
+            removeRequestsViewAndDivider();
+            this.unacceptedConversations.clear();
+            return;
+        }
+        this.unacceptedConversations.clear();
+        this.unacceptedConversations.addAll(unacceptedConversations);
+        addRequestsViewAndDivider();
+        notifyDataSetChanged();
+    }
+
+    private void removeRequestsViewAndDivider() {
+        if (isConversationRequestsViewAdded()) {
+            conversations.remove(DIVIDER_POSITION);
+            conversations.remove(REQUESTS_POSITION);
+        }
+        notifyDataSetChanged();
+    }
+
+    public void updateAcceptedConversation(final Conversation conversation) {
         final int position = this.conversations.indexOf(conversation);
         if (position == -1) {
-            this.conversations.add(0, conversation);
-            notifyItemInserted(0);
+            final int firstPosition = isConversationRequestsViewAdded()
+                    ? FIRST_CONVERSATION_POSITION
+                    : 0;
+            this.conversations.add(firstPosition, conversation);
+            notifyItemInserted(firstPosition);
             return;
         }
 
         this.conversations.set(position, conversation);
         notifyItemChanged(position);
+    }
+
+    public void updateUnacceptedConversation(final Conversation conversation) {
+        if (this.unacceptedConversations.contains(conversation)) return;
+        this.unacceptedConversations.add(conversation);
+        addRequestsViewAndDivider();
+        notifyDataSetChanged();
+    }
+
+    private void addRequestsViewAndDivider() {
+        if (!this.unacceptedConversations.isEmpty() && !isConversationRequestsViewAdded()) {
+            this.conversations.add(REQUESTS_POSITION, new ConversationRequestsItem());
+            this.conversations.add(DIVIDER_POSITION, new ConversationDividerItem());
+        }
+    }
+
+    private boolean isConversationRequestsViewAdded() {
+        return this.conversations.size() >= FIRST_CONVERSATION_POSITION
+                && this.conversations.get(REQUESTS_POSITION) instanceof ConversationRequestsItem
+                && this.conversations.get(DIVIDER_POSITION) instanceof ConversationDividerItem;
     }
 
     public void removeItem(final Conversation conversation, final RecyclerView parentView) {
@@ -113,15 +189,17 @@ public class RecentAdapter extends RecyclerView.Adapter<ThreadViewHolder> implem
     }
 
     public void removeItemAtWithUndo(final int position, final RecyclerView parentView) {
-        final Conversation removedConversation = this.conversations.get(position);
-        final Snackbar snackbar = generateSnackbar(parentView);
-        snackbar.setAction(
-                R.string.undo,
-                handleUndoRemove(position, parentView, removedConversation)
-        ).show();
-        this.conversations.remove(position);
-        notifyItemRemoved(position);
-        conversationsToDelete.add(removedConversation);
+        if (this.conversations.get(position) instanceof Conversation) {
+            final Conversation removedConversation = (Conversation) this.conversations.get(position);
+            final Snackbar snackbar = generateSnackbar(parentView);
+            snackbar.setAction(
+                    R.string.undo,
+                    handleUndoRemove(position, parentView, removedConversation)
+            ).show();
+            this.conversations.remove(position);
+            notifyItemRemoved(position);
+            conversationsToDelete.add(removedConversation);
+        }
     }
 
     @NonNull
@@ -204,5 +282,14 @@ public class RecentAdapter extends RecyclerView.Adapter<ThreadViewHolder> implem
                             t -> LogUtil.e(getClass(), "Unable to delete conversation")
                     );
         }
+    }
+
+    public boolean isAcceptedConversationEmpty() {
+        return isConversationRequestsViewAdded() && this.conversations.size() == FIRST_CONVERSATION_POSITION;
+    }
+
+    @Override
+    public int getItemCount() {
+        return this.conversations.size();
     }
 }

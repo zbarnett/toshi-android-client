@@ -280,4 +280,6 @@
     <string name="unknown_address">Unknown Address</string>
     <string name="option_not_supported">This option is not supported</string>
     <string name="view_profile">View Profile</string>
+    <string name="messages">Messages</string>
+    <string name="message_requests">Message requests</string>
 </resources>
