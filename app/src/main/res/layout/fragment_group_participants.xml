@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ 	Copyright (c) 2017. Toshi Inc
+  ~
+  ~ 	This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        style="@style/Toolbar">
+
+        <ImageButton
+            android:id="@+id/closeButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="fitCenter"
+            android:tint="@color/textColorContrast"
+            app:srcCompat="@drawable/ic_arrow_back"
+            style="@style/closeButtonStyle"/>
+
+        <android.support.v4.widget.Space
+            android:layout_width="16dp"
+            android:layout_height="0dp" />
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Toolbar.TitleText"
+            android:text="@string/new_group"/>
+
+        <android.support.v4.widget.Space
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="0dp" />
+
+        <TextView
+            android:id="@+id/next"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:padding="@dimen/activity_horizontal_margin"
+            style="@style/TextStyleMedium"
+            android:visibility="gone"
+            tools:visibility="visible"
+            android:textColor="@color/textColorContrast"
+            android:textSize="14sp"
+            android:textAllCaps="true"
+            android:text="@string/next"/>
+
+    </LinearLayout>
+
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.design.widget.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/windowBackground"
+            app:elevation="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@color/input_bg"
+                app:layout_scrollFlags="scroll"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+                <EditText
+                    android:id="@+id/search"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="54dp"
+                    android:paddingLeft="@dimen/activity_horizontal_margin"
+                    android:paddingRight="@dimen/activity_horizontal_margin"
+                    android:background="@color/input_bg"
+                    android:singleLine="true"
+                    android:maxLines="1"
+                    android:imeOptions="actionDone"
+                    android:textSize="16sp"
+                    android:hint="@string/search_people"/>
+
+                <ImageButton
+                    android:id="@+id/clearButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/searchClearButton"
+                    app:srcCompat="@drawable/ic_clear"
+                    tools:visibility="visible" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="10dp"
+                app:layout_scrollFlags="scroll"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                android:background="@color/divider"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="18dp"
+                android:paddingBottom="18dp"
+                app:layout_scrollFlags="scroll"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textColor="@color/textColorSecondary"
+                    android:text="@string/to"/>
+
+                <android.support.v4.widget.Space
+                    android:layout_width="3dp"
+                    android:layout_height="0dp" />
+
+                <TextView
+                    android:id="@+id/participants"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:textSize="16sp"
+                    android:textColor="@color/colorPrimary"
+                    tools:text="Ola Nordmann"/>
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="10dp"
+                app:layout_scrollFlags="scroll"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                android:background="@color/divider"/>
+
+        </android.support.design.widget.AppBarLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/searchResults"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:clipToPadding="false"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+
+    </android.support.design.widget.CoordinatorLayout>
+</LinearLayout>

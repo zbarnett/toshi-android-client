@@ -19,11 +19,12 @@ package com.toshi.view.activity
 
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import com.toshi.R
-import com.toshi.extensions.startActivity
 import com.toshi.extensions.startActivityAndFinish
 import com.toshi.model.local.User
+import com.toshi.view.fragment.newconversation.GroupParticipantsFragment
 import com.toshi.view.fragment.newconversation.UserParticipantsFragment
 import com.toshi.viewModel.NewConversationViewModel
 
@@ -34,7 +35,7 @@ class NewConversationActivity : AppCompatActivity() {
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         init()
-        if (savedInstanceState == null) openFirstFragment()
+        if (savedInstanceState== null) openFragment(UserParticipantsFragment())
     }
 
     private fun init() {
@@ -46,13 +47,12 @@ class NewConversationActivity : AppCompatActivity() {
         viewModel = ViewModelProviders.of(this).get(NewConversationViewModel::class.java)
     }
 
-    private fun initView() {
-        setContentView(R.layout.activity_new_conversation)
-    }
-    private fun openFirstFragment() {
+    private fun initView() = setContentView(R.layout.activity_new_conversation)
+
+    private fun openFragment(fragment: Fragment) {
         supportFragmentManager
                 .beginTransaction()
-                .replace(R.id.container, UserParticipantsFragment())
+                .replace(R.id.container, fragment)
                 .commit()
     }
 
@@ -62,7 +62,9 @@ class NewConversationActivity : AppCompatActivity() {
         }
     }
 
-    fun openNewGroupFlow() {
-        startActivity<GroupParticipantsActivity>()
+    fun openNewGroupFlow() = openFragment(GroupParticipantsFragment())
+
+    fun openGroupSetupFlow(selectedParticipants: List<User>?) {
+        // ToDo
     }
 }
