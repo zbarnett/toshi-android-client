@@ -57,18 +57,14 @@
             android:layout_weight="1"
             android:layout_height="0dp" />
 
-        <TextView
+        <Button
             android:id="@+id/create"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center"
             android:padding="@dimen/activity_horizontal_margin"
-            style="@style/TextStyleMedium"
-            android:textColor="@color/textColorContrast"
-            android:textSize="14sp"
-            android:textAllCaps="true"
-            android:clickable="false"
-            android:alpha="@dimen/create_button_disabled"
+            style="@style/NavBarButton"
+            android:enabled="false"
             android:text="@string/create"/>
 
     </LinearLayout>
