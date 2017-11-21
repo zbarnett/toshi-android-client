@@ -340,6 +340,7 @@ public class ConversationStore {
             final Realm realm = BaseApplication.get().getRealm();
             realm.beginTransaction();
             final Conversation conversation = new Conversation(recipient);
+            conversation.getConversationStatus().setAccepted(true);
             realm.copyToRealmOrUpdate(conversation);
             realm.commitTransaction();
             realm.close();
