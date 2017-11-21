@@ -38,6 +38,7 @@ import com.toshi.view.activity.ChatActivity
 import com.toshi.view.activity.NewConversationActivity
 import com.toshi.view.adapter.RecentAdapter
 import com.toshi.view.adapter.listeners.OnItemClickListener
+import com.toshi.view.adapter.viewholder.ThreadViewHolder
 import com.toshi.view.custom.HorizontalLineDivider
 import com.toshi.view.fragment.DialogFragment.ConversationOptionsDialogFragment
 import com.toshi.viewModel.RecentViewModel
@@ -149,6 +150,11 @@ class RecentFragment : Fragment(), TopLevelFragment {
 
     private fun addSwipeToDeleteListener(recyclerView: RecyclerView) {
         val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+            override fun getSwipeDirs(recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder?): Int {
+                if (viewHolder !is ThreadViewHolder) return 0
+                return super.getSwipeDirs(recyclerView, viewHolder)
+            }
+
             override fun onMove(recyclerView1: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
                 return false
             }
