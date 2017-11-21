@@ -99,7 +99,6 @@
         <activity android:name="com.toshi.view.activity.CurrencyActivity" />
         <activity android:name="com.toshi.view.activity.LandingActivity"
                   android:theme="@style/DarkTheme"/>
-        <activity android:name="com.toshi.view.activity.GroupSetupActivity"/>
         <activity android:name="com.toshi.view.activity.BrowseMoreActivity"/>
         <activity android:name="com.toshi.view.activity.AdvancedSettingsActivity"/>
         <activity android:name="com.toshi.view.activity.BalanceActivity"/>

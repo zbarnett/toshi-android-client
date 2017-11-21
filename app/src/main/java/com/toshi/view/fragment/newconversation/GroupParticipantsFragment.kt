@@ -65,7 +65,7 @@ class GroupParticipantsFragment : Fragment() {
         next.setOnClickListener { handleNextClicked() }
     }
 
-    private fun handleNextClicked() = (this.activity as NewConversationActivity).openGroupSetupFlow(viewModel.selectedParticipants.value)
+    private fun handleNextClicked() = (this.activity as NewConversationActivity).openGroupSetupFlow(viewModel.selectedParticipants.value!!)
 
     private fun initRecyclerView() {
         userAdapter = UserAdapter().setOnItemClickListener(this::handleUserClicked)

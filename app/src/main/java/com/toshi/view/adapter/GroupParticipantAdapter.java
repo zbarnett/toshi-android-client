@@ -37,8 +37,8 @@ public final class GroupParticipantAdapter extends RecyclerView.Adapter<GroupPar
         this.users = new ArrayList<>();
     }
 
-    public GroupParticipantAdapter addUser(final User user) {
-        this.users.add(user);
+    public GroupParticipantAdapter addUsers(final List<User> users) {
+        this.users.addAll(users);
         notifyDataSetChanged();
         return this;
     }

@@ -40,6 +40,6 @@ inline fun <reified T> Fragment.startActivityAndFinish() {
     activity.finish()
 }
 
-fun Fragment.toast(@StringRes id: Int) = Toast.makeText(context, id, Toast.LENGTH_SHORT).show()
+fun Fragment.toast(@StringRes id: Int, duration: Int = Toast.LENGTH_SHORT) = Toast.makeText(context, id, duration).show()
 
 fun Fragment.getColor(@ColorRes id: Int) = ContextCompat.getColor(context, id)

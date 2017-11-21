@@ -46,6 +46,7 @@ public class Avatar {
     }
 
     private void init(final Bitmap avatar) throws FileNotFoundException, IllegalStateException {
+        if (avatar == null) throw new NullPointerException("avatar is null");
         this.attachmentStream = FileUtil.buildSignalServiceAttachment(avatar);
         if (!this.attachmentStream.isPointer()) return;
         final SignalServiceAttachmentPointer pointer = this.attachmentStream.asPointer();
