@@ -33,8 +33,10 @@ class RecentViewModel : ViewModel() {
 
     private val subscriptions by lazy { CompositeSubscription() }
 
-    val conversations by lazy { SingleLiveEvent<MutableList<Conversation>>() }
+    val acceptedConversations by lazy { SingleLiveEvent<MutableList<Conversation>>() }
+    val unacceptedConversations by lazy { SingleLiveEvent<MutableList<Conversation>>() }
     val updatedConversation by lazy { SingleLiveEvent<Conversation>() }
+    val updatedUnacceptedConversation by lazy { SingleLiveEvent<Conversation>() }
     val conversationInfo by lazy { SingleLiveEvent<ConversationInfo>() }
     val deleteConversation by lazy { SingleLiveEvent<Conversation>() }
 
@@ -47,20 +49,37 @@ class RecentViewModel : ViewModel() {
                 .registerForAllConversationChanges()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        { updatedConversation.value = it },
-                        { LogUtil.e(javaClass, "Error fetching conversations $it") }
+                        { handleUpdatedConversation(it) },
+                        { LogUtil.e(javaClass, "Error fetching acceptedConversations $it") }
                 )
 
         this.subscriptions.add(sub)
     }
 
-    fun getRecentConversations() {
+    private fun handleUpdatedConversation(conversation: Conversation) {
+        if (conversation.conversationStatus.isAccepted) updatedConversation.value = conversation
+        else updatedUnacceptedConversation.value = conversation
+    }
+
+    fun getAcceptedConversations() {
         val sub = getSofaMessageManager()
-                .loadAllConversations()
+                .loadAllAcceptedConversations()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        { conversations.value = it },
-                        { LogUtil.e(javaClass, "Error fetching conversations $it") }
+                        { acceptedConversations.value = it },
+                        { LogUtil.e(javaClass, "Error fetching acceptedConversations $it") }
+                )
+
+        this.subscriptions.add(sub)
+    }
+
+    fun getUnacceptedConversations() {
+        val sub = getSofaMessageManager()
+                .loadAllUnacceptedConversations()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        { unacceptedConversations.value = it },
+                        { LogUtil.e(javaClass, "Error fetching acceptedConversations $it") }
                 )
 
         this.subscriptions.add(sub)

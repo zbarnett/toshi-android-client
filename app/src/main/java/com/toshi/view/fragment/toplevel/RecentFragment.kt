@@ -31,6 +31,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.toshi.R
 import com.toshi.extensions.getPxSize
+import com.toshi.extensions.isVisible
 import com.toshi.extensions.startActivity
 import com.toshi.model.local.Conversation
 import com.toshi.model.local.ConversationInfo
@@ -38,6 +39,7 @@ import com.toshi.view.activity.ChatActivity
 import com.toshi.view.activity.NewConversationActivity
 import com.toshi.view.adapter.RecentAdapter
 import com.toshi.view.adapter.listeners.OnItemClickListener
+import com.toshi.view.adapter.listeners.OnUpdateListener
 import com.toshi.view.adapter.viewholder.ThreadViewHolder
 import com.toshi.view.custom.HorizontalLineDivider
 import com.toshi.view.fragment.DialogFragment.ConversationOptionsDialogFragment
@@ -63,14 +65,18 @@ class RecentFragment : Fragment(), TopLevelFragment {
 
     private fun init() {
         initViewModel()
-        initRecentAdapter()
-        getRecentConversations()
         initClickListeners()
+        initRecentAdapter()
         initObservers()
     }
 
     private fun initViewModel() {
         viewModel = ViewModelProviders.of(activity).get(RecentViewModel::class.java)
+    }
+
+    private fun initClickListeners() {
+        startChat.setOnClickListener { startActivity<NewConversationActivity>() }
+        add.setOnClickListener { startActivity<NewConversationActivity>() }
     }
 
     private fun initRecentAdapter() {
@@ -105,19 +111,18 @@ class RecentFragment : Fragment(), TopLevelFragment {
                 .setLeftPadding(dividerLeftPadding)
     }
 
-    private fun getRecentConversations() = viewModel.getRecentConversations()
-
-    private fun initClickListeners() {
-        startChat.setOnClickListener { startActivity<NewConversationActivity>() }
-        add.setOnClickListener { startActivity<NewConversationActivity>() }
-    }
-
     private fun initObservers() {
-        viewModel.conversations.observe(this, Observer {
-            conversation -> conversation?.let { handleConversations(it) }
+        viewModel.acceptedConversations.observe(this, Observer {
+            conversations -> conversations?.let { handleAcceptedConversations(it) }
+        })
+        viewModel.unacceptedConversations.observe(this, Observer {
+            conversations -> conversations?.let { handleUnacceptedConversations(it) }
         })
         viewModel.updatedConversation.observe(this, Observer {
-            conversation -> conversation?.let { handleConversation(it) }
+            conversation -> conversation?.let { handleAcceptedConversation(it) }
+        })
+        viewModel.updatedUnacceptedConversation.observe(this, Observer {
+            conversation -> conversation?.let { handleUnacceptedConversation(it) }
         })
         viewModel.conversationInfo.observe(this, Observer {
             conversationInfo -> conversationInfo?.let { showConversationOptionsDialog(it) }
@@ -127,13 +132,23 @@ class RecentFragment : Fragment(), TopLevelFragment {
         })
     }
 
-    private fun handleConversations(conversations: List<Conversation>) {
+    private fun handleAcceptedConversations(conversations: List<Conversation>) {
         recentAdapter.setConversations(conversations)
         updateEmptyState()
     }
 
-    private fun handleConversation(updatedConversation: Conversation) {
-        recentAdapter.updateConversation(updatedConversation)
+    private fun handleUnacceptedConversations(conversations: List<Conversation>) {
+        recentAdapter.setUnacceptedConversations(conversations)
+        updateEmptyState()
+    }
+
+    private fun handleAcceptedConversation(updatedConversation: Conversation) {
+        recentAdapter.updateAcceptedConversation(updatedConversation)
+        updateEmptyState()
+    }
+
+    private fun handleUnacceptedConversation(updatedConversation: Conversation) {
+        recentAdapter.updateUnacceptedConversation(updatedConversation)
         updateEmptyState()
     }
 
@@ -168,15 +183,26 @@ class RecentFragment : Fragment(), TopLevelFragment {
     }
 
     private fun updateEmptyState() {
-        val showingEmptyState = emptyStateSwitcher.currentView.id == emptyState.id
-        val shouldShowEmptyState = recentAdapter.itemCount == 0
+        val isAdapterEmpty = recentAdapter.itemCount == 0
+        val isAcceptedConversationsEmpty = recentAdapter.isAcceptedConversationEmpty
 
-        if (shouldShowEmptyState && !showingEmptyState) {
-            emptyStateSwitcher.showPrevious()
-        } else if (!shouldShowEmptyState && showingEmptyState) {
-            emptyStateSwitcher.showNext()
-        }
+        val params = recents.layoutParams
+        params.height = if (isAcceptedConversationsEmpty) ViewGroup.LayoutParams.WRAP_CONTENT else ViewGroup.LayoutParams.MATCH_PARENT
+        recents.layoutParams = params
+
+        recents.isVisible(!isAdapterEmpty)
+        emptyState.isVisible(isAcceptedConversationsEmpty || isAdapterEmpty)
     }
+
+    override fun onStart() {
+        super.onStart()
+        getAcceptedConversations()
+        getUnacceptedConversations()
+    }
+
+    private fun getAcceptedConversations() = viewModel.getAcceptedConversations()
+
+    private fun getUnacceptedConversations() = viewModel.getUnacceptedConversations()
 
     override fun onStop() {
         super.onStop()

@@ -144,8 +144,13 @@ public final class SofaMessageManager {
         }
     }
 
-    public final Single<List<Conversation>> loadAllConversations() {
-        return this.conversationStore.loadAll()
+    public final Single<List<Conversation>> loadAllAcceptedConversations() {
+        return this.conversationStore.loadAllAcceptedConversation()
+                .subscribeOn(Schedulers.io());
+    }
+
+    public final Single<List<Conversation>> loadAllUnacceptedConversations() {
+        return this.conversationStore.loadAllUnacceptedConversation()
                 .subscribeOn(Schedulers.io());
     }
 

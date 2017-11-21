@@ -219,11 +219,20 @@ public class ConversationStore {
         );
     }
 
-    public Single<List<Conversation>> loadAll() {
+    public Single<List<Conversation>> loadAllAcceptedConversation() {
+        return loadAllConversations(true);
+    }
+
+    public Single<List<Conversation>> loadAllUnacceptedConversation() {
+        return loadAllConversations(false);
+    }
+
+    private Single<List<Conversation>> loadAllConversations(final boolean isAccepted) {
         return Single.fromCallable(() -> {
             final Realm realm = BaseApplication.get().getRealm();
             final RealmQuery<Conversation> query =
                     realm.where(Conversation.class)
+                            .equalTo("conversationStatus.isAccepted", isAccepted)
                             .isNotEmpty("allMessages");
             final RealmResults<Conversation> results = query.findAllSorted("updatedTime", Sort.DESCENDING);
             final List<Conversation> allConversations = realm.copyFromRealm(results);
