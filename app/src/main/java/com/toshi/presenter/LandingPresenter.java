@@ -37,6 +37,7 @@ import com.toshi.view.activity.SignInActivity;
 
 import java.util.concurrent.TimeUnit;
 
+import rx.Single;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -120,8 +121,10 @@ public class LandingPresenter implements Presenter<LandingActivity> {
                 .getSofaMessageManager()
                 .registerForAllConversationChanges()
                 .filter(this::isOnboardingBot)
-                .first()
                 .timeout(10, TimeUnit.SECONDS)
+                .first()
+                .toSingle()
+                .flatMap(this::setConversationToAccepted)
                 .map(conversation -> conversation.getRecipient().getUser().getToshiId())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -135,6 +138,13 @@ public class LandingPresenter implements Presenter<LandingActivity> {
 
     private boolean isOnboardingBot(final Conversation conversation) {
         return conversation.getRecipient().getUser().getUsernameForEditing().equals(OnboardingManager.ONBOARDING_BOT_NAME);
+    }
+
+    private Single<Conversation> setConversationToAccepted(final Conversation conversation) {
+        return BaseApplication
+                .get()
+                .getSofaMessageManager()
+                .acceptConversation(conversation);
     }
 
     private void handleOnboardingSuccess(final String onboardingBotId) {
