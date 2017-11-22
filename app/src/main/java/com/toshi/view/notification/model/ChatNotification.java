@@ -22,18 +22,17 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.support.v4.app.TaskStackBuilder;
 
-import com.bumptech.glide.Glide;
 import com.toshi.R;
 import com.toshi.model.local.Recipient;
 import com.toshi.presenter.chat.DirectReplyService;
 import com.toshi.service.NotificationDismissedReceiver;
 import com.toshi.service.RejectPaymentRequestService;
+import com.toshi.util.ImageUtil;
 import com.toshi.util.PaymentType;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.activity.ChatActivity;
 import com.toshi.view.activity.MainActivity;
 import com.toshi.view.activity.SplashActivity;
-import com.toshi.view.custom.CropCircleTransformation;
 
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
@@ -178,31 +177,23 @@ public class ChatNotification extends ToshiNotification {
 
     public Completable generateLargeIcon() {
         if (this.largeIcon != null) return Completable.complete();
-        if (getAvatarUri() == null) return Completable.fromAction(this::setDefaultLargeIcon);
+        if (!hasAvatar()) return Completable.fromAction(this::setDefaultLargeIcon);
 
         return Completable.fromAction(() -> {
             try {
-                fetchUserAvatar();
+                fetchRecipientAvatar();
             } catch (InterruptedException | ExecutionException e) {
                 setDefaultLargeIcon();
             }
         });
     }
 
-    private void fetchUserAvatar() throws InterruptedException, ExecutionException {
-        this.largeIcon = Glide
-                        .with(BaseApplication.get())
-                        .load(getAvatarUri())
-                        .asBitmap()
-                        .transform(new CropCircleTransformation(BaseApplication.get()))
-                        .into(200, 200)
-                        .get();
+    private void fetchRecipientAvatar() throws InterruptedException, ExecutionException {
+        this.largeIcon = ImageUtil.loadNotificationIcon(this.sender);
     }
 
-    private String getAvatarUri() {
-        return this.sender == null
-                ? null
-                : this.sender.getAvatar();
+    private boolean hasAvatar() {
+        return this.sender != null && this.sender.hasAvatar();
     }
 
     public boolean isUnknownSender() {

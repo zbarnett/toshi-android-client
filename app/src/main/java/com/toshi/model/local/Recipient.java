@@ -17,6 +17,10 @@
 
 package com.toshi.model.local;
 
+import android.widget.ImageView;
+
+import com.toshi.util.ImageUtil;
+
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
@@ -60,8 +64,23 @@ public class Recipient extends RealmObject {
         return isGroup() ? this.group.getTitle() : this.user.getDisplayName();
     }
 
-    public String getAvatar() {
-        // Todo - support group avatar
-        return isGroup() ? null : this.user.getAvatar();
+    public void loadAvatarInto(final ImageView imageView) {
+        if (isGroup()) {
+            ImageUtil.load(getGroupAvatar(), imageView);
+        } else {
+            ImageUtil.load(getUserAvatar(), imageView);
+        }
+    }
+
+    public boolean hasAvatar() {
+        return isGroup() ? this.group.hasAvatar() : this.user.getAvatar() != null;
+    }
+
+    public Avatar getGroupAvatar() {
+        return this.group.getAvatar();
+    }
+
+    public String getUserAvatar() {
+        return this.user.getAvatar();
     }
 }

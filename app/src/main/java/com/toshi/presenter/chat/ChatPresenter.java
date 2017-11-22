@@ -55,7 +55,6 @@ import com.toshi.presenter.Presenter;
 import com.toshi.util.BuildTypes;
 import com.toshi.util.ChatNavigation;
 import com.toshi.util.FileUtil;
-import com.toshi.util.ImageUtil;
 import com.toshi.util.KeyboardUtil;
 import com.toshi.util.LogUtil;
 import com.toshi.util.OnSingleClickListener;
@@ -648,7 +647,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         this.activity.getBinding().title.setText(this.recipient.getDisplayName());
         this.activity.getBinding().closeButton.setOnClickListener(this::handleBackButtonClicked);
         this.activity.getBinding().avatar.setOnClickListener(__ -> viewRemoteUserProfile());
-        ImageUtil.load(this.recipient.getAvatar(), this.activity.getBinding().avatar);
+        this.recipient.loadAvatarInto(this.activity.getBinding().avatar);
     }
 
     private void handleBackButtonClicked(final View v) {

@@ -183,4 +183,8 @@ public class Group extends RealmObject {
         }
         return ids;
     }
+
+    /* package */ boolean hasAvatar() {
+        return this.avatar != null && this.avatar.getBytes() != null;
+    }
 }

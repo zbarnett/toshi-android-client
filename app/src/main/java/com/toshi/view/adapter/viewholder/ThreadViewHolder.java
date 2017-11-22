@@ -24,7 +24,6 @@ import android.widget.TextView;
 import com.toshi.R;
 import com.toshi.model.local.Conversation;
 import com.toshi.model.local.Recipient;
-import com.toshi.util.ImageUtil;
 import com.toshi.util.LocaleUtil;
 import com.toshi.view.adapter.listeners.OnItemClickListener;
 
@@ -64,7 +63,7 @@ public class ThreadViewHolder extends ClickableViewHolder {
         final int visibility = conversation.getNumberOfUnread() > 0 ? VISIBLE : GONE;
         this.unreadCounter.setVisibility(visibility);
 
-        ImageUtil.load(recipient.getAvatar(), this.avatar);
+        recipient.loadAvatarInto(this.avatar);
     }
 
     private String getNumberOfUnread(final Conversation conversation) {

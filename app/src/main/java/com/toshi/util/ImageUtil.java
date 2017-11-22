@@ -19,6 +19,7 @@ package com.toshi.util;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.support.annotation.Nullable;
@@ -38,7 +39,10 @@ import com.toshi.R;
 import com.toshi.exception.QrCodeException;
 import com.toshi.manager.network.image.CachedGlideUrl;
 import com.toshi.manager.network.image.ForceLoadGlideUrl;
+import com.toshi.model.local.Avatar;
+import com.toshi.model.local.Recipient;
 import com.toshi.view.BaseApplication;
+import com.toshi.view.custom.CropCircleTransformation;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -126,6 +130,19 @@ public class ImageUtil {
         }
     }
 
+    public static void load(final Avatar avatar, final ImageView imageView) {
+        if (avatar == null || avatar.getBytes() == null || imageView == null) return;
+
+        Single
+                .fromCallable(() -> BitmapFactory.decodeByteArray(avatar.getBytes(), 0, avatar.getBytes().length))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        imageView::setImageBitmap,
+                        throwable -> LogUtil.exception(ImageUtil.class, throwable)
+                );
+    }
+
     public static Single<Bitmap> loadAsBitmap(final Uri uri, final Context context) {
         return Single.fromCallable(() -> {
             if (uri == null || context == null) return null;
@@ -143,6 +160,16 @@ public class ImageUtil {
             return null;
         })
         .subscribeOn(Schedulers.io());
+    }
+
+    public static Bitmap loadNotificationIcon(final Recipient sender) throws ExecutionException, InterruptedException {
+        return Glide
+                .with(BaseApplication.get())
+                .load(sender.isGroup() ? sender.getGroupAvatar().getBytes() : sender.getUserAvatar())
+                .asBitmap()
+                .transform(new CropCircleTransformation(BaseApplication.get()))
+                .into(200, 200)
+                .get();
     }
 
     public static Single<Bitmap> generateQrCode(final String value) {
