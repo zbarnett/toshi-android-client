@@ -67,12 +67,14 @@ import com.toshi.view.activity.AttachmentConfirmationActivity;
 import com.toshi.view.activity.ChatActivity;
 import com.toshi.view.adapter.MessageAdapter;
 import com.toshi.view.custom.ChatInputView;
+import com.toshi.view.custom.ConversationRequestView;
 import com.toshi.view.custom.SpeedyLinearLayoutManager;
 import com.toshi.view.notification.ChatNotificationManager;
 
 import java.io.File;
 import java.io.IOException;
 
+import kotlin.Unit;
 import rx.Observable;
 import rx.Single;
 import rx.Subscription;
@@ -709,6 +711,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         updateEmptyState();
         tryClearMessageSubscriptions();
         initMessageObservables();
+        initConversationRequestView(conversation);
     }
 
     private void initConversation(final Conversation conversation) {
@@ -774,6 +777,62 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
                 this.newMessageSubscription,
                 this.updatedMessageSubscription
         );
+    }
+
+    private void initConversationRequestView(final Conversation conversation) {
+        final ConversationRequestView requestView = this.activity.getBinding().conversationRequestView;
+        if (!conversation.getConversationStatus().isAccepted()) {
+            requestView.setOnAcceptClickListener(this::acceptConversation);
+            requestView.setOnDeclineClickListener(this::declineConversation);
+            requestView.setVisibility(View.VISIBLE);
+        } else {
+            requestView.setVisibility(View.GONE);
+        }
+    }
+
+    private Unit acceptConversation() {
+        final Subscription sub =
+                BaseApplication
+                .get()
+                .getSofaMessageManager()
+                .acceptConversation(this.conversation)
+                .observeOn(AndroidSchedulers.mainThread())
+                .toCompletable()
+                .subscribe(
+                        this::hideConversationRequestView,
+                        throwable -> LogUtil.e(getClass(), "Error while accepting conversation " + throwable)
+                );
+
+        subscriptions.add(sub);
+        return null;
+    }
+
+    private Unit declineConversation() {
+        final Subscription sub =
+                BaseApplication
+                .get()
+                .getSofaMessageManager()
+                .rejectConversation(this.conversation)
+                .observeOn(AndroidSchedulers.mainThread())
+                .toCompletable()
+                .subscribe(
+                        this::hideConversationRequestViewAndFinish,
+                        throwable -> LogUtil.e(getClass(), "Error while accepting conversation " + throwable)
+                );
+
+        subscriptions.add(sub);
+        return null;
+    }
+
+    private void hideConversationRequestViewAndFinish() {
+        if (this.activity == null) return;
+        hideConversationRequestView();
+        this.activity.finish();
+    }
+
+    private void hideConversationRequestView() {
+        if (this.activity == null) return;
+        this.activity.getBinding().conversationRequestView.setVisibility(View.GONE);
     }
 
     private void tryClearMessageSubscriptions() {
