@@ -34,6 +34,7 @@ import com.toshi.R
 import com.toshi.extensions.addHorizontalLineDivider
 import com.toshi.extensions.toast
 import com.toshi.model.local.User
+import com.toshi.util.ImageUtil
 import com.toshi.util.LogUtil
 import com.toshi.view.activity.NewConversationActivity
 import com.toshi.view.adapter.GroupParticipantAdapter
@@ -47,6 +48,7 @@ class GroupSetupFragment : Fragment() {
     private lateinit var userAdapter: GroupParticipantAdapter
 
     var avatarUri: Uri? = null
+        set(value) { field = value; ImageUtil.renderFileIntoTarget(value, avatar) }
 
     fun setSelectedParticipants(selectedParticipants: List<User>): GroupSetupFragment {
         this.selectedParticipants = selectedParticipants
