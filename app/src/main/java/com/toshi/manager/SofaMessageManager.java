@@ -231,6 +231,20 @@ public final class SofaMessageManager {
                 .subscribeOn(Schedulers.io());
     }
 
+    public Single<Conversation> acceptConversation(final Conversation conversation) {
+        return this.conversationStore.acceptConversation(conversation)
+                .subscribeOn(Schedulers.io());
+    }
+
+    public Single<Conversation> rejectConversation(final Conversation conversation) {
+        return BaseApplication
+                .get()
+                .getRecipientManager()
+                .blockUser(conversation.getRecipient().getUser().getToshiId())
+                .andThen(deleteConversation(conversation))
+                .toSingle(() -> conversation);
+    }
+
     private Completable initEverything() {
         generateStores();
         initMessageReceiver();

@@ -35,4 +35,19 @@ class ConversationRequestViewHolder(itemView: View?) : RecyclerView.ViewHolder(i
         itemView.latestMessage.text = latestMessage
         return this
     }
+
+    fun setOnItemClickListener(conversation: Conversation, listener: (Conversation) -> Unit): ConversationRequestViewHolder {
+        this.itemView.setOnClickListener { listener(conversation) }
+        return this
+    }
+
+    fun setOnAcceptClickListener(conversation: Conversation, listener: (Conversation) -> Unit): ConversationRequestViewHolder {
+        this.itemView.accept.setOnClickListener { listener(conversation) }
+        return this
+    }
+
+    fun setOnRejectClickListener(conversation: Conversation, listener: (Conversation) -> Unit): ConversationRequestViewHolder {
+        this.itemView.reject.setOnClickListener { listener(conversation) }
+        return this
+    }
 }

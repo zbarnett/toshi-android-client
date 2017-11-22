@@ -24,6 +24,7 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import com.toshi.R
 import com.toshi.extensions.addHorizontalLineDivider
+import com.toshi.extensions.startActivity
 import com.toshi.model.local.Conversation
 import com.toshi.model.local.User
 import com.toshi.view.adapter.ConversationRequestAdapter
@@ -56,7 +57,11 @@ class ConversationRequestActivity : AppCompatActivity() {
     private fun initClickListeners() = closeButton.setOnClickListener { finish() }
 
     private fun initRecyclerView() {
-        requestsAdapter = ConversationRequestAdapter()
+        requestsAdapter = ConversationRequestAdapter(
+                onItemCLickListener = { startActivity<ChatActivity> { putExtra(ChatActivity.EXTRA__THREAD_ID, it.threadId) } },
+                onAcceptClickListener = { viewModel.acceptConversation(it) },
+                onRejectClickListener = { viewModel.rejectConversation(it) }
+        )
 
         requests.apply {
             layoutManager = LinearLayoutManager(context)
@@ -71,6 +76,12 @@ class ConversationRequestActivity : AppCompatActivity() {
         })
         viewModel.updatedConversation.observe(this, Observer {
             updatedConversation -> updatedConversation?.let { requestsAdapter.addConversation(it) }
+        })
+        viewModel.acceptConversation.observe(this, Observer {
+            acceptedConversation -> acceptedConversation?.let { requestsAdapter.remove(it) }
+        })
+        viewModel.rejectConversation.observe(this, Observer {
+            rejectedConversation -> rejectedConversation?.let { requestsAdapter.remove(it) }
         })
     }
 

@@ -32,6 +32,8 @@ inline fun <reified T> AppCompatActivity.startActivity() = startActivity(Intent(
 
 fun AppCompatActivity.toast(@StringRes id: Int, duration: Int = Toast.LENGTH_SHORT) = Toast.makeText(this, id, duration).show()
 
+inline fun <reified T> AppCompatActivity.startActivity(func: Intent.() -> Intent) = startActivity(Intent(this, T::class.java).func())
+
 inline fun <reified T> AppCompatActivity.startActivityAndFinish(func: Intent.() -> Intent) {
     startActivity(Intent(this, T::class.java).func())
     finish()

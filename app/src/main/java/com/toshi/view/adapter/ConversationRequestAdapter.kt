@@ -30,7 +30,11 @@ import com.toshi.util.LogUtil
 import com.toshi.view.adapter.viewholder.ConversationRequestViewHolder
 import java.io.IOException
 
-class ConversationRequestAdapter : RecyclerView.Adapter<ConversationRequestViewHolder>() {
+class ConversationRequestAdapter(
+        private val onItemCLickListener: (Conversation) -> Unit,
+        private val onAcceptClickListener: (Conversation) -> Unit,
+        private val onRejectClickListener: (Conversation) -> Unit
+) : RecyclerView.Adapter<ConversationRequestViewHolder>() {
 
     private val conversations = mutableListOf<Conversation>()
     lateinit var localUser: User
@@ -53,6 +57,12 @@ class ConversationRequestAdapter : RecyclerView.Adapter<ConversationRequestViewH
         notifyItemChanged(index)
     }
 
+    fun remove(conversation: Conversation) {
+        val index = conversations.indexOf(conversation)
+        conversations.remove(conversation)
+        notifyItemRemoved(index)
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ConversationRequestViewHolder {
         val layoutInflater = LayoutInflater.from(parent?.context)
         return ConversationRequestViewHolder(layoutInflater.inflate(R.layout.list_item__conversation_request, parent, false))
@@ -64,6 +74,9 @@ class ConversationRequestAdapter : RecyclerView.Adapter<ConversationRequestViewH
         holder
                 ?.setConversation(conversation)
                 ?.setLatestMessage(formattedLatestMessage)
+                ?.setOnItemClickListener(conversation, onItemCLickListener)
+                ?.setOnAcceptClickListener(conversation, onAcceptClickListener)
+                ?.setOnRejectClickListener(conversation, onRejectClickListener)
     }
 
     private fun formatLastMessage(sofaMessage: SofaMessage): String {

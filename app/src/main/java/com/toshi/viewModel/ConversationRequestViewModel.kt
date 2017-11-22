@@ -34,6 +34,8 @@ class ConversationRequestViewModel : ViewModel() {
 
     val conversationsAndLocalUser by lazy { SingleLiveEvent<Pair<List<Conversation>, User>>() }
     val updatedConversation by lazy { SingleLiveEvent<Conversation>() }
+    val acceptConversation by lazy { SingleLiveEvent<Conversation>() }
+    val rejectConversation by lazy { SingleLiveEvent<Conversation>() }
 
     init {
         attachSubscriber()
@@ -64,6 +66,30 @@ class ConversationRequestViewModel : ViewModel() {
                 .subscribe(
                         { conversationsAndLocalUser.value = it },
                         { LogUtil.e(javaClass, "Error fetching conversations $it") }
+                )
+
+        subscriptions.add(sub)
+    }
+
+    fun acceptConversation(conversation: Conversation) {
+        val sub = getSofaMessageManager()
+                .acceptConversation(conversation)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        { acceptConversation.value = it },
+                        { LogUtil.e(javaClass, "Error while accepting conversation $it") }
+                )
+
+        subscriptions.add(sub)
+    }
+
+    fun rejectConversation(conversation: Conversation) {
+        val sub = getSofaMessageManager()
+                .rejectConversation(conversation)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        { rejectConversation.value = it },
+                        { LogUtil.e(javaClass, "Error while accepting conversation $it") }
                 )
 
         subscriptions.add(sub)
