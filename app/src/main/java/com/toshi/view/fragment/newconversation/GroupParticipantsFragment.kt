@@ -60,7 +60,7 @@ class GroupParticipantsFragment : Fragment() {
     }
 
     private fun initClickListeners() {
-        closeButton.setOnClickListener { this.activity.finish() }
+        closeButton.setOnClickListener { this.activity.onBackPressed() }
         clearButton.setOnClickListener { search.text = null }
         next.setOnClickListener { handleNextClicked() }
     }

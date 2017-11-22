@@ -78,7 +78,7 @@ class GroupSetupFragment : Fragment() {
 
     private fun initClickListeners() {
         create.setOnClickListener { viewModel.createGroup(selectedParticipants, avatarUri, groupName.text.toString()) }
-        closeButton.setOnClickListener { activity.finish() }
+        closeButton.setOnClickListener { this.activity.onBackPressed() }
         avatar.setOnClickListener { (this.activity as NewConversationActivity).showImageChooserDialog() }
     }
 

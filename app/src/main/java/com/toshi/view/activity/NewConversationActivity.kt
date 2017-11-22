@@ -76,9 +76,17 @@ class NewConversationActivity : AppCompatActivity() {
         supportFragmentManager
                 .beginTransaction()
                 .replace(R.id.container, fragment, fragment::class.java.canonicalName)
+                .addToBackStack(fragment::class.java.canonicalName)
                 .commit()
     }
 
+    override fun onBackPressed() {
+        if (supportFragmentManager.backStackEntryCount == 1) {
+            finish()
+        } else {
+            supportFragmentManager.popBackStackImmediate()
+        }
+    }
     fun openConversation(user: User) {
         startActivityAndFinish<ChatActivity> {
             putExtra(ChatActivity.EXTRA__THREAD_ID, user.toshiId)
