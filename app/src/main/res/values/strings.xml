@@ -282,4 +282,6 @@
     <string name="view_profile">View Profile</string>
     <string name="messages">Messages</string>
     <string name="message_requests">Message requests</string>
+    <string name="accept">Accept</string>
+    <string name="decline">Decline</string>
 </resources>
