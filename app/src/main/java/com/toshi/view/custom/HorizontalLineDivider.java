@@ -29,8 +29,7 @@ public class HorizontalLineDivider extends RecyclerView.ItemDecoration {
     private int leftPadding = 0;
     private int rightPadding = 0;
     private int dividerHeight = 6;
-    private boolean isTopDivider = false;
-    private boolean skipFirst = false;
+    private int startPosition = 0;
 
     public HorizontalLineDivider(final int color) {
         this.paint = new Paint();
@@ -47,39 +46,26 @@ public class HorizontalLineDivider extends RecyclerView.ItemDecoration {
         return this;
     }
 
-    public HorizontalLineDivider setIsTopDivider(final boolean isTopDivider) {
-        this.isTopDivider = isTopDivider;
-        return this;
-    }
-
     public HorizontalLineDivider setDividerHeight(final int dividerHeight) {
         this.dividerHeight = dividerHeight;
         return this;
     }
 
-    public HorizontalLineDivider setSkipFirst(final boolean skipFirst) {
-        this.skipFirst = skipFirst;
+    public HorizontalLineDivider setStartPosition(final int startPosition) {
+        this.startPosition = startPosition;
         return this;
     }
 
     @Override
-    public void onDraw(final Canvas canvas,
-                       final RecyclerView parent,
-                       final RecyclerView.State state) {
-
+    public void onDraw(final Canvas canvas, final RecyclerView parent, final RecyclerView.State state) {
         final int dividerLeft = parent.getPaddingLeft() + this.leftPadding;
         final int dividerRight = parent.getWidth() - parent.getPaddingRight() - this.rightPadding;
-        final int childCount = parent.getChildCount();
 
-        for (int i = this.skipFirst ? 1 : 0; i < childCount - (this.isTopDivider ? 0 : 1); i++) {
+        for (int i = this.startPosition; i < parent.getChildCount() - 1; i++) {
             final View child = parent.getChildAt(i);
             final RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) child.getLayoutParams();
-
-            final int dividerTop = this.isTopDivider
-                    ? child.getTop() - params.topMargin
-                    : child.getBottom() + params.bottomMargin - (this.dividerHeight / 2);
+            final int dividerTop = child.getBottom() + params.bottomMargin - (this.dividerHeight / 2);
             final int dividerBottom = dividerTop + (this.dividerHeight / 2);
-
             canvas.drawRect(dividerLeft, dividerTop, dividerRight, dividerBottom, paint);
         }
     }

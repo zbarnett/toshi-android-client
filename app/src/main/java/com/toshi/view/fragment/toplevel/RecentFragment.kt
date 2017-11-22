@@ -21,7 +21,6 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v4.content.ContextCompat
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -30,8 +29,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.toshi.R
-import com.toshi.extensions.addHorizontalLineDivider
-import com.toshi.extensions.getPxSize
 import com.toshi.extensions.isVisible
 import com.toshi.extensions.startActivity
 import com.toshi.model.local.Conversation
@@ -43,7 +40,6 @@ import com.toshi.view.adapter.RecentAdapter
 import com.toshi.view.adapter.listeners.OnItemClickListener
 import com.toshi.view.adapter.listeners.OnUpdateListener
 import com.toshi.view.adapter.viewholder.ThreadViewHolder
-import com.toshi.view.custom.HorizontalLineDivider
 import com.toshi.view.fragment.DialogFragment.ConversationOptionsDialogFragment
 import com.toshi.viewModel.RecentViewModel
 import kotlinx.android.synthetic.main.fragment_recent.*
@@ -52,6 +48,8 @@ class RecentFragment : Fragment(), TopLevelFragment {
 
     companion object {
         private const val TAG = "RecentFragment"
+        private const val NO_MESSAGE_REQUESTS_START_POSITION = 0
+        private const val MESSAGE_REQUESTS_START_POSITION = 2
     }
 
     override fun getFragmentTag() = TAG
@@ -99,7 +97,6 @@ class RecentFragment : Fragment(), TopLevelFragment {
             layoutManager = LinearLayoutManager(context)
             itemAnimator = DefaultItemAnimator()
             adapter = recentAdapter
-            addHorizontalLineDivider()
         }
 
         addSwipeToDeleteListener(recents)
@@ -187,24 +184,10 @@ class RecentFragment : Fragment(), TopLevelFragment {
     }
 
     private fun updateDividers() {
-        if (!recentAdapter.isUnacceptedConversationsEmpty) {
-            recents.removeItemDecoration(recents.getItemDecorationAt(RecentAdapter.REQUESTS_POSITION))
-            recents.removeItemDecoration(recents.getItemDecorationAt(RecentAdapter.DIVIDER_POSITION))
-        } else {
-            val divider = createRecycleViewDivider()
-            recents.addItemDecoration(divider, RecentAdapter.REQUESTS_POSITION)
-            recents.addItemDecoration(divider, RecentAdapter.DIVIDER_POSITION)
-        }
-    }
-
-    private fun createRecycleViewDivider(): HorizontalLineDivider {
-        val dividerLeftPadding = getPxSize(R.dimen.avatar_size_small)
-        + getPxSize(R.dimen.activity_horizontal_margin)
-        + getPxSize(R.dimen.list_item_avatar_margin)
-        val dividerRightPadding = getPxSize(R.dimen.activity_horizontal_margin)
-        return HorizontalLineDivider(ContextCompat.getColor(context, R.color.divider))
-                .setRightPadding(dividerRightPadding)
-                .setLeftPadding(dividerLeftPadding)
+        val dividerStartPosition =
+                if (recentAdapter.isUnacceptedConversationsEmpty) NO_MESSAGE_REQUESTS_START_POSITION
+                else MESSAGE_REQUESTS_START_POSITION
+        recents.setDividerStartPosition(dividerStartPosition)
     }
 
     override fun onStart() {
