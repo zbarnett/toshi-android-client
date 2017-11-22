@@ -27,7 +27,6 @@ import rx.Single
 import rx.android.schedulers.AndroidSchedulers
 import rx.subjects.PublishSubject
 import rx.subscriptions.CompositeSubscription
-import java.util.*
 import java.util.concurrent.TimeUnit
 
 class GroupParticipantsViewModel : ViewModel() {
@@ -45,20 +44,19 @@ class GroupParticipantsViewModel : ViewModel() {
 
     private fun subscribeForQueryChanges() {
         val startSearchSub = querySubject.debounce(500, TimeUnit.MILLISECONDS)
-                .filter {query -> query.length >= 3}
+                .filter { query -> query.length >= 3 }
                 .subscribe(
                         { runSearchQuery(it) },
                         { LogUtil.e(javaClass, "Error while listening for query changes $it") }
                 )
 
-        val clearSub = querySubject.filter {query -> query.length < 3}
+        val clearSub = querySubject.filter { query -> query.length < 3 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { searchResults.value = emptyList() },
                         { LogUtil.e(javaClass, "Error while listening for query changes $it") }
                 )
-        this.subscriptions.add(startSearchSub)
-        this.subscriptions.add(clearSub)
+        this.subscriptions.addAll(startSearchSub, clearSub)
     }
 
     fun queryUpdated(query: CharSequence) = querySubject.onNext(query.toString())

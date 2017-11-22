@@ -41,13 +41,12 @@ class UserParticipantsViewModel : ViewModel() {
 
     private fun subscribeForQueryChanges() {
         val sub = querySubject.debounce(500, TimeUnit.MILLISECONDS)
-                .filter {query -> query.length > 1}
+                .filter { query -> query.length > 1 }
                 .subscribe(
                         { runSearchQuery(it) },
                         { LogUtil.e(javaClass, "Error while listening for query changes $it") }
                 )
         this.subscriptions.add(sub)
-
     }
 
     fun queryUpdated(query: CharSequence) = querySubject.onNext(query.toString())

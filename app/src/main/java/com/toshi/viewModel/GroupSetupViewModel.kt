@@ -37,7 +37,6 @@ class GroupSetupViewModel : ViewModel() {
     val conversationCreated by lazy { SingleLiveEvent<Conversation>() }
     val error by lazy { SingleLiveEvent<Throwable>() }
 
-
     fun createGroup(participants: List<User>,
                     avatarUri: Uri?,
                     groupName: String) {

@@ -39,7 +39,6 @@ import com.toshi.view.adapter.UserAdapter
 import com.toshi.viewModel.UserParticipantsViewModel
 import kotlinx.android.synthetic.main.fragment_user_participants.*
 
-
 class UserParticipantsFragment : Fragment() {
 
     private lateinit var viewModel: UserParticipantsViewModel
@@ -102,8 +101,8 @@ class UserParticipantsFragment : Fragment() {
     private fun initSearch() {
         search.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable) = updateSearchUi(s.toString().isEmpty())
-            override fun beforeTextChanged(s:CharSequence, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s:CharSequence, start: Int, before: Int, count: Int) = viewModel.queryUpdated(s)
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) = viewModel.queryUpdated(s)
         })
     }
 

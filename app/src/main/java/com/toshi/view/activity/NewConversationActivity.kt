@@ -58,7 +58,7 @@ class NewConversationActivity : AppCompatActivity() {
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         init()
-        if (savedInstanceState== null) openFragment(UserParticipantsFragment())
+        if (savedInstanceState == null) openFragment(UserParticipantsFragment())
     }
 
     private fun init() {
