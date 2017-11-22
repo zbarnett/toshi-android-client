@@ -18,7 +18,7 @@ import com.toshi.view.fragment.toplevel.TopLevelFragment
 import com.toshi.viewModel.MainViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity: AppCompatActivity() {
+class MainActivity : AppCompatActivity() {
 
     companion object {
         const val EXTRA__ACTIVE_TAB = "active_tab"

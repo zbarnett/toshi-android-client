@@ -8,6 +8,18 @@ Getting Started
 3. Open this code in Android Studio (Choosing the containing directory in Android Studio `Open` dialog works)
 4. Click the `Play` button (`[Ctrl]` + `[Alt]` + `R`)
 
+Running the linter
+==================
+
+[ktlint](https://github.com/shyiko/ktlint/) is used to check the format of the Kotlin code. It requires that wildcard imports are disabled in Android Studio.
+
+To disable wildcard imports:
+
+- Go to `Preferences... -> Editor -> Code Style -> Kotlin`
+- open `Imports` tab, select all `Use single name import` options and remove `import java.util.*` from `Packages to Use Import with '*'`.
+
+The linter an be run via gradle task `check` or `ktlint`
+
 Adding a dependency
 ===================
 

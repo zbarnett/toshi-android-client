@@ -7,7 +7,7 @@ import com.toshi.view.BaseApplication
 import rx.android.schedulers.AndroidSchedulers
 import rx.subscriptions.CompositeSubscription
 
-class MainViewModel: ViewModel() {
+class MainViewModel : ViewModel() {
 
     private val subscriptions by lazy { CompositeSubscription() }
     val unreadMessages by lazy { MutableLiveData<Boolean>() }

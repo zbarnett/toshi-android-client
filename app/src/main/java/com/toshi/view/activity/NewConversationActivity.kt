@@ -65,7 +65,6 @@ class NewConversationActivity : AppCompatActivity() {
         initRecyclerView()
     }
 
-
     private fun initClickListeners() {
         closeButton.setOnClickListener { handleCloseClicked(it) }
         clearButton.setOnClickListener { search.text = null }
@@ -101,10 +100,10 @@ class NewConversationActivity : AppCompatActivity() {
     }
 
     private fun initSearch() {
-        search.addTextChangedListener(object : TextWatcher  {
+        search.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable) = updateSearchUi(s.toString().isEmpty())
-            override fun beforeTextChanged(s:CharSequence, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s:CharSequence, start: Int, before: Int, count: Int) = viewModel.queryUpdated(s)
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) = viewModel.queryUpdated(s)
         })
     }
 

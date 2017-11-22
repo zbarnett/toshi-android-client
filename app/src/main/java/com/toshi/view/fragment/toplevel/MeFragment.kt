@@ -27,19 +27,30 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.toshi.R
-import com.toshi.extensions.*
+import com.toshi.extensions.addHorizontalLineDivider
+import com.toshi.extensions.getPxSize
+import com.toshi.extensions.startActivity
+import com.toshi.extensions.startActivityAndFinish
+import com.toshi.extensions.toast
 import com.toshi.model.local.User
 import com.toshi.model.network.Balance
 import com.toshi.util.ImageUtil
 import com.toshi.util.SharedPrefsUtil
-import com.toshi.view.activity.*
+import com.toshi.view.activity.AdvancedSettingsActivity
+import com.toshi.view.activity.BackupPhraseInfoActivity
+import com.toshi.view.activity.BalanceActivity
+import com.toshi.view.activity.CurrencyActivity
+import com.toshi.view.activity.QrCodeActivity
+import com.toshi.view.activity.SignOutActivity
+import com.toshi.view.activity.TrustedFriendsActivity
+import com.toshi.view.activity.ViewProfileActivity
 import com.toshi.view.adapter.MeAdapter
 import com.toshi.view.adapter.listeners.OnItemClickListener
 import com.toshi.viewModel.MeViewModel
 import kotlinx.android.synthetic.main.fragment_me.*
 import java.math.BigInteger
 
-class MeFragment: Fragment(), TopLevelFragment {
+class MeFragment : Fragment(), TopLevelFragment {
 
     companion object {
         private const val TAG = "MeFragment"
@@ -84,7 +95,7 @@ class MeFragment: Fragment(), TopLevelFragment {
 
     private fun initRecyclerView() {
         val meAdapter = MeAdapter()
-                .apply { onItemClickListener = OnItemClickListener { handleItemClickListener(it) }}
+                .apply { onItemClickListener = OnItemClickListener { handleItemClickListener(it) } }
 
         settings.apply {
             layoutManager = LinearLayoutManager(context)

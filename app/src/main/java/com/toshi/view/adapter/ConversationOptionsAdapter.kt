@@ -25,9 +25,8 @@ import com.toshi.view.adapter.viewholder.ConversationOptionsViewHolder
 
 class ConversationOptionsAdapter(
         private val options: List<String>,
-        private val listener: (String) -> Unit):
+        private val listener: (String) -> Unit) :
         RecyclerView.Adapter<ConversationOptionsViewHolder>() {
-
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ConversationOptionsViewHolder {
         val layoutInflater = LayoutInflater.from(parent?.context)
@@ -41,5 +40,4 @@ class ConversationOptionsAdapter(
     }
 
     override fun getItemCount() = options.size
-
 }

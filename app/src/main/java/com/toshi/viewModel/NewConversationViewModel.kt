@@ -42,7 +42,7 @@ class NewConversationViewModel : ViewModel() {
     private fun subscribeForQueryChanges() {
         subscriptions.add(
             querySubject.debounce(500, TimeUnit.MILLISECONDS)
-                .filter {it.length > 1}
+                .filter { it.length > 1 }
                 .subscribe(
                         { runSearchQuery(it) },
                         { LogUtil.e(javaClass, "Error whilst listening to query changes $it") }

@@ -36,7 +36,7 @@ fun RecyclerView.addHorizontalLineDivider(
         rightPadding: Int = getPxSize(R.dimen.activity_horizontal_margin),
         color: Int = getColorById(R.color.divider)
 ) {
-    val divider =  HorizontalLineDivider(color)
+    val divider = HorizontalLineDivider(color)
             .setRightPadding(rightPadding)
             .setLeftPadding(leftPadding)
     addItemDecoration(divider)

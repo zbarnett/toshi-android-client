@@ -38,7 +38,10 @@ import com.toshi.model.local.ToshiEntity
 import com.toshi.model.local.User
 import com.toshi.model.network.App
 import com.toshi.util.BrowseType
-import com.toshi.util.BrowseType.*
+import com.toshi.util.BrowseType.VIEW_TYPE_LATEST_APPS
+import com.toshi.util.BrowseType.VIEW_TYPE_LATEST_PUBLIC_USERS
+import com.toshi.util.BrowseType.VIEW_TYPE_TOP_RATED_APPS
+import com.toshi.util.BrowseType.VIEW_TYPE_TOP_RATED_PUBLIC_USERS
 import com.toshi.util.LogUtil
 import com.toshi.view.activity.BrowseMoreActivity
 import com.toshi.view.activity.ViewUserActivity
@@ -52,7 +55,7 @@ import rx.android.schedulers.AndroidSchedulers
 import rx.subscriptions.CompositeSubscription
 import java.util.concurrent.TimeUnit
 
-class BrowseFragment: Fragment(), TopLevelFragment {
+class BrowseFragment : Fragment(), TopLevelFragment {
 
     companion object {
         private const val TAG = "BrowseFragment"
@@ -96,7 +99,7 @@ class BrowseFragment: Fragment(), TopLevelFragment {
         inState?.let {
             topRatedAppsScrollPosition = it.getInt(TOP_RATED_APPS_SCROLL_POSITION, 0)
             featuredAppsScrollPosition = it.getInt(FEATURED_APPS_SCROLL_POSITION, 0)
-            topRatedUsersScrollPosition = it.getInt(TOP_RATED_USERS_SCROLL_POSITION,0)
+            topRatedUsersScrollPosition = it.getInt(TOP_RATED_USERS_SCROLL_POSITION, 0)
             latestUsersScrollPosition = it.getInt(LATEST_USERS_SCROLL_POSITION, 0)
         }
     }
@@ -154,7 +157,7 @@ class BrowseFragment: Fragment(), TopLevelFragment {
     }
 
     private fun initTopRatedPublicUsersRecyclerView() {
-        val recyclerView  = initRecyclerView(
+        val recyclerView = initRecyclerView(
                 topRatedPublicUsers,
                 HorizontalAdapter<User>(5),
                 OnItemClickListener { startProfileActivity(it.toshiId) }
@@ -175,9 +178,9 @@ class BrowseFragment: Fragment(), TopLevelFragment {
         putExtra(ViewUserActivity.EXTRA__USER_ADDRESS, toshiId)
     }
 
-    private fun <T: ToshiEntity> initRecyclerView(recyclerView: RecyclerView,
-                                                  adapter: HorizontalAdapter<T>,
-                                                  onItemClickListener: OnItemClickListener<T>): RecyclerView {
+    private fun <T : ToshiEntity> initRecyclerView(recyclerView: RecyclerView,
+                                                   adapter: HorizontalAdapter<T>,
+                                                   onItemClickListener: OnItemClickListener<T>): RecyclerView {
         recyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         adapter.setOnItemClickListener(onItemClickListener)
         recyclerView.adapter = adapter

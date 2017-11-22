@@ -19,7 +19,6 @@ package com.toshi.model.local
 
 import com.toshi.model.sofa.SofaMessage
 
-
 data class IncomingMessage(
         val sofaMessage: SofaMessage,
         val recipient: Recipient

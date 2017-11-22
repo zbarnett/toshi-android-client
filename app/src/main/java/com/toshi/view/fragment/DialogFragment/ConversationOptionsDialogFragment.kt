@@ -30,7 +30,7 @@ import com.toshi.model.local.ConversationInfo
 import com.toshi.view.adapter.ConversationOptionsAdapter
 import kotlinx.android.synthetic.main.fragment_conversation_options.*
 
-class ConversationOptionsDialogFragment: DialogFragment() {
+class ConversationOptionsDialogFragment : DialogFragment() {
 
     companion object {
         const val TAG = "ConversationOptionsDialogFragment"

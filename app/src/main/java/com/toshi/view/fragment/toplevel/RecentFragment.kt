@@ -43,7 +43,7 @@ import com.toshi.view.fragment.DialogFragment.ConversationOptionsDialogFragment
 import com.toshi.viewModel.RecentViewModel
 import kotlinx.android.synthetic.main.fragment_recent.*
 
-class RecentFragment: Fragment(), TopLevelFragment {
+class RecentFragment : Fragment(), TopLevelFragment {
 
     companion object {
         private const val TAG = "RecentFragment"

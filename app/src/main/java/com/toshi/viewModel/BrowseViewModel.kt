@@ -27,9 +27,8 @@ import com.toshi.util.SingleLiveEvent
 import com.toshi.view.BaseApplication
 import rx.android.schedulers.AndroidSchedulers
 import rx.subscriptions.CompositeSubscription
-import java.util.*
 
-class BrowseViewModel: ViewModel() {
+class BrowseViewModel : ViewModel() {
 
     private val subscriptions by lazy { CompositeSubscription() }
 

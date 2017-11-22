@@ -111,6 +111,10 @@ android {
     }
 }
 
+configurations {
+    ktlint
+}
+
 def supportLibVersion = '26.1.0'
 def retrofitVersion = '2.3.0'
 def archVersion = '1.0.0'
@@ -161,6 +165,7 @@ dependencies {
     )
 
     kapt 'com.android.databinding:compiler:2.3.1'
+    ktlint "com.github.shyiko:ktlint:0.12.1"
 
     compile('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
         transitive = true;
@@ -266,6 +271,21 @@ dependencyVerification {
             'com.google.android.gms:play-services-tasks-license:c7d1faa9af7c460ab7829f6c08770391ed8cff4bd16c15cc2e0c1999a5952b1a',
             'com.google.firebase:firebase-analytics-impl-license:eea62c319d999225e82bb41c622f761075940cc864401cd8d7bfac9e17b49ff1',
     ]
+}
+
+task ktlint(type: JavaExec, group: "verification") {
+    description = "Check Kotlin code style."
+    main = "com.github.shyiko.ktlint.Main"
+    classpath = configurations.ktlint
+    args "src/**/*.kt"
+}
+check.dependsOn ktlint
+
+task ktlintFormat(type: JavaExec, group: "formatting") {
+    description = "Fix Kotlin code style deviations."
+    main = "com.github.shyiko.ktlint.Main"
+    classpath = configurations.ktlint
+    args "-F", "src/**/*.kt"
 }
 
 apply plugin: 'com.google.gms.google-services'

@@ -26,15 +26,26 @@ import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import com.toshi.R
-import com.toshi.extensions.*
+import com.toshi.extensions.getColorById
+import com.toshi.extensions.getDrawableById
+import com.toshi.extensions.isVisible
+import com.toshi.extensions.startActivityAndFinish
+import com.toshi.extensions.startActivityForResult
+import com.toshi.extensions.toast
 import com.toshi.model.local.User
 import com.toshi.model.network.ReputationScore
 import com.toshi.presenter.AmountPresenter
-import com.toshi.util.*
+import com.toshi.util.ImageUtil
+import com.toshi.util.LogUtil
+import com.toshi.util.PaymentType
+import com.toshi.util.RatingHandler
+import com.toshi.util.SoundManager
+import com.toshi.util.UserBlockingHandler
+import com.toshi.util.UserReportingHandler
 import com.toshi.viewModel.ViewUserViewModel
 import kotlinx.android.synthetic.main.activity_view_user.*
 
-class ViewUserActivity: AppCompatActivity() {
+class ViewUserActivity : AppCompatActivity() {
 
     companion object {
         const val EXTRA__USER_ADDRESS = "extra_user_address"
@@ -198,7 +209,7 @@ class ViewUserActivity: AppCompatActivity() {
         val username = getUsernameFromIntent()
         when {
             userAddress != null -> viewModel.getUserById(userAddress)
-            username != null ->  viewModel.tryLookupByUsername(username)
+            username != null -> viewModel.tryLookupByUsername(username)
             else -> handleUserLoadingFailed()
         }
     }

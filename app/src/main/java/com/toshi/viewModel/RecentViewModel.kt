@@ -29,7 +29,7 @@ import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import rx.subscriptions.CompositeSubscription
 
-class RecentViewModel: ViewModel() {
+class RecentViewModel : ViewModel() {
 
     private val subscriptions by lazy { CompositeSubscription() }
 

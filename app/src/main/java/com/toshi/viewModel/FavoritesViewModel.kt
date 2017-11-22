@@ -25,7 +25,7 @@ import com.toshi.view.BaseApplication
 import rx.android.schedulers.AndroidSchedulers
 import rx.subscriptions.CompositeSubscription
 
-class FavoritesViewModel: ViewModel() {
+class FavoritesViewModel : ViewModel() {
 
     private val subscriptions by lazy { CompositeSubscription() }
 

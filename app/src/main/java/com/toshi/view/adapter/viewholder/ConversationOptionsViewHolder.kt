@@ -21,7 +21,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.widget.TextView
 
-class ConversationOptionsViewHolder(view: View): RecyclerView.ViewHolder(view) {
+class ConversationOptionsViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     fun setOption(option: String): ConversationOptionsViewHolder {
         val optionView = itemView as TextView
         optionView.text = option

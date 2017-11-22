@@ -24,7 +24,12 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import com.toshi.R
 import com.toshi.extensions.addHorizontalLineDivider
 import com.toshi.extensions.isVisible
@@ -40,7 +45,7 @@ import com.toshi.view.adapter.listeners.OnItemClickListener
 import com.toshi.viewModel.FavoritesViewModel
 import kotlinx.android.synthetic.main.fragment_favorites.*
 
-class FavoritesFragment: Fragment(), TopLevelFragment {
+class FavoritesFragment : Fragment(), TopLevelFragment {
 
     companion object {
         private const val TAG = "FavoritesFragment"

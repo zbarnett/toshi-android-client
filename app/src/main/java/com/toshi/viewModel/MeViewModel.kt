@@ -28,7 +28,7 @@ import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import rx.subscriptions.CompositeSubscription
 
-class MeViewModel: ViewModel() {
+class MeViewModel : ViewModel() {
 
     private val subscriptions by lazy { CompositeSubscription() }
 
@@ -71,7 +71,7 @@ class MeViewModel: ViewModel() {
         this.subscriptions.add(sub)
     }
 
-    private fun getFormattedBalance(balance: Balance){
+    private fun getFormattedBalance(balance: Balance) {
         val sub = balance
                 .formattedLocalBalance
                 .observeOn(AndroidSchedulers.mainThread())
