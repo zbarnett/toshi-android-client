@@ -33,8 +33,7 @@ class RecentViewModel : ViewModel() {
 
     private val subscriptions by lazy { CompositeSubscription() }
 
-    val acceptedConversations by lazy { SingleLiveEvent<MutableList<Conversation>>() }
-    val unacceptedConversations by lazy { SingleLiveEvent<MutableList<Conversation>>() }
+    val acceptedAndUnacceptedConversations by lazy { SingleLiveEvent<Pair<List<Conversation>, List<Conversation>>>() }
     val updatedConversation by lazy { SingleLiveEvent<Conversation>() }
     val updatedUnacceptedConversation by lazy { SingleLiveEvent<Conversation>() }
     val conversationInfo by lazy { SingleLiveEvent<ConversationInfo>() }
@@ -61,25 +60,16 @@ class RecentViewModel : ViewModel() {
         else updatedUnacceptedConversation.value = conversation
     }
 
-    fun getAcceptedConversations() {
-        val sub = getSofaMessageManager()
-                .loadAllAcceptedConversations()
-                .observeOn(AndroidSchedulers.mainThread())
+    fun getAcceptedAndUnAcceptedConversations() {
+        val sub = Single.zip(
+                getSofaMessageManager().loadAllAcceptedConversations(),
+                getSofaMessageManager().loadAllUnacceptedConversations(),
+                { t1, t2 -> Pair(t1, t2) }
+        )
+        .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        { acceptedConversations.value = it },
-                        { LogUtil.e(javaClass, "Error fetching acceptedConversations $it") }
-                )
-
-        this.subscriptions.add(sub)
-    }
-
-    fun getUnacceptedConversations() {
-        val sub = getSofaMessageManager()
-                .loadAllUnacceptedConversations()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        { unacceptedConversations.value = it },
-                        { LogUtil.e(javaClass, "Error fetching acceptedConversations $it") }
+                        { acceptedAndUnacceptedConversations.value = it },
+                        { LogUtil.e(javaClass, "Error fetching conversations $it") }
                 )
 
         this.subscriptions.add(sub)

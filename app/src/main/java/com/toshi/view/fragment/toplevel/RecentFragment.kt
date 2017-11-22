@@ -30,6 +30,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.toshi.R
+import com.toshi.extensions.addHorizontalLineDivider
 import com.toshi.extensions.getPxSize
 import com.toshi.extensions.isVisible
 import com.toshi.extensions.startActivity
@@ -39,7 +40,6 @@ import com.toshi.view.activity.ChatActivity
 import com.toshi.view.activity.NewConversationActivity
 import com.toshi.view.adapter.RecentAdapter
 import com.toshi.view.adapter.listeners.OnItemClickListener
-import com.toshi.view.adapter.listeners.OnUpdateListener
 import com.toshi.view.adapter.viewholder.ThreadViewHolder
 import com.toshi.view.custom.HorizontalLineDivider
 import com.toshi.view.fragment.DialogFragment.ConversationOptionsDialogFragment
@@ -94,29 +94,15 @@ class RecentFragment : Fragment(), TopLevelFragment {
             layoutManager = LinearLayoutManager(context)
             itemAnimator = DefaultItemAnimator()
             adapter = recentAdapter
+            addHorizontalLineDivider()
         }
 
-        val divider = createRecycleViewDivider()
-        recents.addItemDecoration(divider)
         addSwipeToDeleteListener(recents)
     }
 
-    private fun createRecycleViewDivider(): HorizontalLineDivider {
-        val dividerLeftPadding = getPxSize(R.dimen.avatar_size_small)
-        + getPxSize(R.dimen.activity_horizontal_margin)
-        + getPxSize(R.dimen.list_item_avatar_margin)
-        val dividerRightPadding = getPxSize(R.dimen.activity_horizontal_margin)
-        return HorizontalLineDivider(ContextCompat.getColor(context, R.color.divider))
-                .setRightPadding(dividerRightPadding)
-                .setLeftPadding(dividerLeftPadding)
-    }
-
     private fun initObservers() {
-        viewModel.acceptedConversations.observe(this, Observer {
-            conversations -> conversations?.let { handleAcceptedConversations(it) }
-        })
-        viewModel.unacceptedConversations.observe(this, Observer {
-            conversations -> conversations?.let { handleUnacceptedConversations(it) }
+        viewModel.acceptedAndUnacceptedConversations.observe(this, Observer {
+            conversations -> conversations?.let { handleConversations(it.first, it.second) }
         })
         viewModel.updatedConversation.observe(this, Observer {
             conversation -> conversation?.let { handleAcceptedConversation(it) }
@@ -132,35 +118,31 @@ class RecentFragment : Fragment(), TopLevelFragment {
         })
     }
 
-    private fun handleAcceptedConversations(conversations: List<Conversation>) {
-        recentAdapter.setConversations(conversations)
-        updateEmptyState()
-    }
-
-    private fun handleUnacceptedConversations(conversations: List<Conversation>) {
-        recentAdapter.setUnacceptedConversations(conversations)
-        updateEmptyState()
+    private fun handleConversations(acceptedConversations: List<Conversation>, unacceptedConversation: List<Conversation>) {
+        recentAdapter.setUnacceptedConversations(unacceptedConversation)
+        recentAdapter.setConversations(acceptedConversations)
+        updateViewState()
     }
 
     private fun handleAcceptedConversation(updatedConversation: Conversation) {
         recentAdapter.updateAcceptedConversation(updatedConversation)
-        updateEmptyState()
+        updateViewState()
     }
 
     private fun handleUnacceptedConversation(updatedConversation: Conversation) {
         recentAdapter.updateUnacceptedConversation(updatedConversation)
-        updateEmptyState()
+        updateViewState()
     }
 
     private fun showConversationOptionsDialog(conversationInfo: ConversationInfo) {
         ConversationOptionsDialogFragment.newInstance(conversationInfo)
-                .setItemClickListener({ viewModel.handleSelectedOption(conversationInfo.conversation, it) })
+                .setItemClickListener { viewModel.handleSelectedOption(conversationInfo.conversation, it) }
                 .show(fragmentManager, ConversationOptionsDialogFragment.TAG)
     }
 
     private fun removeItemAtWithUndo(conversation: Conversation) {
         recentAdapter.removeItem(conversation, recents)
-        updateEmptyState()
+        updateViewState()
     }
 
     private fun addSwipeToDeleteListener(recyclerView: RecyclerView) {
@@ -182,9 +164,14 @@ class RecentFragment : Fragment(), TopLevelFragment {
         itemTouchHelper.attachToRecyclerView(recyclerView)
     }
 
+    private fun updateViewState() {
+        updateEmptyState()
+        updateDividers()
+    }
+
     private fun updateEmptyState() {
         val isAdapterEmpty = recentAdapter.itemCount == 0
-        val isAcceptedConversationsEmpty = recentAdapter.isAcceptedConversationEmpty
+        val isAcceptedConversationsEmpty = recentAdapter.isAcceptedConversationsEmpty
 
         val params = recents.layoutParams
         params.height = if (isAcceptedConversationsEmpty) ViewGroup.LayoutParams.WRAP_CONTENT else ViewGroup.LayoutParams.MATCH_PARENT
@@ -194,15 +181,33 @@ class RecentFragment : Fragment(), TopLevelFragment {
         emptyState.isVisible(isAcceptedConversationsEmpty || isAdapterEmpty)
     }
 
-    override fun onStart() {
-        super.onStart()
-        getAcceptedConversations()
-        getUnacceptedConversations()
+    private fun updateDividers() {
+        if (!recentAdapter.isUnacceptedConversationsEmpty) {
+            recents.removeItemDecoration(recents.getItemDecorationAt(RecentAdapter.REQUESTS_POSITION))
+            recents.removeItemDecoration(recents.getItemDecorationAt(RecentAdapter.DIVIDER_POSITION))
+        } else {
+            val divider = createRecycleViewDivider()
+            recents.addItemDecoration(divider, RecentAdapter.REQUESTS_POSITION)
+            recents.addItemDecoration(divider, RecentAdapter.DIVIDER_POSITION)
+        }
     }
 
-    private fun getAcceptedConversations() = viewModel.getAcceptedConversations()
+    private fun createRecycleViewDivider(): HorizontalLineDivider {
+        val dividerLeftPadding = getPxSize(R.dimen.avatar_size_small)
+        + getPxSize(R.dimen.activity_horizontal_margin)
+        + getPxSize(R.dimen.list_item_avatar_margin)
+        val dividerRightPadding = getPxSize(R.dimen.activity_horizontal_margin)
+        return HorizontalLineDivider(ContextCompat.getColor(context, R.color.divider))
+                .setRightPadding(dividerRightPadding)
+                .setLeftPadding(dividerLeftPadding)
+    }
 
-    private fun getUnacceptedConversations() = viewModel.getUnacceptedConversations()
+    override fun onStart() {
+        super.onStart()
+        getAcceptedAndUnacceptedConversations()
+    }
+
+    private fun getAcceptedAndUnacceptedConversations() = viewModel.getAcceptedAndUnAcceptedConversations()
 
     override fun onStop() {
         super.onStop()

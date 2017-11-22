@@ -57,8 +57,8 @@ import static com.toshi.model.local.ConversationItemType.REQUESTS;
 
 public class RecentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private static final int REQUESTS_POSITION = 0;
-    private static final int DIVIDER_POSITION = 1;
+    public static final int REQUESTS_POSITION = 0;
+    public static final int DIVIDER_POSITION = 1;
     private static final int FIRST_CONVERSATION_POSITION = 2;
 
     private final ArrayList<Conversation> conversationsToDelete;
@@ -284,8 +284,12 @@ public class RecentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         }
     }
 
-    public boolean isAcceptedConversationEmpty() {
+    public boolean isAcceptedConversationsEmpty() {
         return isConversationRequestsViewAdded() && this.conversations.size() == FIRST_CONVERSATION_POSITION;
+    }
+
+    public boolean isUnacceptedConversationsEmpty() {
+        return this.unacceptedConversations.isEmpty();
     }
 
     @Override
