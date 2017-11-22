@@ -63,7 +63,7 @@ public class RecentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     private final ArrayList<Conversation> conversationsToDelete;
     private final List<ConversationItem> conversations;
-    private final List<ConversationItem> unacceptedConversations;
+    private final List<Conversation> unacceptedConversations;
 
     public OnItemClickListener<Conversation> onItemClickListener;
     public OnItemClickListener<Conversation> onItemLongClickListener;
@@ -108,7 +108,8 @@ public class RecentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         if (viewType == REQUESTS.getValue()) {
             final ConversationRequestsViewHolder viewHolder = (ConversationRequestsViewHolder) holder;
             viewHolder.setNumberOfConversationRequests(this.unacceptedConversations.size())
-                    .setOnItemClickListener(this.onRequestsClickListener);
+                    .setOnItemClickListener(this.onRequestsClickListener)
+                    .loadAvatar(this.unacceptedConversations);
         } else if (viewType == CONVERSATION.getValue()) {
             final ThreadViewHolder viewHolder = (ThreadViewHolder) holder;
             final Conversation conversation = (Conversation) conversationItem;

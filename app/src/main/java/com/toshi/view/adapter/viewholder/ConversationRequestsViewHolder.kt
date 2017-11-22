@@ -20,6 +20,7 @@ package com.toshi.view.adapter.viewholder
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import com.toshi.R
+import com.toshi.model.local.Conversation
 import com.toshi.view.adapter.listeners.OnUpdateListener
 import kotlinx.android.synthetic.main.list_item__conversation_requests.view.*
 
@@ -28,6 +29,12 @@ class ConversationRequestsViewHolder(itemView: View?) : RecyclerView.ViewHolder(
         val numberOfRequestsText = itemView.resources.getQuantityString(R.plurals.conversation_request, numberOfRequests, numberOfRequests)
         itemView.numberOfRequests.text = numberOfRequestsText
         return this
+    }
+
+    fun loadAvatar(conversations: List<Conversation>) {
+        val lastTwoElements = conversations.takeLast(2)
+                .map { it.recipient.avatar }
+        itemView.avatar.loadAvatars(lastTwoElements)
     }
 
     fun setOnItemClickListener(onItemClickListener: OnUpdateListener): ConversationRequestsViewHolder {
