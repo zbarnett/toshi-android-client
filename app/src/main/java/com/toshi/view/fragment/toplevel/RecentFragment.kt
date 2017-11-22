@@ -37,9 +37,11 @@ import com.toshi.extensions.startActivity
 import com.toshi.model.local.Conversation
 import com.toshi.model.local.ConversationInfo
 import com.toshi.view.activity.ChatActivity
+import com.toshi.view.activity.ConversationRequestActivity
 import com.toshi.view.activity.NewConversationActivity
 import com.toshi.view.adapter.RecentAdapter
 import com.toshi.view.adapter.listeners.OnItemClickListener
+import com.toshi.view.adapter.listeners.OnUpdateListener
 import com.toshi.view.adapter.viewholder.ThreadViewHolder
 import com.toshi.view.custom.HorizontalLineDivider
 import com.toshi.view.fragment.DialogFragment.ConversationOptionsDialogFragment
@@ -87,6 +89,9 @@ class RecentFragment : Fragment(), TopLevelFragment {
                     }
                     onItemLongClickListener = OnItemClickListener {
                         viewModel.showConversationOptionsDialog(it.threadId)
+                    }
+                    onRequestsClickListener = OnUpdateListener {
+                        startActivity<ConversationRequestActivity>()
                     }
                 }
 
