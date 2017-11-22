@@ -88,7 +88,7 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
     private void initWebSettings() {
         final WebSettings webSettings = this.activity.getBinding().webview.getSettings();
         webSettings.setJavaScriptEnabled(true);
-        webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+        webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);
         webSettings.setBuiltInZoomControls(true);
         webSettings.setDisplayZoomControls(false);
         webSettings.setUseWideViewPort(false);
