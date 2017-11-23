@@ -216,6 +216,7 @@
     <string name="unsupported_currency_message">Unsupported currency</string>
     <string name="unsupported_format">That address is invalid</string>
     <string name="new_group">New Group</string>
+    <string name="group_info">Group Info</string>
     <string name="next">Next</string>
     <string name="create">Create</string>
     <string name="group_name">Group name</string>

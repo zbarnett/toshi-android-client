@@ -72,6 +72,7 @@
         </activity>
 
         <activity android:name="com.toshi.view.activity.ViewUserActivity" />
+        <activity android:name="com.toshi.view.activity.GroupInfoActivity" />
         <activity android:name="com.toshi.view.activity.ViewProfileActivity" />
         <activity android:name="com.toshi.view.activity.EditProfileActivity" />
         <activity android:name="com.toshi.view.activity.NewConversationActivity" />

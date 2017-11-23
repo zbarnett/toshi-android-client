@@ -29,6 +29,7 @@ import com.toshi.view.BaseApplication;
 import com.toshi.view.activity.AmountActivity;
 import com.toshi.view.activity.AttachmentConfirmationActivity;
 import com.toshi.view.activity.FullscreenImageActivity;
+import com.toshi.view.activity.GroupInfoActivity;
 import com.toshi.view.activity.ViewUserActivity;
 import com.toshi.view.activity.WebViewActivity;
 
@@ -111,9 +112,9 @@ public class ChatNavigation {
     }
 
     public void startProfileActivityWithId(final AppCompatActivity activity,
-                                           final String ownerAddress) {
+                                           final String userId) {
         final Intent intent = new Intent(activity, ViewUserActivity.class)
-                .putExtra(ViewUserActivity.EXTRA__USER_ADDRESS, ownerAddress);
+                .putExtra(ViewUserActivity.EXTRA__USER_ADDRESS, userId);
         activity.startActivity(intent);
     }
 
@@ -121,6 +122,13 @@ public class ChatNavigation {
                                                  final String username) {
         final Intent intent = new Intent(activity, ViewUserActivity.class)
                 .putExtra(ViewUserActivity.EXTRA__USER_NAME, username);
+        activity.startActivity(intent);
+    }
+
+    public void startGroupInfoActivityWithId(final AppCompatActivity activity,
+                                             final String groupId) {
+        final Intent intent = new Intent(activity, GroupInfoActivity.class)
+                .putExtra(GroupInfoActivity.EXTRA__GROUP_ID, groupId);
         activity.startActivity(intent);
     }
 

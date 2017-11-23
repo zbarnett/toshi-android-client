@@ -643,7 +643,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     private void initToolbar() {
         this.activity.getBinding().title.setText(this.recipient.getDisplayName());
         this.activity.getBinding().closeButton.setOnClickListener(this::handleBackButtonClicked);
-        this.activity.getBinding().avatar.setOnClickListener(__ -> viewRemoteUserProfile());
+        this.activity.getBinding().avatar.setOnClickListener(__ -> viewRecipientProfile());
         this.recipient.loadAvatarInto(this.activity.getBinding().avatar);
     }
 
@@ -652,8 +652,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         this.activity.onBackPressed();
     }
 
-    private void viewRemoteUserProfile() {
-        // Todo -- handle groups?
+    private void viewRecipientProfile() {
         final Subscription sub =
                 getRecipient()
                 .subscribeOn(Schedulers.io())
@@ -670,8 +669,9 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         this.chatNavigation.startProfileActivityWithUsername(this.activity, username);
     }
 
-    private void viewProfileWithId(final String userId) {
-        this.chatNavigation.startProfileActivityWithId(this.activity, userId);
+    private void viewProfileWithId(final String threadId) {
+        if (StringUtils.isGroupId(threadId)) this.chatNavigation.startGroupInfoActivityWithId(this.activity, threadId);
+        else this.chatNavigation.startProfileActivityWithId(this.activity, threadId);
     }
 
     private void initChatMessageStore() {
