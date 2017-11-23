@@ -18,5 +18,33 @@
 package com.toshi.viewModel
 
 import android.arch.lifecycle.ViewModel
+import com.toshi.model.local.Group
+import com.toshi.util.SingleLiveEvent
+import com.toshi.view.BaseApplication
+import rx.android.schedulers.AndroidSchedulers
+import rx.subscriptions.CompositeSubscription
 
-class GroupInfoViewModel : ViewModel()
+class GroupInfoViewModel : ViewModel() {
+
+    private val subscriptions by lazy { CompositeSubscription() }
+
+    val group by lazy { SingleLiveEvent<Group>() }
+    val error by lazy { SingleLiveEvent<Throwable>() }
+
+    fun fetchGroup(groupId: String) {
+        val subscription = BaseApplication.get()
+                .recipientManager
+                .getGroupFromId(groupId)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        { group.value = it },
+                        { error.value = it }
+                )
+        this.subscriptions.add(subscription)
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        this.subscriptions.clear()
+    }
+}

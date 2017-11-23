@@ -106,6 +106,7 @@
     <string name="local_amount">Send %1$s</string>
     <string name="rate">Rate</string>
     <string name="error_unknown_user">Unable to find user at this address</string>
+    <string name="error_unknown_group">Unable to show group info</string>
     <string name="latest_message__payment_outgoing">You paid %1$s</string>
     <string name="latest_message__payment_incoming">Received %1$s</string>
     <string name="latest_message__request_failed">Payment request failed</string>

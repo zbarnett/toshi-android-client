@@ -86,17 +86,16 @@
                     android:layout_width="12sp"
                     android:layout_height="0dp" />
 
-                <EditText
+                <TextView
                     android:id="@+id/groupName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@color/textColorPrimary"
                     android:textColorHint="@color/textColorSecondary"
                     android:textSize="16sp"
-                    android:background="@null"
                     android:singleLine="true"
                     android:maxLength="100"
-                    android:hint="@string/group_name"/>
+                    tools:text="@string/group_name"/>
 
             </LinearLayout>
 

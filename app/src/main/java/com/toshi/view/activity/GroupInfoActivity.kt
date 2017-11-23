@@ -17,11 +17,17 @@
 
 package com.toshi.view.activity
 
+import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.widget.Toast
 import com.toshi.R
+import com.toshi.extensions.toast
+import com.toshi.model.local.Group
+import com.toshi.util.LogUtil
 import com.toshi.viewModel.GroupInfoViewModel
+import kotlinx.android.synthetic.main.activity_group_info.groupName
 
 
 class GroupInfoActivity : AppCompatActivity() {
@@ -40,6 +46,7 @@ class GroupInfoActivity : AppCompatActivity() {
     private fun init() {
         initViewModel()
         processIntentData()
+        initObservers()
     }
 
     private fun initViewModel() {
@@ -48,7 +55,23 @@ class GroupInfoActivity : AppCompatActivity() {
 
     private fun processIntentData() {
         val groupId = getGroupIdFromIntent()
+        groupId?.let { this.viewModel.fetchGroup(groupId) }
     }
 
     private fun getGroupIdFromIntent(): String? = intent.getStringExtra(EXTRA__GROUP_ID)
+
+    private fun initObservers() {
+        viewModel.group.observe(this, Observer {
+            it?.let { updateView(it) }
+        })
+        viewModel.error.observe(this, Observer {
+            LogUtil.exception(this::class.java, it)
+            toast(R.string.error_unknown_group, Toast.LENGTH_LONG)
+            finish()
+        })
+    }
+
+    private fun updateView(group: Group) {
+        groupName.text = group.title
+    }
 }
