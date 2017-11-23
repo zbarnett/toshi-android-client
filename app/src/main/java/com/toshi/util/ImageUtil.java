@@ -143,7 +143,6 @@ public class ImageUtil {
             return null;
         })
         .subscribeOn(Schedulers.io());
-
     }
 
     public static Single<Bitmap> generateQrCode(final String value) {
@@ -182,7 +181,8 @@ public class ImageUtil {
         return supportedImageTypes.contains(fileExtension);
     }
 
-    public static @Nullable byte[] toByteArray(@Nullable Bitmap bitmap, final Bitmap.CompressFormat format) {
+    public static @Nullable byte[] toByteArray(@Nullable Bitmap bitmap) {
+        final Bitmap.CompressFormat format = Bitmap.CompressFormat.PNG;
         if (bitmap == null) return null;
         final ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmap.compress(format, 100, stream);

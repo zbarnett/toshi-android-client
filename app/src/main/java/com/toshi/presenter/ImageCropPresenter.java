@@ -113,7 +113,7 @@ public class ImageCropPresenter implements Presenter<ImageCropActivity> {
     }
 
     private void cropImage() {
-        final File destFile = new FileUtil().createImageFileWithRandomName();
+        final File destFile = FileUtil.createImageFileWithRandomName();
         final Uri imageUri = Uri.fromFile(destFile);
         final CropIwaSaveConfig cropConfig =
                 new CropIwaSaveConfig
@@ -149,10 +149,9 @@ public class ImageCropPresenter implements Presenter<ImageCropActivity> {
     }
 
     private void createNewFileAndUploadAvatar(final Uri uri) {
-        final FileUtil fileUtil = new FileUtil();
         final Subscription sub =
-                fileUtil.saveFileFromUri(this.activity, uri)
-                .flatMap(file -> fileUtil.compressImage(FileUtil.MAX_SIZE, file))
+                FileUtil.saveFileFromUri(this.activity, uri)
+                .flatMap(file -> FileUtil.compressImage(FileUtil.MAX_SIZE, file))
                 .subscribe(
                         this::uploadAvatar,
                         __ -> handleUploadError()

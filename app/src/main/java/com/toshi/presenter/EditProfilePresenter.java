@@ -244,7 +244,7 @@ public class EditProfilePresenter implements Presenter<EditProfileActivity> {
     private void startCameraActivity() {
         final Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (cameraIntent.resolveActivity(this.activity.getPackageManager()) != null) {
-            final File photoFile = new FileUtil().createImageFileWithRandomName();
+            final File photoFile = FileUtil.createImageFileWithRandomName();
             this.capturedImagePath = photoFile.getAbsolutePath();
             final Uri photoURI = FileProvider.getUriForFile(
                     BaseApplication.get(),

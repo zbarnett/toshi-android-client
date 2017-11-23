@@ -144,7 +144,7 @@ class NewConversationActivity : AppCompatActivity() {
     private fun startCameraActivity() {
         val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         if (cameraIntent.resolveActivity(packageManager) != null) {
-            val photoFile = FileUtil().createImageFileWithRandomName()
+            val photoFile = FileUtil.createImageFileWithRandomName()
             this.capturedImagePath = photoFile.absolutePath
             val photoURI = FileProvider.getUriForFile(
                     BaseApplication.get(),

@@ -335,10 +335,9 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
     }
 
     private void startCameraActivity() {
-        final FileUtil fileUtil = new FileUtil();
-        final File photoFile = fileUtil.createImageFileWithRandomName();
+        final File photoFile = FileUtil.createImageFileWithRandomName();
         this.captureImageFilename = photoFile.getName();
-        final Uri photoUri = fileUtil.getUriFromFile(photoFile);
+        final Uri photoUri = FileUtil.getUriFromFile(photoFile);
 
         this.chatNavigation.startCameraActivity(this.activity, photoUri, CAPTURE_IMAGE);
     }
@@ -945,7 +944,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
 
         final File file = new File(BaseApplication.get().getFilesDir(), this.captureImageFilename);
         final Subscription sub =
-                new FileUtil().compressImage(FileUtil.MAX_SIZE, file)
+                FileUtil.compressImage(FileUtil.MAX_SIZE, file)
                 .subscribe(
                         compressedFile -> sendMediaMessage(compressedFile.getAbsolutePath()),
                         this::handleError

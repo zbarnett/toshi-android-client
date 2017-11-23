@@ -145,11 +145,11 @@ public class AttachmentConfirmationPresenter implements Presenter<AttachmentConf
     }
 
     private Attachment getAttachment() {
-        return new FileUtil().getNameAndSizeFromUri(getAttachmentUri());
+        return FileUtil.getNameAndSizeFromUri(getAttachmentUri());
     }
 
     private String getMimeType(final String filename) {
-        return new FileUtil().getMimeTypeFromFilename(filename);
+        return FileUtil.getMimeTypeFromFilename(filename);
     }
 
     private boolean isImage(final String mimeType) {
@@ -157,10 +157,9 @@ public class AttachmentConfirmationPresenter implements Presenter<AttachmentConf
     }
 
     private void saveAndCompressImageToFile() {
-        final FileUtil fileUtil = new FileUtil();
         final Subscription sub =
-                fileUtil.saveFileFromUri(this.activity, getAttachmentUri())
-                .flatMap(file -> fileUtil.compressImage(FileUtil.MAX_SIZE, file))
+                FileUtil.saveFileFromUri(this.activity, getAttachmentUri())
+                .flatMap(file -> FileUtil.compressImage(FileUtil.MAX_SIZE, file))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         compressedFile -> finishWithResult(compressedFile.getAbsolutePath()),
@@ -172,7 +171,7 @@ public class AttachmentConfirmationPresenter implements Presenter<AttachmentConf
 
     private void saveAttachmentToFile() {
         final Subscription sub =
-                new FileUtil().saveFileFromUri(this.activity, getAttachmentUri())
+                FileUtil.saveFileFromUri(this.activity, getAttachmentUri())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         file -> finishWithResult(file.getAbsolutePath()),

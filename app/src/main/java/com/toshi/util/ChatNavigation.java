@@ -46,9 +46,8 @@ public class ChatNavigation {
             return;
         }
 
-        final FileUtil fileUtil = new FileUtil();
-        final String mimeType = fileUtil.getMimeTypeFromFilename(path);
-        final Uri fileUri = fileUtil.getUriFromFile(file);
+        final String mimeType = FileUtil.getMimeTypeFromFilename(path);
+        final Uri fileUri = FileUtil.getUriFromFile(file);
 
         startExternalActivity(activity, fileUri, mimeType);
     }

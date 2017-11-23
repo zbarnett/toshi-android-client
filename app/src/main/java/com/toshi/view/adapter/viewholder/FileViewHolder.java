@@ -80,10 +80,10 @@ public class FileViewHolder extends RecyclerView.ViewHolder {
     }
 
     private void setPath(final String path) {
-        final String fileName = new FileUtil().getFilenameFromPath(path);
+        final String fileName = FileUtil.getFilenameFromPath(path);
         this.displayName.setText(fileName);
 
-        final long bytes = new FileUtil().getFileSize(path);
+        final long bytes = FileUtil.getFileSize(path);
         final String fileSizeText = Formatter.formatFileSize(BaseApplication.get(), bytes);
         this.fileSize.setText(fileSizeText);
     }

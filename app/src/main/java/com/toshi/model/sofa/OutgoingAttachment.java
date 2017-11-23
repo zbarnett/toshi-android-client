@@ -31,7 +31,7 @@ public class OutgoingAttachment {
         }
 
         this.outgoingAttachment = new File(sofaMessage.getAttachmentFilePath());
-        this.mimeType = new FileUtil().getMimeTypeFromFilename(this.outgoingAttachment.getName());
+        this.mimeType = FileUtil.getMimeTypeFromFilename(this.outgoingAttachment.getName());
     }
 
     public File getOutgoingAttachment() {

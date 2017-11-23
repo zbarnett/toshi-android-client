@@ -60,10 +60,12 @@ import static org.whispersystems.signalservice.api.messages.SignalServiceAttachm
 
 public class FileUtil {
 
+    private FileUtil() {}
+
     public static final int MAX_SIZE = 1024 * 1024;
     public static final String FILE_PROVIDER_NAME = ".fileProvider";
 
-    public Single<File> saveFileFromUri(final Context context, final Uri uri) {
+    public static Single<File> saveFileFromUri(final Context context, final Uri uri) {
         return Single.fromCallable(() -> {
             final String mimeType = context.getContentResolver().getType(uri);
             final MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
@@ -78,7 +80,7 @@ public class FileUtil {
         .subscribeOn(Schedulers.io());
     }
 
-    private File writeToFileFromInputStream(final File file, final InputStream inputStream) throws IOException {
+    private static File writeToFileFromInputStream(final File file, final InputStream inputStream) throws IOException {
         final BufferedSink sink = Okio.buffer(Okio.sink(file));
         final Source source = Okio.source(inputStream);
         sink.writeAll(source);
@@ -86,7 +88,7 @@ public class FileUtil {
         return file;
     }
 
-    public @Nullable File writeAttachmentToFileFromMessageReceiver(
+    public @Nullable static File writeAttachmentToFileFromMessageReceiver(
             final SignalServiceAttachmentPointer attachment,
             final SignalServiceMessageReceiver messageReceiver) {
         File file = null;
@@ -99,7 +101,7 @@ public class FileUtil {
             final File destFile = constructAttachmentFile(attachment.getContentType());
             return writeToFileFromInputStream(destFile, inputStream);
         } catch (IOException | InvalidMessageException e) {
-            LogUtil.exception(getClass(), "Error during writing attachment to file", e);
+            LogUtil.exception(FileUtil.class, "Error during writing attachment to file", e);
             return null;
         } finally {
             if (file != null) {
@@ -108,7 +110,7 @@ public class FileUtil {
         }
     }
 
-    private File constructAttachmentFile(final String contentType) throws IOException {
+    private static File constructAttachmentFile(final String contentType) throws IOException {
         final File baseDirectory = BaseApplication.get().getFilesDir();
         final String directoryPath = contentType.startsWith("image/") ? "images" : "files";
         final File outputDirectory = new File(baseDirectory, directoryPath);
@@ -124,19 +126,19 @@ public class FileUtil {
         return new File(outputDirectory, filename);
     }
 
-    public File createImageFileWithRandomName() {
+    public static File createImageFileWithRandomName() {
         final String filename = UUID.randomUUID().toString() + ".jpg";
         return new File(BaseApplication.get().getFilesDir(), filename);
     }
 
-    public String getMimeTypeFromFilename(final String filename) {
+    public static String getMimeTypeFromFilename(final String filename) {
         if (filename == null) return null;
         final String strippedFilename = filename.replaceAll("\\s","");
         final String fileExtension = MimeTypeMap.getFileExtensionFromUrl(strippedFilename);
         return  MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension);
     }
 
-    public Single<File> compressImage(final long maxSize, final File file) {
+    public static Single<File> compressImage(final long maxSize, final File file) {
         return Single.fromCallable(() -> {
             if (file.length() <= maxSize) return file;
             final int compressPercentage = (int)(((double)maxSize / file.length()) * 100);
@@ -148,7 +150,7 @@ public class FileUtil {
         .subscribeOn(Schedulers.io());
     }
 
-    public Attachment getNameAndSizeFromUri(final Uri uri) {
+    public static Attachment getNameAndSizeFromUri(final Uri uri) {
         final String [] projection = { MediaStore.Images.Media.DISPLAY_NAME, MediaStore.Images.Media.SIZE };
         final Cursor cursor =
                 BaseApplication.get()
@@ -174,17 +176,17 @@ public class FileUtil {
                 .setSize(size);
     }
 
-    public String getFilenameFromPath(final String path) {
+    public static String getFilenameFromPath(final String path) {
         final File file = new File(path);
         return file.exists() ? file.getName() : "";
     }
 
-    public long getFileSize(final String path) {
+    public static long getFileSize(final String path) {
         final File file = new File(path);
         return file.exists() ? file.length() : 0;
     }
 
-    public Uri getUriFromFile(final File file) {
+    public static Uri getUriFromFile(final File file) {
         return FileProvider
                 .getUriForFile(
                         BaseApplication.get(),
@@ -204,8 +206,11 @@ public class FileUtil {
     }
 
     public static SignalServiceAttachmentStream buildSignalServiceAttachment(final Bitmap bitmap) {
-        final Bitmap.CompressFormat format = Bitmap.CompressFormat.PNG;
-        final byte[] bytes = ImageUtil.toByteArray(bitmap, format);
+        final byte[] bytes = ImageUtil.toByteArray(bitmap);
+        return buildSignalServiceAttachment(bytes);
+    }
+
+    public static SignalServiceAttachmentStream buildSignalServiceAttachment(final byte[] bytes) {
         return SignalServiceAttachmentStream.newStreamBuilder()
                 .withContentType("image/png")
                 .withStream(new ByteArrayInputStream(bytes))

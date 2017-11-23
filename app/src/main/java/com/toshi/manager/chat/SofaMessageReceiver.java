@@ -239,8 +239,7 @@ public class SofaMessageReceiver {
 
     private @Nullable
     String saveAttachmentToFile(final SignalServiceAttachmentPointer attachment) {
-        final FileUtil fileUtil = new FileUtil();
-        final File attachmentFile = fileUtil.writeAttachmentToFileFromMessageReceiver(attachment, this.messageReceiver);
+        final File attachmentFile = FileUtil.writeAttachmentToFileFromMessageReceiver(attachment, this.messageReceiver);
         return attachmentFile != null ? attachmentFile.getAbsolutePath() : null;
     }
 

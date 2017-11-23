@@ -235,8 +235,7 @@ public class UserManager {
     }
 
     public Single<User> uploadAvatar(final File file) {
-        final FileUtil fileUtil = new FileUtil();
-        final String mimeType = fileUtil.getMimeTypeFromFilename(file.getName());
+        final String mimeType = FileUtil.getMimeTypeFromFilename(file.getName());
         if (mimeType == null) {
             return Single.error(new IllegalArgumentException("Unable to determine file type from file."));
         }
