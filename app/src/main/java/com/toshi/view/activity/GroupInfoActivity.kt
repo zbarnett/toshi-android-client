@@ -21,12 +21,17 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.DefaultItemAnimator
+import android.support.v7.widget.LinearLayoutManager
 import android.widget.Toast
 import com.toshi.R
+import com.toshi.extensions.addHorizontalLineDivider
 import com.toshi.extensions.toast
 import com.toshi.model.local.Group
+import com.toshi.model.local.User
 import com.toshi.util.ImageUtil
 import com.toshi.util.LogUtil
+import com.toshi.view.adapter.GroupParticipantAdapter
 import com.toshi.viewModel.GroupInfoViewModel
 import kotlinx.android.synthetic.main.activity_group_info.*
 
@@ -35,6 +40,7 @@ class GroupInfoActivity : AppCompatActivity() {
         const val EXTRA__GROUP_ID = "extra_group_id"
     }
 
+    private lateinit var userAdapter: GroupParticipantAdapter
     private lateinit var viewModel: GroupInfoViewModel
 
     public override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,5 +83,23 @@ class GroupInfoActivity : AppCompatActivity() {
     private fun updateView(group: Group) {
         groupName.text = group.title
         ImageUtil.load(group.avatar, avatar)
+        initRecyclerView(group.members)
+        initNumberOfParticipantsView(group.members)
+    }
+
+    private fun initRecyclerView(members: List<User>) {
+        userAdapter = GroupParticipantAdapter().addUsers(members)
+        participants.apply {
+            layoutManager = LinearLayoutManager(this.context)
+            itemAnimator = DefaultItemAnimator()
+            adapter = userAdapter
+            addHorizontalLineDivider()
+        }
+    }
+
+    private fun initNumberOfParticipantsView(members: List<User>) {
+        val participantSize = members.size
+        val participantsLabel = this.resources.getQuantityString(R.plurals.participants, participantSize, participantSize)
+        numberOfParticipants.text = participantsLabel
     }
 }

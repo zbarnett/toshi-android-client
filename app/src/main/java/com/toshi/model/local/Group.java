@@ -142,6 +142,11 @@ public class Group extends RealmObject {
         return this;
     }
 
+    @NonNull
+    public List<User> getMembers() {
+        return this.members;
+    }
+
     public Avatar getAvatar() {
         return this.avatar;
     }
