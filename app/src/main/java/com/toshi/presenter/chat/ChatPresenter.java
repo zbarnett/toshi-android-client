@@ -902,9 +902,11 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         try {
             final Message message = SofaAdapters.get().messageFrom(sofaMessage.getPayload());
             final boolean notNullAndNotZero = message.getControls() != null && message.getControls().size() > 0;
+            final boolean isConversationAccepted =
+                    this.conversation != null && this.conversation.getConversationStatus().isAccepted();
             this.activity.getBinding().controlView.hideView();
 
-            if (notNullAndNotZero) {
+            if (notNullAndNotZero && isConversationAccepted) {
                 this.activity.getBinding().controlView.showControls(message.getControls());
             } else {
                 removePadding();
