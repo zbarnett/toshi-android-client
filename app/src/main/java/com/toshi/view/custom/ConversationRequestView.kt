@@ -39,10 +39,17 @@ class ConversationRequestView : LinearLayout {
 
     var onAcceptClickListener: (() -> Unit)? = null
     var onDeclineClickListener: (() -> Unit)? = null
+    var onSizeChangedListener: ((Int) -> Unit)? = null
 
     private fun init() {
         val view = inflate(context, R.layout.view_conversation_request, this)
         view.accept.setOnClickListener { onAcceptClickListener?.invoke() }
         view.decline.setOnClickListener { onDeclineClickListener?.invoke() }
+    }
+
+    override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
+        super.onLayout(changed, l, t, r, b)
+        if (height == 0) return
+        onSizeChangedListener?.invoke(height)
     }
 }

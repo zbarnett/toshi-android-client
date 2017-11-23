@@ -391,15 +391,17 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
 
     private void initControlView() {
         this.activity.getBinding().controlView.setOnSizeChangedListener(this::setPadding);
+        this.activity.getBinding().conversationRequestView.setOnSizeChangedListener(this::setPadding);
     }
 
-    private void setPadding(final int height) {
-        if (this.activity == null) return;
+    private Unit setPadding(final int height) {
+        if (this.activity == null) return null;
         final int paddingBottom = this.activity.getResources().getDimensionPixelSize(R.dimen.chat_button_padding) + height;
         final int paddingRight = this.activity.getBinding().messagesList.getPaddingRight();
         final int paddingLeft = this.activity.getBinding().messagesList.getPaddingLeft();
         this.activity.getBinding().messagesList.setPadding(paddingLeft, 0, paddingRight, paddingBottom);
         scrollToPosition(this.messageAdapter.getItemCount() - 1);
+        return null;
     }
 
     private void loadOrUseRecipient() {
@@ -803,7 +805,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
                         throwable -> LogUtil.e(getClass(), "Error while accepting conversation " + throwable)
                 );
 
-        subscriptions.add(sub);
+        this.subscriptions.add(sub);
         return null;
     }
 
@@ -820,7 +822,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
                         throwable -> LogUtil.e(getClass(), "Error while accepting conversation " + throwable)
                 );
 
-        subscriptions.add(sub);
+        this.subscriptions.add(sub);
         return null;
     }
 
@@ -832,6 +834,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
 
     private void hideConversationRequestView() {
         if (this.activity == null) return;
+        removePadding();
         this.activity.getBinding().conversationRequestView.setVisibility(View.GONE);
     }
 
@@ -911,7 +914,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
             } else {
                 removePadding();
             }
-        } catch (java.io.IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
