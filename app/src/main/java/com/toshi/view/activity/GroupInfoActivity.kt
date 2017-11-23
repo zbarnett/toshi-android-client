@@ -27,7 +27,7 @@ import com.toshi.extensions.toast
 import com.toshi.model.local.Group
 import com.toshi.util.LogUtil
 import com.toshi.viewModel.GroupInfoViewModel
-import kotlinx.android.synthetic.main.activity_group_info.groupName
+import kotlinx.android.synthetic.main.activity_group_info.*
 
 
 class GroupInfoActivity : AppCompatActivity() {
@@ -45,9 +45,12 @@ class GroupInfoActivity : AppCompatActivity() {
 
     private fun init() {
         initViewModel()
+        initClickListeners()
         processIntentData()
         initObservers()
     }
+
+    private fun initClickListeners() = closeButton.setOnClickListener { finish() }
 
     private fun initViewModel() {
         viewModel = ViewModelProviders.of(this).get(GroupInfoViewModel::class.java)
