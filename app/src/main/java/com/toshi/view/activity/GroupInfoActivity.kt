@@ -25,10 +25,10 @@ import android.widget.Toast
 import com.toshi.R
 import com.toshi.extensions.toast
 import com.toshi.model.local.Group
+import com.toshi.util.ImageUtil
 import com.toshi.util.LogUtil
 import com.toshi.viewModel.GroupInfoViewModel
 import kotlinx.android.synthetic.main.activity_group_info.*
-
 
 class GroupInfoActivity : AppCompatActivity() {
     companion object {
@@ -76,5 +76,6 @@ class GroupInfoActivity : AppCompatActivity() {
 
     private fun updateView(group: Group) {
         groupName.text = group.title
+        ImageUtil.load(group.avatar, avatar)
     }
 }
