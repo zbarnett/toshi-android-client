@@ -18,15 +18,11 @@
 package com.toshi.crypto.signal.model;
 
 
-import com.toshi.model.local.Group;
-
 import org.whispersystems.libsignal.util.guava.Optional;
 import org.whispersystems.signalservice.api.messages.SignalServiceAttachment;
 import org.whispersystems.signalservice.api.messages.SignalServiceGroup;
 
 import java.util.List;
-
-import rx.Single;
 
 public class DecryptedSignalMessage {
 
@@ -72,12 +68,11 @@ public class DecryptedSignalMessage {
         return this.group != null && this.group.isPresent();
     }
 
-    public Single<Group> getGroup() {
+    public SignalServiceGroup getGroup() {
         if (!isGroup()) {
             throw new IllegalStateException("Message does not contain a group");
         }
 
-        return new Group()
-                .initFromSignalGroup(this.group.get());
+        return this.group.get();
     }
 }

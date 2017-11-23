@@ -303,6 +303,20 @@ public class DbMigration implements RealmMigration {
 
             oldVersion++;
         }
+
+        if (oldVersion == 19) {
+            if (schema.get("Avatar") == null) {
+                schema.create("Avatar")
+                        .addField("bytes", byte[].class);
+            }
+
+            if (!schema.get("Group").hasField("avatar")) {
+                schema.get("Group")
+                        .addRealmObjectField("avatar", schema.get("Avatar"));
+            }
+
+            oldVersion++;
+        }
     }
 
     @Override

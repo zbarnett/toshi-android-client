@@ -19,11 +19,15 @@ package com.toshi.model.local;
 
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 
+import com.toshi.util.FileUtil;
 import com.toshi.view.BaseApplication;
 
 import org.spongycastle.util.encoders.Hex;
+import org.whispersystems.signalservice.api.SignalServiceMessageReceiver;
+import org.whispersystems.signalservice.api.messages.SignalServiceAttachmentPointer;
 import org.whispersystems.signalservice.api.messages.SignalServiceGroup;
 import org.whispersystems.signalservice.api.push.SignalServiceAddress;
 
@@ -35,8 +39,8 @@ import java.util.List;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;
-import io.realm.annotations.Ignore;
 import io.realm.annotations.PrimaryKey;
+import rx.Completable;
 import rx.Observable;
 import rx.Single;
 import rx.schedulers.Schedulers;
@@ -52,8 +56,6 @@ public class Group extends RealmObject {
     private String id;
     private String title;
     private RealmList<User> members;
-
-    @Ignore
     private Avatar avatar;
 
     public Group(){}
@@ -64,7 +66,7 @@ public class Group extends RealmObject {
         this.members.addAll(members);
     }
 
-    public Single<Group> initFromSignalGroup(final SignalServiceGroup group) {
+    public Single<Group> initFromSignalGroup(final SignalServiceGroup group, final SignalServiceMessageReceiver messageReceiver) {
         this.id = Hex.toHexString(group.getGroupId());
         this.members = new RealmList<>();
 
@@ -72,13 +74,33 @@ public class Group extends RealmObject {
             this.title = group.getName().get();
         }
 
+        processAvatar(group, messageReceiver);
+
         if (group.getMembers().isPresent()) {
             return lookupUsers(group.getMembers().get())
                     .map(this.members::addAll)
-                    .map(__ -> this);
+                    .flatMapCompletable(__ -> processAvatar(group, messageReceiver))
+                    .toSingleDefault(this);
         }
 
         return Single.just(this);
+    }
+
+    private Completable processAvatar(final SignalServiceGroup group, final SignalServiceMessageReceiver messageReceiver) {
+        if (group.getAvatar().isPresent()) {
+
+            return Single.fromCallable(() -> {
+                final SignalServiceAttachmentPointer attachment = group.getAvatar().get().asPointer();
+                return FileUtil.writeAttachmentToFileFromMessageReceiver(attachment, messageReceiver);
+            })
+            .flatMap(file -> FileUtil.compressImage(FileUtil.MAX_SIZE, file))
+            .map(file -> BitmapFactory.decodeFile(file.getAbsolutePath()))
+            .map(Avatar::new)
+            .map(avatar -> this.avatar = avatar)
+            .toCompletable();
+        }
+
+        return Completable.complete();
     }
 
     private Single<List<User>> lookupUsers(final List<String> userIds) {
@@ -113,14 +135,6 @@ public class Group extends RealmObject {
     @NonNull
     public String getTitle() {
         return this.title == null ? "" : this.title;
-    }
-
-    @NonNull
-    public List<User> getMembers() {
-        if (this.members == null) {
-            return Collections.emptyList();
-        }
-        return this.members;
     }
 
     public Group setTitle(final String title) {

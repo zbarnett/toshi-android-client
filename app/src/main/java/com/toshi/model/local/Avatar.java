@@ -21,23 +21,26 @@ package com.toshi.model.local;
 import android.graphics.Bitmap;
 
 import com.toshi.util.FileUtil;
+import com.toshi.util.ImageUtil;
 import com.toshi.util.LogUtil;
 
 import org.whispersystems.signalservice.api.messages.SignalServiceAttachment;
-import org.whispersystems.signalservice.api.messages.SignalServiceAttachmentPointer;
 import org.whispersystems.signalservice.api.messages.SignalServiceAttachmentStream;
 
 import java.io.FileNotFoundException;
 
-public class Avatar {
+import io.realm.RealmObject;
+import io.realm.annotations.Ignore;
 
-    private long id;
-    private byte[] key;
-    private String contentType;
-    private byte[] digest;
+public class Avatar extends RealmObject {
+    private byte[] bytes;
+
+    @Ignore
     private SignalServiceAttachmentStream attachmentStream;
 
-    public Avatar(final Bitmap avatar) {
+    public Avatar() {}
+
+    /* package */ Avatar(final Bitmap avatar) {
         try {
             init(avatar);
         } catch (final NullPointerException | FileNotFoundException | IllegalStateException ex) {
@@ -47,33 +50,12 @@ public class Avatar {
 
     private void init(final Bitmap avatar) throws FileNotFoundException, IllegalStateException {
         if (avatar == null) throw new NullPointerException("avatar is null");
-        this.attachmentStream = FileUtil.buildSignalServiceAttachment(avatar);
-        if (!this.attachmentStream.isPointer()) return;
-        final SignalServiceAttachmentPointer pointer = this.attachmentStream.asPointer();
-        init(pointer);
+        this.bytes = ImageUtil.toByteArray(avatar);
+        this.attachmentStream = FileUtil.buildSignalServiceAttachment(this.bytes);
     }
 
-    private void init(final SignalServiceAttachmentPointer pointer) {
-        this.id = pointer.getId();
-        this.key = pointer.getKey();
-        this.contentType = pointer.getContentType();
-        this.digest = pointer.getDigest().orNull();
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public byte[] getKey() {
-        return key;
-    }
-
-    public String getContentType() {
-        return contentType;
-    }
-
-    public byte[] getDigest() {
-        return digest;
+    public byte[] getBytes() {
+        return bytes;
     }
 
     public SignalServiceAttachment getStream() {
