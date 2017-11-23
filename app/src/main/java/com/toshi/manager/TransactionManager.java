@@ -499,7 +499,7 @@ public class TransactionManager {
                 .setToAddress(transaction.getTo())
                 .setData(transaction.getData())
                 .setGas(transaction.getGas())
-                .setGasPrice(transaction.getGas());
+                .setGasPrice(transaction.getGasPrice());
     }
 
     private Single<SentTransaction> signAndSendTransaction(final UnsignedTransaction unsignedTransaction) {
