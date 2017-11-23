@@ -66,7 +66,7 @@ public class Group extends RealmObject {
         this.members.addAll(members);
     }
 
-    public Single<Group> initFromSignalGroup(final SignalServiceGroup group, final SignalServiceMessageReceiver messageReceiver) {
+    public Single<Group> updateFromSignalGroup(final SignalServiceGroup group, final SignalServiceMessageReceiver messageReceiver) {
         this.id = Hex.toHexString(group.getGroupId());
         this.members = new RealmList<>();
 
@@ -186,5 +186,16 @@ public class Group extends RealmObject {
 
     /* package */ boolean hasAvatar() {
         return this.avatar != null && this.avatar.getBytes() != null;
+    }
+
+    public static Single<Group> fromSignalGroup(final SignalServiceGroup signalGroup) {
+        return fromId(Hex.toHexString(signalGroup.getGroupId()));
+    }
+
+    public static Single<Group> fromId(final String id) {
+        return BaseApplication
+                .get()
+                .getRecipientManager()
+                .getGroupFromId(id);
     }
 }

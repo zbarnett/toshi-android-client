@@ -448,10 +448,7 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
 
     private void loadGroupRecipient(final String groupId) {
         final Subscription sub =
-                BaseApplication
-                .get()
-                .getRecipientManager()
-                .getGroupFromId(groupId)
+                Group.fromId(groupId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

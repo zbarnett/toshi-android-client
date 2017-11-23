@@ -180,7 +180,7 @@ public class SofaMessageReceiver {
     private IncomingMessage handleGroupUpdate(final SignalServiceDataMessage dataMessage) {
         final SignalServiceGroup signalGroup = dataMessage.getGroupInfo().get();
         new Group()
-                .initFromSignalGroup(signalGroup, this.messageReceiver)
+                .updateFromSignalGroup(signalGroup, this.messageReceiver)
                 .subscribe(
                         this.conversationStore::saveGroup,
                         ex -> LogUtil.e(getClass(), "Error creating incoming group. " + ex)
@@ -290,7 +290,7 @@ public class SofaMessageReceiver {
             return Single.just(new Recipient(sender));
         }
         return Single.just(signalMessage.getGroup())
-                .flatMap(signalGroup -> new Group().initFromSignalGroup(signalGroup, this.messageReceiver))
+                .flatMap(Group::fromSignalGroup)
                 .map(Recipient::new);
     }
 
