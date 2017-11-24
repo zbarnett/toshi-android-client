@@ -156,16 +156,16 @@ public final class SofaMessageManager {
 
     public final Single<Conversation> loadConversation(final String threadId) {
         return this.conversationStore.loadByThreadId(threadId)
-                .flatMap(conversation -> createEmptyConversationIfNull(conversation, threadId))
                 .subscribeOn(Schedulers.io());
     }
 
     public final Single<Conversation> loadConversationAndResetUnreadCounter(final String threadId) {
         return loadConversation(threadId)
+                .flatMap(conversation -> createEmptyConversationIfNullAndSetToAccepted(conversation, threadId))
                 .doOnSuccess(conversation -> this.conversationStore.resetUnreadMessageCounter(conversation.getThreadId()));
     }
 
-    private Single<Conversation> createEmptyConversationIfNull(final Conversation conversation, final String threadId) {
+    private Single<Conversation> createEmptyConversationIfNullAndSetToAccepted(final Conversation conversation, final String threadId) {
         if (conversation != null) return Single.just(conversation);
         return BaseApplication
                 .get()
