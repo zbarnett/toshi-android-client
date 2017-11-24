@@ -24,7 +24,7 @@
     tools:parentTag="android.widget.FrameLayout">
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/singleAvatar"
+        android:id="@+id/singleAvatarView"
         android:layout_width="34dp"
         android:layout_height="34dp"
         android:layout_gravity="center"
@@ -32,7 +32,7 @@
         android:visibility="visible"/>
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/secondAvatar"
+        android:id="@+id/secondAvatarView"
         android:layout_width="34dp"
         android:layout_height="34dp"
         android:layout_gravity="right|bottom"
@@ -40,7 +40,7 @@
         android:visibility="gone"/>
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/firstAvatar"
+        android:id="@+id/firstAvatarView"
         android:layout_width="34dp"
         android:layout_height="34dp"
         android:layout_gravity="left|top"

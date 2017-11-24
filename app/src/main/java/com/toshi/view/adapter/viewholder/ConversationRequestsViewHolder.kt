@@ -33,7 +33,7 @@ class ConversationRequestsViewHolder(itemView: View?) : RecyclerView.ViewHolder(
 
     fun loadAvatar(conversations: List<Conversation>) {
         val lastTwoElements = conversations.takeLast(2)
-                .map { it.recipient.userAvatar }
+                .map { it.recipient }
         itemView.avatar.loadAvatars(lastTwoElements)
     }
 

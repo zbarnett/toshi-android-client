@@ -23,7 +23,7 @@ import android.widget.FrameLayout
 import com.toshi.R
 import com.toshi.extensions.getColorById
 import com.toshi.extensions.isVisible
-import com.toshi.util.ImageUtil
+import com.toshi.model.local.Recipient
 import kotlinx.android.synthetic.main.view_double_avatar.view.*
 
 class DoubleAvatarView : FrameLayout {
@@ -41,7 +41,7 @@ class DoubleAvatarView : FrameLayout {
 
     private fun init() = inflate(context, R.layout.view_double_avatar, this)
 
-    fun loadAvatars(avatars: List<String>) {
+    fun loadAvatars(avatars: List<Recipient>) {
         when (avatars.size) {
             0 -> showPlaceHolder()
             1 -> loadSingleAvatar(avatars[0])
@@ -50,24 +50,24 @@ class DoubleAvatarView : FrameLayout {
         }
     }
 
-    private fun showPlaceHolder() = singleAvatar.setBackgroundColor(getColorById(R.color.placeholder))
+    private fun showPlaceHolder() = singleAvatarView.setBackgroundColor(getColorById(R.color.placeholder))
 
-    private fun loadSingleAvatar(avatar: String) {
+    private fun loadSingleAvatar(recipient: Recipient) {
         hideDoubleAvatars()
-        singleAvatar.isVisible(true)
-        ImageUtil.load(avatar, singleAvatar)
+        singleAvatarView.isVisible(true)
+        recipient.loadAvatarInto(firstAvatarView)
     }
 
     private fun hideDoubleAvatars() {
-        firstAvatar.isVisible(false)
-        secondAvatar.isVisible(false)
+        firstAvatarView.isVisible(false)
+        secondAvatarView.isVisible(false)
     }
 
-    private fun loadDoubleAvatars(avatars: List<String>) {
-        singleAvatar.isVisible(false)
-        firstAvatar.isVisible(true)
-        secondAvatar.isVisible(true)
-        ImageUtil.load(avatars[0], firstAvatar)
-        ImageUtil.load(avatars[1], secondAvatar)
+    private fun loadDoubleAvatars(recipients: List<Recipient>) {
+        singleAvatarView.isVisible(false)
+        firstAvatarView.isVisible(true)
+        secondAvatarView.isVisible(true)
+        recipients[0].loadAvatarInto(firstAvatarView)
+        recipients[1].loadAvatarInto(secondAvatarView)
     }
 }
