@@ -34,6 +34,7 @@ public class ToshiNotificationTest {
 
     private final String expectedNotificationId = "notificationId";
     private final String expectedMessageId = "messageId";
+    private final String unacceptedMessage = "Unaccepted message";
     private SofaMessage unreadMessage;
     private ToshiNotification notification;
 
@@ -153,17 +154,30 @@ public class ToshiNotificationTest {
         }
     }
 
+    @Test
+    public void isAllMessagesOfUnacceptedTypeWhenUnaccepted() {
+        this.notification.setIsAccepted(false);
+        final SofaMessage unreadMessage0 = createUnreadMessage("id: 0");
+        final SofaMessage unreadMessage1 = createUnreadMessage("id: 1");
+        this.notification.addUnreadMessage(unreadMessage0);
+        this.notification.addUnreadMessage(unreadMessage1);
+        assertThat(this.notification.getLastFewMessages().get(0), is("Unaccepted message"));
+        assertThat(this.notification.getLastFewMessages().get(1), is("Unaccepted message"));
+    }
+
     private void addMultipleUnreadMessages(final int numberToCreate) {
         for (int i = 0; i < numberToCreate; i++) {
             final SofaMessage unreadMessage = createUnreadMessage(String.valueOf(i));
             this.notification.addUnreadMessage(unreadMessage);
         }
     }
+
     private SofaMessage createUnreadMessage(final String id) {
         final Message message = new Message().setBody(id);
         final String sofaPayload = SofaAdapters.get().toJson(message);
         return new SofaMessage().makeNew(sofaPayload);
     }
+
     class TestToshiNotification extends ToshiNotification {
         TestToshiNotification(final String id) {
             super(id);
@@ -172,6 +186,11 @@ public class ToshiNotificationTest {
         @Override
         public String getTitle() {
             return "TestToshiNotification";
+        }
+
+        @Override
+        String getUnacceptedText() {
+            return unacceptedMessage;
         }
     }
 }

@@ -101,7 +101,7 @@ public abstract class ToshiNotification {
     }
 
     private String getMessage(final SofaMessage sofaMessage) {
-        if (!this.isAccepted) return BaseApplication.get().getString(R.string.unaccepted_notification_message);
+        if (!this.isAccepted) return getUnacceptedText();
 
         final @SofaType.Type int sofaType = sofaMessage.hasAttachment() ? sofaMessage.getAttachmentType() : sofaMessage.getType();
         if (sofaType == SofaType.PAYMENT_REQUEST) {
@@ -160,4 +160,6 @@ public abstract class ToshiNotification {
         this.isAccepted = isAccepted;
         return this;
     }
+
+    /* package */ abstract String getUnacceptedText();
 }

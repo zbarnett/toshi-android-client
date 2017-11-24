@@ -203,4 +203,9 @@ public class ChatNotification extends ToshiNotification {
     public boolean isKnownSenderAndAccepted() {
         return !isUnknownSender() && isAccepted();
     }
+
+    @Override
+    String getUnacceptedText() {
+        return BaseApplication.get().getString(R.string.unaccepted_notification_message);
+    }
 }

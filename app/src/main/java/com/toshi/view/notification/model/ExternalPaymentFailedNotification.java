@@ -38,4 +38,9 @@ public class ExternalPaymentFailedNotification extends ToshiNotification {
     public String getTitle() {
         return BaseApplication.get().getString(R.string.payment_failed);
     }
+
+    @Override
+    String getUnacceptedText() {
+        return BaseApplication.get().getString(R.string.external_payment_failure);
+    }
 }
