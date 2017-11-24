@@ -27,7 +27,7 @@ class ConversationRequestViewHolder(itemView: View?) : RecyclerView.ViewHolder(i
 
     fun setConversation(conversation: Conversation): ConversationRequestViewHolder {
         itemView.name.text = conversation.recipient.displayName
-        ImageUtil.load(conversation.recipient.avatar, itemView.avatar)
+        ImageUtil.load(conversation.recipient.userAvatar, itemView.avatar)
         return this
     }
 
