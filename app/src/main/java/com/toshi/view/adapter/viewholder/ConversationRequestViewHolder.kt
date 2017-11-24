@@ -20,14 +20,13 @@ package com.toshi.view.adapter.viewholder
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import com.toshi.model.local.Conversation
-import com.toshi.util.ImageUtil
 import kotlinx.android.synthetic.main.list_item__conversation_request.view.*
 
 class ConversationRequestViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
 
     fun setConversation(conversation: Conversation): ConversationRequestViewHolder {
         itemView.name.text = conversation.recipient.displayName
-        ImageUtil.load(conversation.recipient.userAvatar, itemView.avatar)
+        conversation.recipient.loadAvatarInto(itemView.avatar)
         return this
     }
 
