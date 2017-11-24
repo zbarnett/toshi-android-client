@@ -199,4 +199,8 @@ public class ChatNotification extends ToshiNotification {
     public boolean isUnknownSender() {
         return this.sender == null;
     }
+
+    public boolean isKnownSenderAndAccepted() {
+        return !isUnknownSender() && isAccepted();
+    }
 }

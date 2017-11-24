@@ -40,7 +40,8 @@ public class ToshiNotificationTest {
     @Before
     public void setup() {
         this.unreadMessage = createUnreadMessage(this.expectedMessageId);
-        this.notification = new TestToshiNotification(expectedNotificationId);
+        this.notification = new TestToshiNotification(expectedNotificationId)
+                .setIsAccepted(true);
     }
 
     @Test

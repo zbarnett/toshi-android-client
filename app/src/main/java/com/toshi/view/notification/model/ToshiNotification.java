@@ -41,6 +41,7 @@ public abstract class ToshiNotification {
     private SofaMessage lastMessage;
     private static final int MAXIMUM_NUMBER_OF_SHOWN_MESSAGES = 5;
     /* package */ Bitmap largeIcon;
+    private boolean isAccepted;
 
     /* package */ ToshiNotification(final String id) {
         this.id = id;
@@ -100,6 +101,8 @@ public abstract class ToshiNotification {
     }
 
     private String getMessage(final SofaMessage sofaMessage) {
+        if (!this.isAccepted) return BaseApplication.get().getString(R.string.unaccepted_notification_message);
+
         final @SofaType.Type int sofaType = sofaMessage.hasAttachment() ? sofaMessage.getAttachmentType() : sofaMessage.getType();
         if (sofaType == SofaType.PAYMENT_REQUEST) {
             final PaymentRequest paymentRequest = getPaymentRequestFromSofaMessage(sofaMessage);
@@ -147,5 +150,14 @@ public abstract class ToshiNotification {
 
     public @SofaType.Type int getTypeOfLastMessage() {
         return this.lastMessage.getType();
+    }
+
+    public boolean isAccepted() {
+        return this.isAccepted;
+    }
+
+    public ToshiNotification setIsAccepted(final boolean isAccepted) {
+        this.isAccepted = isAccepted;
+        return this;
     }
 }

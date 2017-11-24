@@ -108,6 +108,7 @@ public class ChatNotificationManager extends ToshiNotificationBuilder {
 
         final ChatNotification activeChatNotification = getAndCacheChatNotification(sender);
         if (activeChatNotification == null) return;
+        activeChatNotification.setIsAccepted(conversationStatus.isAccepted());
 
         if (sofaMessage.getType() == SofaType.PLAIN_TEXT) {
             activeChatNotification.addUnreadMessage(sofaMessage);
@@ -249,7 +250,7 @@ public class ChatNotificationManager extends ToshiNotificationBuilder {
                 .setDeleteIntent(activeChatNotification.getDeleteIntent())
                 .setContentIntent(activeChatNotification.getPendingIntent());
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && !activeChatNotification.isUnknownSender()) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && activeChatNotification.isKnownSenderAndAccepted()) {
             builder.addAction(buildDirectReplyAction(activeChatNotification));
 
             if (activeChatNotification.getTypeOfLastMessage() == SofaType.PAYMENT_REQUEST) {
