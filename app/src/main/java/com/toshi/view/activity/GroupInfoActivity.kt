@@ -23,15 +23,19 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
+import android.view.MenuItem
 import android.widget.Toast
 import com.toshi.R
 import com.toshi.extensions.addHorizontalLineDivider
+import com.toshi.extensions.startActivityAndFinish
 import com.toshi.extensions.toast
 import com.toshi.model.local.Group
 import com.toshi.model.local.User
 import com.toshi.util.ImageUtil
 import com.toshi.util.LogUtil
 import com.toshi.view.adapter.GroupParticipantAdapter
+import com.toshi.view.adapter.viewholder.GroupParticipantViewHolder.Companion.MENU_MESSAGE
+import com.toshi.view.adapter.viewholder.GroupParticipantViewHolder.Companion.MENU_VIEW_PROFILE
 import com.toshi.viewModel.GroupInfoViewModel
 import kotlinx.android.synthetic.main.activity_group_info.*
 
@@ -88,7 +92,7 @@ class GroupInfoActivity : AppCompatActivity() {
     }
 
     private fun initRecyclerView(members: List<User>) {
-        userAdapter = GroupParticipantAdapter().addUsers(members)
+        userAdapter = GroupParticipantAdapter(true).addUsers(members)
         participants.apply {
             layoutManager = LinearLayoutManager(this.context)
             itemAnimator = DefaultItemAnimator()
@@ -101,5 +105,22 @@ class GroupInfoActivity : AppCompatActivity() {
         val participantSize = members.size
         val participantsLabel = this.resources.getQuantityString(R.plurals.participants, participantSize, participantSize)
         numberOfParticipants.text = participantsLabel
+    }
+
+    override fun onContextItemSelected(item: MenuItem?): Boolean {
+        val clickedUser = userAdapter.users[item?.order ?: -1]
+        when (item?.itemId) {
+            MENU_VIEW_PROFILE -> startProfileActivity(clickedUser)
+            MENU_MESSAGE -> startChatActivity(clickedUser)
+        }
+        return super.onContextItemSelected(item)
+    }
+
+    private fun startProfileActivity(user: User) = startActivityAndFinish<ViewUserActivity> {
+        putExtra(ViewUserActivity.EXTRA__USER_ADDRESS, user.toshiId)
+    }
+
+    private fun startChatActivity(user: User) = startActivityAndFinish<ChatActivity> {
+        putExtra(ChatActivity.EXTRA__THREAD_ID, user.toshiId)
     }
 }
