@@ -28,6 +28,8 @@ import android.support.v4.app.RemoteInput;
 
 import com.toshi.R;
 import com.toshi.crypto.HDWallet;
+import com.toshi.model.local.Conversation;
+import com.toshi.model.local.ConversationStatus;
 import com.toshi.model.local.IncomingMessage;
 import com.toshi.model.local.Recipient;
 import com.toshi.model.sofa.Message;
@@ -76,7 +78,11 @@ public class ChatNotificationManager extends ToshiNotificationBuilder {
 
     public static void showNotification(final IncomingMessage incomingMessage) {
         if (incomingMessage == null) return;
-        showChatNotification(incomingMessage.getRecipient(), incomingMessage.getSofaMessage());
+        tryShowNotification(
+                incomingMessage.getRecipient(),
+                incomingMessage.getSofaMessage(),
+                incomingMessage.getConversation().getConversationStatus()
+        );
     }
 
     public static void showChatNotification(final Recipient sender, final String content) {
@@ -87,18 +93,18 @@ public class ChatNotificationManager extends ToshiNotificationBuilder {
     }
 
     public static void showChatNotification(final Recipient sender, final SofaMessage sofaMessage) {
-        checkIfConversationIsMuted(sender.getThreadId())
+        getConversationStatus(sender.getThreadId())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        isMuted -> tryShowNotification(sender, sofaMessage, isMuted),
+                        conversationStatus -> tryShowNotification(sender, sofaMessage, conversationStatus),
                         throwable -> LogUtil.e("ChatNotificationManager", "Error while parsing sofa message " + throwable)
                 );
     }
 
     private static void tryShowNotification(final Recipient sender,
                                             final SofaMessage sofaMessage,
-                                            final boolean isMuted) {
-        if (isMuted) return;
+                                            final ConversationStatus conversationStatus) {
+        if (conversationStatus.isMuted()) return;
 
         final ChatNotification activeChatNotification = getAndCacheChatNotification(sender);
         if (activeChatNotification == null) return;
@@ -117,11 +123,12 @@ public class ChatNotificationManager extends ToshiNotificationBuilder {
         }
     }
 
-    private static Single<Boolean> checkIfConversationIsMuted(final String threadId) {
+    private static Single<ConversationStatus> getConversationStatus(final String threadId) {
         return BaseApplication
                 .get()
                 .getSofaMessageManager()
-                .isConversationMuted(threadId);
+                .loadConversation(threadId)
+                .map(Conversation::getConversationStatus);
     }
 
     private static PaymentRequest getPaymentRequestFromMessage(final SofaMessage sofaMessage) {

@@ -28,6 +28,7 @@ import com.toshi.crypto.HDWallet;
 import com.toshi.crypto.signal.model.DecryptedSignalMessage;
 import com.toshi.crypto.signal.store.ProtocolStore;
 import com.toshi.manager.store.ConversationStore;
+import com.toshi.model.local.Conversation;
 import com.toshi.model.local.Group;
 import com.toshi.model.local.IncomingMessage;
 import com.toshi.model.local.Recipient;
@@ -243,7 +244,7 @@ public class SofaMessageReceiver {
         return attachmentFile != null ? attachmentFile.getAbsolutePath() : null;
     }
 
-    private IncomingMessage saveIncomingMessageToDatabase(final User sender, final DecryptedSignalMessage signalMessage) throws IllegalStateException{
+    private IncomingMessage saveIncomingMessageToDatabase(final User sender, final DecryptedSignalMessage signalMessage) throws Exception {
         if (Looper.myLooper() == Looper.getMainLooper()) throw new IllegalStateException("Running a blocking DB call on main thread!");
 
         final SofaMessage remoteMessage = new SofaMessage()
@@ -257,32 +258,48 @@ public class SofaMessageReceiver {
                 .value();
 
         if (recipient == null) throw new IllegalStateException("Failure to generate Recipient");
-        this.saveIncomingMessageToDatabase(sender, remoteMessage, recipient);
-        return new IncomingMessage(remoteMessage, recipient);
+        final Conversation conversation = saveIncomingMessageToDatabase(sender, remoteMessage, recipient);
+        if (conversation == null) return null;
+        return new IncomingMessage(remoteMessage, recipient, conversation);
     }
 
-    private void saveIncomingMessageToDatabase(final User sender, final SofaMessage remoteMessage, final Recipient senderRecipient) {
+    //Returns null if the the message isn't saved to the db.
+    private Conversation saveIncomingMessageToDatabase(final User sender, final SofaMessage remoteMessage, final Recipient senderRecipient) throws Exception {
         if (remoteMessage.getType() == SofaType.PAYMENT) {
-            // Don't render incoming SOFA::Payments,
-            // but ensure we have the sender cached.
-            fetchAndCacheIncomingPaymentSender(sender);
-            return;
-        } else if(remoteMessage.getType() == SofaType.PAYMENT_REQUEST) {
-            generatePayloadWithLocalAmountEmbedded(remoteMessage)
-                    .subscribe((updatedPayload) -> {
-                                remoteMessage.setPayload(updatedPayload);
-                                this.conversationStore.saveNewMessage(senderRecipient, remoteMessage);
-                            },
-                            this::handleError);
-            return;
-        } else if (remoteMessage.getType() == SofaType.INIT_REQUEST) {
             // Don't render initRequests,
             // but respond to them.
+            fetchAndCacheIncomingPaymentSender(sender);
+            return null;
+        } else if (remoteMessage.getType() == SofaType.INIT_REQUEST) {
+            // Don't render incoming SOFA::Payments,
+            // but ensure we have the sender cached.
             respondToInitRequest(sender, remoteMessage);
-            return;
+            return null;
+        } else if (remoteMessage.getType() == SofaType.PAYMENT_REQUEST) {
+            return savePaymentRequestAndShowNotification(remoteMessage, senderRecipient);
         }
 
-        this.conversationStore.saveNewMessage(senderRecipient, remoteMessage);
+        return saveMessageToDatabase(remoteMessage, senderRecipient);
+    }
+
+    private Conversation savePaymentRequestAndShowNotification(final SofaMessage remoteMessage, final Recipient senderRecipient) throws Exception {
+        if (Looper.myLooper() == Looper.getMainLooper()) throw new IllegalStateException("Running a blocking DB call on main thread!");
+        final String updatedPayload = generatePayloadWithLocalAmountEmbedded(remoteMessage)
+                .timeout(30, TimeUnit.SECONDS)
+                .toBlocking()
+                .value();
+        return this.conversationStore.saveNewMessageSingle(senderRecipient, remoteMessage.setPayload(updatedPayload))
+                .timeout(30, TimeUnit.SECONDS)
+                .toBlocking()
+                .value();
+    }
+
+    private Conversation saveMessageToDatabase(final SofaMessage remoteMessage, final Recipient senderRecipient) throws Exception {
+        if (Looper.myLooper() == Looper.getMainLooper()) throw new IllegalStateException("Running a blocking DB call on main thread!");
+        return this.conversationStore.saveNewMessageSingle(senderRecipient, remoteMessage)
+                .timeout(30, TimeUnit.SECONDS)
+                .toBlocking()
+                .value();
     }
 
     private Single<Recipient> generateRecipientFromSignalMessage(final User sender, final DecryptedSignalMessage signalMessage) {
@@ -292,10 +309,6 @@ public class SofaMessageReceiver {
         return Single.just(signalMessage.getGroup())
                 .flatMap(Group::fromSignalGroup)
                 .map(Recipient::new);
-    }
-
-    private void handleError(final Throwable throwable) {
-        LogUtil.exception(getClass(), "Error while generating payload with local amount embedded", throwable);
     }
 
     private void respondToInitRequest(final User sender, final SofaMessage remoteMessage) {

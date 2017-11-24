@@ -101,6 +101,18 @@ public class ConversationStore {
                 .doOnError(this::handleError);
     }
 
+    public Single<Conversation> saveNewMessageSingle(@NonNull final Recipient receiver,
+                                                     @NonNull final SofaMessage message) {
+        return saveMessage(receiver, message)
+                .observeOn(Schedulers.immediate())
+                .subscribeOn(Schedulers.from(dbThread))
+                .doOnSuccess(conversationForBroadcast -> {
+                    broadcastNewChatMessage(receiver.getThreadId(), message);
+                    broadcastConversationChanged(conversationForBroadcast);
+                })
+                .doOnError(throwable -> LogUtil.e(getClass(), "Error while saving message " + throwable));
+    }
+
     public void saveNewMessage(
             @NonNull final Recipient receiver,
             @NonNull final SofaMessage message) {

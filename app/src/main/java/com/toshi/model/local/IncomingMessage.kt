@@ -21,5 +21,6 @@ import com.toshi.model.sofa.SofaMessage
 
 data class IncomingMessage(
         val sofaMessage: SofaMessage,
-        val recipient: Recipient
+        val recipient: Recipient,
+        val conversation: Conversation
 )
