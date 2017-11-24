@@ -78,17 +78,22 @@ class ConversationRequestActivity : AppCompatActivity() {
             updatedConversation -> updatedConversation?.let { requestsAdapter.addConversation(it) }
         })
         viewModel.acceptConversation.observe(this, Observer {
-            acceptedConversation -> acceptedConversation?.let { requestsAdapter.remove(it) }
+            acceptedConversation -> acceptedConversation?.let { requestsAdapter.remove(it); finishIfEmpty() }
         })
         viewModel.rejectConversation.observe(this, Observer {
-            rejectedConversation -> rejectedConversation?.let { requestsAdapter.remove(it) }
+            rejectedConversation -> rejectedConversation?.let { requestsAdapter.remove(it); finishIfEmpty() }
         })
     }
 
     private fun handleConversationsAndLocalUser(conversations: List<Conversation>, localUser: User) {
+        if (conversations.isEmpty()) finish()
         requestsAdapter.localUser = localUser
         requestsAdapter.setConversations(conversations)
     }
 
     private fun getConversationsAndLocalUser() = viewModel.getUnacceptedConversationsAndLocalUser()
+
+    private fun finishIfEmpty() {
+        if (requestsAdapter.itemCount == 0) finish()
+    }
 }
