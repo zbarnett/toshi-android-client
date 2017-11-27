@@ -70,7 +70,8 @@ public class SofaMessageReceiver {
     public SofaMessageReceiver(@NonNull final HDWallet wallet,
                                @NonNull final ProtocolStore protocolStore,
                                @NonNull final ConversationStore conversationStore,
-                               @NonNull final SignalServiceUrl[] urls) {
+                               @NonNull final SignalServiceUrl[] urls,
+                               @NonNull final SofaMessageSender messageSender) {
         this.wallet = wallet;
         this.protocolStore = protocolStore;
         this.messageReceiver =
@@ -82,7 +83,7 @@ public class SofaMessageReceiver {
                         USER_AGENT);
 
         this.taskGroupUpdate = new GroupUpdateTask(this.messageReceiver, conversationStore);
-        this.taskHandleMessage = new HandleMessageTask(this.messageReceiver, conversationStore, this.wallet);
+        this.taskHandleMessage = new HandleMessageTask(this.messageReceiver, conversationStore, this.wallet, messageSender);
     }
 
     public void receiveMessagesAsync() {

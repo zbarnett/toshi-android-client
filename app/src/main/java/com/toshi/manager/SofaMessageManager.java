@@ -249,8 +249,8 @@ public final class SofaMessageManager {
 
     private Completable initEverything() {
         generateStores();
-        initMessageReceiver();
         initMessageSender();
+        initMessageReceiver(this.messageSender);
         return initRegistrationTask()
                 .onErrorComplete()
                 .doOnCompleted(this::attachConnectivityObserver);
@@ -292,13 +292,14 @@ public final class SofaMessageManager {
         this.chatService = new ChatService(this.signalServiceUrls, this.wallet, this.protocolStore, this.userAgent);
     }
 
-    private void initMessageReceiver() {
+    private void initMessageReceiver(final SofaMessageSender messageSender) {
         if (this.messageReceiver != null) return;
         this.messageReceiver = new SofaMessageReceiver(
                 this.wallet,
                 this.protocolStore,
                 this.conversationStore,
-                this.signalServiceUrls);
+                this.signalServiceUrls,
+                messageSender);
     }
 
     private void initMessageSender() {

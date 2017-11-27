@@ -20,6 +20,7 @@ package com.toshi.manager.chat.tasks
 import android.os.Looper
 import com.toshi.crypto.HDWallet
 import com.toshi.crypto.signal.model.DecryptedSignalMessage
+import com.toshi.manager.chat.SofaMessageSender
 import com.toshi.manager.store.ConversationStore
 import com.toshi.model.local.Conversation
 import com.toshi.model.local.Group
@@ -42,9 +43,11 @@ import java.util.concurrent.TimeUnit
 class HandleMessageTask(
         private val messageReceiver: SignalServiceMessageReceiver,
         private val conversationStore: ConversationStore,
-        private val wallet: HDWallet
+        private val wallet: HDWallet,
+        private val messageSender: SofaMessageSender
 ) {
     private val taskProcessAttachments by lazy { ProcessAttachmentsTask(messageReceiver) }
+    private val taskRequestGroupInfo by lazy { RequestGroupInfoTask(messageSender) }
     private val recipientManager by lazy { BaseApplication.get().recipientManager }
     private val sofaMessageManager by lazy { BaseApplication.get().sofaMessageManager }
 
@@ -155,8 +158,14 @@ class HandleMessageTask(
         } else {
             Single.just(signalMessage.group)
                     .flatMap { Group.fromSignalGroup(it) }
-                    .map { Recipient(it) }
+                    .map { handleGetGroupFromSignalGroup(it) }
+                    .doOnError { taskRequestGroupInfo.run(signalMessage.group, sender) }
         }
+    }
+
+    private fun handleGetGroupFromSignalGroup(group: Group?): Recipient {
+        return group?.let { Recipient(group) }
+                ?: throw IllegalStateException("No group found with that ID")
     }
 
     private fun generatePayloadWithLocalAmountEmbedded(remoteMessage: SofaMessage): Single<String> {

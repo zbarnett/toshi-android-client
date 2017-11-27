@@ -39,8 +39,10 @@ import com.toshi.util.LogUtil;
 import org.whispersystems.libsignal.util.Hex;
 import org.whispersystems.libsignal.util.guava.Optional;
 import org.whispersystems.signalservice.api.SignalServiceMessageSender;
+import org.whispersystems.signalservice.api.crypto.UntrustedIdentityException;
 import org.whispersystems.signalservice.api.messages.SignalServiceDataMessage;
 import org.whispersystems.signalservice.api.messages.SignalServiceGroup;
+import org.whispersystems.signalservice.api.push.SignalServiceAddress;
 import org.whispersystems.signalservice.api.push.exceptions.EncapsulatedExceptions;
 import org.whispersystems.signalservice.internal.configuration.SignalCdnUrl;
 import org.whispersystems.signalservice.internal.configuration.SignalServiceConfiguration;
@@ -176,6 +178,23 @@ public class SofaMessageSender {
                 throw new GroupCreationException(ex);
             }
         });
+    }
+
+    public void requestGroupInfo(final String groupId, final String senderId) {
+        try {
+            final SignalServiceGroup signalGroup = SignalServiceGroup
+                            .newBuilder(SignalServiceGroup.Type.REQUEST_INFO)
+                            .withId(Hex.fromStringCondensed(groupId))
+                            .build();
+            final SignalServiceDataMessage dataMessage = SignalServiceDataMessage
+                    .newBuilder()
+                    .asGroupMessage(signalGroup)
+                    .withTimestamp(System.currentTimeMillis())
+                    .build();
+            this.signalMessageSender.sendMessage(new SignalServiceAddress(senderId), dataMessage);
+        } catch (final IOException | UntrustedIdentityException ex) {
+            LogUtil.exception(getClass(), "Unable to request group info");
+        }
     }
 
 
