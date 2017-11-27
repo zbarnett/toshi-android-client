@@ -131,7 +131,7 @@
                         android:textSize="16sp"
                         android:textColor="@color/textColorPrimary"
                         android:textColorLink="@color/colorPrimary"
-                        android:autoLink="web"
+                        android:autoLink="web|phone|email"
                         android:textIsSelectable="true"
                         tools:text="Commonwealth Games Road Champ, 3x World Champ. Pro cyclist for Team Sky."/>
 
@@ -147,7 +147,7 @@
                         android:textSize="16sp"
                         android:textColor="@color/textColorSecondary"
                         android:textColorLink="@color/colorPrimary"
-                        android:autoLink="web"
+                        android:autoLink="web|phone|email"
                         android:textIsSelectable="true"
                         tools:text="Amsterdam, ZH"/>
 
