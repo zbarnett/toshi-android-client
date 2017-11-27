@@ -31,6 +31,7 @@ import com.toshi.extensions.getDrawableById
 import com.toshi.extensions.isVisible
 import com.toshi.extensions.startActivityAndFinish
 import com.toshi.extensions.startActivityForResult
+import com.toshi.extensions.startActivity
 import com.toshi.extensions.toast
 import com.toshi.model.local.User
 import com.toshi.model.network.ReputationScore
@@ -104,6 +105,16 @@ class ViewUserActivity : AppCompatActivity() {
     private fun initClickListeners() {
         closeButton.setOnClickListener { onBackPressed() }
         rateUser.setOnClickListener { showRatingDialog() }
+        avatar.setOnClickListener { startFullscreenActivity() }
+    }
+
+    private fun startFullscreenActivity() {
+        val avatar = viewModel.user.value?.avatar
+        avatar?.let {
+            startActivity<FullscreenImageActivity> {
+                putExtra(FullscreenImageActivity.IMAGE_URL, it)
+            }
+        }
     }
 
     private fun initObservers() {
