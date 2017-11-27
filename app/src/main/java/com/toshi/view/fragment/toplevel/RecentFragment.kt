@@ -50,22 +50,25 @@ class RecentFragment : Fragment(), TopLevelFragment {
         private const val TAG = "RecentFragment"
         private const val NO_MESSAGE_REQUESTS_START_POSITION = 0
         private const val MESSAGE_REQUESTS_START_POSITION = 2
+        private const val SCROLL_POSITION = "ScrollPosition"
     }
 
     override fun getFragmentTag() = TAG
 
     private lateinit var viewModel: RecentViewModel
     private lateinit var recentAdapter: RecentAdapter
+    private var scrollPosition = 0
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater?.inflate(R.layout.fragment_recent, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) = init()
+    override fun onViewCreated(view: View?, inState: Bundle?) = init(inState)
 
-    private fun init() {
+    private fun init(inState: Bundle?) {
         initViewModel()
         initClickListeners()
+        restoreScrollPosition(inState)
         initRecentAdapter()
         initObservers()
     }
@@ -77,6 +80,12 @@ class RecentFragment : Fragment(), TopLevelFragment {
     private fun initClickListeners() {
         startChat.setOnClickListener { startActivity<NewConversationActivity>() }
         add.setOnClickListener { startActivity<NewConversationActivity>() }
+    }
+
+    private fun restoreScrollPosition(inState: Bundle?) {
+        inState?.let {
+            scrollPosition = it.getInt(SCROLL_POSITION, 0)
+        }
     }
 
     private fun initRecentAdapter() {
@@ -100,6 +109,7 @@ class RecentFragment : Fragment(), TopLevelFragment {
         }
 
         addSwipeToDeleteListener(recents)
+        recents.scrollToPosition(scrollPosition)
     }
 
     private fun initObservers() {
@@ -196,6 +206,17 @@ class RecentFragment : Fragment(), TopLevelFragment {
     }
 
     private fun getAcceptedAndUnacceptedConversations() = viewModel.getAcceptedAndUnAcceptedConversations()
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(setOutState(outState))
+    }
+
+    private fun setOutState(outState: Bundle?): Bundle? {
+        val recentsLayoutManager = recents.layoutManager as LinearLayoutManager
+        return outState?.apply {
+            putInt(SCROLL_POSITION, recentsLayoutManager.findFirstCompletelyVisibleItemPosition())
+        }
+    }
 
     override fun onStop() {
         super.onStop()
