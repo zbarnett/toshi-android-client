@@ -108,6 +108,7 @@
                             android:textColor="@color/textColorPrimary"
                             android:textSize="22sp"
                             style="@style/TextStyleMedium"
+                            android:textIsSelectable="true"
                             tools:text="Damn Daniel!"/>
 
                         <TextView
@@ -115,6 +116,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textColor="@color/textColorSecondary"
+                            android:textIsSelectable="true"
                             tools:text="\@username" />
 
                     </LinearLayout>
@@ -130,6 +132,9 @@
                     android:layout_height="wrap_content"
                     android:textSize="16sp"
                     android:textColor="@color/textColorPrimary"
+                    android:textColorLink="@color/colorPrimary"
+                    android:autoLink="web"
+                    android:textIsSelectable="true"
                     tools:text="Commonwealth Games Road Champ, 3x World Champ. Pro cyclist for Team Sky."/>
 
                 <android.support.v4.widget.Space
@@ -143,6 +148,9 @@
                     app:layout_columnSpan="2"
                     android:textSize="16sp"
                     android:textColor="@color/textColorSecondary"
+                    android:textColorLink="@color/colorPrimary"
+                    android:autoLink="web"
+                    android:textIsSelectable="true"
                     tools:text="Amsterdam, ZH"/>
 
             </LinearLayout>
