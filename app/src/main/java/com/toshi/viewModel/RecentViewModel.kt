@@ -46,6 +46,7 @@ class RecentViewModel : ViewModel() {
     private fun attachSubscriber() {
         val sub = getSofaMessageManager()
                 .registerForAllConversationChanges()
+                .filter { it.allMessages.size > 0 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { handleUpdatedConversation(it) },
