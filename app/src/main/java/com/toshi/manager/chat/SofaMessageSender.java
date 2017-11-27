@@ -24,6 +24,8 @@ import com.toshi.BuildConfig;
 import com.toshi.crypto.HDWallet;
 import com.toshi.crypto.signal.store.ProtocolStore;
 import com.toshi.exception.GroupCreationException;
+import com.toshi.manager.chat.tasks.SendMessageToRecipientTask;
+import com.toshi.manager.chat.tasks.StoreMessageTask;
 import com.toshi.manager.model.SofaMessageTask;
 import com.toshi.manager.store.ConversationStore;
 import com.toshi.manager.store.PendingMessageStore;
@@ -31,28 +33,20 @@ import com.toshi.model.local.Group;
 import com.toshi.model.local.PendingMessage;
 import com.toshi.model.local.Recipient;
 import com.toshi.model.local.SendState;
-import com.toshi.model.sofa.OutgoingAttachment;
 import com.toshi.model.sofa.SofaMessage;
 import com.toshi.util.LogUtil;
-import com.toshi.view.BaseApplication;
 
-import org.whispersystems.libsignal.SignalProtocolAddress;
 import org.whispersystems.libsignal.util.Hex;
 import org.whispersystems.libsignal.util.guava.Optional;
 import org.whispersystems.signalservice.api.SignalServiceMessageSender;
-import org.whispersystems.signalservice.api.crypto.UntrustedIdentityException;
-import org.whispersystems.signalservice.api.messages.SignalServiceAttachment;
 import org.whispersystems.signalservice.api.messages.SignalServiceDataMessage;
 import org.whispersystems.signalservice.api.messages.SignalServiceGroup;
-import org.whispersystems.signalservice.api.push.SignalServiceAddress;
 import org.whispersystems.signalservice.api.push.exceptions.EncapsulatedExceptions;
 import org.whispersystems.signalservice.internal.configuration.SignalCdnUrl;
 import org.whispersystems.signalservice.internal.configuration.SignalServiceConfiguration;
 import org.whispersystems.signalservice.internal.configuration.SignalServiceUrl;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.List;
 
 import rx.Single;
 import rx.Subscription;
@@ -60,8 +54,6 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 import rx.subscriptions.CompositeSubscription;
-
-import static com.toshi.util.FileUtil.buildSignalServiceAttachment;
 
 public class SofaMessageSender {
 
@@ -74,6 +66,8 @@ public class SofaMessageSender {
     private final ProtocolStore protocolStore;
     private final PublishSubject<SofaMessageTask> messageQueue;
     private final SignalServiceMessageSender signalMessageSender;
+    private final SendMessageToRecipientTask taskSendMessage;
+    private final StoreMessageTask taskStoreMessage;
 
 
     public SofaMessageSender(@NonNull final HDWallet wallet,
@@ -98,6 +92,13 @@ public class SofaMessageSender {
                         Optional.absent()
                 );
 
+        this.taskSendMessage = new SendMessageToRecipientTask(
+                this.conversationStore,
+                this.pendingMessageStore,
+                this.protocolStore,
+                this.signalMessageSender);
+        this.taskStoreMessage = new StoreMessageTask(this.conversationStore);
+
         attachSubscriber();
     }
 
@@ -116,16 +117,16 @@ public class SofaMessageSender {
     private void processTask(final SofaMessageTask messageTask) {
         switch (messageTask.getAction()) {
             case SofaMessageTask.SEND_AND_SAVE:
-                sendMessageToRecipient(messageTask, true);
+                taskSendMessage.run(messageTask, true);
                 break;
             case SofaMessageTask.SAVE_ONLY:
-                storeMessage(messageTask.getReceiver(), messageTask.getSofaMessage(), SendState.STATE_LOCAL_ONLY);
+                taskStoreMessage.run(messageTask.getReceiver(), messageTask.getSofaMessage(), SendState.STATE_LOCAL_ONLY);
                 break;
             case SofaMessageTask.SAVE_TRANSACTION:
-                storeMessage(messageTask.getReceiver(), messageTask.getSofaMessage(), SendState.STATE_SENDING);
+                taskStoreMessage.run(messageTask.getReceiver(), messageTask.getSofaMessage(), SendState.STATE_SENDING);
                 break;
             case SofaMessageTask.SEND_ONLY:
-                sendMessageToRecipient(messageTask, false);
+                taskSendMessage.run(messageTask, false);
                 break;
             case SofaMessageTask.UPDATE_MESSAGE:
                 updateExistingMessage(messageTask.getReceiver(), messageTask.getSofaMessage());
@@ -177,144 +178,7 @@ public class SofaMessageSender {
         });
     }
 
-    private void sendMessageToRecipient(final SofaMessageTask messageTask, final boolean saveMessageToDatabase) {
-        final Recipient receiver = messageTask.getReceiver();
-        if (receiver.isGroup()) {
-            sendMessageToGroup(messageTask, saveMessageToDatabase);
-        } else {
-            sendMessageToUser(messageTask, saveMessageToDatabase);
-        }
-    }
 
-    private void sendMessageToGroup(final SofaMessageTask messageTask, final boolean saveMessageToDatabase) {
-        final Recipient receiver = messageTask.getReceiver();
-        final SofaMessage message = messageTask.getSofaMessage();
-
-        if (saveMessageToDatabase) {
-            this.conversationStore.saveNewMessage(receiver, message);
-        }
-
-        if (!BaseApplication.get().isConnected() && saveMessageToDatabase) {
-            message.setSendState(SendState.STATE_FAILED);
-            updateExistingMessage(receiver, message);
-            savePendingMessage(receiver, message);
-            return;
-        }
-
-        try {
-            sendToSignal(receiver.getGroup().getMemberAddresses(), messageTask);
-
-            if (saveMessageToDatabase) {
-                message.setSendState(SendState.STATE_SENT);
-                updateExistingMessage(receiver, message);
-            }
-        } catch (final IOException ex) {
-            LogUtil.error(getClass(), ex.toString());
-            if (saveMessageToDatabase) {
-                message.setSendState(SendState.STATE_FAILED);
-                updateExistingMessage(receiver, message);
-            }
-        } catch (final EncapsulatedExceptions e) {
-            for (UntrustedIdentityException uie : e.getUntrustedIdentityExceptions()) {
-                LogUtil.error(getClass(), "Keys have changed.");
-                protocolStore.saveIdentity(new SignalProtocolAddress(uie.getE164Number(), SignalServiceAddress.DEFAULT_DEVICE_ID), uie.getIdentityKey());
-            }
-        }
-    }
-
-    private void sendMessageToUser(final SofaMessageTask messageTask, final boolean saveMessageToDatabase) {
-        final Recipient receiver = messageTask.getReceiver();
-        final SofaMessage message = messageTask.getSofaMessage();
-
-        if (saveMessageToDatabase) {
-            this.conversationStore.saveNewMessage(receiver, message);
-        }
-
-        if (!BaseApplication.get().isConnected() && saveMessageToDatabase) {
-            message.setSendState(SendState.STATE_FAILED);
-            updateExistingMessage(receiver, message);
-            savePendingMessage(receiver, message);
-            return;
-        }
-
-        try {
-            sendToSignal(receiver.getUser().getToshiId(), messageTask);
-
-            if (saveMessageToDatabase) {
-                message.setSendState(SendState.STATE_SENT);
-                updateExistingMessage(receiver, message);
-            }
-        } catch (final UntrustedIdentityException ue) {
-            LogUtil.error(getClass(), "Keys have changed. " + ue);
-            protocolStore.saveIdentity(
-                    new SignalProtocolAddress(receiver.getUser().getToshiId(), SignalServiceAddress.DEFAULT_DEVICE_ID),
-                    ue.getIdentityKey());
-        } catch (final IOException ex) {
-            LogUtil.error(getClass(), ex.toString());
-            if (saveMessageToDatabase) {
-                message.setSendState(SendState.STATE_FAILED);
-                updateExistingMessage(receiver, message);
-                savePendingMessage(receiver, message);
-            }
-        }
-    }
-
-    private void sendToSignal(final List<SignalServiceAddress> signalAddresses, final SofaMessageTask messageTask) throws IOException, EncapsulatedExceptions {
-        final SignalServiceDataMessage message = buildMessage(messageTask);
-        this.signalMessageSender.sendMessage(signalAddresses, message);
-    }
-
-    private void sendToSignal(final String signalAddress, final SofaMessageTask messageTask) throws UntrustedIdentityException, IOException {
-        final SignalServiceAddress receivingAddress = new SignalServiceAddress(signalAddress);
-        final SignalServiceDataMessage message = buildMessage(messageTask);
-        this.signalMessageSender.sendMessage(receivingAddress, message);
-    }
-
-    private SignalServiceDataMessage buildMessage(final SofaMessageTask messageTask) throws FileNotFoundException {
-        final SignalServiceDataMessage.Builder messageBuilder = SignalServiceDataMessage.newBuilder();
-        messageBuilder.withBody(messageTask.getSofaMessage().getAsSofaMessage());
-
-        tryAddAttachment(messageTask, messageBuilder);
-        tryAddGroup(messageTask, messageBuilder);
-
-        return messageBuilder.build();
-    }
-
-    private void tryAddGroup(final SofaMessageTask messageTask, final SignalServiceDataMessage.Builder messageBuilder) {
-        try {
-            if (!messageTask.getReceiver().isGroup()) return;
-            final SignalServiceGroup signalGroup = new SignalServiceGroup(
-                    Hex.fromStringCondensed(messageTask.getReceiver().getGroup().getId()));
-            messageBuilder.asGroupMessage(signalGroup);
-        } catch (final Exception ex) {
-            LogUtil.i(getClass(), "Tried and failed to attach group." + ex);
-        }
-
-    }
-
-    private void tryAddAttachment(final SofaMessageTask messageTask, final SignalServiceDataMessage.Builder messageBuilder) {
-        try {
-            final OutgoingAttachment outgoingAttachment = new OutgoingAttachment(messageTask.getSofaMessage());
-            if (outgoingAttachment.isValid()) {
-                final SignalServiceAttachment signalAttachment = buildSignalServiceAttachment(outgoingAttachment);
-                messageBuilder.withAttachment(signalAttachment);
-            }
-        } catch (final FileNotFoundException | IllegalStateException ex) {
-            LogUtil.i(getClass(), "Tried and failed to attach attachment." + ex);
-        }
-    }
-
-    private void savePendingMessage(final Recipient receiver, final SofaMessage message) {
-        this.pendingMessageStore.save(receiver, message);
-    }
-
-    private void storeMessage(
-            final Recipient receiver,
-            final SofaMessage message,
-            final @SendState.State int sendState) {
-        message.setSendState(sendState);
-        this.conversationStore.saveNewMessage(receiver, message);
-    }
 
     private void updateExistingMessage(final Recipient receiver, final SofaMessage message) {
         this.conversationStore.updateMessage(receiver, message);
