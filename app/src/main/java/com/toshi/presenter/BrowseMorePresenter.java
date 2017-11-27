@@ -114,9 +114,11 @@ public class BrowseMorePresenter implements Presenter<BrowseMoreActivity> {
         final int dividerLeftPadding = this.activity.getResources().getDimensionPixelSize(R.dimen.avatar_size_small)
                 + this.activity.getResources().getDimensionPixelSize(R.dimen.activity_horizontal_margin)
                 + this.activity.getResources().getDimensionPixelSize(R.dimen.list_item_avatar_margin);
+        final int dividerRightPadding = this.activity.getResources().getDimensionPixelSize(R.dimen.activity_horizontal_margin);
         final HorizontalLineDivider lineDivider =
                 new HorizontalLineDivider(ContextCompat.getColor(this.activity, R.color.divider))
-                        .setLeftPadding(dividerLeftPadding);
+                        .setLeftPadding(dividerLeftPadding)
+                        .setRightPadding(dividerRightPadding);
         recyclerView.addItemDecoration(lineDivider);
 
         final boolean isPublicUserViewType = getViewType() == VIEW_TYPE_LATEST_PUBLIC_USERS
