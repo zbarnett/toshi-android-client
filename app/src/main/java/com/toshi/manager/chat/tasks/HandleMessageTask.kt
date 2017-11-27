@@ -1,0 +1,174 @@
+/*
+ * 	Copyright (c) 2017. Toshi Inc
+ *
+ * 	This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+package com.toshi.manager.chat.tasks
+
+import android.os.Looper
+import com.toshi.crypto.HDWallet
+import com.toshi.crypto.signal.model.DecryptedSignalMessage
+import com.toshi.manager.store.ConversationStore
+import com.toshi.model.local.Conversation
+import com.toshi.model.local.Group
+import com.toshi.model.local.IncomingMessage
+import com.toshi.model.local.Recipient
+import com.toshi.model.local.SendState
+import com.toshi.model.local.User
+import com.toshi.model.sofa.Init
+import com.toshi.model.sofa.SofaAdapters
+import com.toshi.model.sofa.SofaMessage
+import com.toshi.model.sofa.SofaType
+import com.toshi.util.LogUtil
+import com.toshi.view.BaseApplication
+import org.whispersystems.signalservice.api.SignalServiceMessageReceiver
+import org.whispersystems.signalservice.api.messages.SignalServiceDataMessage
+import rx.Single
+import java.io.IOException
+import java.util.concurrent.TimeUnit
+
+class HandleMessageTask(
+        private val messageReceiver: SignalServiceMessageReceiver,
+        private val conversationStore: ConversationStore,
+        private val wallet: HDWallet
+) {
+    private val taskProcessAttachments by lazy { ProcessAttachmentsTask(messageReceiver) }
+    private val recipientManager by lazy { BaseApplication.get().recipientManager }
+    private val sofaMessageManager by lazy { BaseApplication.get().sofaMessageManager }
+
+    fun run(messageSource: String, dataMessage: SignalServiceDataMessage): IncomingMessage? {
+        val signalGroup = dataMessage.groupInfo
+        val messageBody = dataMessage.body
+        val attachments = dataMessage.attachments
+        val decryptedMessage = DecryptedSignalMessage(messageSource, messageBody.get(), attachments, signalGroup)
+        return saveIncomingMessageToDatabase(decryptedMessage)
+    }
+
+    private fun saveIncomingMessageToDatabase(signalMessage: DecryptedSignalMessage?): IncomingMessage? {
+        if (signalMessage?.isValid != true) {
+            LogUtil.w(javaClass, "Attempt to save invalid DecryptedSignalMessage to database.")
+            return null
+        }
+
+        taskProcessAttachments.run(signalMessage)
+
+        try {
+            val user = getUser(signalMessage.source)
+            return saveIncomingMessageToDatabase(user, signalMessage)
+        } catch (ex: IllegalStateException) {
+            LogUtil.e(javaClass, "Error saving message to database. $ex")
+        }
+
+        return null
+    }
+
+    private fun getUser(toshiId: String) = recipientManager
+                .getUserFromToshiId(toshiId)
+                .timeout(5000, TimeUnit.MILLISECONDS)
+                .toBlocking()
+                .value() ?: throw IllegalStateException("Failure to get user")
+
+    private fun saveIncomingMessageToDatabase(sender: User, signalMessage: DecryptedSignalMessage): IncomingMessage? {
+        if (Looper.myLooper() == Looper.getMainLooper()) throw IllegalStateException("Running a blocking DB call on main thread!")
+
+        val remoteMessage = SofaMessage()
+                .makeNew(sender, signalMessage.body)
+                .setAttachmentFilePath(signalMessage.attachmentFilePath)
+                .setSendState(SendState.STATE_RECEIVED)
+
+        val recipient = generateRecipientFromSignalMessage(sender, signalMessage)
+                .timeout(30, TimeUnit.SECONDS)
+                .toBlocking()
+                .value() ?: throw IllegalStateException("Failure to generate Recipient")
+
+        val conversation = saveIncomingMessageToDatabase(sender, remoteMessage, recipient) ?: return null
+        return IncomingMessage(remoteMessage, recipient, conversation)
+    }
+
+    private fun saveIncomingMessageToDatabase(sender: User, remoteMessage: SofaMessage, senderRecipient: Recipient): Conversation? {
+        return when {
+            remoteMessage.type == SofaType.INIT_REQUEST -> respondToInitRequest(sender, remoteMessage)
+            remoteMessage.type == SofaType.PAYMENT -> fetchAndCacheIncomingPaymentSender(sender)
+            remoteMessage.type == SofaType.PAYMENT_REQUEST -> savePaymentRequestAndShowNotification(remoteMessage, senderRecipient)
+            else -> saveMessageToDatabase(remoteMessage, senderRecipient)
+        }
+    }
+
+    private fun respondToInitRequest(sender: User, remoteMessage: SofaMessage): Conversation? {
+        // Don't render initRequests, but respond to them.
+        try {
+            val initRequest = SofaAdapters.get().initRequestFrom(remoteMessage.payload)
+            val initMessage = Init().construct(initRequest, wallet.paymentAddress)
+            val payload = SofaAdapters.get().toJson(initMessage)
+            val newSofaMessage = SofaMessage().makeNew(sender, payload)
+            val recipient = Recipient(sender)
+            sofaMessageManager.sendMessage(recipient, newSofaMessage)
+        } catch (e: IOException) {
+            LogUtil.e(javaClass, "Failed to respond to incoming init request. $e")
+        }
+        return null
+    }
+
+    private fun fetchAndCacheIncomingPaymentSender(sender: User): Conversation? {
+        // Don't render incoming SOFA::Payments, but ensure we have the sender cached.
+        recipientManager.getUserFromToshiId(sender.toshiId)
+        return null
+    }
+
+    private fun savePaymentRequestAndShowNotification(remoteMessage: SofaMessage, senderRecipient: Recipient): Conversation {
+        if (Looper.myLooper() == Looper.getMainLooper()) throw IllegalStateException("Running a blocking DB call on main thread!")
+        val updatedPayload = generatePayloadWithLocalAmountEmbedded(remoteMessage)
+                .timeout(30, TimeUnit.SECONDS)
+                .toBlocking()
+                .value()
+        return conversationStore
+                .saveNewMessageSingle(senderRecipient, remoteMessage.setPayload(updatedPayload))
+                .timeout(30, TimeUnit.SECONDS)
+                .toBlocking()
+                .value()
+    }
+
+    private fun saveMessageToDatabase(remoteMessage: SofaMessage, senderRecipient: Recipient): Conversation {
+        if (Looper.myLooper() == Looper.getMainLooper()) throw IllegalStateException("Running a blocking DB call on main thread!")
+        return conversationStore
+                .saveNewMessageSingle(senderRecipient, remoteMessage)
+                .timeout(30, TimeUnit.SECONDS)
+                .toBlocking()
+                .value()
+    }
+
+    private fun generateRecipientFromSignalMessage(sender: User, signalMessage: DecryptedSignalMessage): Single<Recipient> {
+        return if (!signalMessage.isGroup) {
+            Single.just(Recipient(sender))
+        } else {
+            Single.just(signalMessage.group)
+                    .flatMap { Group.fromSignalGroup(it) }
+                    .map { Recipient(it) }
+        }
+    }
+
+    private fun generatePayloadWithLocalAmountEmbedded(remoteMessage: SofaMessage): Single<String> {
+        try {
+            val request = SofaAdapters.get().txRequestFrom(remoteMessage.payload)
+            return request
+                    .generateLocalPrice()
+                    .map { updatedPaymentRequest -> SofaAdapters.get().toJson(updatedPaymentRequest) }
+        } catch (ex: IOException) {
+            LogUtil.e(javaClass, "Unable to embed local price. $ex")
+        }
+
+        return Single.just(remoteMessage.payloadWithHeaders)
+    }
+}

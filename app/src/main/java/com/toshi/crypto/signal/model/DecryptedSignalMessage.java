@@ -75,4 +75,8 @@ public class DecryptedSignalMessage {
 
         return this.group.get();
     }
+
+    public boolean isValid() {
+        return this.body != null && this.source != null;
+    }
 }

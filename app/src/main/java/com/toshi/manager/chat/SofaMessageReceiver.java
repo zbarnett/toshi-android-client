@@ -18,29 +18,16 @@
 package com.toshi.manager.chat;
 
 
-import android.os.Looper;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 
 import com.toshi.BuildConfig;
 import com.toshi.crypto.HDWallet;
-import com.toshi.crypto.signal.model.DecryptedSignalMessage;
 import com.toshi.crypto.signal.store.ProtocolStore;
+import com.toshi.manager.chat.tasks.GroupUpdateTask;
+import com.toshi.manager.chat.tasks.HandleMessageTask;
 import com.toshi.manager.store.ConversationStore;
-import com.toshi.model.local.Conversation;
-import com.toshi.model.local.Group;
 import com.toshi.model.local.IncomingMessage;
-import com.toshi.model.local.Recipient;
-import com.toshi.model.local.SendState;
-import com.toshi.model.local.User;
-import com.toshi.model.sofa.Init;
-import com.toshi.model.sofa.InitRequest;
-import com.toshi.model.sofa.PaymentRequest;
-import com.toshi.model.sofa.SofaAdapters;
-import com.toshi.model.sofa.SofaMessage;
-import com.toshi.model.sofa.SofaType;
-import com.toshi.util.FileUtil;
 import com.toshi.util.LogUtil;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.notification.ChatNotificationManager;
@@ -52,37 +39,30 @@ import org.whispersystems.libsignal.InvalidMessageException;
 import org.whispersystems.libsignal.InvalidVersionException;
 import org.whispersystems.libsignal.LegacyMessageException;
 import org.whispersystems.libsignal.NoSessionException;
-import org.whispersystems.libsignal.util.guava.Optional;
 import org.whispersystems.signalservice.api.SignalServiceMessagePipe;
 import org.whispersystems.signalservice.api.SignalServiceMessageReceiver;
 import org.whispersystems.signalservice.api.crypto.SignalServiceCipher;
-import org.whispersystems.signalservice.api.messages.SignalServiceAttachment;
-import org.whispersystems.signalservice.api.messages.SignalServiceAttachmentPointer;
 import org.whispersystems.signalservice.api.messages.SignalServiceContent;
 import org.whispersystems.signalservice.api.messages.SignalServiceDataMessage;
 import org.whispersystems.signalservice.api.messages.SignalServiceEnvelope;
-import org.whispersystems.signalservice.api.messages.SignalServiceGroup;
 import org.whispersystems.signalservice.api.push.SignalServiceAddress;
 import org.whispersystems.signalservice.internal.configuration.SignalCdnUrl;
 import org.whispersystems.signalservice.internal.configuration.SignalServiceConfiguration;
 import org.whispersystems.signalservice.internal.configuration.SignalServiceUrl;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-
-import rx.Single;
 
 public class SofaMessageReceiver {
 
     private final static String USER_AGENT = "Android " + BuildConfig.APPLICATION_ID + " - " + BuildConfig.VERSION_NAME +  ":" + BuildConfig.VERSION_CODE;
 
-    private final ConversationStore conversationStore;
     private final ProtocolStore protocolStore;
     private final SignalServiceMessageReceiver messageReceiver;
     private final HDWallet wallet;
+    private final GroupUpdateTask taskGroupUpdate;
+    private final HandleMessageTask taskHandleMessage;
 
     private SignalServiceMessagePipe messagePipe;
     private boolean isReceivingMessages;
@@ -93,8 +73,6 @@ public class SofaMessageReceiver {
                                @NonNull final SignalServiceUrl[] urls) {
         this.wallet = wallet;
         this.protocolStore = protocolStore;
-        this.conversationStore = conversationStore;
-
         this.messageReceiver =
                 new SignalServiceMessageReceiver(
                         new SignalServiceConfiguration(urls, new SignalCdnUrl[0]),
@@ -102,6 +80,9 @@ public class SofaMessageReceiver {
                         this.protocolStore.getPassword(),
                         this.protocolStore.getSignalingKey(),
                         USER_AGENT);
+
+        this.taskGroupUpdate = new GroupUpdateTask(this.messageReceiver, conversationStore);
+        this.taskHandleMessage = new HandleMessageTask(this.messageReceiver, conversationStore, this.wallet);
     }
 
     public void receiveMessagesAsync() {
@@ -163,29 +144,9 @@ public class SofaMessageReceiver {
 
         if (content.getDataMessage().isPresent()) {
             final SignalServiceDataMessage dataMessage = content.getDataMessage().get();
-            if (dataMessage.isGroupUpdate()) return handleGroupUpdate(dataMessage);
-            else return handleTextMessage(messageSource, dataMessage);
+            if (dataMessage.isGroupUpdate()) return taskGroupUpdate.run(dataMessage);
+            else return taskHandleMessage.run(messageSource, dataMessage);
         }
-        return null;
-    }
-
-    @Nullable
-    private IncomingMessage handleTextMessage(final String messageSource, final SignalServiceDataMessage dataMessage) {
-        final Optional<SignalServiceGroup> signalGroup = dataMessage.getGroupInfo();
-        final Optional<String> messageBody = dataMessage.getBody();
-        final Optional<List<SignalServiceAttachment>> attachments = dataMessage.getAttachments();
-        final DecryptedSignalMessage decryptedMessage = new DecryptedSignalMessage(messageSource, messageBody.get(), attachments, signalGroup);
-        return saveIncomingMessageToDatabase(decryptedMessage);
-    }
-
-    private IncomingMessage handleGroupUpdate(final SignalServiceDataMessage dataMessage) {
-        final SignalServiceGroup signalGroup = dataMessage.getGroupInfo().get();
-        new Group()
-                .updateFromSignalGroup(signalGroup, this.messageReceiver)
-                .subscribe(
-                        this.conversationStore::saveGroup,
-                        ex -> LogUtil.e(getClass(), "Error creating incoming group. " + ex)
-                );
         return null;
     }
 
@@ -196,156 +157,6 @@ public class SofaMessageReceiver {
                 .isUserBlocked(address)
                 .toBlocking()
                 .value();
-    }
-
-    private IncomingMessage saveIncomingMessageToDatabase(final DecryptedSignalMessage signalMessage) {
-        if (signalMessage == null || signalMessage.getBody() == null || signalMessage.getSource() == null) {
-            LogUtil.w(getClass(), "Attempt to save invalid DecryptedSignalMessage to database.");
-            return null;
-        }
-
-        processAttachments(signalMessage);
-
-        try {
-            final User user = getUser(signalMessage.getSource());
-            return saveIncomingMessageToDatabase(user, signalMessage);
-        } catch (Exception ex) {
-            LogUtil.e(getClass(), "Error fetching user. " + ex);
-        }
-        return null;
-    }
-
-    private User getUser(final String toshiId) {
-        return BaseApplication
-                .get()
-                .getRecipientManager()
-                .getUserFromToshiId(toshiId)
-                .timeout(5000, TimeUnit.MILLISECONDS)
-                .toBlocking()
-                .value();
-    }
-
-    private void processAttachments(final DecryptedSignalMessage signalMessage) {
-        if (!signalMessage.getAttachments().isPresent()) {
-            return;
-        }
-
-        final List<SignalServiceAttachment> attachments = signalMessage.getAttachments().get();
-        if (attachments.size() > 0) {
-            final SignalServiceAttachment attachment = attachments.get(0);
-            final String filePath = saveAttachmentToFile(attachment.asPointer());
-            signalMessage.setAttachmentFilePath(filePath);
-        }
-    }
-
-    private @Nullable
-    String saveAttachmentToFile(final SignalServiceAttachmentPointer attachment) {
-        final File attachmentFile = FileUtil.writeAttachmentToFileFromMessageReceiver(attachment, this.messageReceiver);
-        return attachmentFile != null ? attachmentFile.getAbsolutePath() : null;
-    }
-
-    private IncomingMessage saveIncomingMessageToDatabase(final User sender, final DecryptedSignalMessage signalMessage) throws Exception {
-        if (Looper.myLooper() == Looper.getMainLooper()) throw new IllegalStateException("Running a blocking DB call on main thread!");
-
-        final SofaMessage remoteMessage = new SofaMessage()
-                .makeNew(sender, signalMessage.getBody())
-                .setAttachmentFilePath(signalMessage.getAttachmentFilePath())
-                .setSendState(SendState.STATE_RECEIVED);
-
-        final Recipient recipient = generateRecipientFromSignalMessage(sender, signalMessage)
-                .timeout(30, TimeUnit.SECONDS)
-                .toBlocking()
-                .value();
-
-        if (recipient == null) throw new IllegalStateException("Failure to generate Recipient");
-        final Conversation conversation = saveIncomingMessageToDatabase(sender, remoteMessage, recipient);
-        if (conversation == null) return null;
-        return new IncomingMessage(remoteMessage, recipient, conversation);
-    }
-
-    //Returns null if the the message isn't saved to the db.
-    private Conversation saveIncomingMessageToDatabase(final User sender, final SofaMessage remoteMessage, final Recipient senderRecipient) throws Exception {
-        if (remoteMessage.getType() == SofaType.PAYMENT) {
-            // Don't render initRequests,
-            // but respond to them.
-            fetchAndCacheIncomingPaymentSender(sender);
-            return null;
-        } else if (remoteMessage.getType() == SofaType.INIT_REQUEST) {
-            // Don't render incoming SOFA::Payments,
-            // but ensure we have the sender cached.
-            respondToInitRequest(sender, remoteMessage);
-            return null;
-        } else if (remoteMessage.getType() == SofaType.PAYMENT_REQUEST) {
-            return savePaymentRequestAndShowNotification(remoteMessage, senderRecipient);
-        }
-
-        return saveMessageToDatabase(remoteMessage, senderRecipient);
-    }
-
-    private Conversation savePaymentRequestAndShowNotification(final SofaMessage remoteMessage, final Recipient senderRecipient) throws Exception {
-        if (Looper.myLooper() == Looper.getMainLooper()) throw new IllegalStateException("Running a blocking DB call on main thread!");
-        final String updatedPayload = generatePayloadWithLocalAmountEmbedded(remoteMessage)
-                .timeout(30, TimeUnit.SECONDS)
-                .toBlocking()
-                .value();
-        return this.conversationStore.saveNewMessageSingle(senderRecipient, remoteMessage.setPayload(updatedPayload))
-                .timeout(30, TimeUnit.SECONDS)
-                .toBlocking()
-                .value();
-    }
-
-    private Conversation saveMessageToDatabase(final SofaMessage remoteMessage, final Recipient senderRecipient) throws Exception {
-        if (Looper.myLooper() == Looper.getMainLooper()) throw new IllegalStateException("Running a blocking DB call on main thread!");
-        return this.conversationStore.saveNewMessageSingle(senderRecipient, remoteMessage)
-                .timeout(30, TimeUnit.SECONDS)
-                .toBlocking()
-                .value();
-    }
-
-    private Single<Recipient> generateRecipientFromSignalMessage(final User sender, final DecryptedSignalMessage signalMessage) {
-        if (!signalMessage.isGroup()) {
-            return Single.just(new Recipient(sender));
-        }
-        return Single.just(signalMessage.getGroup())
-                .flatMap(Group::fromSignalGroup)
-                .map(Recipient::new);
-    }
-
-    private void respondToInitRequest(final User sender, final SofaMessage remoteMessage) {
-        try {
-            final InitRequest initRequest = SofaAdapters.get().initRequestFrom(remoteMessage.getPayload());
-            final Init initMessage = new Init().construct(initRequest, this.wallet.getPaymentAddress());
-            final String payload = SofaAdapters.get().toJson(initMessage);
-            final SofaMessage newSofaMessage = new SofaMessage().makeNew(sender, payload);
-
-            final Recipient recipient = new Recipient(sender);
-            BaseApplication
-                    .get()
-                    .getSofaMessageManager()
-                    .sendMessage(recipient, newSofaMessage);
-        } catch (final IOException e) {
-            LogUtil.exception(getClass(), "Failed to respond to incoming init request", e);
-        }
-    }
-
-    private void fetchAndCacheIncomingPaymentSender(final User sender) {
-        BaseApplication
-                .get()
-                .getRecipientManager()
-                .getUserFromToshiId(sender.getToshiId());
-    }
-
-    private Single<String> generatePayloadWithLocalAmountEmbedded(final SofaMessage remoteMessage) {
-        try {
-            final PaymentRequest request = SofaAdapters.get().txRequestFrom(remoteMessage.getPayload());
-            return request
-                    .generateLocalPrice()
-                    .map((updatedPaymentRequest) -> SofaAdapters.get().toJson(updatedPaymentRequest));
-        } catch (final IOException ex) {
-            LogUtil.exception(getClass(), "Unable to embed local price", ex);
-        }
-
-        return Single.just(remoteMessage.getPayloadWithHeaders());
     }
 
     public void shutdown() {
