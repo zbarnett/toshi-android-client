@@ -61,12 +61,15 @@ public class HorizontalLineDivider extends RecyclerView.ItemDecoration {
         final int dividerLeft = parent.getPaddingLeft() + this.leftPadding;
         final int dividerRight = parent.getWidth() - parent.getPaddingRight() - this.rightPadding;
 
-        for (int i = this.startPosition; i < parent.getChildCount() - 1; i++) {
+        for (int i = 0; i < parent.getChildCount() - 1; i++) {
             final View child = parent.getChildAt(i);
-            final RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) child.getLayoutParams();
-            final int dividerTop = child.getBottom() + params.bottomMargin - (this.dividerHeight / 2);
-            final int dividerBottom = dividerTop + (this.dividerHeight / 2);
-            canvas.drawRect(dividerLeft, dividerTop, dividerRight, dividerBottom, paint);
+            final int childPosition = parent.getChildAdapterPosition(child);
+            if (childPosition >= this.startPosition) {
+                final RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) child.getLayoutParams();
+                final int dividerTop = child.getBottom() + params.bottomMargin - (this.dividerHeight / 2);
+                final int dividerBottom = dividerTop + (this.dividerHeight / 2);
+                canvas.drawRect(dividerLeft, dividerTop, dividerRight, dividerBottom, paint);
+            }
         }
     }
 }
