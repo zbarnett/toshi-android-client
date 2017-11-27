@@ -24,6 +24,7 @@ import android.support.annotation.StringRes
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.content.res.AppCompatResources
+import android.view.WindowManager
 import android.widget.Toast
 
 fun AppCompatActivity.getColorById(@ColorRes id: Int) = ContextCompat.getColor(this, id)
@@ -44,3 +45,5 @@ inline fun <reified T> AppCompatActivity.startActivityForResult(requestCode: Int
 }
 
 fun AppCompatActivity.getDrawableById(@DrawableRes id: Int) = AppCompatResources.getDrawable(this, id)
+
+fun AppCompatActivity.hideStatusBar() = window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
