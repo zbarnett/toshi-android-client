@@ -83,6 +83,7 @@ class GroupParticipantsFragment : Fragment() {
 
     private fun initObservers() {
         initSearch()
+        viewModel.searchResults.value.let { handleSearchResults(it.orEmpty()) }
         viewModel.searchResults.observe(this, Observer { searchResults ->
             searchResults?.let { handleSearchResults(it) }
         })

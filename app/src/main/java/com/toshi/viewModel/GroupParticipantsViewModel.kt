@@ -33,7 +33,8 @@ class GroupParticipantsViewModel : ViewModel() {
 
     private val subscriptions by lazy { CompositeSubscription() }
     private val querySubject by lazy { PublishSubject.create<String>() }
-    private val participants by lazy { ArrayList<User>() }
+    private val participants by lazy { mutableListOf<User>() }
+    private val defaultResults by lazy { mutableListOf<User>() }
 
     val searchResults by lazy { SingleLiveEvent<List<User>>() }
     val selectedParticipants by lazy { MutableLiveData<List<User>>() }
@@ -53,10 +54,27 @@ class GroupParticipantsViewModel : ViewModel() {
         val clearSub = querySubject.filter { query -> query.length < 3 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        { searchResults.value = emptyList() },
+                        { showDefaultResults() },
                         { LogUtil.e(javaClass, "Error while listening for query changes $it") }
                 )
-        this.subscriptions.addAll(startSearchSub, clearSub)
+
+        val defaultSub = getContacts()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        { cacheDefaultResults(it) },
+                        { LogUtil.e(javaClass, "Error while fetching contacts $it") }
+                )
+        this.subscriptions.addAll(startSearchSub, clearSub, defaultSub)
+    }
+
+    private fun showDefaultResults() {
+        if (searchResults.value != defaultResults) searchResults.value = defaultResults
+    }
+
+    private fun cacheDefaultResults(contacts: List<User>) {
+        defaultResults.clear()
+        defaultResults.addAll(contacts)
+        if (searchResults.value == null) searchResults.value = defaultResults
     }
 
     fun queryUpdated(query: CharSequence) = querySubject.onNext(query.toString())
@@ -76,6 +94,12 @@ class GroupParticipantsViewModel : ViewModel() {
         return BaseApplication.get()
                 .recipientManager
                 .searchOnlineUsers(query)
+    }
+
+    private fun getContacts(): Single<List<User>> {
+        return BaseApplication.get()
+                .recipientManager
+                .loadAllUserContacts()
     }
 
     fun handleUserClicked(user: User) {

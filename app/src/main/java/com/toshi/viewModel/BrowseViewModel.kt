@@ -100,7 +100,7 @@ class BrowseViewModel : ViewModel() {
     fun runSearchQuery(query: String) {
         if (query.isEmpty()) return
         val sub = getRecipientManager()
-                .searchOnlineUsers(query)
+                .searchOnlineUsersAndApps(query)
                 .observeOn(AndroidSchedulers.mainThread())
                 .map { users -> ArrayList<ToshiEntity>(users) }
                 .subscribe(

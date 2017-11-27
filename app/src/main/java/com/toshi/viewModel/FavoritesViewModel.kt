@@ -34,11 +34,6 @@ class FavoritesViewModel : ViewModel() {
     fun loadContacts() {
         val sub = getRecipientManager()
                 .loadAllContacts()
-                .toObservable()
-                .flatMapIterable { it }
-                .map { it.user }
-                .toList()
-                .toSingle()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { contacts.value = it },

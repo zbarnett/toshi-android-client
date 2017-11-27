@@ -66,6 +66,9 @@ public interface IdInterface {
     @GET("/v1/search/user")
     Single<UserSearchResults> searchByUsername(@Query("query") String username);
 
+    @GET("/v1/search/user?apps=false")
+    Single<UserSearchResults> searchOnlyUsersByUsername(@Query("query") String username);
+
     @GET("/v1/search/user")
     Single<UserSearchResults> searchByPaymentAddress(@Query("payment_address") String paymentAddress);
 

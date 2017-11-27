@@ -65,7 +65,7 @@ class UserParticipantsViewModel : ViewModel() {
     private fun searchOnlineUsers(query: String): Single<List<User>> {
         return BaseApplication.get()
                 .recipientManager
-                .searchOnlineUsers(query)
+                .searchOnlineUsersAndApps(query)
     }
 
     override fun onCleared() {

@@ -145,9 +145,26 @@ public class RecipientManager {
         this.userStore.save(user);
     }
 
-    public Single<List<Contact>> loadAllContacts() {
+    public Single<List<User>> loadAllContacts() {
         return this.contactStore
                 .loadAll()
+                .toObservable()
+                .flatMapIterable(contact -> contact)
+                .map(Contact::getUser)
+                .toList()
+                .toSingle()
+                .subscribeOn(Schedulers.io());
+    }
+
+    public Single<List<User>> loadAllUserContacts() {
+        return this.contactStore
+                .loadAll()
+                .toObservable()
+                .flatMapIterable(contact -> contact)
+                .map(Contact::getUser)
+                .filter(user -> !user.isApp())
+                .toList()
+                .toSingle()
                 .subscribeOn(Schedulers.io());
     }
 
@@ -157,10 +174,18 @@ public class RecipientManager {
                 .subscribeOn(Schedulers.io());
     }
 
-    public Single<List<User>> searchOnlineUsers(final String query) {
+    public Single<List<User>> searchOnlineUsersAndApps(final String query) {
         return IdService
                 .getApi()
                 .searchByUsername(query)
+                .subscribeOn(Schedulers.io())
+                .map(UserSearchResults::getResults);
+    }
+
+    public Single<List<User>> searchOnlineUsers(final String query) {
+        return IdService
+                .getApi()
+                .searchOnlyUsersByUsername(query)
                 .subscribeOn(Schedulers.io())
                 .map(UserSearchResults::getResults);
     }
