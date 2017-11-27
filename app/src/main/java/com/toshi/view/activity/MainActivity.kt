@@ -62,13 +62,12 @@ class MainActivity : AppCompatActivity() {
         val existingFragment = getExistingFragment(position)
         if (existingFragment == null) {
             transitionToSelectedFragment(position)
-        }
-
-        if (!wasSelected) {
-            SoundManager.getInstance().playSound(SoundManager.TAB_BUTTON)
+            if (!wasSelected) playTabSelectedSound()
         }
         true
     }
+
+    private fun playTabSelectedSound() = SoundManager.getInstance().playSound(SoundManager.TAB_BUTTON)
 
     private fun getExistingFragment(position: Int): Fragment? {
         val selectedFragment = navAdapter.getItem(position) as TopLevelFragment
