@@ -30,7 +30,8 @@ public class SofaType {
             PAYMENT,
             INIT,
             INIT_REQUEST,
-            TIMESTAMP
+            TIMESTAMP,
+            LOCAL_STATUS_MESSAGE
     })
     public @interface Type {}
     public static final int UNKNOWN = -1;
@@ -43,6 +44,7 @@ public class SofaType {
     public static final int IMAGE = 6;
     public static final int TIMESTAMP = 7;
     public static final int FILE = 8;
+    public static final int LOCAL_STATUS_MESSAGE = 9;
 
     public static final String LOCAL_ONLY_PAYLOAD = "custom_local_only_payload";
     public static final String WEB_VIEW = "webview:";
@@ -60,6 +62,7 @@ public class SofaType {
     private static final String init = "SOFA::Init:";
     private static final String init_request = "SOFA::InitRequest:";
     private static final String timestamp = "LOCAL::Timestamp";
+    private static final String local_status_message = "LOCAL::StatusMessage";
 
     /* package */ static String createHeader(final @SofaType.Type int type) {
         switch (type) {
@@ -70,6 +73,7 @@ public class SofaType {
             case INIT: return init;
             case INIT_REQUEST: return init_request;
             case TIMESTAMP: return timestamp;
+            case LOCAL_STATUS_MESSAGE: return local_status_message;
             case UNKNOWN: return null;
             default: return null;
         }
@@ -85,6 +89,7 @@ public class SofaType {
             case init: return INIT;
             case init_request: return INIT_REQUEST;
             case timestamp: return TIMESTAMP;
+            case local_status_message: return LOCAL_STATUS_MESSAGE;
             default: return UNKNOWN;
         }
     }

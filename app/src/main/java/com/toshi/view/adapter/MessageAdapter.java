@@ -38,6 +38,7 @@ import com.toshi.view.BaseApplication;
 import com.toshi.view.adapter.listeners.OnItemClickListener;
 import com.toshi.view.adapter.viewholder.FileViewHolder;
 import com.toshi.view.adapter.viewholder.ImageViewHolder;
+import com.toshi.view.adapter.viewholder.LocalStatusMessageViewHolder;
 import com.toshi.view.adapter.viewholder.PaymentRequestViewHolder;
 import com.toshi.view.adapter.viewholder.PaymentViewHolder;
 import com.toshi.view.adapter.viewholder.TextViewHolder;
@@ -202,6 +203,11 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
                 return new TimestampMessageViewHolder(v);
             }
 
+            case SofaType.LOCAL_STATUS_MESSAGE: {
+                final View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item__local_status_message, parent, false);
+                return new LocalStatusMessageViewHolder(v);
+            }
+
             case SofaType.FILE: {
                 final View v = isRemote
                         ? LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item__file_message_remote, parent, false)
@@ -327,6 +333,11 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
             case SofaType.TIMESTAMP: {
                 final TimestampMessageViewHolder vh = (TimestampMessageViewHolder) holder;
                 vh.setTime(sofaMessage.getCreationTime());
+            }
+
+            case SofaType.LOCAL_STATUS_MESSAGE: {
+                final LocalStatusMessageViewHolder vh = (LocalStatusMessageViewHolder) holder;
+                // Todo - set message resource
             }
         }
     }
