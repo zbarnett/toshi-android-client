@@ -47,7 +47,6 @@ class HandleMessageTask(
         private val messageSender: SofaMessageSender
 ) {
     private val taskProcessAttachments by lazy { ProcessAttachmentsTask(messageReceiver) }
-    private val taskRequestGroupInfo by lazy { RequestGroupInfoTask(messageSender) }
     private val recipientManager by lazy { BaseApplication.get().recipientManager }
     private val sofaMessageManager by lazy { BaseApplication.get().sofaMessageManager }
 
@@ -159,7 +158,7 @@ class HandleMessageTask(
             Single.just(signalMessage.group)
                     .flatMap { Group.fromSignalGroup(it) }
                     .map { handleGetGroupFromSignalGroup(it) }
-                    .doOnError { taskRequestGroupInfo.run(signalMessage.group, sender) }
+                    .doOnError { messageSender.requestGroupInfo(sender, signalMessage.group) }
         }
     }
 

@@ -23,7 +23,9 @@ import android.support.annotation.NonNull;
 import com.toshi.BuildConfig;
 import com.toshi.crypto.HDWallet;
 import com.toshi.crypto.signal.store.ProtocolStore;
-import com.toshi.exception.GroupCreationException;
+import com.toshi.manager.chat.tasks.CreateGroupTask;
+import com.toshi.manager.chat.tasks.RequestGroupInfoTask;
+import com.toshi.manager.chat.tasks.SendGroupInfoTask;
 import com.toshi.manager.chat.tasks.SendMessageToRecipientTask;
 import com.toshi.manager.chat.tasks.StoreMessageTask;
 import com.toshi.manager.model.SofaMessageTask;
@@ -33,22 +35,17 @@ import com.toshi.model.local.Group;
 import com.toshi.model.local.PendingMessage;
 import com.toshi.model.local.Recipient;
 import com.toshi.model.local.SendState;
+import com.toshi.model.local.User;
 import com.toshi.model.sofa.SofaMessage;
 import com.toshi.util.LogUtil;
 
-import org.whispersystems.libsignal.util.Hex;
+import org.jetbrains.annotations.NotNull;
 import org.whispersystems.libsignal.util.guava.Optional;
 import org.whispersystems.signalservice.api.SignalServiceMessageSender;
-import org.whispersystems.signalservice.api.crypto.UntrustedIdentityException;
-import org.whispersystems.signalservice.api.messages.SignalServiceDataMessage;
 import org.whispersystems.signalservice.api.messages.SignalServiceGroup;
-import org.whispersystems.signalservice.api.push.SignalServiceAddress;
-import org.whispersystems.signalservice.api.push.exceptions.EncapsulatedExceptions;
 import org.whispersystems.signalservice.internal.configuration.SignalCdnUrl;
 import org.whispersystems.signalservice.internal.configuration.SignalServiceConfiguration;
 import org.whispersystems.signalservice.internal.configuration.SignalServiceUrl;
-
-import java.io.IOException;
 
 import rx.Single;
 import rx.Subscription;
@@ -162,42 +159,16 @@ public class SofaMessageSender {
     }
 
     public Single<Group> createGroup(final Group group) {
-        return Single.fromCallable(() -> {
-            try {
-                final SignalServiceGroup signalGroup = new SignalServiceGroup(
-                        SignalServiceGroup.Type.UPDATE,
-                        Hex.fromStringCondensed(group.getId()),
-                        group.getTitle(),
-                        group.getMemberIds(),
-                        group.getAvatar().getStream());
-                final SignalServiceDataMessage groupDataMessage = new SignalServiceDataMessage(System.currentTimeMillis(), signalGroup, null, null);
-
-                this.signalMessageSender.sendMessage(group.getMemberAddresses(), groupDataMessage);
-                return group;
-            } catch (final IOException | EncapsulatedExceptions ex) {
-                throw new GroupCreationException(ex);
-            }
-        });
+        return new CreateGroupTask(this.signalMessageSender).run(group);
     }
 
-    public void requestGroupInfo(final String groupId, final String senderId) {
-        try {
-            final SignalServiceGroup signalGroup = SignalServiceGroup
-                            .newBuilder(SignalServiceGroup.Type.REQUEST_INFO)
-                            .withId(Hex.fromStringCondensed(groupId))
-                            .build();
-            final SignalServiceDataMessage dataMessage = SignalServiceDataMessage
-                    .newBuilder()
-                    .asGroupMessage(signalGroup)
-                    .withTimestamp(System.currentTimeMillis())
-                    .build();
-            this.signalMessageSender.sendMessage(new SignalServiceAddress(senderId), dataMessage);
-        } catch (final IOException | UntrustedIdentityException ex) {
-            LogUtil.exception(getClass(), "Unable to request group info");
-        }
+    public void requestGroupInfo(final User sender, final SignalServiceGroup group) {
+        new RequestGroupInfoTask(this.signalMessageSender).run(sender, group);
     }
 
-
+    public void sendGroupInfo(@NotNull final String messageSource, @NotNull final Group group) {
+        new SendGroupInfoTask(this.signalMessageSender).run(messageSource, group);
+    }
 
     private void updateExistingMessage(final Recipient receiver, final SofaMessage message) {
         this.conversationStore.updateMessage(receiver, message);

@@ -17,33 +17,36 @@
 
 package com.toshi.manager.chat.tasks
 
-import com.toshi.model.local.User
-import com.toshi.util.LogUtil
+import com.toshi.exception.GroupCreationException
+import com.toshi.model.local.Group
+import org.whispersystems.libsignal.util.Hex
 import org.whispersystems.signalservice.api.SignalServiceMessageSender
-import org.whispersystems.signalservice.api.crypto.UntrustedIdentityException
 import org.whispersystems.signalservice.api.messages.SignalServiceDataMessage
 import org.whispersystems.signalservice.api.messages.SignalServiceGroup
 import org.whispersystems.signalservice.api.push.SignalServiceAddress
+import org.whispersystems.signalservice.api.push.exceptions.EncapsulatedExceptions
 import java.io.IOException
 
-class RequestGroupInfoTask(
+class SendGroupInfoTask(
         private val signalMessageSender: SignalServiceMessageSender
 ) {
-    fun run(sender: User, group: SignalServiceGroup) {
+    fun run(requestingUserAddress: String, group: Group) {
         try {
-            val signalGroup = SignalServiceGroup
-                    .newBuilder(SignalServiceGroup.Type.REQUEST_INFO)
-                    .withId(group.groupId)
+            val signalGroup = SignalServiceGroup.newBuilder(SignalServiceGroup.Type.UPDATE)
+                    .withId(Hex.fromStringCondensed(group.id))
+                    .withName(group.title)
+                    .withMembers(group.memberIds)
+                    .withAvatar(group.avatar.stream)
                     .build()
-            val dataMessage = SignalServiceDataMessage
-                    .newBuilder()
-                    .asGroupMessage(signalGroup)
+            val groupDataMessage = SignalServiceDataMessage.newBuilder()
                     .withTimestamp(System.currentTimeMillis())
+                    .asGroupMessage(signalGroup)
                     .build()
-            signalMessageSender.sendMessage(SignalServiceAddress(sender.toshiId), dataMessage)
+            val address = SignalServiceAddress(requestingUserAddress)
+            signalMessageSender.sendMessage(address, groupDataMessage)
         } catch (ex: Exception) {
             when (ex) {
-                is IOException, is UntrustedIdentityException -> LogUtil.exception(javaClass, "Unable to request group info")
+                is IOException, is EncapsulatedExceptions -> throw GroupCreationException(ex)
                 else -> throw ex
             }
         }

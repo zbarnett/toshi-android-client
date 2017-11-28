@@ -82,7 +82,7 @@ public class SofaMessageReceiver {
                         this.protocolStore.getSignalingKey(),
                         USER_AGENT);
 
-        this.taskGroupUpdate = new GroupUpdateTask(this.messageReceiver, conversationStore);
+        this.taskGroupUpdate = new GroupUpdateTask(this.messageReceiver, messageSender, conversationStore);
         this.taskHandleMessage = new HandleMessageTask(this.messageReceiver, conversationStore, this.wallet, messageSender);
     }
 
@@ -145,7 +145,7 @@ public class SofaMessageReceiver {
 
         if (content.getDataMessage().isPresent()) {
             final SignalServiceDataMessage dataMessage = content.getDataMessage().get();
-            if (dataMessage.isGroupUpdate()) return taskGroupUpdate.run(dataMessage);
+            if (dataMessage.isGroupUpdate()) return taskGroupUpdate.run(messageSource, dataMessage);
             else return taskHandleMessage.run(messageSource, dataMessage);
         }
         return null;

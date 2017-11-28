@@ -17,26 +17,50 @@
 
 package com.toshi.manager.chat.tasks
 
+import com.toshi.manager.chat.SofaMessageSender
 import com.toshi.manager.store.ConversationStore
 import com.toshi.model.local.Group
 import com.toshi.model.local.IncomingMessage
 import com.toshi.util.LogUtil
 import org.whispersystems.signalservice.api.SignalServiceMessageReceiver
 import org.whispersystems.signalservice.api.messages.SignalServiceDataMessage
+import org.whispersystems.signalservice.api.messages.SignalServiceGroup
+import rx.schedulers.Schedulers
 
 class GroupUpdateTask(
         private val messageReceiver: SignalServiceMessageReceiver,
+        private val messageSender: SofaMessageSender,
         private val conversationStore: ConversationStore
 ) {
 
-    fun run(dataMessage: SignalServiceDataMessage): IncomingMessage? {
+    fun run(messageSource: String, dataMessage: SignalServiceDataMessage): IncomingMessage? {
         val signalGroup = dataMessage.groupInfo.get()
-        Group()
-            .updateFromSignalGroup(signalGroup, messageReceiver)
-            .subscribe(
-                    { this.conversationStore.saveGroup(it) },
-                    { LogUtil.e(javaClass, "Error creating incoming group. $it") }
-            )
+        when (signalGroup.type) {
+            SignalServiceGroup.Type.REQUEST_INFO -> handleRequestGroupInfo(messageSource, dataMessage)
+            else -> handleGroupUpdate(signalGroup)
+        }
         return null
+    }
+
+    private fun handleRequestGroupInfo(messageSource: String, dataMessage: SignalServiceDataMessage) {
+        if (!dataMessage.groupInfo.isPresent) return
+        val signalGroup = dataMessage.groupInfo.get()
+        Group
+                .fromSignalGroup(signalGroup)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe(
+                        { group -> messageSender.sendGroupInfo(messageSource, group) },
+                        { LogUtil.e(javaClass, "Request for group info failed.") }
+                )
+    }
+
+    private fun handleGroupUpdate(signalGroup: SignalServiceGroup?) {
+        Group()
+                .updateFromSignalGroup(signalGroup, messageReceiver)
+                .subscribe(
+                        { this.conversationStore.saveGroup(it) },
+                        { LogUtil.e(javaClass, "Error creating incoming group. $it") }
+                )
     }
 }
