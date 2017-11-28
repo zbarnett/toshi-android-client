@@ -22,6 +22,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.widget.ImageView;
@@ -172,7 +173,7 @@ public class ImageUtil {
                 .get();
     }
 
-    public static Single<Bitmap> generateQrCode(final String value) {
+    public static Single<Bitmap> generateQrCode(@NonNull final String value) {
         return Single.fromCallable(() -> {
             try {
                 return generateQrCodeBitmap(value);
@@ -182,9 +183,7 @@ public class ImageUtil {
         });
     }
 
-    private static Bitmap generateQrCodeBitmap(final String value) throws WriterException {
-        if (value == null) return null;
-        
+    private static Bitmap generateQrCodeBitmap(@NonNull final String value) throws WriterException {
         final QRCodeWriter writer = new QRCodeWriter();
         final int size = BaseApplication.get().getResources().getDimensionPixelSize(R.dimen.qr_code_size);
         final Map<EncodeHintType, Integer> map = new HashMap<>();

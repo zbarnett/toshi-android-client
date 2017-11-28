@@ -18,7 +18,10 @@
 package com.toshi.presenter;
 
 import android.graphics.Bitmap;
+import android.support.annotation.StringRes;
+import android.widget.Toast;
 
+import com.toshi.R;
 import com.toshi.model.local.User;
 import com.toshi.util.LogUtil;
 import com.toshi.util.QrCode;
@@ -60,6 +63,9 @@ public class QrCodePresenter implements Presenter<QrCodeActivity> {
     private void fetchUser() {
         final Subscription sub =
                 getCurrentUser()
+                .toObservable()
+                .filter(user -> user != null)
+                .toSingle()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -83,6 +89,7 @@ public class QrCodePresenter implements Presenter<QrCodeActivity> {
 
     private void handleUserError(final Throwable throwable) {
         LogUtil.exception(getClass(), "Error while fetching user", throwable);
+        showToast(R.string.qr_code_error);
     }
 
     private void showQrCode(final User user) {
@@ -107,6 +114,11 @@ public class QrCodePresenter implements Presenter<QrCodeActivity> {
 
     private void handleQrCodeError(final Throwable throwable) {
         LogUtil.exception(getClass(), "Error while generating qr code", throwable);
+        showToast(R.string.qr_code_error);
+    }
+
+    private void showToast(@StringRes final int messageId) {
+        Toast.makeText(this.activity, messageId, Toast.LENGTH_SHORT).show();
     }
 
     @Override

@@ -23,6 +23,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.support.annotation.StringRes;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.Toast;
@@ -75,7 +76,6 @@ public class DepositPresenter implements Presenter<DepositActivity> {
         initNetworkView();
         initClickListeners();
         attachListeners();
-        updateView();
     }
 
     private void showWarningDialogIfNotBackedUp() {
@@ -132,6 +132,9 @@ public class DepositPresenter implements Presenter<DepositActivity> {
                 BaseApplication.get()
                 .getToshiManager()
                 .getWallet()
+                .toObservable()
+                .filter(wallet -> wallet != null)
+                .toSingle()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -144,23 +147,24 @@ public class DepositPresenter implements Presenter<DepositActivity> {
 
     private void handleWalletError(final Throwable throwable) {
         LogUtil.exception(getClass(), "Error while fetching wallet", throwable);
+        showToast(R.string.qr_code_error);
     }
 
     private void handleWalletCallback(final HDWallet wallet) {
         this.wallet = wallet;
-        updateView();
+        updateView(wallet);
     }
 
-    private void updateView() {
-        if (this.wallet == null || this.activity == null) return;
-        this.activity.getBinding().ownerAddress.setText(this.wallet.getPaymentAddress());
+    private void updateView(final HDWallet wallet) {
+        if (this.activity == null) return;
+        this.activity.getBinding().ownerAddress.setText(wallet.getPaymentAddress());
         this.activity.getBinding().copyToClipboard.setEnabled(true);
-        generateQrCode();
+        generateQrCode(wallet);
     }
 
-    private void generateQrCode() {
+    private void generateQrCode(final HDWallet wallet) {
         final Subscription sub =
-                QrCode.generatePaymentAddressQrCode(this.wallet.getPaymentAddress())
+                QrCode.generatePaymentAddressQrCode(wallet.getPaymentAddress())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -173,6 +177,7 @@ public class DepositPresenter implements Presenter<DepositActivity> {
 
     private void handleQrCodeError(final Throwable throwable) {
         LogUtil.exception(getClass(), "Error while generating qr code", throwable);
+        showToast(R.string.qr_code_error);
     }
 
     private void renderQrCode(final Bitmap qrCodeBitmap) {
@@ -180,6 +185,10 @@ public class DepositPresenter implements Presenter<DepositActivity> {
         this.activity.getBinding().qrCode.setAlpha(0.0f);
         this.activity.getBinding().qrCode.setImageBitmap(qrCodeBitmap);
         this.activity.getBinding().qrCode.animate().alpha(1f).setDuration(200).start();
+    }
+
+    private void showToast(@StringRes final int messageId) {
+        Toast.makeText(this.activity, messageId, Toast.LENGTH_SHORT).show();
     }
 
     @Override

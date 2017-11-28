@@ -94,6 +94,7 @@ public class QrCode {
     }
 
     public static Single<Bitmap> generateAddQrCode(final String username) {
+        if (username == null) Single.error(new Throwable("Can't generate a qr code with null username"));
         final String baseUrl = BaseApplication.get().getString(R.string.qr_code_base_url);
         final String addParams = getAddUrl(username);
         final String url = String.format("%s%s", baseUrl, addParams);
@@ -145,6 +146,7 @@ public class QrCode {
     }
 
     public static Single<Bitmap> generatePaymentAddressQrCode(final String paymentAddress) {
+        if (paymentAddress == null) Single.error(new Throwable("Can't generate a qr code with null payment address"));
         final String url = String.format("ethereum:%s", paymentAddress);
         return ImageUtil.generateQrCode(url);
     }
