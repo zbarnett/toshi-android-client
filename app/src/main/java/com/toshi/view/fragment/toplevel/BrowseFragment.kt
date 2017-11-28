@@ -123,9 +123,7 @@ class BrowseFragment : Fragment(), TopLevelFragment {
     private fun initSearchAppsRecyclerView() {
         searchAdapter = ToshiEntityAdapter()
                 .apply {
-                    itemClickListener = OnItemClickListener {
-                        startActivity<ViewUserActivity> { putExtra(ViewUserActivity.EXTRA__USER_ADDRESS, it.toshiId) }
-                    }
+                    itemClickListener = OnItemClickListener { startProfileActivity(it) }
                     dappLaunchClicked = OnItemClickListener {
                         startActivity<WebViewActivity> { putExtra(WebViewActivity.EXTRA__ADDRESS, it.address) }
                     }
@@ -142,7 +140,7 @@ class BrowseFragment : Fragment(), TopLevelFragment {
         val recyclerView = initRecyclerView(
                 topRatedApps,
                 HorizontalAdapter<App>(5),
-                OnItemClickListener { startProfileActivity(it.toshiId) }
+                OnItemClickListener { startProfileActivity(it) }
         )
         recyclerView.layoutManager.scrollToPosition(topRatedAppsScrollPosition)
     }
@@ -151,7 +149,7 @@ class BrowseFragment : Fragment(), TopLevelFragment {
         val recyclerView = initRecyclerView(
                 featuredApps,
                 HorizontalAdapter<App>(4),
-                OnItemClickListener { startProfileActivity(it.toshiId) }
+                OnItemClickListener { startProfileActivity(it) }
         )
         recyclerView.layoutManager.scrollToPosition(featuredAppsScrollPosition)
     }
@@ -160,7 +158,7 @@ class BrowseFragment : Fragment(), TopLevelFragment {
         val recyclerView = initRecyclerView(
                 topRatedPublicUsers,
                 HorizontalAdapter<User>(5),
-                OnItemClickListener { startProfileActivity(it.toshiId) }
+                OnItemClickListener { startProfileActivity(it) }
         )
         recyclerView.layoutManager.scrollToPosition(topRatedUsersScrollPosition)
     }
@@ -169,13 +167,15 @@ class BrowseFragment : Fragment(), TopLevelFragment {
         val recyclerView = initRecyclerView(
                 latestPublicUsers,
                 HorizontalAdapter<User>(6),
-                OnItemClickListener { startProfileActivity(it.toshiId) }
+                OnItemClickListener { startProfileActivity(it) }
         )
         recyclerView.layoutManager.scrollToPosition(latestUsersScrollPosition)
     }
 
-    private fun startProfileActivity(toshiId: String) = startActivity<ViewUserActivity> {
-        putExtra(ViewUserActivity.EXTRA__USER_ADDRESS, toshiId)
+    private fun startProfileActivity(toshiEntity: ToshiEntity?) {
+        toshiEntity?.toshiId?.let {
+            startActivity<ViewUserActivity> { putExtra(ViewUserActivity.EXTRA__USER_ADDRESS, it) }
+        }
     }
 
     private fun <T : ToshiEntity> initRecyclerView(recyclerView: RecyclerView,

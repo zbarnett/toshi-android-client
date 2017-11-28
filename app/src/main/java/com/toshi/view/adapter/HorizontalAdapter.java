@@ -67,8 +67,8 @@ public class HorizontalAdapter<T extends ToshiEntity> extends RecyclerView.Adapt
     public void onBindViewHolder(HorizontalViewHolder holder, int position) {
         final T elem = this.elements.get(position);
 
-        holder.setElement(elem)
-                .setOnClickListener(this.listener, elem);
+        holder.setElement(elem);
+        if (elem != null) holder.setOnClickListener(this.listener, elem);
     }
 
     @Override
