@@ -51,7 +51,7 @@ public class Avatar extends RealmObject {
     private void init(final Bitmap avatar) throws FileNotFoundException, IllegalStateException {
         if (avatar == null) throw new NullPointerException("avatar is null");
         this.bytes = ImageUtil.toByteArray(avatar);
-        this.attachmentStream = FileUtil.buildSignalServiceAttachment(this.bytes);
+        generateAttachmentStream();
     }
 
     public byte[] getBytes() {
@@ -59,6 +59,11 @@ public class Avatar extends RealmObject {
     }
 
     public SignalServiceAttachment getStream() {
+        if (this.attachmentStream == null) generateAttachmentStream();
         return this.attachmentStream;
+    }
+
+    private void generateAttachmentStream() {
+        this.attachmentStream = FileUtil.buildSignalServiceAttachment(this.bytes);
     }
 }
