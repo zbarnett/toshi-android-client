@@ -31,6 +31,7 @@ class SendGroupInfoTask(
         private val signalMessageSender: SignalServiceMessageSender
 ) {
     fun run(requestingUserAddress: String, group: Group) {
+        if (!shouldSendGroupInfo(requestingUserAddress, group)) return
         try {
             val signalGroup = SignalServiceGroup.newBuilder(SignalServiceGroup.Type.UPDATE)
                     .withId(Hex.fromStringCondensed(group.id))
@@ -51,4 +52,6 @@ class SendGroupInfoTask(
             }
         }
     }
+
+    private fun shouldSendGroupInfo(requestingUserAddress: String, group: Group) = group.memberIds.contains(requestingUserAddress)
 }
