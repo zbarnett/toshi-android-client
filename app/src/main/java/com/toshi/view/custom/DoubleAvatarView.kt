@@ -55,7 +55,7 @@ class DoubleAvatarView : FrameLayout {
     private fun loadSingleAvatar(recipient: Recipient) {
         hideDoubleAvatars()
         singleAvatarView.isVisible(true)
-        recipient.loadAvatarInto(firstAvatarView)
+        recipient.loadAvatarInto(singleAvatarView)
     }
 
     private fun hideDoubleAvatars() {
