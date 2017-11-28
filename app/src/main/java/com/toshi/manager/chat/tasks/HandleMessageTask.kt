@@ -39,6 +39,7 @@ import org.whispersystems.signalservice.api.messages.SignalServiceDataMessage
 import rx.Single
 import java.io.IOException
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
 
 class HandleMessageTask(
         private val messageReceiver: SignalServiceMessageReceiver,
@@ -69,8 +70,11 @@ class HandleMessageTask(
         try {
             val user = getUser(signalMessage.source)
             return saveIncomingMessageToDatabase(user, signalMessage)
-        } catch (ex: IllegalStateException) {
-            LogUtil.e(javaClass, "Error saving message to database. $ex")
+        } catch (ex: Exception) {
+            when (ex) {
+                is IllegalStateException, is TimeoutException -> LogUtil.e(javaClass, "Error saving message to database. $ex")
+                else -> throw ex
+            }
         }
 
         return null
@@ -78,7 +82,7 @@ class HandleMessageTask(
 
     private fun getUser(toshiId: String) = recipientManager
                 .getUserFromToshiId(toshiId)
-                .timeout(5000, TimeUnit.MILLISECONDS)
+                .timeout(30, TimeUnit.SECONDS)
                 .toBlocking()
                 .value() ?: throw IllegalStateException("Failure to get user")
 
