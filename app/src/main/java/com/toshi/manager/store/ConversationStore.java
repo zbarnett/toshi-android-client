@@ -133,6 +133,7 @@ public class ConversationStore {
             final Conversation conversationToStore = getOrCreateConversation(group);
             final Realm realm = BaseApplication.get().getRealm();
             realm.beginTransaction();
+            conversationToStore.updateRecipient(new Recipient(group));
             final Conversation storedConversation = realm.copyToRealmOrUpdate(conversationToStore);
             realm.commitTransaction();
             final Conversation conversationForBroadcast = realm.copyFromRealm(storedConversation);

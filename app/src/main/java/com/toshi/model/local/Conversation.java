@@ -47,6 +47,11 @@ public class Conversation extends RealmObject implements ConversationItem {
         this.conversationStatus = new ConversationStatus(this.threadId);
     }
 
+    public Conversation updateRecipient(final Recipient recipient) {
+        this.recipient = recipient;
+        return this;
+    }
+
     public String getThreadId() {
         return threadId;
     }

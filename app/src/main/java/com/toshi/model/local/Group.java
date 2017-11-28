@@ -203,4 +203,10 @@ public class Group extends RealmObject {
                 .getRecipientManager()
                 .getGroupFromId(id);
     }
+
+    public static Group emptyGroup(final byte[] id) {
+        final Group group = new Group();
+        group.id = Hex.toHexString(id);
+        return group;
+    }
 }

@@ -159,6 +159,7 @@ class HandleMessageTask(
                     .flatMap { Group.fromSignalGroup(it) }
                     .map { handleGetGroupFromSignalGroup(it) }
                     .doOnError { messageSender.requestGroupInfo(sender, signalMessage.group) }
+                    .onErrorReturn { Recipient(Group.emptyGroup(signalMessage.group.groupId)) }
         }
     }
 
