@@ -83,4 +83,10 @@ public class ChooserDialog extends DialogFragment {
         this.listener.importImageFromGalleryClicked();
         this.dismiss();
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        dismissAllowingStateLoss();
+    }
 }

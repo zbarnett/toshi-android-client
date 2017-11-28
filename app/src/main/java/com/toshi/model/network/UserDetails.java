@@ -72,4 +72,12 @@ public class UserDetails {
         this.is_public = isPublic;
         return this;
     }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getName() {
+        return name;
+    }
 }

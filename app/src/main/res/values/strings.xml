@@ -287,4 +287,7 @@
     <string name="unaccepted_notification_message">You have a new message</string>
     <string name="external_payment_failure">Unable to send money</string>
     <string name="qr_code_error">Couldn\'t render QR Code</string>
+    <string name="user_error">Couldn\'t load user</string>
+    <string name="user_updated">Saved successfully!</string>
+    <string name="user_update_error">Error updating profile. Try a different username</string>
 </resources>
