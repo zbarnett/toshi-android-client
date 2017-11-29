@@ -31,6 +31,7 @@ import android.widget.TextView;
 import com.toshi.R;
 import com.toshi.model.local.ChainPosition;
 import com.toshi.model.local.SendState;
+import com.toshi.model.network.SofaError;
 import com.toshi.model.sofa.SofaMessage;
 import com.toshi.util.ImageUtil;
 import com.toshi.view.adapter.listeners.OnItemClickListener;
@@ -61,6 +62,7 @@ public final class TextViewHolder extends RecyclerView.ViewHolder {
     private String avatarUri;
     private @ChainPosition.Position int chainPosition;
     private boolean isRemote;
+    private SofaError sofaError;
 
     public TextViewHolder(final View v) {
         super(v);
@@ -101,6 +103,11 @@ public final class TextViewHolder extends RecyclerView.ViewHolder {
         if (this.sendState == SendState.STATE_PENDING || this.sendState == SendState.STATE_FAILED) {
             this.itemView.setOnClickListener(v -> listener.onItemClick(sofaMessage));
         }
+        return this;
+    }
+
+    public TextViewHolder setErrorMessage(final SofaError sofaError) {
+        this.sofaError = sofaError;
         return this;
     }
 
@@ -169,6 +176,7 @@ public final class TextViewHolder extends RecyclerView.ViewHolder {
                 : View.GONE;
         this.sentStatus.setVisibility(visibility);
         this.errorMessage.setVisibility(visibility);
+        if (this.sofaError != null) this.errorMessage.setText(this.sofaError.getMessage());
     }
 
     public void setClickableUsernames(final OnItemClickListener<String> listener) {

@@ -266,6 +266,7 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
                         .setChainPosition(chainPosition)
                         .setIsSentByRemoteUser(isRemote)
                         .setOnResendListener(this.onResendListener, sofaMessage)
+                        .setErrorMessage(sofaMessage.getErrorMessage())
                         .draw()
                         .setClickableUsernames(this.onUsernameClickListener);
                 break;
@@ -280,6 +281,7 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
                         .setAttachmentFilePath(sofaMessage.getAttachmentFilePath())
                         .setClickableImage(this.onImageClickListener, sofaMessage.getAttachmentFilePath())
                         .setOnResendListener(this.onResendListener, sofaMessage)
+                        .setErrorMessage(sofaMessage.getErrorMessage())
                         .setText(message.getBody())
                         .draw();
                 break;
@@ -293,6 +295,7 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
                         .setAvatarUri(sofaMessage.getSenderAvatar())
                         .setOnClickListener(this.onFileClickListener, sofaMessage.getAttachmentFilePath())
                         .setOnResendListener(this.onResendListener, sofaMessage)
+                        .setErrorMessage(sofaMessage.getErrorMessage())
                         .draw();
                 break;
             }
@@ -326,6 +329,7 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
                   .setOnApproveListener(this.handleOnPaymentRequestApproved)
                   .setOnRejectListener(this.handleOnPaymentRequestRejected)
                   .setOnResendListener(this.onResendListener, sofaMessage)
+                  .setErrorMessage(sofaMessage.getErrorMessage())
                   .draw();
                 break;
             }

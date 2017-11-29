@@ -29,6 +29,7 @@ import android.widget.TextView;
 import com.toshi.R;
 import com.toshi.model.local.SendState;
 import com.toshi.model.local.User;
+import com.toshi.model.network.SofaError;
 import com.toshi.model.sofa.PaymentRequest;
 import com.toshi.model.sofa.SofaMessage;
 import com.toshi.util.EthUtil;
@@ -57,6 +58,7 @@ public final class PaymentRequestViewHolder extends RecyclerView.ViewHolder {
     private String avatarUri;
     private User remoteUser;
     private @SendState.State int sendState;
+    private SofaError sofaError;
 
     public PaymentRequestViewHolder(final View v) {
         super(v);
@@ -107,6 +109,11 @@ public final class PaymentRequestViewHolder extends RecyclerView.ViewHolder {
         if (this.sendState == SendState.STATE_PENDING || this.sendState == SendState.STATE_FAILED) {
             this.itemView.setOnClickListener(__ -> listener.onItemClick(sofaMessage));
         }
+        return this;
+    }
+
+    public PaymentRequestViewHolder setErrorMessage(final SofaError sofaError) {
+        this.sofaError = sofaError;
         return this;
     }
 
@@ -201,5 +208,6 @@ public final class PaymentRequestViewHolder extends RecyclerView.ViewHolder {
                 : View.GONE;
         this.sentStatus.setVisibility(visibility);
         this.errorMessage.setVisibility(visibility);
+        if (this.sofaError != null) this.errorMessage.setText(this.sofaError.getMessage());
     }
 }

@@ -28,6 +28,7 @@ import android.widget.TextView;
 
 import com.toshi.R;
 import com.toshi.model.local.SendState;
+import com.toshi.model.network.SofaError;
 import com.toshi.model.sofa.SofaMessage;
 import com.toshi.util.FileUtil;
 import com.toshi.util.ImageUtil;
@@ -46,6 +47,7 @@ public class FileViewHolder extends RecyclerView.ViewHolder {
     private String path;
     private String avatarUri;
     private @SendState.State int sendState;
+    private SofaError sofaError;
 
     public FileViewHolder(View v) {
         super(v);
@@ -108,6 +110,11 @@ public class FileViewHolder extends RecyclerView.ViewHolder {
         return this;
     }
 
+    public FileViewHolder setErrorMessage(final SofaError sofaError) {
+        this.sofaError = sofaError;
+        return this;
+    }
+
     private void setSendState() {
         if (this.sentStatus == null || this.errorMessage == null) return;
         final int visibility = this.sendState == SendState.STATE_FAILED || this.sendState == SendState.STATE_PENDING
@@ -115,5 +122,6 @@ public class FileViewHolder extends RecyclerView.ViewHolder {
                 : View.GONE;
         this.sentStatus.setVisibility(visibility);
         this.errorMessage.setVisibility(visibility);
+        if (this.sofaError != null) this.errorMessage.setText(this.sofaError.getMessage());
     }
 }

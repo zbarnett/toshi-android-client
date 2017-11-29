@@ -27,6 +27,7 @@ import android.widget.TextView;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.toshi.R;
 import com.toshi.model.local.SendState;
+import com.toshi.model.network.SofaError;
 import com.toshi.model.sofa.SofaMessage;
 import com.toshi.util.ImageUtil;
 import com.toshi.view.adapter.listeners.OnItemClickListener;
@@ -48,6 +49,7 @@ public final class ImageViewHolder extends RecyclerView.ViewHolder {
     private String attachmentFilePath;
     private String avatarUri;
     private String text;
+    private SofaError sofaError;
 
     public ImageViewHolder(final View v) {
         super(v);
@@ -79,6 +81,11 @@ public final class ImageViewHolder extends RecyclerView.ViewHolder {
         if (this.sendState == SendState.STATE_PENDING || this.sendState == SendState.STATE_FAILED) {
             this.itemView.setOnClickListener(v -> listener.onItemClick(sofaMessage));
         }
+        return this;
+    }
+
+    public ImageViewHolder setErrorMessage(final SofaError sofaError) {
+        this.sofaError = sofaError;
         return this;
     }
 
@@ -147,6 +154,7 @@ public final class ImageViewHolder extends RecyclerView.ViewHolder {
                 : View.GONE;
         this.sentStatus.setVisibility(visibility);
         this.errorMessage.setVisibility(visibility);
+        if (this.sofaError != null) this.errorMessage.setText(this.sofaError.getMessage());
     }
 
     public ImageViewHolder setClickableImage(final OnItemClickListener<String> listener, final String filePath) {
