@@ -29,7 +29,8 @@ public class OnboardingManager {
                 .toSingle()
                 .doOnSuccess(this::sendOnboardingMessageToOnboardingBot)
                 .doOnError(throwable -> LogUtil.exception(getClass(), "Error during sending onboarding message to bot", throwable))
-                .toCompletable();
+                .toCompletable()
+                .onErrorComplete();
     }
 
     private void sendOnboardingMessageToOnboardingBot(final User onboardingBot) {
