@@ -337,7 +337,7 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
 
             case SofaType.LOCAL_STATUS_MESSAGE: {
                 final LocalStatusMessageViewHolder vh = (LocalStatusMessageViewHolder) holder;
-                // Todo - set message resource
+                vh.setMessageResource(sofaMessage.getPayload());
             }
         }
     }
