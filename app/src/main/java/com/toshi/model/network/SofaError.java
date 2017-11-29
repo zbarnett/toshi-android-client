@@ -20,6 +20,7 @@ public class SofaError extends RealmObject {
     @Ignore private static final String INSUFFUCIENT_FUNDS = "insufficient_funds";
     @Ignore private static final String INVALID_SIGNATURE = "invalid_signature";
     @Ignore private static final String NOT_DELIVERED_ID = "not_delivered";
+    @Ignore private static final String USER_UNAVAILABLE = "user_unavailable";
 
     @PrimaryKey
     private String id;
@@ -39,10 +40,19 @@ public class SofaError extends RealmObject {
         return this;
     }
 
+    public SofaError createUserUnavailableMessage(final Context context) {
+        this.id = USER_UNAVAILABLE;
+        this.message = context.getString(R.string.user_unavailable);
+        return this;
+    }
+
     public String getUserReadableErrorMessage(final Context context) {
         switch (this.id) {
             case INSUFFUCIENT_FUNDS: {
                 return context.getString(R.string.insufficient_funds);
+            }
+            case USER_UNAVAILABLE: {
+                return context.getString(R.string.user_unavailable);
             }
             default: {
                 return context.getString(R.string.not_delivered);

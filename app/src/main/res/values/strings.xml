@@ -290,4 +290,5 @@
     <string name="user_error">Couldn\'t load user</string>
     <string name="user_updated">Saved successfully!</string>
     <string name="user_update_error">Error updating profile. Try a different username</string>
+    <string name="user_unavailable">User unavailable</string>
 </resources>

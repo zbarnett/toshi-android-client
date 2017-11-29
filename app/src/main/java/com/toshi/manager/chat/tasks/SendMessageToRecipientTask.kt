@@ -22,6 +22,7 @@ import com.toshi.manager.model.SofaMessageTask
 import com.toshi.manager.store.ConversationStore
 import com.toshi.manager.store.PendingMessageStore
 import com.toshi.model.local.SendState
+import com.toshi.model.network.SofaError
 import com.toshi.model.sofa.OutgoingAttachment
 import com.toshi.util.FileUtil.buildSignalServiceAttachment
 import com.toshi.util.LogUtil
@@ -34,6 +35,7 @@ import org.whispersystems.signalservice.api.messages.SignalServiceDataMessage
 import org.whispersystems.signalservice.api.messages.SignalServiceGroup
 import org.whispersystems.signalservice.api.push.SignalServiceAddress
 import org.whispersystems.signalservice.api.push.exceptions.EncapsulatedExceptions
+import org.whispersystems.signalservice.api.push.exceptions.UnregisteredUserException
 import java.io.FileNotFoundException
 import java.io.IOException
 
@@ -65,11 +67,8 @@ class SendMessageToRecipientTask(
             }
         } catch (ex: IOException) {
             LogUtil.error(javaClass, ex.toString())
-            if (saveMessageToDatabase) {
-                messageTask.sofaMessage.sendState = SendState.STATE_FAILED
-                updateExistingMessage(messageTask)
-                savePendingMessage(messageTask)
-            }
+            val errorMessage = getErrorMessageFromException(ex)
+            if (saveMessageToDatabase) saveAndUpdateExistingMessageWithErrorMessage(messageTask, errorMessage)
         }
     }
 
@@ -88,11 +87,26 @@ class SendMessageToRecipientTask(
             protocolStore.saveIdentity(SignalProtocolAddress(ue.e164Number, SignalServiceAddress.DEFAULT_DEVICE_ID), ue.identityKey)
         } catch (ex: IOException) {
             LogUtil.error(javaClass, ex.toString())
-            if (saveMessageToDatabase) {
-                messageTask.sofaMessage.sendState = SendState.STATE_FAILED
-                updateExistingMessage(messageTask)
-                savePendingMessage(messageTask)
-            }
+            val errorMessage = getErrorMessageFromException(ex)
+            if (saveMessageToDatabase) saveAndUpdateExistingMessageWithErrorMessage(messageTask, errorMessage)
+        }
+    }
+
+    private fun getErrorMessageFromException(exception: Exception): SofaError {
+        return when (exception) {
+            is UnregisteredUserException -> SofaError().createUserUnavailableMessage(BaseApplication.get())
+            else -> SofaError().createNotDeliveredMessage(BaseApplication.get())
+        }
+    }
+
+    private fun saveAndUpdateExistingMessageWithErrorMessage(messageTask: SofaMessageTask, errorMessage: SofaError) {
+        try {
+            messageTask.sofaMessage.errorMessage = errorMessage
+            messageTask.sofaMessage.sendState = SendState.STATE_FAILED
+            updateExistingMessage(messageTask)
+            savePendingMessage(messageTask)
+        } catch (ex: IOException) {
+            LogUtil.error(javaClass, ex.toString())
         }
     }
 
