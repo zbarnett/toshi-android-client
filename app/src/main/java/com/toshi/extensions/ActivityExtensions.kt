@@ -40,6 +40,11 @@ inline fun <reified T> AppCompatActivity.startActivityAndFinish(func: Intent.() 
     finish()
 }
 
+inline fun <reified T> AppCompatActivity.startActivityAndFinish() {
+    startActivity(Intent(this, T::class.java))
+    finish()
+}
+
 inline fun <reified T> AppCompatActivity.startActivityForResult(requestCode: Int, func: Intent.() -> Intent) {
     startActivityForResult(Intent(this, T::class.java).func(), requestCode)
 }

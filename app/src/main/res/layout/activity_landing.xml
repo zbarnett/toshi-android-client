@@ -16,114 +16,110 @@
   ~     along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <FrameLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
-        <ScrollView
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fillViewport="true">
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:paddingLeft="45dp"
+            android:paddingRight="45dp"
+            android:background="@drawable/splash_background_image">
 
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:paddingLeft="45dp"
-                android:paddingRight="45dp"
-                android:background="@drawable/splash_background_image">
+            <android.support.v4.widget.Space
+                android:layout_width="0dp"
+                android:layout_height="72dp" />
 
-                <android.support.v4.widget.Space
-                    android:layout_width="0dp"
-                    android:layout_height="72dp" />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:srcCompat="@drawable/ic_toshi_icon"/>
-
-                <android.support.v4.widget.Space
-                    android:layout_width="0dp"
-                    android:layout_height="32dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:textColor="@color/textColorContrast"
-                    android:textSize="41sp"
-                    android:text="@string/welcome_to_toshi"/>
-
-                <android.support.v4.widget.Space
-                    android:layout_width="0dp"
-                    android:layout_height="16dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:textColor="@color/textColorContrastTransparent"
-                    android:textSize="16sp"
-                    android:text="@string/splash_view_info"/>
-
-                <android.support.v4.widget.Space
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"/>
-
-                <TextView
-                    android:id="@+id/create_new_account"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="10dp"
-                    android:gravity="center_horizontal"
-                    android:textAllCaps="true"
-                    android:textColor="@color/textColorContrast"
-                    android:textSize="16sp"
-                    android:fontFamily="@string/fontFamily_medium"
-                    android:text="@string/start_with_a_new_account"/>
-
-                <android.support.v4.widget.Space
-                    android:layout_width="0dp"
-                    android:layout_height="3dp" />
-
-                <TextView
-                    android:id="@+id/sign_in"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="10dp"
-                    android:textAllCaps="true"
-                    android:textColor="@color/textColorContrast"
-                    android:textSize="14sp"
-                    android:fontFamily="@string/fontFamily_medium"
-                    android:text="@string/sign_in"/>
-
-                <android.support.v4.widget.Space
-                    android:layout_width="0dp"
-                    android:layout_height="35dp" />
-
-            </LinearLayout>
-        </ScrollView>
-
-        <FrameLayout
-            android:id="@+id/loading_spinner"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone"
-            android:background="@color/semi_transparent_overlay">
-
-            <ProgressBar
-                android:layout_gravity="center"
+            <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:indeterminate="true"/>
+                app:srcCompat="@drawable/ic_toshi_icon"/>
 
-        </FrameLayout>
+            <android.support.v4.widget.Space
+                android:layout_width="0dp"
+                android:layout_height="32dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:textColor="@color/textColorContrast"
+                android:textSize="41sp"
+                android:text="@string/welcome_to_toshi"/>
+
+            <android.support.v4.widget.Space
+                android:layout_width="0dp"
+                android:layout_height="16dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:textColor="@color/textColorContrastTransparent"
+                android:textSize="16sp"
+                android:text="@string/splash_view_info"/>
+
+            <android.support.v4.widget.Space
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+
+            <TextView
+                android:id="@+id/createNewAccount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:gravity="center_horizontal"
+                android:textAllCaps="true"
+                android:textColor="@color/textColorContrast"
+                android:textSize="16sp"
+                android:fontFamily="@string/fontFamily_medium"
+                android:text="@string/start_with_a_new_account"/>
+
+            <android.support.v4.widget.Space
+                android:layout_width="0dp"
+                android:layout_height="3dp" />
+
+            <TextView
+                android:id="@+id/signIn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:textAllCaps="true"
+                android:textColor="@color/textColorContrast"
+                android:textSize="14sp"
+                android:fontFamily="@string/fontFamily_medium"
+                android:text="@string/sign_in"/>
+
+            <android.support.v4.widget.Space
+                android:layout_width="0dp"
+                android:layout_height="35dp" />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <FrameLayout
+        android:id="@+id/loadingSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:background="@color/semi_transparent_overlay">
+
+        <ProgressBar
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"/>
+
     </FrameLayout>
-
-</layout>
-
+</FrameLayout>
