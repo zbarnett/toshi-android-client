@@ -28,7 +28,6 @@ import com.toshi.extensions.isVisible
 import com.toshi.extensions.startActivityForResult
 import com.toshi.extensions.toast
 import com.toshi.model.local.Networks
-import com.toshi.presenter.AmountPresenter
 import com.toshi.util.BuildTypes
 import com.toshi.util.PaymentType
 import com.toshi.util.ScannerResultType
@@ -67,7 +66,7 @@ class SendActivity : AppCompatActivity() {
     }
 
     private fun generateAmount() {
-        encodedEthAmount = intent.getStringExtra(AmountPresenter.INTENT_EXTRA__ETH_AMOUNT)
+        encodedEthAmount = intent.getStringExtra(AmountActivity.INTENT_EXTRA__ETH_AMOUNT)
         encodedEthAmount
                 ?.let { viewModel.generateAmount(it) }
                 ?: toast(R.string.invalid_eth_amount)

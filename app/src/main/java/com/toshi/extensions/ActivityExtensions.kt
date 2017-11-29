@@ -50,6 +50,11 @@ inline fun <reified T> AppCompatActivity.startActivityForResult(requestCode: Int
     startActivityForResult(Intent(this, T::class.java).func(), requestCode)
 }
 
+inline fun AppCompatActivity.setActivityResultAndFinish(resultCode: Int, func: Intent.() -> Intent) {
+    setResult(resultCode, intent.func())
+    finish()
+}
+
 fun AppCompatActivity.getDrawableById(@DrawableRes id: Int) = AppCompatResources.getDrawable(this, id)
 
 fun AppCompatActivity.hideStatusBar() = window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)

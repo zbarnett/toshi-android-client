@@ -15,167 +15,163 @@
   ~     You should have received a copy of the GNU General Public License
   ~     along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
-
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <LinearLayout
-        android:orientation="vertical"
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="?attr/actionBarSize"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        style="@style/Toolbar">
+
+        <ImageButton
+            android:id="@+id/closeButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="fitCenter"
+            android:tint="@color/textColorContrast"
+            app:srcCompat="@drawable/ic_arrow_back"
+            style="@style/closeButtonStyle"/>
+
+        <android.support.v4.widget.Space
+            android:layout_width="16dp"
+            android:layout_height="0dp" />
+
+        <TextView
+            android:id="@+id/toolbarTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Toolbar.TitleText"
+            tools:text="Name"/>
+
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
         <LinearLayout
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            style="@style/Toolbar">
-
-            <ImageButton
-                android:id="@+id/close_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:scaleType="fitCenter"
-                android:tint="@color/textColorContrast"
-                app:srcCompat="@drawable/ic_arrow_back"
-                style="@style/closeButtonStyle"/>
-
-            <android.support.v4.widget.Space
-                android:layout_width="16dp"
-                android:layout_height="0dp" />
-
-            <TextView
-                android:id="@+id/title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/Toolbar.TitleText"
-                tools:text="Name"/>
-
-        </LinearLayout>
-
-
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fillViewport="true">
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
             <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
                 android:orientation="vertical"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:gravity="center">
 
                 <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:gravity="center">
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
 
-                    <LinearLayout
-                        android:orientation="horizontal"
+                    <TextView
+                        android:id="@+id/localCurrencySymbol"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:textColor="@color/textColorPrimary"
+                        android:textSize="53sp"
+                        tools:text="@string/dollar"/>
 
-                        <TextView
-                            android:id="@+id/local_currency_symbol"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:textColor="@color/textColorPrimary"
-                            android:textSize="53sp"
-                            tools:text="@string/dollar"/>
-
-                        <TextView
-                            android:id="@+id/local_value"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:textColor="@color/textColorPrimary"
-                            android:textSize="53sp" />
-
-                        <android.support.v4.widget.Space
-                            android:layout_width="5dp"
-                            android:layout_height="0dp" />
-
-                        <TextView
-                            android:id="@+id/local_currency_code"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:textColor="@color/textColorPrimary"
-                            android:textSize="53sp"
-                            tools:text="USD"/>
-
-                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/localValueView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:textColor="@color/textColorPrimary"
+                        android:textSize="53sp" />
 
                     <android.support.v4.widget.Space
                         android:layout_width="5dp"
                         android:layout_height="0dp" />
 
-                    <LinearLayout
-                        android:orientation="horizontal"
+                    <TextView
+                        android:id="@+id/localCurrencyCode"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:textColor="@color/textColorPrimary"
+                        android:textSize="53sp"
+                        tools:text="USD"/>
 
-                        <TextView
-                            android:id="@+id/eth_value"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:textColor="@color/textColorSecondary"
-                            android:textSize="14sp" />
-
-                        <android.support.v4.widget.Space
-                            android:layout_width="4dp"
-                            android:layout_height="0dp" />
-
-                        <TextView
-                            android:id="@+id/eth_currency"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:textColor="@color/textColorSecondary"
-                            android:textSize="14sp"
-                            android:text="@string/eth_currency_code"/>
-
-                        <android.support.v4.widget.Space
-                            android:layout_width="4dp"
-                            android:layout_height="0dp" />
-
-                    </LinearLayout>
                 </LinearLayout>
 
-                <com.toshi.view.custom.AmountInputView
-                    android:id="@+id/amount_input_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="27dp"/>
+                <android.support.v4.widget.Space
+                    android:layout_width="5dp"
+                    android:layout_height="0dp" />
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/divider"/>
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
 
-                <Button
-                    android:id="@+id/btn_continue"
-                    android:layout_width="match_parent"
-                    android:layout_height="52dp"
-                    style="@style/FlatButton"
-                    android:text="@string/continue_"/>
+                    <TextView
+                        android:id="@+id/ethValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:textColor="@color/textColorSecondary"
+                        android:textSize="14sp" />
 
-                <TextView
-                    android:id="@+id/network"
-                    android:layout_width="match_parent"
-                    android:layout_height="24dp"
-                    android:gravity="center"
-                    android:background="@color/file_avatar_background"
-                    style="@style/TextStyleMedium"
-                    android:textSize="14sp"
-                    android:textColor="@color/textColorContrast"
-                    tools:text="Active network: Mainnet"/>
+                    <android.support.v4.widget.Space
+                        android:layout_width="4dp"
+                        android:layout_height="0dp" />
+
+                    <TextView
+                        android:id="@+id/ethCurrency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:textColor="@color/textColorSecondary"
+                        android:textSize="14sp"
+                        android:text="@string/eth_currency_code"/>
+
+                    <android.support.v4.widget.Space
+                        android:layout_width="4dp"
+                        android:layout_height="0dp" />
+
+                </LinearLayout>
             </LinearLayout>
-        </ScrollView>
-    </LinearLayout>
-</layout>
+
+            <com.toshi.view.custom.AmountInputView
+                android:id="@+id/amountInputView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="27dp"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"/>
+
+            <Button
+                android:id="@+id/btnContinue"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                style="@style/FlatButton"
+                android:text="@string/continue_"/>
+
+            <TextView
+                android:id="@+id/networkView"
+                android:layout_width="match_parent"
+                android:layout_height="24dp"
+                android:gravity="center"
+                android:background="@color/file_avatar_background"
+                style="@style/TextStyleMedium"
+                android:textSize="14sp"
+                android:textColor="@color/textColorContrast"
+                tools:text="Active network: Mainnet"/>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

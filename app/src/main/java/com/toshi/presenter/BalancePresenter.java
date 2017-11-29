@@ -109,7 +109,7 @@ public class BalancePresenter implements Presenter<BalanceActivity> {
             return false;
         }
 
-        final String ethAmount = resultHolder.getIntent().getStringExtra(AmountPresenter.INTENT_EXTRA__ETH_AMOUNT);
+        final String ethAmount = resultHolder.getIntent().getStringExtra(AmountActivity.INTENT_EXTRA__ETH_AMOUNT);
         startSendActivityWithAmountIntent(ethAmount);
         return true;
     }

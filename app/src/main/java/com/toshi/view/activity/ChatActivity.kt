@@ -42,7 +42,6 @@ import com.toshi.model.sofa.Control
 import com.toshi.model.sofa.PaymentRequest
 import com.toshi.model.sofa.SofaAdapters
 import com.toshi.model.sofa.SofaMessage
-import com.toshi.presenter.AmountPresenter
 import com.toshi.presenter.chat.ChatViewModel
 import com.toshi.presenter.chat.ChatViewModelFactory
 import com.toshi.presenter.chat.ConfirmPaymentInfo
@@ -479,11 +478,11 @@ class ChatActivity : AppCompatActivity() {
 
         when (requestCode) {
             REQUEST_RESULT_CODE -> {
-                val value = resultIntent?.getStringExtra(AmountPresenter.INTENT_EXTRA__ETH_AMOUNT)
+                val value = resultIntent?.getStringExtra(AmountActivity.INTENT_EXTRA__ETH_AMOUNT)
                 value?.let { viewModel.sendPaymentRequestWithValue(it) }
             }
             PAY_RESULT_CODE -> {
-                val value = resultIntent?.getStringExtra(AmountPresenter.INTENT_EXTRA__ETH_AMOUNT)
+                val value = resultIntent?.getStringExtra(AmountActivity.INTENT_EXTRA__ETH_AMOUNT)
                 value?.let { viewModel.sendPaymentWithValue(it) }
             }
             PICK_ATTACHMENT -> {

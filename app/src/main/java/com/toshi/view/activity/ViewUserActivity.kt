@@ -35,7 +35,6 @@ import com.toshi.extensions.startActivity
 import com.toshi.extensions.toast
 import com.toshi.model.local.User
 import com.toshi.model.network.ReputationScore
-import com.toshi.presenter.AmountPresenter
 import com.toshi.util.ImageUtil
 import com.toshi.util.LogUtil
 import com.toshi.util.PaymentType
@@ -278,7 +277,7 @@ class ViewUserActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, resultIntent: Intent?) {
         super.onActivityResult(requestCode, resultCode, resultIntent)
         if (resultCode == Activity.RESULT_OK && requestCode == ETH_PAY_CODE) {
-            val ethAmount = resultIntent?.getStringExtra(AmountPresenter.INTENT_EXTRA__ETH_AMOUNT)
+            val ethAmount = resultIntent?.getStringExtra(AmountActivity.INTENT_EXTRA__ETH_AMOUNT)
             val userAddress = viewModel.user.value?.toshiId
             if (ethAmount != null && userAddress != null) {
                 goToChatActivityFromPay(ethAmount, userAddress)
