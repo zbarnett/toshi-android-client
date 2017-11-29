@@ -118,6 +118,7 @@ public class ToshiManager {
             this.userManager.init(this.wallet);
             this.reputationManager = new ReputationManager();
         })
+        .onErrorComplete()
         .andThen(Completable.mergeDelayError(
                 this.balanceManager.init(this.wallet),
                 this.sofaMessageManager.init(this.wallet)

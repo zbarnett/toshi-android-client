@@ -252,7 +252,6 @@ public final class SofaMessageManager {
         initMessageSender();
         initMessageReceiver(this.messageSender);
         return initRegistrationTask()
-                .onErrorComplete()
                 .doOnCompleted(this::attachConnectivityObserver);
     }
 
