@@ -137,7 +137,7 @@ public class LandingPresenter implements Presenter<LandingActivity> {
     }
 
     private boolean isOnboardingBot(final Conversation conversation) {
-        return conversation.getRecipient().getUser().getUsernameForEditing().equals(OnboardingManager.ONBOARDING_BOT_NAME);
+        return conversation.getRecipient().getUser().getUsernameForEditing().equals(OnboardingManager.getOnboardingBotName());
     }
 
     private Single<Conversation> setConversationToAccepted(final Conversation conversation) {
