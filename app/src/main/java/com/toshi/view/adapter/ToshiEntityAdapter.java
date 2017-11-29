@@ -62,7 +62,7 @@ public class ToshiEntityAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     private void addExtras() {
         if (this.dapp == null) return;
-        this.toshiEntities.add(dapp);
+        this.toshiEntities.add(0, dapp);
     }
 
     public void addDapp(final String DappAddress) {
