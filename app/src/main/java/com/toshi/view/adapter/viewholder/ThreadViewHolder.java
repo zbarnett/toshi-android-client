@@ -75,11 +75,6 @@ public class ThreadViewHolder extends RecyclerView.ViewHolder {
     }
 
     private String getLastMessageCreationTime(final Conversation conversation) {
-        if (conversation.getLatestMessage() == null) {
-            // Todo calculate time when group has been created
-            return "Todo";
-        }
-
         final long creationTime = conversation.getLatestMessage().getCreationTime();
         final Calendar lastMessageCreationTime = Calendar.getInstance();
         lastMessageCreationTime.setTimeInMillis(creationTime);
