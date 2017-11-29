@@ -333,11 +333,13 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
             case SofaType.TIMESTAMP: {
                 final TimestampMessageViewHolder vh = (TimestampMessageViewHolder) holder;
                 vh.setTime(sofaMessage.getCreationTime());
+                break;
             }
 
             case SofaType.LOCAL_STATUS_MESSAGE: {
                 final LocalStatusMessageViewHolder vh = (LocalStatusMessageViewHolder) holder;
                 vh.setMessageResource(sofaMessage.getPayload());
+                break;
             }
         }
     }
