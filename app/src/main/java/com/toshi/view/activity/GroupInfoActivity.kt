@@ -23,6 +23,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
+import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import com.toshi.R
@@ -55,16 +56,22 @@ class GroupInfoActivity : AppCompatActivity() {
 
     private fun init() {
         initViewModel()
+        initToolbar()
         initClickListeners()
         processIntentData()
         initObservers()
     }
 
-    private fun initClickListeners() = closeButton.setOnClickListener { finish() }
-
     private fun initViewModel() {
         viewModel = ViewModelProviders.of(this).get(GroupInfoViewModel::class.java)
     }
+
+    private fun initToolbar() {
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+    }
+
+    private fun initClickListeners() = closeButton.setOnClickListener { finish() }
 
     private fun processIntentData() {
         val groupId = getGroupIdFromIntent()
@@ -114,6 +121,19 @@ class GroupInfoActivity : AppCompatActivity() {
             MENU_MESSAGE -> startChatActivity(clickedUser)
         }
         return super.onContextItemSelected(item)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.groupinfo, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.edit -> LogUtil.d(javaClass, "Not implemented")
+            R.id.leave -> LogUtil.d(javaClass, "Not implemented")
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun startProfileActivity(user: User) = startActivityAndFinish<ViewUserActivity> {

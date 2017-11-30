@@ -292,4 +292,6 @@
     <string name="user_update_error">Error updating profile. Try a different username</string>
     <string name="user_unavailable">User unavailable</string>
     <string name="invalid_eth_amount">Invalid amount</string>
+    <string name="edit_group">Edit</string>
+    <string name="leave">Leave</string>
 </resources>
