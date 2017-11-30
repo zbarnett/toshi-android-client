@@ -24,6 +24,7 @@ import android.util.Pair;
 
 import com.toshi.model.local.Conversation;
 import com.toshi.model.local.Group;
+import com.toshi.model.local.LocalStatusMessage;
 import com.toshi.model.local.Recipient;
 import com.toshi.model.local.User;
 import com.toshi.model.sofa.SofaMessage;
@@ -93,8 +94,9 @@ public class ConversationStore {
                 );
     }
 
-    public Single<Conversation> saveConversationFromGroup(@NonNull final Group group) {
+    public Single<Conversation> createNewConversationFromGroup(@NonNull final Group group) {
         return copyOrUpdateGroup(group)
+                .flatMap(this::addGroupCreatedStatusMessage)
                 .observeOn(Schedulers.immediate())
                 .subscribeOn(Schedulers.from(dbThread))
                 .doOnSuccess(this::broadcastConversationChanged)
@@ -141,6 +143,11 @@ public class ConversationStore {
 
             return conversationForBroadcast;
         });
+    }
+
+    private Single<Conversation> addGroupCreatedStatusMessage(@NonNull final Conversation conversation) {
+        final SofaMessage statusMessage = new SofaMessage().makeNewLocalStatusMessage(LocalStatusMessage.NEW_GROUP);
+        return saveMessage(conversation.getRecipient(), statusMessage);
     }
 
     private Single<Conversation> saveMessage(

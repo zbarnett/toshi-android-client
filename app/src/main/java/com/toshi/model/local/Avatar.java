@@ -64,6 +64,7 @@ public class Avatar extends RealmObject {
     }
 
     private void generateAttachmentStream() {
+        if (this.bytes == null) return;
         this.attachmentStream = FileUtil.buildSignalServiceAttachment(this.bytes);
     }
 }

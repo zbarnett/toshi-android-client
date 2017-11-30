@@ -19,6 +19,7 @@ package com.toshi.model.sofa;
 
 import android.support.annotation.Nullable;
 
+import com.toshi.model.local.LocalStatusMessage;
 import com.toshi.model.local.SendState;
 import com.toshi.model.local.User;
 import com.toshi.model.network.SofaError;
@@ -187,12 +188,12 @@ public class SofaMessage extends RealmObject {
                 .setPayload("");
     }
 
-    public SofaMessage makeNewLocalStatusMessage(final String resourceIdentifier) {
+    public SofaMessage makeNewLocalStatusMessage(final @LocalStatusMessage.Type long type) {
         final String sofaHeader = SofaType.createHeader(SofaType.LOCAL_STATUS_MESSAGE);
         final @SofaType.Type int sofaType = SofaType.getType(sofaHeader);
 
         return setType(sofaType)
-                .setPayload(resourceIdentifier);
+                .setPayload(String.valueOf(type));
     }
 
     // This will set the private key to be the txHash to ensure all

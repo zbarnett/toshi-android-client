@@ -111,7 +111,7 @@ public final class SofaMessageManager {
     public final Single<Conversation> createConversationFromGroup(final Group group) {
         return this.messageSender
                 .createGroup(group)
-                .flatMap(this.conversationStore::saveConversationFromGroup);
+                .flatMap(this.conversationStore::createNewConversationFromGroup);
     }
 
     // Will store a transaction in the local database

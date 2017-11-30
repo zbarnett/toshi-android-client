@@ -32,6 +32,7 @@ import com.toshi.model.local.Conversation;
 import com.toshi.model.local.ConversationDividerItem;
 import com.toshi.model.local.ConversationItem;
 import com.toshi.model.local.ConversationRequestsItem;
+import com.toshi.model.local.LocalStatusMessage;
 import com.toshi.model.local.User;
 import com.toshi.model.sofa.Message;
 import com.toshi.model.sofa.Payment;
@@ -226,12 +227,6 @@ public class RecentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
     private String formatLastMessage(final SofaMessage sofaMessage) {
-        if (sofaMessage == null) {
-            // Todo - this is only null because of group creation not containing a message
-            // should it?
-            return "";
-        }
-
         final User localUser = getCurrentLocalUser();
         final boolean sentByLocal = sofaMessage.isSentBy(localUser);
 
@@ -249,10 +244,15 @@ public class RecentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                     final PaymentRequest request = SofaAdapters.get().txRequestFrom(sofaMessage.getPayload());
                     return request.toUserVisibleString(sentByLocal, sofaMessage.getSendState());
                 }
+                case SofaType.LOCAL_STATUS_MESSAGE: {
+                    return LocalStatusMessage.Companion.loadString(sofaMessage.getPayload());
+                }
                 case SofaType.COMMAND_REQUEST:
                 case SofaType.INIT_REQUEST:
                 case SofaType.INIT:
+                case SofaType.TIMESTAMP:
                 case SofaType.UNKNOWN:
+                default:
                     return "";
             }
         } catch (final IOException ex) {

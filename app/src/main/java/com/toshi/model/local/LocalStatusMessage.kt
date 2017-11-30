@@ -15,17 +15,29 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.toshi.view.adapter.viewholder
+package com.toshi.model.local
 
-import android.support.v7.widget.RecyclerView
-import android.view.View
-import com.toshi.model.local.LocalStatusMessage
-import kotlinx.android.synthetic.main.list_item__local_status_message.view.*
+import android.support.annotation.IntDef
+import com.toshi.R
+import com.toshi.view.BaseApplication
 
-class LocalStatusMessageViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
+class LocalStatusMessage {
+    companion object {
+        const val NEW_GROUP = 0L
 
-    fun setMessageType(type: String) {
-        val string = LocalStatusMessage.loadString(type)
-        itemView.message.text = string
+        fun loadString(type: String): String {
+            val asLong = type.toLongOrNull()
+            return asLong?.let { loadString(asLong) } ?: ""
+        }
+
+        private fun loadString(@LocalStatusMessage.Type type: Long): String {
+            return when (type) {
+                LocalStatusMessage.NEW_GROUP -> BaseApplication.get().getString(R.string.lsm_group_created)
+                else -> ""
+            }
+        }
     }
+
+    @IntDef(NEW_GROUP)
+    annotation class Type
 }
