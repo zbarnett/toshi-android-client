@@ -31,6 +31,8 @@ import com.toshi.model.sofa.SofaMessage;
 import com.toshi.util.LogUtil;
 import com.toshi.view.BaseApplication;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -328,6 +330,18 @@ public class ConversationStore {
                 () -> broadcastDeletedChatMessage(receiver.getThreadId(), message),
                 this::handleError
         );
+    }
+
+    public void removeUserFromGroup(@NotNull User user, @NotNull String groupId) {
+        loadByThreadId(groupId)
+                .map(conversation -> conversation.getRecipient().getGroup())
+                .map(group -> group.removeMember(user))
+                .flatMap(this::copyOrUpdateGroup)
+                .subscribeOn(Schedulers.from(dbThread))
+                .subscribe(
+                        this::broadcastConversationChanged,
+                        this::handleError
+                );
     }
 
     public boolean areUnreadMessages() {

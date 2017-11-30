@@ -122,6 +122,11 @@ public class Group extends RealmObject {
         return this;
     }
 
+    public Group removeMember(final User member) {
+        this.members.remove(member);
+        return this;
+    }
+
     @NonNull
     public String getId() {
         return this.id;
