@@ -22,7 +22,7 @@ import com.squareup.moshi.Moshi;
 import com.toshi.manager.network.interceptor.LoggingInterceptor;
 import com.toshi.manager.network.interceptor.OfflineCacheInterceptor;
 import com.toshi.manager.network.interceptor.ReadFromCacheInterceptor;
-import com.toshi.manager.network.interceptor.UserAgentInterceptor;
+import com.toshi.manager.network.interceptor.AppInfoUserAgentInterceptor;
 import com.toshi.model.adapter.BigDecimalAdapter;
 import com.toshi.model.adapter.BigIntegerAdapter;
 import com.toshi.R;
@@ -91,7 +91,7 @@ public class CurrencyService {
     }
 
     private void addUserAgentHeader() {
-        this.client.addInterceptor(new UserAgentInterceptor());
+        this.client.addInterceptor(new AppInfoUserAgentInterceptor());
     }
 
     private void addLogging() {

@@ -21,7 +21,7 @@ package com.toshi.manager.network;
 import com.squareup.moshi.Moshi;
 import com.toshi.manager.network.interceptor.LoggingInterceptor;
 import com.toshi.manager.network.interceptor.SigningInterceptor;
-import com.toshi.manager.network.interceptor.UserAgentInterceptor;
+import com.toshi.manager.network.interceptor.AppInfoUserAgentInterceptor;
 import com.toshi.model.adapter.BigIntegerAdapter;
 import com.toshi.model.local.Network;
 import com.toshi.model.local.Networks;
@@ -100,7 +100,7 @@ public class EthereumService {
     }
 
     private void addUserAgentHeader() {
-        this.client.addInterceptor(new UserAgentInterceptor());
+        this.client.addInterceptor(new AppInfoUserAgentInterceptor());
     }
 
     private void addSigningInterceptor() {

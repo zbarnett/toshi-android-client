@@ -25,7 +25,7 @@ import com.toshi.crypto.signal.network.ChatInterface;
 import com.toshi.crypto.signal.store.ProtocolStore;
 import com.toshi.manager.network.interceptor.LoggingInterceptor;
 import com.toshi.manager.network.interceptor.SigningInterceptor;
-import com.toshi.manager.network.interceptor.UserAgentInterceptor;
+import com.toshi.manager.network.interceptor.AppInfoUserAgentInterceptor;
 import com.toshi.util.LogUtil;
 
 import org.whispersystems.libsignal.IdentityKey;
@@ -106,7 +106,7 @@ public final class ChatService extends SignalServiceAccountManager {
     }
 
     private void addUserAgentHeader() {
-        this.client.addInterceptor(new UserAgentInterceptor());
+        this.client.addInterceptor(new AppInfoUserAgentInterceptor());
     }
 
     private void addSigningInterceptor() {

@@ -25,7 +25,7 @@ import com.bumptech.glide.integration.okhttp3.OkHttpUrlLoader;
 import com.bumptech.glide.load.model.ModelLoaderFactory;
 import com.bumptech.glide.module.GlideModule;
 import com.toshi.manager.network.interceptor.LoggingInterceptor;
-import com.toshi.manager.network.interceptor.UserAgentInterceptor;
+import com.toshi.manager.network.interceptor.AppInfoUserAgentInterceptor;
 import com.toshi.view.BaseApplication;
 
 import java.io.File;
@@ -50,7 +50,7 @@ public class GlideOkHttpStack implements GlideModule {
         final OkHttpClient client =
                 new OkHttpClient().newBuilder()
                 .cache(cache)
-                .addInterceptor(new UserAgentInterceptor())
+                .addInterceptor(new AppInfoUserAgentInterceptor())
                 .addInterceptor(new HttpLoggingInterceptor(new LoggingInterceptor()).setLevel(HttpLoggingInterceptor.Level.BODY))
                 .build();
 

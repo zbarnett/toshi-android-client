@@ -23,7 +23,7 @@ import com.toshi.manager.network.interceptor.LoggingInterceptor;
 import com.toshi.manager.network.interceptor.OfflineCacheInterceptor;
 import com.toshi.manager.network.interceptor.ReadFromCacheInterceptor;
 import com.toshi.manager.network.interceptor.SigningInterceptor;
-import com.toshi.manager.network.interceptor.UserAgentInterceptor;
+import com.toshi.manager.network.interceptor.AppInfoUserAgentInterceptor;
 import com.toshi.model.adapter.RealmListAdapter;
 import com.toshi.R;
 import com.toshi.view.BaseApplication;
@@ -93,7 +93,7 @@ public class IdService {
     }
 
     private void addUserAgentHeader() {
-        this.client.addInterceptor(new UserAgentInterceptor());
+        this.client.addInterceptor(new AppInfoUserAgentInterceptor());
     }
 
     private void addSigningInterceptor() {
