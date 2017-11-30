@@ -95,7 +95,7 @@ public class ConversationStore {
     }
 
     public Single<Conversation> createNewConversationFromGroup(@NonNull final Group group) {
-        return copyOrUpdateGroup(group)
+        return createEmptyConversation(new Recipient(group))
                 .flatMap(this::addGroupCreatedStatusMessage)
                 .observeOn(Schedulers.immediate())
                 .subscribeOn(Schedulers.from(dbThread))
