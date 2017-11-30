@@ -15,13 +15,13 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.toshi.presenter.factory;
+package com.toshi.view.adapter.listeners
 
-import com.toshi.presenter.SendPresenter;
+import android.text.Editable
+import android.text.TextWatcher
 
-public class SendPresenterFactory implements PresenterFactory<SendPresenter> {
-    @Override
-    public SendPresenter create() {
-        return new SendPresenter();
-    }
+abstract class TextChangedListener : TextWatcher {
+    override fun afterTextChanged(s: Editable?) {}
+    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+    abstract override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int)
 }

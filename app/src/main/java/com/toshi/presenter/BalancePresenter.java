@@ -109,14 +109,15 @@ public class BalancePresenter implements Presenter<BalanceActivity> {
             return false;
         }
 
-        startSendActivityWithAmountIntent(resultHolder.getIntent());
+        final String ethAmount = resultHolder.getIntent().getStringExtra(AmountPresenter.INTENT_EXTRA__ETH_AMOUNT);
+        startSendActivityWithAmountIntent(ethAmount);
         return true;
     }
 
-    private void startSendActivityWithAmountIntent(final Intent amountIntent) {
+    private void startSendActivityWithAmountIntent(final String ethAmount) {
         if (this.activity == null) return;
         final Intent intent = new Intent(this.activity, SendActivity.class)
-                .putExtra(SendActivity.EXTRA__INTENT, amountIntent);
+                .putExtra(SendActivity.INTENT_EXTRA__ETH_AMOUNT, ethAmount);
         this.activity.startActivity(intent);
     }
 
