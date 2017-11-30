@@ -37,7 +37,6 @@ import com.toshi.model.network.SignedTransaction;
 import com.toshi.model.network.SofaError;
 import com.toshi.model.network.TransactionRequest;
 import com.toshi.model.network.UnsignedTransaction;
-import com.toshi.model.sofa.Message;
 import com.toshi.model.sofa.Payment;
 import com.toshi.model.sofa.PaymentRequest;
 import com.toshi.model.sofa.SofaAdapters;
@@ -213,11 +212,11 @@ public class TransactionManager {
                 );
     }
 
-    public void sendPayment(final User receiver, final String paymentAddress, final String amount) {
+    public void sendPayment(final User receiver, final String amount) {
         new Payment()
             .setValue(amount)
             .setFromAddress(this.wallet.getPaymentAddress())
-            .setToAddress(paymentAddress)
+            .setToAddress(receiver.getPaymentAddress())
             .generateLocalPrice()
             .subscribe(
                     payment -> addOutgoingPaymentTask(receiver, payment, OUTGOING),

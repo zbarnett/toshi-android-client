@@ -192,8 +192,8 @@ public final class SofaMessageManager {
                 .subscribeOn(Schedulers.io());
     }
 
-    public void deleteMessage(final Recipient recipient, final SofaMessage sofaMessage) {
-        this.conversationStore
+    public Completable deleteMessage(final Recipient recipient, final SofaMessage sofaMessage) {
+        return this.conversationStore
                 .deleteMessageById(recipient, sofaMessage);
     }
 

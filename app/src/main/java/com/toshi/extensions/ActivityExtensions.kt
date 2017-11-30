@@ -19,6 +19,7 @@ package com.toshi.extensions
 
 import android.content.Intent
 import android.support.annotation.ColorRes
+import android.support.annotation.DimenRes
 import android.support.annotation.DrawableRes
 import android.support.annotation.StringRes
 import android.support.v4.content.ContextCompat
@@ -52,3 +53,5 @@ inline fun <reified T> AppCompatActivity.startActivityForResult(requestCode: Int
 fun AppCompatActivity.getDrawableById(@DrawableRes id: Int) = AppCompatResources.getDrawable(this, id)
 
 fun AppCompatActivity.hideStatusBar() = window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
+
+fun AppCompatActivity.getPxSize(@DimenRes id: Int) = resources.getDimensionPixelSize(id)

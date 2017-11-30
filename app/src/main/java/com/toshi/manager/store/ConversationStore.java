@@ -312,8 +312,8 @@ public class ConversationStore {
         });
     }
 
-    public void deleteMessageById(final Recipient receiver, final SofaMessage message) {
-        Completable.fromAction(() -> {
+    public Completable deleteMessageById(final Recipient receiver, final SofaMessage message) {
+        return Completable.fromAction(() -> {
             final Realm realm = BaseApplication.get().getRealm();
             realm.beginTransaction();
             realm
@@ -326,10 +326,8 @@ public class ConversationStore {
         })
         .observeOn(Schedulers.immediate())
         .subscribeOn(Schedulers.from(dbThread))
-        .subscribe(
-                () -> broadcastDeletedChatMessage(receiver.getThreadId(), message),
-                this::handleError
-        );
+        .doOnCompleted(() -> broadcastDeletedChatMessage(receiver.getThreadId(), message))
+        .doOnError(this::handleError);
     }
 
     public void removeUserFromGroup(@NotNull User user, @NotNull String groupId) {

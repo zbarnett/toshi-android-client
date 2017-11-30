@@ -15,16 +15,22 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.toshi.presenter.factory;
+package com.toshi.presenter.chat;
 
-import com.toshi.presenter.chat.ChatPresenter;
+import android.arch.lifecycle.ViewModelProvider;
+import android.support.annotation.NonNull;
 
-public final class ChatPresenterFactory implements PresenterFactory<ChatPresenter> {
+public class ChatViewModelFactory implements ViewModelProvider.Factory {
 
-    public ChatPresenterFactory() {}
+    private String threadId;
 
+    public ChatViewModelFactory(final String threadId) {
+        this.threadId = threadId;
+    }
+
+    @NonNull
     @Override
-    public ChatPresenter create() {
-        return new ChatPresenter();
+    public ChatViewModel create(@NonNull Class modelClass) {
+        return new ChatViewModel(this.threadId);
     }
 }
