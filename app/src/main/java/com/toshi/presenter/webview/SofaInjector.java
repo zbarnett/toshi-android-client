@@ -20,10 +20,8 @@ package com.toshi.presenter.webview;
 
 import android.support.annotation.NonNull;
 
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
 import com.toshi.R;
+import com.toshi.manager.network.interceptor.DeviceInfoUserAgentInterceptor;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.custom.listener.OnLoadListener;
 
@@ -32,6 +30,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import rx.Completable;
 import rx.Single;
 import rx.Subscription;
@@ -53,9 +54,16 @@ import rx.subscriptions.CompositeSubscription;
      */
     /* package */ SofaInjector(@NonNull final OnLoadListener listener) {
         this.listener = listener;
-        this.client = new OkHttpClient();
+        this.client = buildHttpClient();
         this.subscriptions = new CompositeSubscription();
         asyncLoadSofaScript();
+    }
+
+    @NonNull
+    private OkHttpClient buildHttpClient() {
+        return new OkHttpClient.Builder()
+                .addInterceptor(new DeviceInfoUserAgentInterceptor())
+                .build();
     }
 
     private void asyncLoadSofaScript() {
