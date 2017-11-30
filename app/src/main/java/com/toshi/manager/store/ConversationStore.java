@@ -334,6 +334,7 @@ public class ConversationStore {
 
     public void removeUserFromGroup(@NotNull User user, @NotNull String groupId) {
         loadByThreadId(groupId)
+                .flatMap(conversation -> addUserLeftStatusMessage(conversation, user))
                 .map(conversation -> conversation.getRecipient().getGroup())
                 .map(group -> group.removeMember(user))
                 .flatMap(this::copyOrUpdateGroup)
@@ -342,6 +343,13 @@ public class ConversationStore {
                         this::broadcastConversationChanged,
                         this::handleError
                 );
+    }
+
+    private Single<Conversation> addUserLeftStatusMessage(@NonNull final Conversation conversation, @NonNull User user) {
+        final SofaMessage statusMessage = new SofaMessage()
+                .makeNewLocalStatusMessage(LocalStatusMessage.USER_LEFT)
+                .setSender(user);
+        return saveMessage(conversation.getRecipient(), statusMessage);
     }
 
     public boolean areUnreadMessages() {
