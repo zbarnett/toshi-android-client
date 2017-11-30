@@ -160,6 +160,10 @@
             android:name="com.toshi.manager.network.image.GlideOkHttpStack"
             android:value="GlideModule"/>
 
+        <meta-data
+            android:name="android.webkit.WebView.EnableSafeBrowsing"
+            android:value="true" />
+
     </application>
 
 </manifest>
