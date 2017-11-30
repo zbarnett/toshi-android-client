@@ -298,8 +298,6 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
                 .setOnSendMessageClicked(this::sendMessage)
                 .setOnAttachmentClicked(__ -> checkExternalStoragePermission())
                 .setOnCameraClickedListener(__ -> checkCameraPermission());
-        this.activity.getBinding().balanceBar.setOnRequestClicked(this.requestButtonClicked);
-        this.activity.getBinding().balanceBar.setOnPayClicked(this.payButtonClicked);
         this.activity.getBinding().controlView.setOnControlClickedListener(this::handleControlClicked);
     }
 
@@ -649,6 +647,11 @@ public final class ChatPresenter implements Presenter<ChatActivity> {
         this.activity.getBinding().closeButton.setOnClickListener(this::handleBackButtonClicked);
         this.activity.getBinding().avatar.setOnClickListener(__ -> viewRecipientProfile());
         this.recipient.loadAvatarInto(this.activity.getBinding().avatar);
+
+        if (this.recipient.isUser()) {
+            this.activity.getBinding().balanceBar.setOnRequestClicked(this.requestButtonClicked);
+            this.activity.getBinding().balanceBar.setOnPayClicked(this.payButtonClicked);
+        }
     }
 
     private void handleBackButtonClicked(final View v) {

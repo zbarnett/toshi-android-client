@@ -47,6 +47,10 @@ public class Recipient extends RealmObject {
         return this.group != null;
     }
 
+    public boolean isUser() {
+        return this.group == null;
+    }
+
     public User getUser() {
         return this.user;
     }
