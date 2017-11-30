@@ -20,6 +20,7 @@ package com.toshi.viewModel
 import android.arch.lifecycle.ViewModel
 import android.graphics.Bitmap
 import android.net.Uri
+import com.toshi.extensions.toIdenticon
 import com.toshi.model.local.Conversation
 import com.toshi.model.local.Group
 import com.toshi.model.local.User
@@ -40,7 +41,8 @@ class GroupSetupViewModel : ViewModel() {
     fun createGroup(participants: List<User>,
                     avatarUri: Uri?,
                     groupName: String) {
-        val subscription = generateAvatar(avatarUri)
+        val subscription = generateAvatarFromUri(avatarUri)
+                .map { avatar -> tryGeneratePlaceholderAvatar(avatar, groupName) }
                 .map { avatar -> createGroupObject(participants, avatar, groupName) }
                 .flatMap { addCurrentUserToGroup(it) }
                 .flatMap { createConversationFromGroup(it) }
@@ -75,8 +77,12 @@ class GroupSetupViewModel : ViewModel() {
                 .createConversationFromGroup(group)
     }
 
-    private fun generateAvatar(avatarUri: Uri?): Single<Bitmap> {
+    private fun generateAvatarFromUri(avatarUri: Uri?): Single<Bitmap> {
         return ImageUtil.loadAsBitmap(avatarUri, BaseApplication.get())
+    }
+
+    private fun tryGeneratePlaceholderAvatar(avatar: Bitmap?, groupName: String): Bitmap {
+        return avatar.let { avatar } ?: groupName.toIdenticon()
     }
 
     override fun onCleared() {
