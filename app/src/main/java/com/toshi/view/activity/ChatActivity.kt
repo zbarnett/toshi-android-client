@@ -340,7 +340,9 @@ class ChatActivity : AppCompatActivity() {
 
     private fun handleConversation(conversation: Conversation) {
         messageAdapter.setMessages(conversation.allMessages)
-        messagesList.scrollToPosition(getSafePosition())
+        val unreadScrollPosition = messageAdapter.itemCount - conversation.numberOfUnread
+        val scrollPosition = if (conversation.numberOfUnread == 0) getSafePosition() else unreadScrollPosition
+        messagesList.scrollToPosition(scrollPosition)
         updateControlView(conversation.conversationStatus.isAccepted)
         initConversationRequestView(conversation)
         updateEmptyState()
