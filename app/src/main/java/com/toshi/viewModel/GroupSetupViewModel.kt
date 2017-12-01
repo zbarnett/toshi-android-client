@@ -34,6 +34,7 @@ import rx.subscriptions.CompositeSubscription
 class GroupSetupViewModel : ViewModel() {
 
     private val subscriptions by lazy { CompositeSubscription() }
+    private var isCreatingGroup = false
 
     val conversationCreated by lazy { SingleLiveEvent<Conversation>() }
     val error by lazy { SingleLiveEvent<Throwable>() }
@@ -41,12 +42,15 @@ class GroupSetupViewModel : ViewModel() {
     fun createGroup(participants: List<User>,
                     avatarUri: Uri?,
                     groupName: String) {
+        if (isCreatingGroup) return
+        isCreatingGroup = true
         val subscription = generateAvatarFromUri(avatarUri)
                 .map { avatar -> tryGeneratePlaceholderAvatar(avatar, groupName) }
                 .map { avatar -> createGroupObject(participants, avatar, groupName) }
                 .flatMap { addCurrentUserToGroup(it) }
                 .flatMap { createConversationFromGroup(it) }
                 .observeOn(AndroidSchedulers.mainThread())
+                .doAfterTerminate { isCreatingGroup = false }
                 .subscribe(
                         { conversationCreated.value = it },
                         { error.value = it }
