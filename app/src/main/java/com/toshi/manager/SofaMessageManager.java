@@ -44,6 +44,7 @@ import com.toshi.util.GcmPrefsUtil;
 import com.toshi.util.LocaleUtil;
 import com.toshi.util.LogUtil;
 import com.toshi.view.BaseApplication;
+import com.toshi.view.notification.ChatNotificationManager;
 
 import org.jetbrains.annotations.NotNull;
 import org.whispersystems.signalservice.internal.configuration.SignalServiceUrl;
@@ -120,6 +121,7 @@ public final class SofaMessageManager {
         return Completable
                 .fromAction(() -> this.messageSender.leaveGroup(group))
                 .andThen(this.conversationStore.deleteByThreadId(group.getId()))
+                .doAfterTerminate(() -> ChatNotificationManager.removeNotificationsForConversation(group.getId()))
                 .subscribeOn(Schedulers.io());
     }
 

@@ -58,6 +58,10 @@ public class ChatNotificationManager extends ToshiNotificationBuilder {
 
     public static void suppressNotificationsForConversation(final String conversationId) {
         currentlyOpenConversation = conversationId;
+        removeNotificationsForConversation(conversationId);
+    }
+
+    public static void removeNotificationsForConversation(final String conversationId) {
         final NotificationManager manager = (NotificationManager) BaseApplication.get().getSystemService(Context.NOTIFICATION_SERVICE);
         manager.cancel(conversationId, 1);
         handleNotificationDismissed(conversationId);
