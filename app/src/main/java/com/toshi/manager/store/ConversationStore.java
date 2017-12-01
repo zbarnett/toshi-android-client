@@ -110,10 +110,7 @@ public class ConversationStore {
         return saveMessage(receiver, message)
                 .observeOn(Schedulers.immediate())
                 .subscribeOn(Schedulers.from(dbThread))
-                .doOnSuccess(conversationForBroadcast -> {
-                    broadcastNewChatMessage(receiver.getThreadId(), message);
-                    broadcastConversationChanged(conversationForBroadcast);
-                })
+                .doOnSuccess(this::broadcastConversationChanged)
                 .doOnError(throwable -> LogUtil.e(getClass(), "Error while saving message " + throwable));
     }
 
@@ -124,10 +121,7 @@ public class ConversationStore {
         .observeOn(Schedulers.immediate())
         .subscribeOn(Schedulers.from(dbThread))
         .subscribe(
-                conversationForBroadcast -> {
-                    broadcastNewChatMessage(receiver.getThreadId(), message);
-                    broadcastConversationChanged(conversationForBroadcast);
-                },
+                this::broadcastConversationChanged,
                 this::handleError
         );
     }
@@ -175,6 +169,7 @@ public class ConversationStore {
                 } else {
                     conversationToStore.setLatestMessageAndUpdateUnreadCounter(storedMessage);
                 }
+                broadcastNewChatMessage(receiver.getThreadId(), message);
             }
 
             final Conversation storedConversation = realm.copyToRealmOrUpdate(conversationToStore);
