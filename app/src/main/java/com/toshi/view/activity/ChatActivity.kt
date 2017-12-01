@@ -91,11 +91,12 @@ class ChatActivity : AppCompatActivity() {
     override fun onCreate(inState: Bundle?) {
         super.onCreate(inState)
         setContentView(R.layout.activity_chat)
-        init()
+        init(inState)
     }
 
-    private fun init() {
+    private fun init(inState: Bundle?) {
         initViewModel()
+        restoreLastVisibleMessagePosition(inState)
         initNetworkView()
         initRecyclerView()
         initControlView()
@@ -117,6 +118,12 @@ class ChatActivity : AppCompatActivity() {
         val threadId = intent.getStringExtra(ChatActivity.EXTRA__THREAD_ID)
         if (threadId == null) handleRecipientLoadFailed(R.string.error__app_loading)
         return threadId
+    }
+
+    private fun restoreLastVisibleMessagePosition(inState: Bundle?) {
+        inState?.let {
+            lastVisibleMessagePosition = it.getInt(LAST_VISIBLE_MESSAGE_POSITION)
+        }
     }
 
     private fun initNetworkView() {
@@ -459,7 +466,7 @@ class ChatActivity : AppCompatActivity() {
     private fun tryScrollToBottom(animate: Boolean) {
         if (messageAdapter.itemCount == 0) return
         // Only animate if we're already near the bottom
-        if (layoutManager.findLastVisibleItemPosition() < messageAdapter.itemCount - 3) return
+        if (layoutManager.findLastVisibleItemPosition() < messageAdapter.itemCount - 2) return
         val bottomPosition = messageAdapter.itemCount - 1
         if (animate) messagesList.smoothScrollToPosition(bottomPosition)
         else messagesList.scrollToPosition(bottomPosition)
@@ -521,7 +528,7 @@ class ChatActivity : AppCompatActivity() {
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
-        outState?.putInt(LAST_VISIBLE_MESSAGE_POSITION, lastVisibleMessagePosition)
+        outState?.putInt(LAST_VISIBLE_MESSAGE_POSITION, layoutManager.findLastVisibleItemPosition())
         super.onSaveInstanceState(outState)
     }
 
