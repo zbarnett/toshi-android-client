@@ -245,9 +245,11 @@ public final class SofaMessageManager {
                 .subscribeOn(Schedulers.io());
     }
 
-    //TODO: Support groups
     public Single<Conversation> rejectConversation(final Conversation conversation) {
-        if (conversation.isGroup()) return Single.error(new Throwable("Can't block groups"));
+        if (conversation.isGroup()) {
+            return leaveGroup(conversation.getRecipient().getGroup())
+                    .toSingle(() -> conversation);
+        }
         return BaseApplication
                 .get()
                 .getRecipientManager()
