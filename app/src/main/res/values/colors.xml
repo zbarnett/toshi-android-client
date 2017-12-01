@@ -29,6 +29,7 @@
     <color name="textColorSecondaryTransparent">#8B000000</color>
     <color name="textColorContrast">#FFFFFF</color>
     <color name="textColorContrastTransparent">#99FFFFFF</color>
+    <color name="textColorDisabledButton">#66FFFFFF</color>
     <color name="textColorHint">#B2B4B8</color>
     <color name="textColorInput">#212121</color>
     <color name="textColorLightButton">#4F4F53</color>
