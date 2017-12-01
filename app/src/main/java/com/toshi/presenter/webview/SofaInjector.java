@@ -93,10 +93,10 @@ import rx.subscriptions.CompositeSubscription;
         final String injectedBody = injectSofaScript(body);
 
         return new SofaInjectResponse.Builder()
-                .setAddress(url)
+                .setAddress(response.request().url().toString())
                 .setData(injectedBody)
-                .setMimeType(response.header("content-type", "text/plain"))
-                .setEncoding(response.header("content-encoding", "utf-8"))
+                .setMimeType(response.header("Content-Type", "text/html"))
+                .setEncoding(response.header("Content-Encoding", "UTF-8"))
                 .build();
     }
 
