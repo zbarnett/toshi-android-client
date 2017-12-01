@@ -19,6 +19,7 @@ package com.toshi.view.activity
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DefaultItemAnimator
@@ -28,6 +29,7 @@ import android.view.MenuItem
 import android.widget.Toast
 import com.toshi.R
 import com.toshi.extensions.addHorizontalLineDivider
+import com.toshi.extensions.startActivity
 import com.toshi.extensions.startActivityAndFinish
 import com.toshi.extensions.toast
 import com.toshi.model.local.Group
@@ -84,10 +86,17 @@ class GroupInfoActivity : AppCompatActivity() {
         viewModel.group.observe(this, Observer {
             it?.let { updateView(it) }
         })
-        viewModel.error.observe(this, Observer {
+        viewModel.fetchGroupError.observe(this, Observer {
             LogUtil.exception(this::class.java, it)
             toast(R.string.error_unknown_group, Toast.LENGTH_LONG)
             finish()
+        })
+        viewModel.leaveGroup.observe(this, Observer {
+            if (it == true) returnToMainActivity()
+        })
+        viewModel.leaveGroupError.observe(this, Observer {
+            LogUtil.exception(this::class.java, it)
+            toast(R.string.error_leave_group, Toast.LENGTH_LONG)
         })
     }
 
@@ -131,9 +140,13 @@ class GroupInfoActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.edit -> LogUtil.d(javaClass, "Not implemented")
-            R.id.leave -> LogUtil.d(javaClass, "Not implemented")
+            R.id.leave -> handleLeaveGroup()
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun handleLeaveGroup() {
+        viewModel.leaveGroup()
     }
 
     private fun startProfileActivity(user: User) = startActivityAndFinish<ViewUserActivity> {
@@ -142,5 +155,10 @@ class GroupInfoActivity : AppCompatActivity() {
 
     private fun startChatActivity(user: User) = startActivityAndFinish<ChatActivity> {
         putExtra(ChatActivity.EXTRA__THREAD_ID, user.toshiId)
+    }
+
+    private fun returnToMainActivity() = startActivity<MainActivity> {
+        putExtra(MainActivity.EXTRA__ACTIVE_TAB, 1)
+        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
     }
 }

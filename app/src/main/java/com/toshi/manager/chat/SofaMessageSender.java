@@ -24,6 +24,7 @@ import com.toshi.BuildConfig;
 import com.toshi.crypto.HDWallet;
 import com.toshi.crypto.signal.store.ProtocolStore;
 import com.toshi.manager.chat.tasks.CreateGroupTask;
+import com.toshi.manager.chat.tasks.LeaveGroupTask;
 import com.toshi.manager.chat.tasks.RequestGroupInfoTask;
 import com.toshi.manager.chat.tasks.SendGroupInfoTask;
 import com.toshi.manager.chat.tasks.SendMessageToRecipientTask;
@@ -168,6 +169,10 @@ public class SofaMessageSender {
 
     public void sendGroupInfo(@NotNull final String messageSource, @NotNull final Group group) {
         new SendGroupInfoTask(this.signalMessageSender).run(messageSource, group);
+    }
+
+    public void leaveGroup(final Group group) {
+        new LeaveGroupTask(this.signalMessageSender).run(group);
     }
 
     private void updateExistingMessage(final Recipient receiver, final SofaMessage message) {

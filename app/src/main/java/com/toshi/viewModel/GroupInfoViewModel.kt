@@ -29,7 +29,9 @@ class GroupInfoViewModel : ViewModel() {
     private val subscriptions by lazy { CompositeSubscription() }
 
     val group by lazy { SingleLiveEvent<Group>() }
-    val error by lazy { SingleLiveEvent<Throwable>() }
+    val fetchGroupError by lazy { SingleLiveEvent<Throwable>() }
+    val leaveGroup by lazy { SingleLiveEvent<Boolean>() }
+    val leaveGroupError by lazy { SingleLiveEvent<Throwable>() }
 
     fun fetchGroup(groupId: String) {
         val subscription = BaseApplication.get()
@@ -38,9 +40,24 @@ class GroupInfoViewModel : ViewModel() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { group.value = it },
-                        { error.value = it }
+                        { fetchGroupError.value = it }
                 )
         this.subscriptions.add(subscription)
+    }
+
+    fun leaveGroup() {
+        group.value?.let {
+            val leaveSub = BaseApplication
+                    .get()
+                    .sofaMessageManager
+                    .leaveGroup(it)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                            { leaveGroup.value = true },
+                            { leaveGroupError.value = it }
+                    )
+            subscriptions.add(leaveSub)
+        }
     }
 
     override fun onCleared() {

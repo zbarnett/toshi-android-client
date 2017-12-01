@@ -45,6 +45,7 @@ import com.toshi.util.LocaleUtil;
 import com.toshi.util.LogUtil;
 import com.toshi.view.BaseApplication;
 
+import org.jetbrains.annotations.NotNull;
 import org.whispersystems.signalservice.internal.configuration.SignalServiceUrl;
 
 import java.util.List;
@@ -112,6 +113,14 @@ public final class SofaMessageManager {
         return this.messageSender
                 .createGroup(group)
                 .flatMap(this.conversationStore::createNewConversationFromGroup);
+    }
+
+    @NotNull
+    public Completable leaveGroup(@NotNull final Group group) {
+        return Completable
+                .fromAction(() -> this.messageSender.leaveGroup(group))
+                .andThen(this.conversationStore.deleteByThreadId(group.getId()))
+                .subscribeOn(Schedulers.io());
     }
 
     // Will store a transaction in the local database
