@@ -26,8 +26,14 @@ private val size = 8
 private val randomSeed by lazy { arrayOf<Long>(0, 0, 0, 0) }
 
 fun String.toIdenticon(): Bitmap {
-    initRandomSeed(this)
+    val seed = safeLength(this)
+    initRandomSeed(seed)
     return createBitmap()
+}
+
+fun safeLength(seed: String): String {
+    return if (seed.length > randomSeed.size) seed
+    else seed + seed + seed + seed
 }
 
 private fun initRandomSeed(seed: String) {
