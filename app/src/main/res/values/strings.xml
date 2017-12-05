@@ -297,4 +297,5 @@
     <string name="error_leave_group">Unable to leave group</string>
     <string name="local_currency_to_eth_error">Couldn\'t do currency conversion. Check your network connection.</string>
     <string name="update_group">Update</string>
+    <string name="personal_sign_title">This webpage is requesting your signature</string>
 </resources>

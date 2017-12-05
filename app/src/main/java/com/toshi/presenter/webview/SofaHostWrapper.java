@@ -28,6 +28,7 @@ import android.webkit.WebView;
 import com.toshi.R;
 import com.toshi.crypto.HDWallet;
 import com.toshi.crypto.util.TypeConverter;
+import com.toshi.model.local.PersonalMessage;
 import com.toshi.model.local.UnsignedW3Transaction;
 import com.toshi.model.network.SentTransaction;
 import com.toshi.model.network.SignedTransaction;
@@ -36,11 +37,18 @@ import com.toshi.presenter.webview.model.ApproveTransactionCallback;
 import com.toshi.presenter.webview.model.GetAccountsCallback;
 import com.toshi.presenter.webview.model.RejectTransactionCallback;
 import com.toshi.presenter.webview.model.SignTransactionCallback;
+import com.toshi.util.DialogUtil;
+import com.toshi.util.EthereumSignedMessage;
 import com.toshi.util.LogUtil;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.fragment.DialogFragment.PaymentConfirmationDialog;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.subscriptions.CompositeSubscription;
 
 /* package */ class SofaHostWrapper implements SofaHostListener {
 
@@ -48,17 +56,23 @@ import java.io.IOException;
     private final WebView webView;
     private final SOFAHost sofaHost;
     private final HDWallet wallet;
+    private final CompositeSubscription subscriptions;
 
     /* package */ SofaHostWrapper(final AppCompatActivity activity, final WebView webView) {
         this.activity = activity;
+        this.subscriptions = new CompositeSubscription();
         this.webView = webView;
         this.sofaHost = new SOFAHost(this);
-        this.wallet = BaseApplication
-                        .get()
-                        .getToshiManager()
-                        .getWallet()
-                        .toBlocking()
-                        .value();
+        this.wallet = getWallet();
+    }
+
+    private HDWallet getWallet() {
+        return BaseApplication
+                .get()
+                .getToshiManager()
+                .getWallet()
+                .toBlocking()
+                .value();
     }
 
     /* package */ SOFAHost getSofaHost() {
@@ -130,7 +144,7 @@ import java.io.IOException;
             return;
         }
 
-        BaseApplication
+        final Subscription sub = BaseApplication
                 .get()
                 .getTransactionManager()
                 .signW3Transaction(transaction)
@@ -138,6 +152,8 @@ import java.io.IOException;
                         signedTransaction -> handleSignedW3Transaction(callbackId, signedTransaction),
                         throwable -> LogUtil.exception(getClass(), throwable)
                 );
+
+        this.subscriptions.add(sub);
     }
 
     private void handleSignedW3Transaction(final String callbackId, final SignedTransaction signedTransaction) {
@@ -166,7 +182,7 @@ import java.io.IOException;
         final SignedTransaction transaction = new SignedTransaction()
                 .setEncodedTransaction(cleanPayload);
 
-        BaseApplication
+        final Subscription sub = BaseApplication
                 .get()
                 .getTransactionManager()
                 .sendSignedTransaction(transaction)
@@ -174,6 +190,8 @@ import java.io.IOException;
                         sentTransaction -> handleSentTransaction(callbackId, sentTransaction),
                         throwable -> LogUtil.exception(getClass(), throwable)
                 );
+
+        this.subscriptions.add(sub);
     }
 
     private void handleSentTransaction(final String callbackId, final SentTransaction sentTransaction) {
@@ -187,12 +205,56 @@ import java.io.IOException;
         new Handler(Looper.getMainLooper()).post(() -> {
             if (activity == null) return;
             final String methodCall = String.format("SOFA.callback(\"%s\",\"%s\")", id, encodedCallback);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                webView.evaluateJavascript(methodCall, null);
-            } else {
-                webView.loadUrl("javascript:" + methodCall);
-            }
+            executeJavascriptMethod(methodCall);
         });
+    }
 
+    @Override
+    public void signPersonalMessage(final String id, final String msgParams) {
+        try {
+            final PersonalMessage personalMessage = PersonalMessage.build(msgParams);
+            showPersonalSignDialog(id, personalMessage);
+        } catch (IOException e) {
+            LogUtil.e(getClass(), "Error while parsing PersonalMessageSign" + e);
+        }
+    }
+
+    private void showPersonalSignDialog(final String id, final PersonalMessage personalMessage) {
+        if (this.activity == null) return;
+        DialogUtil.getBaseDialog(
+                this.activity,
+                this.activity.getString(R.string.personal_sign_title),
+                personalMessage.getDataFromMessageAsString(),
+                R.string.agree,
+                R.string.cancel,
+                (dialog, which) -> handleSignPersonalMessageClicked(id, personalMessage)
+        ).show();
+    }
+
+    private void handleSignPersonalMessageClicked(final String id, final PersonalMessage personalMessage) {
+        try {
+            final EthereumSignedMessage ethereumSignedMessage = new EthereumSignedMessage(id, personalMessage);
+            final Subscription sub = ethereumSignedMessage.signPersonalMessage()
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                            this::executeJavascriptMethod,
+                            throwable -> LogUtil.e(getClass(), "Error " + throwable)
+                    );
+            this.subscriptions.add(sub);
+        } catch (UnsupportedEncodingException e) {
+            LogUtil.e(getClass(), "Error " + e);
+        }
+    }
+
+    private void executeJavascriptMethod(final String methodCall) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            webView.evaluateJavascript(methodCall, null);
+        } else {
+            webView.loadUrl("javascript:" + methodCall);
+        }
+    }
+
+    public void clear() {
+        this.subscriptions.clear();
     }
 }

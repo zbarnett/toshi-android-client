@@ -174,10 +174,26 @@ public class HDWallet {
         }
     }
 
+    public String signTransactionWithoutMinus27(final String data) {
+        try {
+            final byte[] transactionBytes = TypeConverter.StringHexToByteArray(data);
+            return signWithoutMinus27(transactionBytes, this.paymentKey);
+        } catch (final Exception e) {
+            LogUtil.print(getClass(), "Unable to sign transaction. " + e);
+            return null;
+        }
+    }
+
     private String sign(final byte[] bytes, final ECKey key) {
         final byte[] msgHash = sha3(bytes);
         final ECKey.ECDSASignature signature = key.sign(msgHash);
         return signature.toHex();
+    }
+
+    private String signWithoutMinus27(final byte[] bytes, final ECKey key) {
+        final byte[] msgHash = sha3(bytes);
+        final ECKey.ECDSASignature signature = key.sign(msgHash);
+        return signature.toHexWithNoMinus27();
     }
 
     public String getMasterSeed() {

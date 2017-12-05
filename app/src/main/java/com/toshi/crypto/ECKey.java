@@ -673,6 +673,14 @@ public class ECKey implements Serializable {
 
             return TypeConverter.toJsonHex(hexR + hexS + hexV);
         }
+
+        public String toHexWithNoMinus27() {
+            final String hexR = ByteUtil.toZeroPaddedHexString(ByteUtil.bigIntegerToBytes(this.r), 64);
+            final String hexS = ByteUtil.toZeroPaddedHexString(ByteUtil.bigIntegerToBytes(this.s), 64);
+            final String hexV = ByteUtil.toHexString(new byte[]{this.v});
+
+            return TypeConverter.toJsonHex(hexR + hexS + hexV);
+        }
     }
 
     /**

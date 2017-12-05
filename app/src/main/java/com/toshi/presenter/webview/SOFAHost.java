@@ -48,4 +48,9 @@ import android.webkit.JavascriptInterface;
     public void publishTransaction(final String id, final String signedTransaction) {
         this.listener.publishTransaction(id, signedTransaction);
     }
+
+    @JavascriptInterface
+    public void signPersonalMessage(final String id, final String msgParams) {
+        this.listener.signPersonalMessage(id, msgParams);
+    }
 }

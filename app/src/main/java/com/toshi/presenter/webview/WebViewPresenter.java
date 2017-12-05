@@ -230,6 +230,7 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
     @Override
     public void onViewDetached() {
         this.subscriptions.clear();
+        this.sofaHostWrapper.clear();
         this.activity = null;
     }
 
