@@ -117,7 +117,7 @@ public final class SofaMessageManager {
 
     public final Completable updateConversationFromGroup(final Group group) {
         return Completable.fromAction(() -> {
-            messageSender.sendGroupInfo(group.getMembers(), group);
+            messageSender.sendGroupUpdate(group);
             this.conversationStore.saveGroup(group);
         }).subscribeOn(Schedulers.io());
     }

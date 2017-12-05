@@ -27,6 +27,7 @@ import com.toshi.manager.chat.tasks.CreateGroupTask;
 import com.toshi.manager.chat.tasks.LeaveGroupTask;
 import com.toshi.manager.chat.tasks.RequestGroupInfoTask;
 import com.toshi.manager.chat.tasks.SendGroupInfoTask;
+import com.toshi.manager.chat.tasks.SendGroupUpdateTask;
 import com.toshi.manager.chat.tasks.SendMessageToRecipientTask;
 import com.toshi.manager.chat.tasks.StoreMessageTask;
 import com.toshi.manager.model.SofaMessageTask;
@@ -47,8 +48,6 @@ import org.whispersystems.signalservice.api.messages.SignalServiceGroup;
 import org.whispersystems.signalservice.internal.configuration.SignalCdnUrl;
 import org.whispersystems.signalservice.internal.configuration.SignalServiceConfiguration;
 import org.whispersystems.signalservice.internal.configuration.SignalServiceUrl;
-
-import java.util.List;
 
 import rx.Single;
 import rx.Subscription;
@@ -173,8 +172,8 @@ public class SofaMessageSender {
         new SendGroupInfoTask(this.signalMessageSender).run(messageSource, group);
     }
 
-    public void sendGroupInfo(@NotNull final List<User> users, @NotNull final Group group) {
-        new SendGroupInfoTask(this.signalMessageSender).run(users, group);
+    public void sendGroupUpdate(@NotNull final Group group) {
+        new SendGroupUpdateTask(this.signalMessageSender).run(group);
     }
 
     public void leaveGroup(final Group group) {

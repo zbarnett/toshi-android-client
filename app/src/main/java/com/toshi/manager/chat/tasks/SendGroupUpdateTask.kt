@@ -23,15 +23,13 @@ import org.whispersystems.libsignal.util.Hex
 import org.whispersystems.signalservice.api.SignalServiceMessageSender
 import org.whispersystems.signalservice.api.messages.SignalServiceDataMessage
 import org.whispersystems.signalservice.api.messages.SignalServiceGroup
-import org.whispersystems.signalservice.api.push.SignalServiceAddress
 import org.whispersystems.signalservice.api.push.exceptions.EncapsulatedExceptions
 import java.io.IOException
 
-class SendGroupInfoTask(
+class SendGroupUpdateTask(
         private val signalMessageSender: SignalServiceMessageSender
 ) {
-    fun run(requestingUserAddress: String, group: Group) {
-        if (!shouldSendGroupInfo(requestingUserAddress, group)) return
+    fun run(group: Group) {
         try {
             val signalGroup = SignalServiceGroup.newBuilder(SignalServiceGroup.Type.UPDATE)
                     .withId(Hex.fromStringCondensed(group.id))
@@ -43,8 +41,7 @@ class SendGroupInfoTask(
                     .withTimestamp(System.currentTimeMillis())
                     .asGroupMessage(signalGroup)
                     .build()
-            val address = SignalServiceAddress(requestingUserAddress)
-            signalMessageSender.sendMessage(address, groupDataMessage)
+            signalMessageSender.sendMessage(group.memberAddresses, groupDataMessage)
         } catch (ex: Exception) {
             when (ex) {
                 is IOException, is EncapsulatedExceptions -> throw GroupCreationException(ex)
@@ -52,6 +49,4 @@ class SendGroupInfoTask(
             }
         }
     }
-
-    private fun shouldSendGroupInfo(requestingUserAddress: String, group: Group) = group.memberIds.contains(requestingUserAddress)
 }
