@@ -84,6 +84,7 @@
         android:textSize="16sp"
         android:visibility="gone"
         tools:visibility="visible"
+        android:textIsSelectable="true"
         tools:text="Remote Message! www.test.com"  />
 
 </LinearLayout>
