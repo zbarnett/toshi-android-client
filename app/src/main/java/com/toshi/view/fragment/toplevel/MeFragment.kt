@@ -58,6 +58,7 @@ class MeFragment : Fragment(), TopLevelFragment {
 
     override fun getFragmentTag() = TAG
 
+    private lateinit var meAdapter: MeAdapter
     private lateinit var viewModel: MeViewModel
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, inState: Bundle?): View? {
@@ -94,7 +95,7 @@ class MeFragment : Fragment(), TopLevelFragment {
     }
 
     private fun initRecyclerView() {
-        val meAdapter = MeAdapter()
+        meAdapter = MeAdapter()
                 .apply { onItemClickListener = OnItemClickListener { handleItemClickListener(it) } }
 
         settings.apply {
@@ -179,5 +180,15 @@ class MeFragment : Fragment(), TopLevelFragment {
                 }
                 .setNegativeButton(R.string.cancel) { dialog, _ -> dialog.dismiss() }
         builder.create().show()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        updateBalance()
+    }
+
+    private fun updateBalance() {
+        viewModel.balance.value?.let { viewModel.getFormattedBalance(it) }
+        meAdapter.notifyDataSetChanged()
     }
 }

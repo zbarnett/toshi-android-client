@@ -71,7 +71,7 @@ class MeViewModel : ViewModel() {
         this.subscriptions.add(sub)
     }
 
-    private fun getFormattedBalance(balance: Balance) {
+    fun getFormattedBalance(balance: Balance) {
         val sub = balance
                 .formattedLocalBalance
                 .observeOn(AndroidSchedulers.mainThread())
