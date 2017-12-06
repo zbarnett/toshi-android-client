@@ -125,34 +125,61 @@ public class TransactionManager {
     private void processNewOutgoingPayment(final PaymentTask paymentTask) {
         switch (paymentTask.getAction()) {
             case OUTGOING_RESEND:
-                getSofaMessageFromId(paymentTask.getPrivateKey())
+                getSofaMessageFromId(paymentTask.getSofaMessage().getPrivateKey())
+                        .map(paymentTask::setSofaMessage)
                         .subscribe(
-                                sofaMessage -> handleOutgoingResendPayment(paymentTask, sofaMessage),
+                                this::handleOutgoingResendPayment,
                                 throwable -> LogUtil.e(getClass(), "Error while fetching user " + throwable)
                         );
                 break;
             case OUTGOING:
-                final Single<Pair<Payment, SofaMessage>> storePaymentSingle = getUpdatedPayment(paymentTask);
+                final Single<PaymentTask> storePaymentSingle = getUpdatedPayment(paymentTask);
                 storePaymentSingle
                         .subscribe(
-                                pair -> handleOutgoingPayment(paymentTask.getUser(), pair.first, pair.second),
+                                this::handleOutgoingPayment,
                                 this::handleNonFatalError
                         );
                 break;
             case OUTGOING_EXTERNAL:
-                final Single<Pair<Payment, SofaMessage>> storeExternalPaymentSingle = getUpdatedPayment(paymentTask);
+                final Single<PaymentTask> storeExternalPaymentSingle = getUpdatedPayment(paymentTask);
                 storeExternalPaymentSingle
                         .subscribe(
-                        pair -> handleOutgoingExternalPayment(pair.first, pair.second),
-                        this::handleNonFatalError
-                );
+                                this::handleOutgoingExternalPayment,
+                                this::handleNonFatalError
+                        );
                 break;
         }
     }
 
-    private void handleOutgoingResendPayment(final PaymentTask paymentTask, final SofaMessage sofaMessage) {
+    private void handleOutgoingResendPayment(final PaymentTask paymentTask) {
+        final SofaMessage sofaMessage = paymentTask.getSofaMessage();
         updateMessageState(paymentTask.getUser(), sofaMessage, SendState.STATE_SENDING);
-        handleOutgoingPayment(paymentTask.getUser(), paymentTask.getPayment(), sofaMessage);
+        handleOutgoingPayment(paymentTask);
+    }
+
+    private void handleOutgoingExternalPayment(final PaymentTask paymentTask) {
+        signAndSendTransaction(paymentTask.getUnsignedTransaction())
+                .observeOn(Schedulers.io())
+                .subscribeOn(Schedulers.io())
+                .map(paymentTask::setSentTransaction)
+                .subscribe(
+                        this::handleOutgoingExternalPaymentSuccess,
+                        error -> handleOutgoingExternalPaymentError(error, paymentTask.getPayment())
+                );
+    }
+
+    private void handleOutgoingPayment(final PaymentTask paymentTask) {
+        final SofaMessage storedSofaMessage = paymentTask.getSofaMessage();
+        final User receiver = paymentTask.getUser();
+
+        signAndSendTransaction(paymentTask.getUnsignedTransaction())
+                .observeOn(Schedulers.io())
+                .subscribeOn(Schedulers.io())
+                .map(paymentTask::setSentTransaction)
+                .subscribe(
+                        this::handleOutgoingPaymentSuccess,
+                        error -> handleOutgoingPaymentError(error, receiver, storedSofaMessage)
+                );
     }
 
     private void attachNewIncomingPaymentSubscriber() {
@@ -171,18 +198,19 @@ public class TransactionManager {
     private void processNewIncomingPayment(final PaymentTask paymentTask) {
         getUpdatedPayment(paymentTask)
                 .subscribe(
-                        pair -> handleIncomingPayment(pair.first, pair.second),
+                        this::handleIncomingPayment,
                         this::handleNonFatalError
                 );
     }
 
-    private Single<Pair<Payment, SofaMessage>> getUpdatedPayment(final PaymentTask paymentTask) {
-        final Payment payment = paymentTask.getPayment();
+    private Single<PaymentTask> getUpdatedPayment(final PaymentTask paymentTask) {
         final User sender = getSenderFromTask(paymentTask);
         final User receiver = getReceiverFromTask(paymentTask);
-        return payment
+
+        return  paymentTask.getPayment()
                 .generateLocalPrice()
-                .map(updatedPayment -> new Pair<>(updatedPayment, storePayment(receiver, updatedPayment, sender)))
+                .map(updatedPayment -> storePayment(receiver, updatedPayment, sender))
+                .map(paymentTask::setSofaMessage)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io());
     }
@@ -212,35 +240,23 @@ public class TransactionManager {
                 );
     }
 
-    public void sendPayment(final User receiver, final String amount) {
-        new Payment()
-            .setValue(amount)
-            .setFromAddress(this.wallet.getPaymentAddress())
-            .setToAddress(receiver.getPaymentAddress())
-            .generateLocalPrice()
-            .subscribe(
-                    payment -> addOutgoingPaymentTask(receiver, payment, OUTGOING),
-                    this::handleNonFatalError
-            );
+    public void sendPayment(final PaymentTask paymentTask) {
+        paymentTask.setAction(OUTGOING);
+        addOutgoingPaymentTask(paymentTask);
     }
 
-    public void resendPayment(final User receiver, final Payment payment, final String privateKey) {
-        addOutgoingPaymentTask(receiver, payment, OUTGOING_RESEND, privateKey);
+    public void resendPayment(final PaymentTask paymentTask) {
+        paymentTask.setAction(OUTGOING_RESEND);
+        addOutgoingPaymentTask(paymentTask);
     }
 
-    private void addOutgoingPaymentTask(final User receiver,
-                                        final Payment payment,
-                                        final @PaymentTask.Action int action,
-                                        final String privateKey) {
-        final PaymentTask task = new PaymentTask(receiver, payment, action, privateKey);
-        this.newOutgoingPaymentQueue.onNext(task);
+    public void sendExternalPayment(final PaymentTask paymentTask) {
+        paymentTask.setAction(OUTGOING_EXTERNAL);
+        addOutgoingPaymentTask(paymentTask);
     }
 
-    private void addOutgoingPaymentTask(final User receiver,
-                                        final Payment payment,
-                                        final @PaymentTask.Action int action) {
-        final PaymentTask task = new PaymentTask(receiver, payment, action);
-        this.newOutgoingPaymentQueue.onNext(task);
+    private void addOutgoingPaymentTask(final PaymentTask paymentTask) {
+        this.newOutgoingPaymentQueue.onNext(paymentTask);
     }
 
     public final void updatePayment(final Payment payment) {
@@ -307,23 +323,11 @@ public class TransactionManager {
         }
     }
 
-    public void sendExternalPayment(final String paymentAddress, final String amount) {
-        new Payment()
-                .setToAddress(paymentAddress)
-                .setFromAddress(this.wallet.getPaymentAddress())
-                .setValue(amount)
-                .generateLocalPrice()
-                .subscribe(
-                        payment -> addOutgoingPaymentTask(null, payment, OUTGOING_EXTERNAL),
-                        this::handleNonFatalError
-                );
-    }
-
-    private void handleIncomingPayment(final Payment payment, final SofaMessage storedSofaMessage) {
+    private void handleIncomingPayment(final PaymentTask paymentTask) {
         final PendingTransaction pendingTransaction =
                 new PendingTransaction()
-                        .setTxHash(payment.getTxHash())
-                        .setSofaMessage(storedSofaMessage);
+                        .setTxHash(paymentTask.getPayment().getTxHash())
+                        .setSofaMessage(paymentTask.getSofaMessage());
         this.pendingTransactionStore.save(pendingTransaction);
     }
 
@@ -333,7 +337,7 @@ public class TransactionManager {
                 .getRecipientManager()
                 .getUserFromPaymentAddress(payment.getFromAddress())
                 .subscribe(
-                        (sender) -> addIncomingPaymentTask(sender, payment),
+                        sender -> addIncomingPaymentTask(sender, payment),
                         this::handleNonFatalError
                 );
     }
@@ -378,22 +382,12 @@ public class TransactionManager {
                 .saveTransaction(receiver, message);
     }
 
-    private void handleOutgoingPayment(final User receiver, final Payment payment, final SofaMessage storedSofaMessage) {
-        createUnsignedTransaction(payment)
-                .flatMap(this::signAndSendTransaction)
-                .observeOn(Schedulers.io())
-                .subscribeOn(Schedulers.io())
-                .subscribe(
-                        sentTransaction -> handleOutgoingPaymentSuccess(sentTransaction, receiver, payment, storedSofaMessage),
-                        error -> handleOutgoingPaymentError(error, receiver, storedSofaMessage)
-                );
-    }
+    private void handleOutgoingPaymentSuccess(final PaymentTask paymentTask) {
+        final SentTransaction sentTransaction = paymentTask.getSentTransaction();
+        final Payment payment = paymentTask.getPayment();
+        final SofaMessage storedSofaMessage = paymentTask.getSofaMessage();
+        final User receiver = paymentTask.getUser();
 
-    private void handleOutgoingPaymentSuccess(
-            final SentTransaction sentTransaction,
-            final User receiver,
-            final Payment payment,
-            final SofaMessage storedSofaMessage) {
         final String txHash = sentTransaction.getTxHash();
         payment.setTxHash(txHash);
 
@@ -447,20 +441,9 @@ public class TransactionManager {
                 content);
     }
 
-    private void handleOutgoingExternalPayment(final Payment payment, final SofaMessage sofaMessage) {
-        createUnsignedTransaction(payment)
-                .flatMap(this::signAndSendTransaction)
-                .observeOn(Schedulers.io())
-                .subscribeOn(Schedulers.io())
-                .subscribe(
-                        sentTransaction -> handleOutgoingExternalPaymentSuccess(sentTransaction, sofaMessage),
-                        error -> handleOutgoingExternalPaymentError(error, payment)
-                );
-    }
-
-    private void handleOutgoingExternalPaymentSuccess(final SentTransaction sentTransaction, final SofaMessage sofaMessage) {
-        final String txHash = sentTransaction.getTxHash();
-        storeUnconfirmedTransaction(txHash, sofaMessage);
+    private void handleOutgoingExternalPaymentSuccess(final PaymentTask paymentTask) {
+        final String txHash = paymentTask.getSentTransaction().getTxHash();
+        storeUnconfirmedTransaction(txHash, paymentTask.getSofaMessage());
     }
 
     private void handleOutgoingExternalPaymentError(final Throwable error, final Payment payment) {
@@ -469,12 +452,8 @@ public class TransactionManager {
         ExternalPaymentNotificationManager.showExternalPaymentFailed(paymentAddress);
     }
 
-    public Single<SignedTransaction> signW3Transaction(final UnsignedW3Transaction transaction) {
-        final TransactionRequest transactionRequest = generateTransactionRequest(transaction);
-        return EthereumService
-                .getApi()
-                .createTransaction(transactionRequest)
-                .flatMap(this::signTransaction);
+    public Single<SignedTransaction> signW3Transaction(final PaymentTask paymentTask) {
+        return signTransaction(paymentTask.getUnsignedTransaction());
     }
 
     private Single<UnsignedTransaction> createUnsignedTransaction(final Payment payment) {
