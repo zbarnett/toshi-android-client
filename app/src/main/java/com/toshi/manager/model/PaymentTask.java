@@ -21,7 +21,10 @@ package com.toshi.manager.model;
 import android.support.annotation.IntDef;
 
 import com.toshi.model.local.User;
+import com.toshi.model.network.SentTransaction;
+import com.toshi.model.network.UnsignedTransaction;
 import com.toshi.model.sofa.Payment;
+import com.toshi.model.sofa.SofaMessage;
 
 public class PaymentTask {
 
@@ -33,10 +36,16 @@ public class PaymentTask {
     public static final int OUTGOING_EXTERNAL = 2;
     public static final int OUTGOING_RESEND = 3;
 
-    private final User user;
-    private final Payment payment;
-    private final @Action int action;
-    private String privateKey;
+    private User user;
+    private Payment payment;
+    private @Action int action;
+    private UnsignedTransaction unsignedTransaction;
+    private SofaMessage sofaMessage;
+    private SentTransaction sentTransaction;
+
+    public PaymentTask(final Payment payment) {
+        this.payment = payment;
+    }
 
     public PaymentTask(
             final User user,
@@ -47,30 +56,57 @@ public class PaymentTask {
         this.action = action;
     }
 
-    public PaymentTask(
-            final User user,
-            final Payment payment,
-            final @Action int action,
-            final String privateKey) {
-        this.user = user;
-        this.payment = payment;
-        this.action = action;
-        this.privateKey = privateKey;
-    }
-
     public User getUser() {
         return this.user;
+    }
+
+    public PaymentTask setUser(final User user) {
+        this.user = user;
+        return this;
     }
 
     public Payment getPayment() {
         return this.payment;
     }
 
+    public PaymentTask setPayment(final Payment payment) {
+        this.payment = payment;
+        return this;
+    }
+
     public int getAction() {
         return this.action;
     }
 
-    public String getPrivateKey() {
-        return this.privateKey;
+    public PaymentTask setAction(final @Action int action) {
+        this.action = action;
+        return this;
+    }
+
+    public UnsignedTransaction getUnsignedTransaction() {
+        return unsignedTransaction;
+    }
+
+    public SofaMessage getSofaMessage() {
+        return sofaMessage;
+    }
+
+    public PaymentTask setSofaMessage(final SofaMessage sofaMessage) {
+        this.sofaMessage = sofaMessage;
+        return this;
+    }
+
+    public SentTransaction getSentTransaction() {
+        return sentTransaction;
+    }
+
+    public PaymentTask setSentTransaction(final SentTransaction sentTransaction) {
+        this.sentTransaction = sentTransaction;
+        return this;
+    }
+
+    public PaymentTask setUnsignedTransaction(final UnsignedTransaction unsignedTransaction) {
+        this.unsignedTransaction = unsignedTransaction;
+        return this;
     }
 }
