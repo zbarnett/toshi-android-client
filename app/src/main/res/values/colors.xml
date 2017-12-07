@@ -44,6 +44,7 @@
     <color name="input_underline">#E0E0E0</color>
     <color name="subTitleBackgroundColor">#B3EEEFF0</color>
     <color name="categoryTextColor">#79797C</color>
+    <color name="colorPrimarySemiTransparent">#9901C236</color>
 
     <color name="input_bg">#FFFFFF</color>
     <color name="balance_bar__bg">#FFFFFF</color>

@@ -18,20 +18,30 @@
 package com.toshi.presenter;
 
 import android.os.Bundle;
+import android.support.annotation.ColorInt;
 import android.support.annotation.StringRes;
-import android.support.v4.util.Pair;
+import android.support.v4.content.ContextCompat;
+import android.util.Pair;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.toshi.R;
+import com.toshi.crypto.HDWallet;
 import com.toshi.crypto.util.TypeConverter;
+import com.toshi.manager.model.PaymentTask;
+import com.toshi.model.local.GasPrice;
+import com.toshi.model.local.UnsignedW3Transaction;
 import com.toshi.model.local.User;
+import com.toshi.model.sofa.SofaAdapters;
 import com.toshi.util.EthUtil;
+import com.toshi.util.LogUtil;
 import com.toshi.util.OnSingleClickListener;
 import com.toshi.util.PaymentType;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.fragment.DialogFragment.PaymentConfirmationDialog;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
@@ -53,6 +63,7 @@ public class PaymentConfirmationPresenter implements Presenter<PaymentConfirmati
     private String paymentAddress;
     private String toshiId;
     private @PaymentType.Type int paymentType;
+    private PaymentTask paymentTask;
 
     @Override
     public void onViewAttached(PaymentConfirmationDialog view) {
@@ -76,6 +87,7 @@ public class PaymentConfirmationPresenter implements Presenter<PaymentConfirmati
         setTitle();
         setMemo();
         tryLoadUserAndLocalAmount(this.toshiId, this.encodedEthAmount);
+        getGasPrice();
     }
 
     private void initClickListeners() {
@@ -88,9 +100,24 @@ public class PaymentConfirmationPresenter implements Presenter<PaymentConfirmati
         });
     }
 
+    @SuppressWarnings("WrongConstant")
+    private void processBundleData() {
+        this.bundle = this.view.getArguments();
+        this.toshiId = this.bundle.getString(PaymentConfirmationDialog.TOSHI_ID);
+        this.paymentAddress = this.bundle.getString(PaymentConfirmationDialog.PAYMENT_ADDRESS);
+        this.encodedEthAmount = this.bundle.getString(PaymentConfirmationDialog.ETH_AMOUNT);
+        this.memo = this.bundle.getString(PaymentConfirmationDialog.MEMO);
+        this.paymentType = this.bundle.getInt(PaymentConfirmationDialog.PAYMENT_TYPE);
+    }
+
+    private void getGasPrice() {
+        if (this.toshiId != null) getPaymentTaskWithToshiId(this.toshiId, this.encodedEthAmount);
+        else getPaymentTaskWithPaymentAddress(this.paymentAddress, this.encodedEthAmount);
+    }
+
     private void handleApprovedClicked() {
         if (this.view.getPaymentConfirmationApprovedListener() != null) {
-            this.view.getPaymentConfirmationApprovedListener().onPaymentApproved(this.bundle);
+            this.view.getPaymentConfirmationApprovedListener().onPaymentApproved(this.bundle, this.paymentTask);
         }
         this.view.dismiss();
     }
@@ -100,16 +127,6 @@ public class PaymentConfirmationPresenter implements Presenter<PaymentConfirmati
             this.view.getPaymentConfirmationCanceledListener().onPaymentCanceled(this.bundle);
         }
         this.view.dismiss();
-    }
-
-    @SuppressWarnings("WrongConstant")
-    private void processBundleData() {
-        this.bundle = this.view.getArguments();
-        this.toshiId = this.bundle.getString(PaymentConfirmationDialog.TOSHI_ID);
-        this.paymentAddress = this.bundle.getString(PaymentConfirmationDialog.PAYMENT_ADDRESS);
-        this.encodedEthAmount = this.bundle.getString(PaymentConfirmationDialog.ETH_AMOUNT);
-        this.memo = this.bundle.getString(PaymentConfirmationDialog.MEMO);
-        this.paymentType = this.bundle.getInt(PaymentConfirmationDialog.PAYMENT_TYPE);
     }
 
     private void setTitle() {
@@ -197,7 +214,7 @@ public class PaymentConfirmationPresenter implements Presenter<PaymentConfirmati
 
     private void renderPaymentMessage(final User user, final String localAmount) {
         final String displayNameOrPaymentAddress = user != null ? user.getDisplayName() : this.paymentAddress;
-        final String ethAmount = this.view.getContext().getString(R.string.eth_amount, getEthAmount());
+        final String ethAmount = this.view.getContext().getString(R.string.eth_amount, getEthAmount(this.encodedEthAmount));
         final @StringRes int messageRes = this.paymentType == PaymentType.TYPE_SEND
                 ? R.string.payment_confirmation_body
                 : R.string.payment_request_confirmation_body;
@@ -205,9 +222,118 @@ public class PaymentConfirmationPresenter implements Presenter<PaymentConfirmati
         this.view.getBinding().message.setText(messageBody);
     }
 
-    private String getEthAmount() {
-        final BigInteger eth = TypeConverter.StringHexToBigInteger(this.encodedEthAmount);
+    private String getEthAmount(final String encodedEthAmount) {
+        final BigInteger eth = TypeConverter.StringHexToBigInteger(encodedEthAmount);
         return EthUtil.weiAmountToUserVisibleString(eth);
+    }
+
+    private void getPaymentTaskWithToshiId(final String toshiId, final String ethAmount) {
+        final Subscription sub =
+                Single.zip(
+                        getWallet(),
+                        getUserFromId(toshiId),
+                        Pair::new
+                )
+                .flatMap(pair -> getPaymentTask(pair.first.getPaymentAddress(), pair.second.getPaymentAddress(), ethAmount))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe(this::showGasPriceLoadingState)
+                .doOnSuccess(__ -> showGasPriceSuccessState())
+                .doOnError(__ -> showGasPriceErrorState())
+                .subscribe(
+                        this::handlePaymentTask,
+                        this::handlePaymentTaskError
+                );
+
+        this.subscriptions.add(sub);
+    }
+
+    private void getPaymentTaskWithPaymentAddress(final String toPaymentAddress, final String ethAmount) {
+        final Subscription sub =
+                getWallet()
+                .flatMap(wallet -> getPaymentTask(wallet.getPaymentAddress(), toPaymentAddress, ethAmount))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe(this::showGasPriceLoadingState)
+                .doOnSuccess(__ -> showGasPriceSuccessState())
+                .doOnError(__ -> showGasPriceErrorState())
+                .subscribe(
+                        this::handlePaymentTask,
+                        this::handlePaymentTaskError
+                );
+
+        this.subscriptions.add(sub);
+    }
+
+    private Single<HDWallet> getWallet() {
+        return BaseApplication
+                .get()
+                .getToshiManager()
+                .getWallet();
+    }
+
+    private Single<PaymentTask> getPaymentTask(final String fromPaymentAddress, final String toPaymentAddress, final String ethAmount) {
+        return BaseApplication.get()
+                .getTransactionManager()
+                .buildPaymentTask(fromPaymentAddress, toPaymentAddress, ethAmount)
+                .doOnSuccess(paymentTask -> this.paymentTask = paymentTask);
+    }
+
+    private void showGasPriceLoadingState() {
+        disablePayButton();
+        this.view.getBinding().pay.setVisibility(View.INVISIBLE);
+        this.view.getBinding().progressBar.setVisibility(View.VISIBLE);
+    }
+
+    private void showGasPriceSuccessState() {
+        enablePayButton();
+        this.view.getBinding().pay.setVisibility(View.VISIBLE);
+        this.view.getBinding().progressBar.setVisibility(View.GONE);
+    }
+
+    private void showGasPriceErrorState() {
+        disablePayButton();
+        this.view.getBinding().pay.setVisibility(View.VISIBLE);
+        this.view.getBinding().progressBar.setVisibility(View.GONE);
+    }
+
+    private void handlePaymentTask(final PaymentTask paymentTask) {
+        final GasPrice gasPrice = paymentTask.getGasPrice();
+        if (gasPrice.getEthAmount().compareTo(BigDecimal.ZERO) == 0) {
+            this.view.getBinding().gasInfo.setVisibility(View.GONE);
+            return;
+        }
+        final String ethAmount = EthUtil.ethAmountToUserVisibleString(gasPrice.getEthAmount());
+        final String messageBody = BaseApplication.get().getString(R.string.gas_price_message, gasPrice.getLocalAmount(), ethAmount);
+        final @ColorInt int errorColor = ContextCompat.getColor(this.view.getContext(), R.color.textColorSecondary);
+        final TextView gasView = this.view.getBinding().gasInfo;
+        gasView.setTextColor(errorColor);
+        gasView.setVisibility(View.VISIBLE);
+        gasView.setText(messageBody);
+    }
+
+    private void enablePayButton() {
+        final TextView pay = this.view.getBinding().pay;
+        pay.setVisibility(View.VISIBLE);
+        pay.setTextColor(ContextCompat.getColor(this.view.getContext(), R.color.colorPrimary));
+        pay.setClickable(true);
+    }
+
+    private void disablePayButton() {
+        final TextView pay = this.view.getBinding().pay;
+        pay.setVisibility(View.INVISIBLE);
+        pay.setTextColor(ContextCompat.getColor(this.view.getContext(), R.color.colorPrimarySemiTransparent));
+        pay.setClickable(false);
+    }
+
+    private void handlePaymentTaskError(final Throwable throwable) {
+        LogUtil.e(getClass(), "Error " + throwable);
+        final String errorMessage = this.view.getString(R.string.gas_price_error);
+        final @ColorInt int errorColor = ContextCompat.getColor(this.view.getContext(), R.color.error_color);
+        final TextView gasView = this.view.getBinding().gasInfo;
+        gasView.setTextColor(errorColor);
+        gasView.setVisibility(View.VISIBLE);
+        gasView.setText(errorMessage);
     }
 
     @Override
