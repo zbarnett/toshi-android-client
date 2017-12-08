@@ -17,6 +17,7 @@
 
 package com.toshi.view.activity
 
+import android.app.Activity
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
@@ -138,10 +139,11 @@ class SendActivity : AppCompatActivity() {
         toolbarTitle.text = usdEth
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, resultIntent: Intent) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, resultIntent: Intent?) {
         super.onActivityResult(requestCode, resultCode, resultIntent)
-        if (requestCode == PAYMENT_SCAN_REQUEST_CODE) {
-            val paymentAddress = resultIntent.getStringExtra(SendActivity.ACTIVITY_RESULT)
+        if (requestCode != PAYMENT_SCAN_REQUEST_CODE || resultCode != Activity.RESULT_OK) return
+        resultIntent?.let {
+            val paymentAddress = it.getStringExtra(SendActivity.ACTIVITY_RESULT)
             recipientAddress.setText(paymentAddress)
         }
     }
