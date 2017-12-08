@@ -18,10 +18,33 @@
 package com.toshi.model.network;
 
 
+import com.squareup.moshi.Json;
+
 public class UnsignedTransaction {
     private String tx;
+    private String gas;
+    @Json(name = "gas_price")
+    private String gasPrice;
+    private String nonce;
+    private String value;
 
     public String getTransaction() {
         return this.tx;
+    }
+
+    public String getGas() {
+        return gas;
+    }
+
+    public String getGasPrice() {
+        return gasPrice;
+    }
+
+    public String getNonce() {
+        return nonce;
+    }
+
+    public String getValue() {
+        return value;
     }
 }
