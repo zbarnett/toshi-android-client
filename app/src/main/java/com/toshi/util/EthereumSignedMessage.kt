@@ -13,8 +13,7 @@ class EthereumSignedMessage(private val id: String, private val personalMessage:
 
     @Throws(UnsupportedEncodingException::class)
     fun signPersonalMessage(): Single<String> {
-        val resultArray = getEthereumSignedMessage(personalMessage)
-        val hexEncodedValue = TypeConverter.toJsonHex(resultArray)
+        val hexEncodedValue = getEthereumSignedMessage(personalMessage)
         return signPersonalMessage(hexEncodedValue)
     }
 

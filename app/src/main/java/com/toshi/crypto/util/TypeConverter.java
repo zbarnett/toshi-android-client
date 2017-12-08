@@ -57,6 +57,7 @@ public class TypeConverter {
     }
 
     public static String toJsonHex(final String x) {
+        if (x.startsWith("0x")) return x;
         return "0x"+x;
     }
 
