@@ -26,6 +26,8 @@ public class TransactionRequest {
     private String data;
     private String gas;
     private String gasPrice;
+    private String nonce;
+    private String chainId;
 
     public TransactionRequest setValue(final String value) {
         this.value = value;
@@ -54,6 +56,16 @@ public class TransactionRequest {
 
     public TransactionRequest setGasPrice(final String gasPrice) {
         this.gasPrice = gasPrice;
+        return this;
+    }
+
+    public TransactionRequest setNonce(final String nonce) {
+        this.nonce = nonce;
+        return this;
+    }
+
+    public TransactionRequest setChainId(final String chainId) {
+        this.chainId = chainId;
         return this;
     }
 }
