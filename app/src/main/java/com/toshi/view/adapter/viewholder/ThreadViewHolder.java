@@ -25,6 +25,7 @@ import android.widget.TextView;
 import com.toshi.R;
 import com.toshi.model.local.Conversation;
 import com.toshi.model.local.Recipient;
+import com.toshi.model.sofa.SofaMessage;
 import com.toshi.util.LocaleUtil;
 import com.toshi.view.adapter.listeners.OnItemClickListener;
 
@@ -75,7 +76,9 @@ public class ThreadViewHolder extends RecyclerView.ViewHolder {
     }
 
     private String getLastMessageCreationTime(final Conversation conversation) {
-        final long creationTime = conversation.getLatestMessage().getCreationTime();
+        final SofaMessage latestMessage = conversation.getLatestMessage();
+        if (latestMessage == null) return "";
+        final long creationTime = latestMessage.getCreationTime();
         final Calendar lastMessageCreationTime = Calendar.getInstance();
         lastMessageCreationTime.setTimeInMillis(creationTime);
         final Calendar now = Calendar.getInstance();

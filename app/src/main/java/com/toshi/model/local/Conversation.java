@@ -19,6 +19,7 @@ package com.toshi.model.local;
 
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.toshi.model.sofa.SofaMessage;
 
@@ -60,6 +61,7 @@ public class Conversation extends RealmObject implements ConversationItem {
         return updatedTime;
     }
 
+    @Nullable
     public SofaMessage getLatestMessage() {
         return latestMessage;
     }

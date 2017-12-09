@@ -227,6 +227,7 @@ public class RecentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
     private String formatLastMessage(final SofaMessage sofaMessage) {
+        if (sofaMessage == null) return "";
         final User localUser = getCurrentLocalUser();
         final boolean sentByLocal = sofaMessage.isSentBy(localUser);
 
