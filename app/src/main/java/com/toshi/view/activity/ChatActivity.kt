@@ -208,10 +208,13 @@ class ChatActivity : AppCompatActivity() {
     }
 
     private fun handleControlClicked(control: Control) {
-        controlView.hideView()
-        removePadding()
-        if (control.hasAction()) chatNavigation.startWebViewActivity(this, control.actionUrl)
-        else viewModel.sendCommandMessage(control)
+        if (control.hasAction()) {
+            chatNavigation.startWebViewActivity(this, control.actionUrl)
+        } else {
+            controlView.hideView()
+            removePadding()
+            viewModel.sendCommandMessage(control)
+        }
     }
 
     private fun loadConversation() = viewModel.loadConversation()
