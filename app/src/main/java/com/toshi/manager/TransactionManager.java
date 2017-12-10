@@ -258,21 +258,24 @@ public class TransactionManager {
         final PaymentTask paymentTaskWithAction = new PaymentTask.Builder(paymentTask)
                 .setAction(OUTGOING)
                 .build();
-        addOutgoingPaymentTask(paymentTaskWithAction);
+        if (paymentTaskWithAction.isValidOutgoingTask()) addOutgoingPaymentTask(paymentTaskWithAction);
+        else LogUtil.e(getClass(), "Could not send payment. Invalid PaymentTask");
     }
 
     public void resendPayment(final PaymentTask paymentTask) {
         final PaymentTask paymentTaskWithAction = new PaymentTask.Builder(paymentTask)
                 .setAction(OUTGOING_RESEND)
                 .build();
-        addOutgoingPaymentTask(paymentTaskWithAction);
+        if (paymentTaskWithAction.isValidOutgoingTask()) addOutgoingPaymentTask(paymentTaskWithAction);
+        else LogUtil.e(getClass(), "Could not resend payment. Invalid PaymentTask");
     }
 
     public void sendExternalPayment(final PaymentTask paymentTask) {
         final PaymentTask paymentTaskWithAction = new PaymentTask.Builder(paymentTask)
                 .setAction(OUTGOING_EXTERNAL)
                 .build();
-        addOutgoingPaymentTask(paymentTaskWithAction);
+        if (paymentTaskWithAction.isValidOutgoingTask()) addOutgoingPaymentTask(paymentTaskWithAction);
+        else LogUtil.e(getClass(), "Could not send external payment. Invalid PaymentTask");
     }
 
     private void addOutgoingPaymentTask(final PaymentTask paymentTask) {
@@ -475,7 +478,7 @@ public class TransactionManager {
         final String paymentAddress = payment.getToAddress();
         ExternalPaymentNotificationManager.showExternalPaymentFailed(paymentAddress);
     }
-    
+
     private Single<SentTransaction> signAndSendTransaction(final UnsignedTransaction unsignedTransaction) {
         return Single.zip(
                 signTransaction(unsignedTransaction),

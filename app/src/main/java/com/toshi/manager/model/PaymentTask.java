@@ -44,16 +44,6 @@ public class PaymentTask {
     private SentTransaction sentTransaction;
     private GasPrice gasPrice;
 
-    private PaymentTask(final Builder builder) {
-        this.user = builder.user;
-        this.payment = builder.payment;
-        this.action = builder.action;
-        this.unsignedTransaction = builder.unsignedTransaction;
-        this.sofaMessage = builder.sofaMessage;
-        this.sentTransaction = builder.sentTransaction;
-        this.gasPrice = builder.gasPrice;
-    }
-
     public User getUser() {
         return user;
     }
@@ -80,6 +70,44 @@ public class PaymentTask {
 
     public GasPrice getGasPrice() {
         return gasPrice;
+    }
+
+    public boolean isValidOutgoingTask() {
+        if (this.action == OUTGOING) return isValidOutGoingTask();
+        else if (this.action == OUTGOING_RESEND) return isValidOutGoingResendTask();
+        else if (this.action == OUTGOING_EXTERNAL) return isValidOutGoingExternalTask();
+        return false;
+    }
+
+    private boolean isValidOutGoingTask() {
+        return this.action == OUTGOING
+                && this.payment != null
+                && this.unsignedTransaction != null
+                && this.user != null;
+    }
+
+    private boolean isValidOutGoingResendTask() {
+        return this.action == OUTGOING_RESEND
+                && this.payment != null
+                && this.unsignedTransaction != null
+                && this.user != null
+                && this.sofaMessage != null;
+    }
+
+    private boolean isValidOutGoingExternalTask() {
+        return this.action == OUTGOING_EXTERNAL
+                && this.payment != null
+                && this.unsignedTransaction != null;
+    }
+
+    private PaymentTask(final Builder builder) {
+        this.user = builder.user;
+        this.payment = builder.payment;
+        this.action = builder.action;
+        this.unsignedTransaction = builder.unsignedTransaction;
+        this.sofaMessage = builder.sofaMessage;
+        this.sentTransaction = builder.sentTransaction;
+        this.gasPrice = builder.gasPrice;
     }
 
     public static class Builder {
