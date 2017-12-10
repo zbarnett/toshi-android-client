@@ -77,4 +77,8 @@ public class PermissionUtil {
             );
         }
     }
+
+    public static boolean isPermissionGranted(final int[] grantResults) {
+        return grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED;
+    }
 }

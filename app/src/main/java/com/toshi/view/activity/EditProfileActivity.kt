@@ -169,7 +169,9 @@ class EditProfileActivity : AppCompatActivity() {
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        if (grantResults.isEmpty()) return
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (!PermissionUtil.isPermissionGranted(grantResults)) return
+
         when (requestCode) {
             PermissionUtil.CAMERA_PERMISSION -> startCameraActivity()
             PermissionUtil.READ_EXTERNAL_STORAGE_PERMISSION -> startGalleryActivity()

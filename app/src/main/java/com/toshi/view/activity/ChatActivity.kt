@@ -22,7 +22,6 @@ import android.app.Activity
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.text.TextUtils
@@ -514,7 +513,7 @@ class ChatActivity : AppCompatActivity() {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED) return
+        if (!PermissionUtil.isPermissionGranted(grantResults)) return
 
         when (requestCode) {
             PermissionUtil.CAMERA_PERMISSION -> startCameraActivity()
