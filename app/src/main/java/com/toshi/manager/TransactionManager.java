@@ -35,7 +35,6 @@ import com.toshi.model.network.SentTransaction;
 import com.toshi.model.network.ServerTime;
 import com.toshi.model.network.SignedTransaction;
 import com.toshi.model.network.SofaError;
-import com.toshi.model.network.TransactionRequest;
 import com.toshi.model.network.UnsignedTransaction;
 import com.toshi.model.sofa.Payment;
 import com.toshi.model.sofa.PaymentRequest;
@@ -44,6 +43,7 @@ import com.toshi.model.sofa.SofaMessage;
 import com.toshi.model.sofa.SofaType;
 import com.toshi.util.LocaleUtil;
 import com.toshi.util.LogUtil;
+import com.toshi.util.PaymentTaskBuilder;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.notification.ChatNotificationManager;
 import com.toshi.view.notification.ExternalPaymentNotificationManager;
@@ -72,6 +72,7 @@ public class TransactionManager {
 
     private HDWallet wallet;
     private PendingTransactionStore pendingTransactionStore;
+    private PaymentTaskBuilder paymentTaskBuilder;
     private CompositeSubscription subscriptions;
     private Subscription outgoingPaymentSub;
     private Subscription incomingPaymentSub;
@@ -80,6 +81,7 @@ public class TransactionManager {
     /*package */ TransactionManager() {
         initDatabase();
         initSubscriptions();
+        initPaymentTaskBuilder();
     }
 
     private void initDatabase() {
@@ -88,6 +90,10 @@ public class TransactionManager {
 
     private void initSubscriptions() {
         this.subscriptions = new CompositeSubscription();
+    }
+
+    private void initPaymentTaskBuilder() {
+        this.paymentTaskBuilder = new PaymentTaskBuilder();
     }
 
     public TransactionManager init(final HDWallet wallet) {
@@ -207,7 +213,7 @@ public class TransactionManager {
         final User sender = getSenderFromTask(paymentTask);
         final User receiver = getReceiverFromTask(paymentTask);
 
-        return  paymentTask.getPayment()
+        return paymentTask.getPayment()
                 .generateLocalPrice()
                 .map(updatedPayment -> storePayment(receiver, updatedPayment, sender))
                 .map(paymentTask::setSofaMessage)
@@ -451,48 +457,24 @@ public class TransactionManager {
         final String paymentAddress = payment.getToAddress();
         ExternalPaymentNotificationManager.showExternalPaymentFailed(paymentAddress);
     }
-
-    public Single<SignedTransaction> signW3Transaction(final PaymentTask paymentTask) {
-        return signTransaction(paymentTask.getUnsignedTransaction());
-    }
-
-    private Single<UnsignedTransaction> createUnsignedTransaction(final Payment payment) {
-        final TransactionRequest transactionRequest = generateTransactionRequest(payment);
-        return EthereumService
-                .getApi()
-                .createTransaction(transactionRequest);
-    }
-
-    private TransactionRequest generateTransactionRequest(final Payment payment) {
-        return new TransactionRequest()
-                .setValue(payment.getValue())
-                .setFromAddress(payment.getFromAddress())
-                .setToAddress(payment.getToAddress());
-    }
-
-    private TransactionRequest generateTransactionRequest(final UnsignedW3Transaction transaction) {
-        return new TransactionRequest()
-                .setValue(transaction.getValue())
-                .setFromAddress(transaction.getFrom())
-                .setToAddress(transaction.getTo())
-                .setData(transaction.getData())
-                .setGas(transaction.getGas())
-                .setGasPrice(transaction.getGasPrice())
-                .setNonce(transaction.getNonce());
-    }
-
+    
     private Single<SentTransaction> signAndSendTransaction(final UnsignedTransaction unsignedTransaction) {
         return Single.zip(
-                    signTransaction(unsignedTransaction),
-                    getServerTime(),
-                    Pair::new)
-                .flatMap(pair -> sendSignedTransaction(pair.first, pair.second));
+                signTransaction(unsignedTransaction),
+                getServerTime(),
+                Pair::new
+        )
+        .flatMap(pair -> sendSignedTransaction(pair.first, pair.second));
     }
 
     private Single<ServerTime> getServerTime() {
         return EthereumService
                 .getApi()
                 .getTimestamp();
+    }
+
+    public Single<SignedTransaction> signW3Transaction(final PaymentTask paymentTask) {
+        return signTransaction(paymentTask.getUnsignedTransaction());
     }
 
     private Single<SignedTransaction> signTransaction(final UnsignedTransaction unsignedTransaction) {
@@ -549,9 +531,10 @@ public class TransactionManager {
     }
 
     private void storeUnconfirmedTransaction(final String txHash, final SofaMessage message) {
-        final PendingTransaction pendingTransaction = new PendingTransaction()
-                                                            .setSofaMessage(message)
-                                                            .setTxHash(txHash);
+        final PendingTransaction pendingTransaction =
+                new PendingTransaction()
+                        .setSofaMessage(message)
+                        .setTxHash(txHash);
         this.pendingTransactionStore.save(pendingTransaction);
     }
 
@@ -598,6 +581,18 @@ public class TransactionManager {
 
     public PublishSubject<PendingTransaction> getPendingTransactionObservable() {
         return this.pendingTransactionStore.getPendingTransactionObservable();
+    }
+
+    public Single<PaymentTask> buildPaymentTask(final String fromPaymentAddress,
+                                                final String toPaymentAddress,
+                                                final String ethAmount) {
+        return this.paymentTaskBuilder
+                .buildPaymentTask(fromPaymentAddress, toPaymentAddress, ethAmount);
+    }
+
+    public Single<PaymentTask> buildPaymentTask(final UnsignedW3Transaction unsignedW3Transaction) {
+        return this.paymentTaskBuilder
+                .buildPaymentTask(unsignedW3Transaction);
     }
 
     private User getCurrentLocalUser() {

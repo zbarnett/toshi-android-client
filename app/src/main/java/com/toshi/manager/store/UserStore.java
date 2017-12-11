@@ -35,8 +35,8 @@ public class UserStore {
         return Observable.fromCallable(() -> loadWhere("owner_address", toshiId));
     }
 
-    public User loadForPaymentAddress(final String address) {
-        return loadWhere("payment_address", address);
+    public Single<User> loadForPaymentAddress(final String address) {
+        return Single.fromCallable(() -> loadWhere("payment_address", address));
     }
 
     public Observable<User> loadForUsername(final String username) {

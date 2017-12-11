@@ -17,9 +17,9 @@
 
 package com.toshi.manager.model;
 
-
 import android.support.annotation.IntDef;
 
+import com.toshi.model.local.GasPrice;
 import com.toshi.model.local.User;
 import com.toshi.model.network.SentTransaction;
 import com.toshi.model.network.UnsignedTransaction;
@@ -42,9 +42,20 @@ public class PaymentTask {
     private UnsignedTransaction unsignedTransaction;
     private SofaMessage sofaMessage;
     private SentTransaction sentTransaction;
+    private GasPrice gasPrice;
 
-    public PaymentTask(final Payment payment) {
+    public PaymentTask(final Payment payment,
+                       final UnsignedTransaction unsignedTransaction,
+                       final GasPrice gasPrice) {
         this.payment = payment;
+        this.unsignedTransaction = unsignedTransaction;
+        this.gasPrice = gasPrice;
+    }
+
+    public PaymentTask(final UnsignedTransaction unsignedTransaction,
+                       final GasPrice gasPrice) {
+        this.unsignedTransaction = unsignedTransaction;
+        this.gasPrice = gasPrice;
     }
 
     public PaymentTask(
@@ -105,8 +116,7 @@ public class PaymentTask {
         return this;
     }
 
-    public PaymentTask setUnsignedTransaction(final UnsignedTransaction unsignedTransaction) {
-        this.unsignedTransaction = unsignedTransaction;
-        return this;
+    public GasPrice getGasPrice() {
+        return this.gasPrice;
     }
 }

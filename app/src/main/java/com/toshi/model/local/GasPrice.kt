@@ -15,35 +15,8 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.toshi.model.network;
+package com.toshi.model.local
 
-import com.squareup.moshi.Json;
+import java.math.BigDecimal
 
-public class UnsignedTransaction {
-    private String tx;
-    private String gas;
-    @Json(name = "gas_price")
-    private String gasPrice;
-    private String nonce;
-    private String value;
-
-    public String getTransaction() {
-        return this.tx;
-    }
-
-    public String getGas() {
-        return gas;
-    }
-
-    public String getGasPrice() {
-        return gasPrice;
-    }
-
-    public String getNonce() {
-        return nonce;
-    }
-
-    public String getValue() {
-        return value;
-    }
-}
+data class GasPrice(val ethAmount: BigDecimal, val localAmount: String)

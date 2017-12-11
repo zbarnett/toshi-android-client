@@ -104,12 +104,12 @@ public class RecipientManager {
     public Single<User> getUserFromPaymentAddress(final String paymentAddress) {
         return Single
                 .concat(
-                        Single.just(userStore.loadForPaymentAddress(paymentAddress)),
+                        this.userStore.loadForPaymentAddress(paymentAddress),
                         this.fetchAndCacheFromNetworkByPaymentAddress(paymentAddress).toSingle()
                 )
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
-                .first(user -> user != null && !user.needsRefresh())
+                .first(this::isUserFresh)
                 .doOnError(t -> LogUtil.exception(getClass(), "getUserFromPaymentAddress", t))
                 .toSingle();
     }
