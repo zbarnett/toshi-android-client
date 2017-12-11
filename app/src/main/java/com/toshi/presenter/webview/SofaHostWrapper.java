@@ -28,6 +28,7 @@ import android.webkit.WebView;
 import com.toshi.R;
 import com.toshi.crypto.HDWallet;
 import com.toshi.crypto.util.TypeConverter;
+import com.toshi.manager.model.PaymentTask;
 import com.toshi.model.local.PersonalMessage;
 import com.toshi.model.local.UnsignedW3Transaction;
 import com.toshi.model.network.SentTransaction;
@@ -129,25 +130,16 @@ import rx.subscriptions.CompositeSubscription;
                 .setOnPaymentConfirmationCanceledListener(this::handleAcceptedCanceled);
     }
 
-    private void handleApprovedClicked(final Bundle bundle) {
+    private void handleApprovedClicked(final Bundle bundle, final PaymentTask paymentTask) {
         final String callbackId = bundle.getString(PaymentConfirmationDialog.CALLBACK_ID);
-        final String unsignedTransaction = bundle.getString(PaymentConfirmationDialog.UNSIGNED_TRANSACTION);
-        handlePaymentApproved(callbackId, unsignedTransaction);
+        handlePaymentApproved(callbackId, paymentTask);
     }
 
-    private void handlePaymentApproved(final String callbackId, final String unsignedTransaction) {
-        final UnsignedW3Transaction transaction;
-        try {
-            transaction = SofaAdapters.get().unsignedW3TransactionFrom(unsignedTransaction);
-        } catch (final IOException e) {
-            LogUtil.exception(getClass(), "Unable to parse unsigned transaction. ", e);
-            return;
-        }
-
+    private void handlePaymentApproved(final String callbackId, final PaymentTask paymentTask) {
         final Subscription sub = BaseApplication
                 .get()
                 .getTransactionManager()
-                .signW3Transaction(transaction)
+                .signW3Transaction(paymentTask)
                 .subscribe(
                         signedTransaction -> handleSignedW3Transaction(callbackId, signedTransaction),
                         throwable -> LogUtil.exception(getClass(), throwable)

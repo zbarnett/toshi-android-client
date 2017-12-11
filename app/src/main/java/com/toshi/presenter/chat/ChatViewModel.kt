@@ -22,6 +22,7 @@ import android.arch.lifecycle.ViewModel
 import com.toshi.R
 import com.toshi.extensions.isGroupId
 import com.toshi.manager.messageQueue.AsyncOutgoingMessageQueue
+import com.toshi.manager.model.PaymentTask
 import com.toshi.model.local.Conversation
 import com.toshi.model.local.Group
 import com.toshi.model.local.Recipient
@@ -320,10 +321,12 @@ class ChatViewModel(private val threadId: String) : ViewModel() {
         transactionManager.updatePaymentRequestState(recipient.user, existingMessage, paymentState)
     }
 
-    fun sendPayment(receiver: User, value: String) = transactionManager.sendPayment(receiver, value)
+    fun sendPayment(paymentTask: PaymentTask) = transactionManager.sendPayment(paymentTask)
 
-    fun resendPayment(receiver: User, payment: Payment, privateKey: String) {
-        transactionManager.resendPayment(receiver, payment, privateKey)
+    fun resendPayment(sofaMessage: SofaMessage, payment: Payment, paymentTask: PaymentTask) {
+        paymentTask.sofaMessage = sofaMessage
+        paymentTask.payment = payment
+        transactionManager.resendPayment(paymentTask)
     }
 
     fun resendMessage(sofaMessage: SofaMessage) = sofaMessageManager.resendPendingMessage(sofaMessage)

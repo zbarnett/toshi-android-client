@@ -284,8 +284,8 @@ class ChatActivity : AppCompatActivity() {
     private fun showPaymentConfirmationDialog(confirmPaymentInfo: ConfirmPaymentInfo) {
         val receiver = confirmPaymentInfo.receiver
         val amount = confirmPaymentInfo.amount
-        resendHandler.showPaymentConfirmationDialog(receiver, amount) {
-            viewModel.sendPayment(receiver, amount)
+        resendHandler.showPaymentConfirmationDialog(receiver, amount) { paymentTask ->
+            viewModel.sendPayment(paymentTask)
         }
     }
 
@@ -294,8 +294,8 @@ class ChatActivity : AppCompatActivity() {
             val sofaMessage = resendPaymentInfo.sofaMessage
             val receiver = resendPaymentInfo.receiver
             val payment = SofaAdapters.get().paymentFrom(sofaMessage.payload)
-            resendHandler.showResendPaymentConfirmationDialog(receiver, payment) {
-                viewModel.resendPayment(receiver, payment, sofaMessage.privateKey)
+            resendHandler.showResendPaymentConfirmationDialog(receiver, payment) { paymentTask ->
+                viewModel.resendPayment(sofaMessage, payment, paymentTask)
             }
         } catch (e: IOException) {
             LogUtil.e(javaClass, "Error while resending payment $e")
@@ -305,9 +305,9 @@ class ChatActivity : AppCompatActivity() {
     private fun showPaymentRequestConfirmationDialog(existingMessage: SofaMessage) {
         try {
             val paymentRequest = SofaAdapters.get().txRequestFrom(existingMessage.payload)
-            resendHandler.showPaymentRequestConfirmationDialog(existingMessage.sender, paymentRequest) {
+            resendHandler.showPaymentRequestConfirmationDialog(existingMessage.sender, paymentRequest) { paymentTask ->
                 viewModel.updatePaymentRequestState(existingMessage, PaymentRequest.ACCEPTED)
-                viewModel.sendPayment(existingMessage.sender, paymentRequest.value)
+                viewModel.sendPayment(paymentTask)
             }
         } catch (e: IOException) {
             LogUtil.exception(javaClass, "Error while showing payment request confirmation dialog $e")

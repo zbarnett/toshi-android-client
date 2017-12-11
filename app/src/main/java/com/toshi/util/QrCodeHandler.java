@@ -29,6 +29,7 @@ import android.widget.Toast;
 import com.toshi.R;
 import com.toshi.exception.InvalidQrCode;
 import com.toshi.exception.InvalidQrCodePayment;
+import com.toshi.manager.model.PaymentTask;
 import com.toshi.model.local.QrCodePayment;
 import com.toshi.model.local.User;
 import com.toshi.model.sofa.Payment;
@@ -153,17 +154,16 @@ public class QrCodeHandler {
         }
     }
 
-    private void onPaymentApproved(final Bundle bundle) {
+    private void onPaymentApproved(final Bundle bundle, final PaymentTask paymentTask) {
         final @PaymentConfirmationType.Type int type = (bundle.getInt(PaymentConfirmationDialog.CONFIRMATION_TYPE));
 
-        final Payment payment = createPayment(bundle);
         if (type == PaymentConfirmationType.EXTERNAL) {
-            handleExternalPayment(payment);
+            handleExternalPayment(paymentTask);
             return;
         }
 
         if (type == PaymentConfirmationType.TOSHI) {
-            handleToshiPayment(bundle, payment);
+            handleToshiPayment(bundle, paymentTask.getPayment());
             return;
         }
 
@@ -303,18 +303,19 @@ public class QrCodeHandler {
                 .setToAddress(paymentAddress);
     }
 
-    private void handleExternalPayment(final Payment payment) {
+    private void handleExternalPayment(final PaymentTask paymentTask) {
         try {
-            sendExternalPayment(payment);
+            sendExternalPayment(paymentTask);
         } catch (InvalidQrCodePayment invalidQrCodePayment) {
             handleInvalidQrCode();
         }
     }
-    private void sendExternalPayment(final Payment payment) throws InvalidQrCodePayment {
+
+    private void sendExternalPayment(final PaymentTask paymentTask) throws InvalidQrCodePayment {
         BaseApplication
                 .get()
                 .getTransactionManager()
-                .sendExternalPayment(payment.getToAddress(), payment.getValue());
+                .sendExternalPayment(paymentTask);
     }
 
     private void handleToshiPayment(final Bundle bundle, final Payment payment) {

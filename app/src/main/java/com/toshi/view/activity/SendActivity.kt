@@ -28,6 +28,7 @@ import com.toshi.R
 import com.toshi.extensions.isVisible
 import com.toshi.extensions.startActivityForResult
 import com.toshi.extensions.toast
+import com.toshi.manager.model.PaymentTask
 import com.toshi.model.local.Networks
 import com.toshi.util.BuildTypes
 import com.toshi.util.PaymentType
@@ -112,15 +113,13 @@ class SendActivity : AppCompatActivity() {
                 null,
                 PaymentType.TYPE_SEND
         )
-        dialog.setOnPaymentConfirmationApprovedListener { onPaymentApproved() }
+        dialog.setOnPaymentConfirmationApprovedListener { _, paymentTask -> onPaymentApproved(paymentTask) }
         dialog.show(supportFragmentManager, PaymentConfirmationDialog.TAG)
     }
 
-    private fun onPaymentApproved() {
-        encodedEthAmount?.let {
-            viewModel.sendPayment(getRecipientAddress(), it)
-            finish()
-        } ?: toast(R.string.invalid_eth_amount)
+    private fun onPaymentApproved(paymentTask: PaymentTask) {
+        viewModel.sendPayment(paymentTask)
+        finish()
     }
 
     private fun getRecipientAddress(): String {

@@ -27,6 +27,7 @@ import android.view.ViewGroup;
 
 import com.toshi.R;
 import com.toshi.databinding.FragmentPaymentConfirmationBinding;
+import com.toshi.manager.model.PaymentTask;
 import com.toshi.presenter.LoaderIds;
 import com.toshi.presenter.PaymentConfirmationPresenter;
 import com.toshi.presenter.factory.PaymentConfirmPresenterFactory;
@@ -50,7 +51,7 @@ public class PaymentConfirmationDialog extends BasePresenterDialogFragment<Payme
     private OnPaymentConfirmationCanceled canceledListener;
 
     public interface OnPaymentConfirmationApproved {
-        void onPaymentApproved(final Bundle bundle);
+        void onPaymentApproved(final Bundle bundle, final PaymentTask paymentTask);
     }
 
     public interface OnPaymentConfirmationCanceled {

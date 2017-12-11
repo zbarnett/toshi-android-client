@@ -19,6 +19,7 @@ package com.toshi.viewModel
 
 import android.arch.lifecycle.ViewModel
 import com.toshi.crypto.util.TypeConverter
+import com.toshi.manager.model.PaymentTask
 import com.toshi.util.EthUtil
 import com.toshi.util.LogUtil
 import com.toshi.util.SingleLiveEvent
@@ -47,9 +48,7 @@ class SendViewModel : ViewModel() {
         subscriptions.add(sub)
     }
 
-    fun sendPayment(address: String, ethAmount: String) {
-        transactionManager.sendExternalPayment(address, ethAmount)
-    }
+    fun sendPayment(paymentTask: PaymentTask) = transactionManager.sendExternalPayment(paymentTask)
 
     override fun onCleared() {
         super.onCleared()
