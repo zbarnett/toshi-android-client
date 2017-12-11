@@ -324,9 +324,11 @@ class ChatViewModel(private val threadId: String) : ViewModel() {
     fun sendPayment(paymentTask: PaymentTask) = transactionManager.sendPayment(paymentTask)
 
     fun resendPayment(sofaMessage: SofaMessage, payment: Payment, paymentTask: PaymentTask) {
-        paymentTask.sofaMessage = sofaMessage
-        paymentTask.payment = payment
-        transactionManager.resendPayment(paymentTask)
+        val updatedPaymentTask = PaymentTask.Builder(paymentTask)
+                .setSofaMessage(sofaMessage)
+                .setPayment(payment)
+                .build()
+        transactionManager.resendPayment(updatedPaymentTask)
     }
 
     fun resendMessage(sofaMessage: SofaMessage) = sofaMessageManager.resendPendingMessage(sofaMessage)

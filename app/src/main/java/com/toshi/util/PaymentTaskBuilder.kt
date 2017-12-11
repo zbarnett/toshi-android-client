@@ -19,6 +19,7 @@ package com.toshi.util
 
 import com.toshi.crypto.util.TypeConverter
 import com.toshi.manager.model.PaymentTask
+import com.toshi.manager.model.PaymentTask.Builder
 import com.toshi.manager.network.EthereumService
 import com.toshi.model.local.GasPrice
 import com.toshi.model.local.UnsignedW3Transaction
@@ -40,21 +41,33 @@ class PaymentTaskBuilder {
                 .setValue(ethAmount)
                 .setFromAddress(fromPaymentAddress)
                 .setToAddress(toPaymentAddress)
+
+        val paymentTaskBuilder = Builder()
+                .setPayment(payment)
+
         return createUnsignedTransaction(payment)
-                .flatMap { unsignedTransaction ->
-                    calculateGasPrice(unsignedTransaction)
-                            .map { gasPrice -> PaymentTask(payment, unsignedTransaction, gasPrice) }
-                }
-                .flatMap { paymentTask -> recipientManager.getUserFromPaymentAddress(toPaymentAddress)
-                        .map { user -> paymentTask.setUser(user) } }
+                .flatMap { addGasPriceToPaymentTask(paymentTaskBuilder, it) }
+                .flatMap { addUserToPaymentTask(paymentTaskBuilder, toPaymentAddress) }
+                .map { it.build() }
+    }
+
+    private fun addUserToPaymentTask(builder: Builder, toPaymentAddress: String): Single<Builder> {
+        return recipientManager.getUserFromPaymentAddress(toPaymentAddress)
+                .map { user -> builder.setUser(user) }
     }
 
     fun buildPaymentTask(unsignedW3Transaction: UnsignedW3Transaction): Single<PaymentTask> {
+        val paymentTaskBuilder = Builder()
         return createUnsignedW3Transaction(unsignedW3Transaction)
-                .flatMap { unsignedTransaction ->
-                    calculateGasPrice(unsignedTransaction)
-                            .map { gasPrice -> PaymentTask(unsignedTransaction, gasPrice) }
-                }
+                .flatMap { addGasPriceToPaymentTask(paymentTaskBuilder, it) }
+                .map { it.build() }
+    }
+
+    private fun addGasPriceToPaymentTask(builder: Builder, unsignedTransaction: UnsignedTransaction): Single<Builder> {
+        return calculateGasPrice(unsignedTransaction)
+                .map { builder
+                        .setUnsignedTransaction(unsignedTransaction)
+                        .setGasPrice(it) }
     }
 
     private fun createUnsignedW3Transaction(transaction: UnsignedW3Transaction): Single<UnsignedTransaction> {

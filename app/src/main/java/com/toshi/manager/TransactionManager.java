@@ -132,7 +132,9 @@ public class TransactionManager {
         switch (paymentTask.getAction()) {
             case OUTGOING_RESEND:
                 getSofaMessageFromId(paymentTask.getSofaMessage().getPrivateKey())
-                        .map(paymentTask::setSofaMessage)
+                        .map(sofaMessage -> new PaymentTask.Builder(paymentTask)
+                                .setSofaMessage(sofaMessage)
+                                .build())
                         .subscribe(
                                 this::handleOutgoingResendPayment,
                                 throwable -> LogUtil.e(getClass(), "Error while fetching user " + throwable)
@@ -167,7 +169,9 @@ public class TransactionManager {
         signAndSendTransaction(paymentTask.getUnsignedTransaction())
                 .observeOn(Schedulers.io())
                 .subscribeOn(Schedulers.io())
-                .map(paymentTask::setSentTransaction)
+                .map(sentTransaction -> new PaymentTask.Builder(paymentTask)
+                        .setSentTransaction(sentTransaction)
+                        .build())
                 .subscribe(
                         this::handleOutgoingExternalPaymentSuccess,
                         error -> handleOutgoingExternalPaymentError(error, paymentTask.getPayment())
@@ -181,7 +185,9 @@ public class TransactionManager {
         signAndSendTransaction(paymentTask.getUnsignedTransaction())
                 .observeOn(Schedulers.io())
                 .subscribeOn(Schedulers.io())
-                .map(paymentTask::setSentTransaction)
+                .map(sentTransaction -> new PaymentTask.Builder(paymentTask)
+                        .setSentTransaction(sentTransaction)
+                        .build())
                 .subscribe(
                         this::handleOutgoingPaymentSuccess,
                         error -> handleOutgoingPaymentError(error, receiver, storedSofaMessage)
@@ -216,7 +222,9 @@ public class TransactionManager {
         return paymentTask.getPayment()
                 .generateLocalPrice()
                 .map(updatedPayment -> storePayment(receiver, updatedPayment, sender))
-                .map(paymentTask::setSofaMessage)
+                .map(sofaMessage -> new PaymentTask.Builder(paymentTask)
+                        .setSofaMessage(sofaMessage)
+                        .build())
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io());
     }
@@ -247,18 +255,24 @@ public class TransactionManager {
     }
 
     public void sendPayment(final PaymentTask paymentTask) {
-        paymentTask.setAction(OUTGOING);
-        addOutgoingPaymentTask(paymentTask);
+        final PaymentTask paymentTaskWithAction = new PaymentTask.Builder(paymentTask)
+                .setAction(OUTGOING)
+                .build();
+        addOutgoingPaymentTask(paymentTaskWithAction);
     }
 
     public void resendPayment(final PaymentTask paymentTask) {
-        paymentTask.setAction(OUTGOING_RESEND);
-        addOutgoingPaymentTask(paymentTask);
+        final PaymentTask paymentTaskWithAction = new PaymentTask.Builder(paymentTask)
+                .setAction(OUTGOING_RESEND)
+                .build();
+        addOutgoingPaymentTask(paymentTaskWithAction);
     }
 
     public void sendExternalPayment(final PaymentTask paymentTask) {
-        paymentTask.setAction(OUTGOING_EXTERNAL);
-        addOutgoingPaymentTask(paymentTask);
+        final PaymentTask paymentTaskWithAction = new PaymentTask.Builder(paymentTask)
+                .setAction(OUTGOING_EXTERNAL)
+                .build();
+        addOutgoingPaymentTask(paymentTaskWithAction);
     }
 
     private void addOutgoingPaymentTask(final PaymentTask paymentTask) {
@@ -349,7 +363,11 @@ public class TransactionManager {
     }
 
     private void addIncomingPaymentTask(final User sender, final Payment payment) {
-        final PaymentTask task = new PaymentTask(sender, payment, INCOMING);
+        final PaymentTask task = new PaymentTask.Builder()
+                .setUser(sender)
+                .setPayment(payment)
+                .setAction(INCOMING)
+                .build();
         this.newIncomingPaymentQueue.onNext(task);
     }
 

@@ -44,54 +44,26 @@ public class PaymentTask {
     private SentTransaction sentTransaction;
     private GasPrice gasPrice;
 
-    public PaymentTask(final Payment payment,
-                       final UnsignedTransaction unsignedTransaction,
-                       final GasPrice gasPrice) {
-        this.payment = payment;
-        this.unsignedTransaction = unsignedTransaction;
-        this.gasPrice = gasPrice;
-    }
-
-    public PaymentTask(final UnsignedTransaction unsignedTransaction,
-                       final GasPrice gasPrice) {
-        this.unsignedTransaction = unsignedTransaction;
-        this.gasPrice = gasPrice;
-    }
-
-    public PaymentTask(
-            final User user,
-            final Payment payment,
-            final @Action int action) {
-        this.user = user;
-        this.payment = payment;
-        this.action = action;
+    private PaymentTask(final Builder builder) {
+        this.user = builder.user;
+        this.payment = builder.payment;
+        this.action = builder.action;
+        this.unsignedTransaction = builder.unsignedTransaction;
+        this.sofaMessage = builder.sofaMessage;
+        this.sentTransaction = builder.sentTransaction;
+        this.gasPrice = builder.gasPrice;
     }
 
     public User getUser() {
-        return this.user;
-    }
-
-    public PaymentTask setUser(final User user) {
-        this.user = user;
-        return this;
+        return user;
     }
 
     public Payment getPayment() {
-        return this.payment;
-    }
-
-    public PaymentTask setPayment(final Payment payment) {
-        this.payment = payment;
-        return this;
+        return payment;
     }
 
     public int getAction() {
-        return this.action;
-    }
-
-    public PaymentTask setAction(final @Action int action) {
-        this.action = action;
-        return this;
+        return action;
     }
 
     public UnsignedTransaction getUnsignedTransaction() {
@@ -102,21 +74,72 @@ public class PaymentTask {
         return sofaMessage;
     }
 
-    public PaymentTask setSofaMessage(final SofaMessage sofaMessage) {
-        this.sofaMessage = sofaMessage;
-        return this;
-    }
-
     public SentTransaction getSentTransaction() {
         return sentTransaction;
     }
 
-    public PaymentTask setSentTransaction(final SentTransaction sentTransaction) {
-        this.sentTransaction = sentTransaction;
-        return this;
+    public GasPrice getGasPrice() {
+        return gasPrice;
     }
 
-    public GasPrice getGasPrice() {
-        return this.gasPrice;
+    public static class Builder {
+        private User user;
+        private Payment payment;
+        private @Action int action;
+        private UnsignedTransaction unsignedTransaction;
+        private SofaMessage sofaMessage;
+        private SentTransaction sentTransaction;
+        private GasPrice gasPrice;
+
+        public Builder() {}
+
+        public Builder(final PaymentTask paymentTask) {
+            this.user = paymentTask.user;
+            this.payment = paymentTask.payment;
+            this.action = paymentTask.action;
+            this.unsignedTransaction = paymentTask.unsignedTransaction;
+            this.sofaMessage = paymentTask.sofaMessage;
+            this.sentTransaction = paymentTask.sentTransaction;
+            this.gasPrice = paymentTask.gasPrice;
+        }
+
+        public Builder setUser(final User user) {
+            this.user = user;
+            return this;
+        }
+
+        public Builder setPayment(Payment payment) {
+            this.payment = payment;
+            return this;
+        }
+
+        public Builder setAction(int action) {
+            this.action = action;
+            return this;
+        }
+
+        public Builder setUnsignedTransaction(UnsignedTransaction unsignedTransaction) {
+            this.unsignedTransaction = unsignedTransaction;
+            return this;
+        }
+
+        public Builder setSofaMessage(SofaMessage sofaMessage) {
+            this.sofaMessage = sofaMessage;
+            return this;
+        }
+
+        public Builder setSentTransaction(SentTransaction sentTransaction) {
+            this.sentTransaction = sentTransaction;
+            return this;
+        }
+
+        public Builder setGasPrice(GasPrice gasPrice) {
+            this.gasPrice = gasPrice;
+            return this;
+        }
+
+        public PaymentTask build() {
+            return new PaymentTask(this);
+        }
     }
 }
