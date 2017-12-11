@@ -63,6 +63,7 @@ public class PaymentConfirmationPresenter implements Presenter<PaymentConfirmati
     private String paymentAddress;
     private String toshiId;
     private @PaymentType.Type int paymentType;
+    private String unsignedW3Transaction;
     private PaymentTask paymentTask;
 
     @Override
@@ -108,10 +109,12 @@ public class PaymentConfirmationPresenter implements Presenter<PaymentConfirmati
         this.encodedEthAmount = this.bundle.getString(PaymentConfirmationDialog.ETH_AMOUNT);
         this.memo = this.bundle.getString(PaymentConfirmationDialog.MEMO);
         this.paymentType = this.bundle.getInt(PaymentConfirmationDialog.PAYMENT_TYPE);
+        this.unsignedW3Transaction = this.bundle.getString(PaymentConfirmationDialog.UNSIGNED_TRANSACTION);
     }
 
     private void getGasPrice() {
-        if (this.toshiId != null) getPaymentTaskWithToshiId(this.toshiId, this.encodedEthAmount);
+        if (this.unsignedW3Transaction != null) getPaymentTaskWithUnsignedW3Transaction(this.unsignedW3Transaction);
+        else if (this.toshiId != null) getPaymentTaskWithToshiId(this.toshiId, this.encodedEthAmount);
         else getPaymentTaskWithPaymentAddress(this.paymentAddress, this.encodedEthAmount);
     }
 
@@ -265,6 +268,27 @@ public class PaymentConfirmationPresenter implements Presenter<PaymentConfirmati
         this.subscriptions.add(sub);
     }
 
+    private void getPaymentTaskWithUnsignedW3Transaction(final String unsignedW3Transaction) {
+        try {
+            final UnsignedW3Transaction transaction = SofaAdapters.get().unsignedW3TransactionFrom(unsignedW3Transaction);
+            final Subscription sub =
+                    getPaymentTaskWithUnsignedW3Transaction(transaction)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnSubscribe(this::showGasPriceLoadingState)
+                    .doOnSuccess(__ -> showGasPriceSuccessState())
+                    .doOnError(__ -> showGasPriceErrorState())
+                    .subscribe(
+                            this::handlePaymentTask,
+                            this::handlePaymentTaskError
+                    );
+
+            this.subscriptions.add(sub);
+        } catch (final IOException e) {
+            LogUtil.exception(getClass(), "Unable to parse unsigned transaction. ", e);
+        }
+    }
+
     private Single<HDWallet> getWallet() {
         return BaseApplication
                 .get()
@@ -276,6 +300,13 @@ public class PaymentConfirmationPresenter implements Presenter<PaymentConfirmati
         return BaseApplication.get()
                 .getTransactionManager()
                 .buildPaymentTask(fromPaymentAddress, toPaymentAddress, ethAmount)
+                .doOnSuccess(paymentTask -> this.paymentTask = paymentTask);
+    }
+
+    private Single<PaymentTask> getPaymentTaskWithUnsignedW3Transaction(final UnsignedW3Transaction unsignedW3Transaction) {
+        return BaseApplication.get()
+                .getTransactionManager()
+                .buildPaymentTask(unsignedW3Transaction)
                 .doOnSuccess(paymentTask -> this.paymentTask = paymentTask);
     }
 
