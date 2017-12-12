@@ -107,5 +107,6 @@ class PaymentTaskBuilder {
                 .setData(transaction.data)
                 .setGas(transaction.gas)
                 .setGasPrice(transaction.gasPrice)
+                .setNonce(transaction.nonce)
     }
 }
