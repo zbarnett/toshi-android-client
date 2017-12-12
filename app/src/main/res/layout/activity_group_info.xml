@@ -115,7 +115,6 @@
                 android:id="@+id/numberOfParticipants"
                 android:layout_width="match_parent"
                 android:layout_height="54dp"
-                android:background="@color/divider"
                 style="@style/listSubTitleStyle"
                 tools:text="2 participants"/>
 
@@ -130,7 +129,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="20dp"
-        android:background="@color/divider"/>
+        android:background="@color/subTitleBackgroundColor"/>
 
     <FrameLayout
         android:id="@+id/leaveGroup"
@@ -161,6 +160,6 @@
         android:layout_width="match_parent"
         android:layout_weight="1"
         android:layout_height="0dp"
-        android:background="@color/divider"/>
+        android:background="@color/subTitleBackgroundColor"/>
 
 </LinearLayout>
