@@ -17,11 +17,9 @@
 
 package com.toshi.manager.network.interceptor
 
-import com.toshi.util.LogUtil
 import okhttp3.Interceptor
 import okhttp3.Response
 import java.io.IOException
-import java.net.SocketTimeoutException
 
 class DeviceInfoUserAgentInterceptor : Interceptor {
 
@@ -29,16 +27,11 @@ class DeviceInfoUserAgentInterceptor : Interceptor {
 
     @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response? {
-        return try {
-            val original = chain.request()
-            val request = original.newBuilder()
-                    .header("User-Agent", this.userAgent)
-                    .method(original.method(), original.body())
-                    .build()
-            chain.proceed(request)
-        } catch (ex: SocketTimeoutException) {
-            LogUtil.exception(javaClass, "Error while intercepting request", ex)
-            null
-        }
+        val original = chain.request()
+        val request = original.newBuilder()
+                .header("User-Agent", this.userAgent)
+                .method(original.method(), original.body())
+                .build()
+        return chain.proceed(request)
     }
 }
