@@ -112,6 +112,39 @@
             </LinearLayout>
 
             <TextView
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                style="@style/listSubTitleStyle"
+                android:text="@string/group_settings"/>
+
+            <FrameLayout
+                android:id="@+id/notificationsWrapper"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:background="?android:selectableItemBackground">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:textSize="17sp"
+                    android:textColor="@color/textColorPrimary"
+                    android:text="@string/notifications"/>
+
+                <android.support.v7.widget.SwitchCompat
+                    android:id="@+id/notificationSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:theme="@style/SwitchStyle"
+                    android:layout_gravity="right|center_vertical"
+                    android:clickable="false"
+                    app:srcCompat="@drawable/ic_chevron_right" />
+
+            </FrameLayout>
+
+            <TextView
                 android:id="@+id/numberOfParticipants"
                 android:layout_width="match_parent"
                 android:layout_height="54dp"
