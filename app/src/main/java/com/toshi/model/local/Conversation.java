@@ -88,6 +88,12 @@ public class Conversation extends RealmObject implements ConversationItem {
         return this;
     }
 
+    public Conversation updateLatestMessage(final SofaMessage sofaMessage) {
+        this.latestMessage = sofaMessage;
+        this.updatedTime = latestMessage.getCreationTime();
+        return this;
+    }
+
     private boolean isDuplicateMessage(final SofaMessage message) {
         return this.allMessages != null && this.allMessages.contains(message);
     }

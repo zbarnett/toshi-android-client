@@ -329,8 +329,30 @@ public class ConversationStore {
         })
         .observeOn(Schedulers.immediate())
         .subscribeOn(Schedulers.from(dbThread))
+        .andThen(updateLatestMessage(receiver.getThreadId()))
         .doOnCompleted(() -> broadcastDeletedChatMessage(receiver.getThreadId(), message))
         .doOnError(this::handleError);
+    }
+
+    private Completable updateLatestMessage(final String threadId) {
+        return Completable.fromAction(() -> {
+            final Realm realm = BaseApplication.get().getRealm();
+            final Conversation conversation = realm
+                    .where(Conversation.class)
+                    .equalTo(THREAD_ID_FIELD, threadId)
+                    .findFirst();
+            if (conversation == null) {
+                realm.close();
+                return;
+            }
+            if (conversation.getAllMessages() != null && conversation.getAllMessages().size() > 0) {
+                final SofaMessage lastMessage = conversation.getAllMessages().get(conversation.getAllMessages().size() - 1);
+                realm.beginTransaction();
+                conversation.updateLatestMessage(lastMessage);
+                realm.commitTransaction();
+            }
+            realm.close();
+        });
     }
 
     public void removeUserFromGroup(@NotNull User user, @NotNull String groupId) {
