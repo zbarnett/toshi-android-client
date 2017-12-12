@@ -24,7 +24,6 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
-import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import com.toshi.R
@@ -130,19 +129,6 @@ class GroupInfoActivity : AppCompatActivity() {
             MENU_MESSAGE -> startChatActivity(clickedUser)
         }
         return super.onContextItemSelected(item)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.groupinfo, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.edit -> startGroupEditActivity(viewModel.group.value)
-            R.id.leave -> handleLeaveGroup()
-        }
-        return super.onOptionsItemSelected(item)
     }
 
     private fun handleLeaveGroup() {
