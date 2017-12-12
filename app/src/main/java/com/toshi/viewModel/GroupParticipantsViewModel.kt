@@ -102,7 +102,7 @@ class GroupParticipantsViewModel : ViewModel() {
                 .loadAllUserContacts()
     }
 
-    fun handleUserClicked(user: User) {
+    fun addSelectedParticipant(user: User) {
         if (this.participants.contains(user)) {
             this.participants.remove(user)
         } else {

@@ -33,14 +33,14 @@ import com.toshi.extensions.addHorizontalLineDivider
 import com.toshi.extensions.isVisible
 import com.toshi.model.local.User
 import com.toshi.view.activity.ConversationSetupActivity
-import com.toshi.view.adapter.UserAdapter
+import com.toshi.view.adapter.SelectGroupParticipantAdapter
 import com.toshi.viewModel.GroupParticipantsViewModel
 import kotlinx.android.synthetic.main.fragment_group_participants.*
 
 class GroupParticipantsFragment : Fragment() {
 
     private lateinit var viewModel: GroupParticipantsViewModel
-    private lateinit var userAdapter: UserAdapter
+    private lateinit var userAdapter: SelectGroupParticipantAdapter
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater?.inflate(R.layout.fragment_group_participants, container, false)
@@ -68,7 +68,7 @@ class GroupParticipantsFragment : Fragment() {
     private fun handleNextClicked() = (this.activity as ConversationSetupActivity).openGroupSetupFlow(viewModel.selectedParticipants.value!!)
 
     private fun initRecyclerView() {
-        userAdapter = UserAdapter().setOnItemClickListener(this::handleUserClicked)
+        initAdapter()
         searchResults.apply {
             layoutManager = LinearLayoutManager(this.context)
             itemAnimator = DefaultItemAnimator()
@@ -77,9 +77,13 @@ class GroupParticipantsFragment : Fragment() {
         }
     }
 
-    private fun handleUserClicked(user: User) {
-        viewModel.handleUserClicked(user)
+    private fun initAdapter() {
+        userAdapter = SelectGroupParticipantAdapter().setOnItemClickListener(this::handleUserClicked)
+        val selectedUsers = viewModel.selectedParticipants.value ?: listOf<User>()
+        userAdapter.setSelectedUsers(selectedUsers)
     }
+
+    private fun handleUserClicked(user: User) = viewModel.addSelectedParticipant(user)
 
     private fun initObservers() {
         initSearch()
