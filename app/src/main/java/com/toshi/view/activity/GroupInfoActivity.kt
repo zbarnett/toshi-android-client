@@ -33,6 +33,7 @@ import com.toshi.extensions.startActivityAndFinish
 import com.toshi.extensions.toast
 import com.toshi.model.local.Group
 import com.toshi.model.local.User
+import com.toshi.util.DialogUtil
 import com.toshi.util.ImageUtil
 import com.toshi.util.LogUtil
 import com.toshi.view.adapter.GroupParticipantAdapter
@@ -68,8 +69,18 @@ class GroupInfoActivity : AppCompatActivity() {
 
     private fun initClickListeners() {
         closeButton.setOnClickListener { finish() }
-        leaveGroup.setOnClickListener { viewModel.leaveGroup() }
+        leaveGroup.setOnClickListener { showLeaveGroupConfirmationDialog() }
         edit.setOnClickListener { startGroupEditActivity(viewModel.group.value) }
+    }
+
+    private fun showLeaveGroupConfirmationDialog() {
+        DialogUtil.getBaseDialog(
+                this,
+                R.string.leave_group,
+                R.string.leave_group_dialog_message,
+                R.string.leave,
+                R.string.cancel
+        ) { _, _ -> viewModel.leaveGroup() }.show()
     }
 
     private fun startGroupEditActivity(group: Group?) = startActivityAndFinish<ConversationSetupActivity> {
