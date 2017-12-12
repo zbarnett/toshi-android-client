@@ -72,7 +72,10 @@ class GroupInfoActivity : AppCompatActivity() {
         supportActionBar?.setDisplayShowTitleEnabled(false)
     }
 
-    private fun initClickListeners() = closeButton.setOnClickListener { finish() }
+    private fun initClickListeners() {
+        closeButton.setOnClickListener { finish() }
+        leaveGroup.setOnClickListener { viewModel.leaveGroup() }
+    }
 
     private fun processIntentData() {
         val groupId = getGroupIdFromIntent()
@@ -129,10 +132,6 @@ class GroupInfoActivity : AppCompatActivity() {
             MENU_MESSAGE -> startChatActivity(clickedUser)
         }
         return super.onContextItemSelected(item)
-    }
-
-    private fun handleLeaveGroup() {
-        viewModel.leaveGroup()
     }
 
     private fun startProfileActivity(user: User) = startActivityAndFinish<ViewUserActivity> {

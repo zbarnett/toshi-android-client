@@ -113,4 +113,41 @@
 
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:background="@color/divider"/>
+
+    <FrameLayout
+        android:id="@+id/leaveGroup"
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:background="?android:selectableItemBackground">
+
+        <TextView
+            android:id="@+id/label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:textSize="17sp"
+            android:textColor="@color/textColorPrimary"
+            android:text="@string/leave_group"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|center_vertical"
+            app:srcCompat="@drawable/ic_chevron_right" />
+
+    </FrameLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_weight="1"
+        android:layout_height="0dp"
+        android:background="@color/divider"/>
+
 </LinearLayout>

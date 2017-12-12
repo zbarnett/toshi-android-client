@@ -300,4 +300,5 @@
     <string name="personal_sign_title">This webpage is requesting your signature</string>
     <string name="gas_price_message">Estimated Ethereum network fees: %1$s (%2$s ETH)</string>
     <string name="gas_price_error">Unable to estimate Ethereum network fees</string>
+    <string name="leave_group">Leave group</string>
 </resources>
