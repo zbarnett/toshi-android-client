@@ -57,7 +57,6 @@ class GroupInfoActivity : AppCompatActivity() {
 
     private fun init() {
         initViewModel()
-        initToolbar()
         initClickListeners()
         processIntentData()
         initObservers()
@@ -67,14 +66,14 @@ class GroupInfoActivity : AppCompatActivity() {
         viewModel = ViewModelProviders.of(this).get(GroupInfoViewModel::class.java)
     }
 
-    private fun initToolbar() {
-        setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayShowTitleEnabled(false)
-    }
-
     private fun initClickListeners() {
         closeButton.setOnClickListener { finish() }
         leaveGroup.setOnClickListener { viewModel.leaveGroup() }
+        edit.setOnClickListener { startGroupEditActivity(viewModel.group.value) }
+    }
+
+    private fun startGroupEditActivity(group: Group?) = startActivityAndFinish<ConversationSetupActivity> {
+        putExtra(ConversationSetupActivity.EXTRA__GROUP_ID_FOR_EDITING, group?.id)
     }
 
     private fun processIntentData() {
@@ -107,6 +106,7 @@ class GroupInfoActivity : AppCompatActivity() {
         ImageUtil.load(group.avatar, avatar)
         initRecyclerView(group.members)
         initNumberOfParticipantsView(group.members)
+        edit.isEnabled = true
     }
 
     private fun initRecyclerView(members: List<User>) {
@@ -140,10 +140,6 @@ class GroupInfoActivity : AppCompatActivity() {
 
     private fun startChatActivity(user: User) = startActivityAndFinish<ChatActivity> {
         putExtra(ChatActivity.EXTRA__THREAD_ID, user.toshiId)
-    }
-
-    private fun startGroupEditActivity(group: Group?) = startActivityAndFinish<ConversationSetupActivity> {
-        putExtra(ConversationSetupActivity.EXTRA__GROUP_ID_FOR_EDITING, group?.id)
     }
 
     private fun returnToMainActivity() = startActivity<MainActivity> {

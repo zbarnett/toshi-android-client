@@ -24,15 +24,13 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar
+    <LinearLayout
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:gravity="center_vertical"
         android:theme="@style/RegularToolbarTheme"
-        style="@style/Toolbar"
-        app:contentInsetStart="0dp"
-        app:contentInsetEndWithActions="0dp">
+        style="@style/Toolbar">
 
         <ImageButton
             android:id="@+id/closeButton"
@@ -56,7 +54,22 @@
             android:maxLines="1"
             android:ellipsize="end"/>
 
-    </android.support.v7.widget.Toolbar>
+        <android.support.v4.widget.Space
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="0dp" />
+
+        <Button
+            android:id="@+id/edit"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:padding="@dimen/activity_horizontal_margin"
+            style="@style/NavBarButton"
+            android:enabled="false"
+            android:text="@string/edit"/>
+
+    </LinearLayout>
 
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
