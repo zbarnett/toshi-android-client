@@ -17,6 +17,7 @@
 
 package com.toshi.viewModel
 
+import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import com.toshi.model.local.Group
 import com.toshi.util.SingleLiveEvent
@@ -26,18 +27,22 @@ import rx.subscriptions.CompositeSubscription
 
 class GroupInfoViewModel : ViewModel() {
 
+    private val recipientManager = BaseApplication.get().recipientManager
+    private val sofaMessageManager = BaseApplication.get().sofaMessageManager
     private val subscriptions by lazy { CompositeSubscription() }
 
     val group by lazy { SingleLiveEvent<Group>() }
     val fetchGroupError by lazy { SingleLiveEvent<Throwable>() }
     val leaveGroup by lazy { SingleLiveEvent<Boolean>() }
     val leaveGroupError by lazy { SingleLiveEvent<Throwable>() }
+    val isMuted by lazy { MutableLiveData<Boolean>() }
+    val isMutedError by lazy { SingleLiveEvent<Throwable>() }
 
     fun fetchGroup(groupId: String) {
-        val subscription = BaseApplication.get()
-                .recipientManager
+        val subscription = recipientManager
                 .getGroupFromId(groupId)
                 .observeOn(AndroidSchedulers.mainThread())
+                .doOnSuccess { isMuted(it) }
                 .subscribe(
                         { group.value = it },
                         { fetchGroupError.value = it }
@@ -47,9 +52,7 @@ class GroupInfoViewModel : ViewModel() {
 
     fun leaveGroup() {
         group.value?.let {
-            val leaveSub = BaseApplication
-                    .get()
-                    .sofaMessageManager
+            val leaveSub = sofaMessageManager
                     .leaveGroup(it)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
@@ -57,6 +60,49 @@ class GroupInfoViewModel : ViewModel() {
                             { leaveGroupError.value = it }
                     )
             subscriptions.add(leaveSub)
+        }
+    }
+
+    private fun isMuted(group: Group) {
+        val sub = sofaMessageManager
+                .isConversationMuted(group.id)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        { isMuted.value = it },
+                        { isMutedError.value = it }
+                )
+
+        subscriptions.add(sub)
+    }
+
+    fun muteConversation(isNotificationEnabled: Boolean) {
+        if (isNotificationEnabled) muteConversation()
+        else unmuteConversation()
+    }
+
+    private fun muteConversation() {
+        group.value?.id.let {
+            val sub = sofaMessageManager
+                    .muteConversation(it)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                            { isMuted.value = true },
+                            { isMutedError.value = it }
+                    )
+            subscriptions.add(sub)
+        }
+    }
+
+    private fun unmuteConversation() {
+        group.value?.id.let {
+            val sub = sofaMessageManager
+                    .unmuteConversation(it)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                            { isMuted.value = false },
+                            { isMutedError.value = it }
+                    )
+            subscriptions.add(sub)
         }
     }
 

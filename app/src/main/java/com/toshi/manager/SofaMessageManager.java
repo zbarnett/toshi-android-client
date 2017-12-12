@@ -239,6 +239,20 @@ public final class SofaMessageManager {
                 .subscribeOn(Schedulers.io());
     }
 
+    public Completable muteConversation(final String threadId) {
+        return this.conversationStore.loadByThreadId(threadId)
+                .flatMap(this::muteConversation)
+                .subscribeOn(Schedulers.io())
+                .toCompletable();
+    }
+
+    public Completable unmuteConversation(final String threadId) {
+        return this.conversationStore.loadByThreadId(threadId)
+                .flatMap(this::unmuteConversation)
+                .subscribeOn(Schedulers.io())
+                .toCompletable();
+    }
+
     public Single<Conversation> muteConversation(final Conversation conversation) {
         return this.conversationStore.muteConversation(conversation, true)
                 .subscribeOn(Schedulers.io());

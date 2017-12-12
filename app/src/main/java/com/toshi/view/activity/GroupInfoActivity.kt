@@ -71,6 +71,7 @@ class GroupInfoActivity : AppCompatActivity() {
         closeButton.setOnClickListener { finish() }
         leaveGroup.setOnClickListener { showLeaveGroupConfirmationDialog() }
         edit.setOnClickListener { startGroupEditActivity(viewModel.group.value) }
+        notificationsWrapper.setOnClickListener { viewModel.muteConversation(notificationSwitch.isChecked) }
     }
 
     private fun showLeaveGroupConfirmationDialog() {
@@ -109,6 +110,9 @@ class GroupInfoActivity : AppCompatActivity() {
         viewModel.leaveGroupError.observe(this, Observer {
             LogUtil.exception(this::class.java, it)
             toast(R.string.error_leave_group, Toast.LENGTH_LONG)
+        })
+        viewModel.isMuted.observe(this, Observer {
+            isMuted -> isMuted?.let { notificationSwitch.isChecked = !it }
         })
     }
 
