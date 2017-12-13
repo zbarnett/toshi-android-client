@@ -94,6 +94,7 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
         webSettings.setUseWideViewPort(true);
         webSettings.setLoadWithOverviewMode(true);
         webSettings.setDomStorageEnabled(true);
+        webSettings.setUserAgentString(BuildConfig.USER_AGENT);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             WebView.setWebContentsDebuggingEnabled(BuildConfig.WEB_DEBUG_ENABLED);
