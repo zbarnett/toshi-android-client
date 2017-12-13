@@ -37,6 +37,7 @@ class GroupInfoViewModel : ViewModel() {
     val leaveGroupError by lazy { SingleLiveEvent<Throwable>() }
     val isMuted by lazy { MutableLiveData<Boolean>() }
     val isMutedError by lazy { SingleLiveEvent<Throwable>() }
+    val isUpdatingMuteState by lazy { MutableLiveData<Boolean>() }
 
     fun fetchGroup(groupId: String) {
         val subscription = recipientManager
@@ -85,6 +86,8 @@ class GroupInfoViewModel : ViewModel() {
             val sub = sofaMessageManager
                     .muteConversation(it)
                     .observeOn(AndroidSchedulers.mainThread())
+                    .doOnSubscribe { isUpdatingMuteState.value = true }
+                    .doOnTerminate { isUpdatingMuteState.value = false }
                     .subscribe(
                             { isMuted.value = true },
                             { isMutedError.value = it }
@@ -98,6 +101,8 @@ class GroupInfoViewModel : ViewModel() {
             val sub = sofaMessageManager
                     .unmuteConversation(it)
                     .observeOn(AndroidSchedulers.mainThread())
+                    .doOnSubscribe { isUpdatingMuteState.value = true }
+                    .doOnTerminate { isUpdatingMuteState.value = false }
                     .subscribe(
                             { isMuted.value = false },
                             { isMutedError.value = it }

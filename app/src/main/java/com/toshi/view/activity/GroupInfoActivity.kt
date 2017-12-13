@@ -117,6 +117,9 @@ class GroupInfoActivity : AppCompatActivity() {
         viewModel.isMutedError.observe(this, Observer {
             toast(R.string.notification_toggle_error)
         })
+        viewModel.isUpdatingMuteState.observe(this, Observer {
+            isUpdatingMuteState -> isUpdatingMuteState?.let { notificationsWrapper.isEnabled = !it }
+        })
     }
 
     private fun updateView(group: Group) {
