@@ -170,4 +170,15 @@ public class PaymentTask {
             return new PaymentTask(this);
         }
     }
+
+    @Override
+    public String toString() {
+        return "User: " + user
+                + " Payment: " + payment
+                + " action: " + action
+                + " UnsignedTransaction: " + unsignedTransaction
+                + " SofaMessage: " + sofaMessage
+                + " SendTransaction: " + sentTransaction
+                + " gasPrice " + gasPrice;
+    }
 }

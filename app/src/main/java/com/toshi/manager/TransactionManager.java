@@ -19,6 +19,7 @@ package com.toshi.manager;
 
 import android.support.annotation.NonNull;
 import android.util.Pair;
+import android.widget.Toast;
 
 import com.toshi.R;
 import com.toshi.crypto.HDWallet;
@@ -174,7 +175,7 @@ public class TransactionManager {
                         .build())
                 .subscribe(
                         this::handleOutgoingExternalPaymentSuccess,
-                        error -> handleOutgoingExternalPaymentError(error, paymentTask.getPayment())
+                        error -> handleOutgoingExternalPaymentError(error, paymentTask)
                 );
     }
 
@@ -258,8 +259,9 @@ public class TransactionManager {
         final PaymentTask paymentTaskWithAction = new PaymentTask.Builder(paymentTask)
                 .setAction(OUTGOING)
                 .build();
+
         if (paymentTaskWithAction.isValidOutgoingTask()) addOutgoingPaymentTask(paymentTaskWithAction);
-        else LogUtil.e(getClass(), "Could not send payment. Invalid PaymentTask");
+        else handlePaymentError(paymentTask);
     }
 
     public void resendPayment(final PaymentTask paymentTask) {
@@ -267,7 +269,12 @@ public class TransactionManager {
                 .setAction(OUTGOING_RESEND)
                 .build();
         if (paymentTaskWithAction.isValidOutgoingTask()) addOutgoingPaymentTask(paymentTaskWithAction);
-        else LogUtil.e(getClass(), "Could not resend payment. Invalid PaymentTask");
+        else handlePaymentError(paymentTask);
+    }
+
+    private void handlePaymentError(final PaymentTask paymentTask) {
+        LogUtil.exception(getClass(), "Could not send payment. Invalid PaymentTask " + paymentTask.toString());
+        Toast.makeText(BaseApplication.get(), R.string.payment_error, Toast.LENGTH_SHORT).show();
     }
 
     public void sendExternalPayment(final PaymentTask paymentTask) {
@@ -275,7 +282,7 @@ public class TransactionManager {
                 .setAction(OUTGOING_EXTERNAL)
                 .build();
         if (paymentTaskWithAction.isValidOutgoingTask()) addOutgoingPaymentTask(paymentTaskWithAction);
-        else LogUtil.e(getClass(), "Could not send external payment. Invalid PaymentTask");
+        else handleOutgoingExternalPaymentError(new Throwable("Invalid PaymentTask"), paymentTask);
     }
 
     private void addOutgoingPaymentTask(final PaymentTask paymentTask) {
@@ -473,9 +480,12 @@ public class TransactionManager {
         storeUnconfirmedTransaction(txHash, paymentTask.getSofaMessage());
     }
 
-    private void handleOutgoingExternalPaymentError(final Throwable error, final Payment payment) {
-        LogUtil.exception(getClass(), "Error sending external payment.", error);
-        final String paymentAddress = payment.getToAddress();
+    private void handleOutgoingExternalPaymentError(final Throwable error, final PaymentTask paymentTask) {
+        LogUtil.exception(getClass(), "Error sending payment.", error);
+        final Payment payment = paymentTask.getPayment();
+        final String paymentAddress = payment != null && payment.getToAddress() != null
+                ? payment.getToAddress()
+                : BaseApplication.get().getString(R.string.payment_error);
         ExternalPaymentNotificationManager.showExternalPaymentFailed(paymentAddress);
     }
 

@@ -306,4 +306,5 @@
     <string name="notifications">Notifications</string>
     <string name="invalid_payment_address">Invalid payment address</string>
     <string name="notification_toggle_error">Unable to update notifications</string>
+    <string name="payment_error">Unable to send a payment to this address</string>
 </resources>
