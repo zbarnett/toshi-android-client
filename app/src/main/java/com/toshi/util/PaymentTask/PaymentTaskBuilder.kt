@@ -15,7 +15,7 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.toshi.util
+package com.toshi.util.PaymentTask
 
 import com.toshi.crypto.util.TypeConverter
 import com.toshi.manager.model.PaymentTask
@@ -23,9 +23,9 @@ import com.toshi.manager.model.PaymentTask.Builder
 import com.toshi.manager.network.EthereumService
 import com.toshi.model.local.GasPrice
 import com.toshi.model.local.UnsignedW3Transaction
-import com.toshi.model.network.TransactionRequest
 import com.toshi.model.network.UnsignedTransaction
 import com.toshi.model.sofa.Payment
+import com.toshi.util.EthUtil
 import com.toshi.view.BaseApplication
 import rx.Single
 
@@ -33,6 +33,7 @@ class PaymentTaskBuilder {
 
     private val balanceManager by lazy { BaseApplication.get().balanceManager }
     private val recipientManager by lazy { BaseApplication.get().recipientManager }
+    private val transactionBuilder by lazy { TransactionRequestBuilder() }
 
     fun buildPaymentTask(fromPaymentAddress: String,
                          toPaymentAddress: String,
@@ -71,8 +72,8 @@ class PaymentTaskBuilder {
                         .setGasPrice(it) }
     }
 
-    private fun createUnsignedW3Transaction(transaction: UnsignedW3Transaction): Single<UnsignedTransaction> {
-        val transactionRequest = generateTransactionRequest(transaction)
+    private fun createUnsignedW3Transaction(unsignedW3Transaction: UnsignedW3Transaction): Single<UnsignedTransaction> {
+        val transactionRequest = transactionBuilder.generateTransactionRequest(unsignedW3Transaction)
         return EthereumService
                 .getApi()
                 .createTransaction(transactionRequest)
@@ -87,27 +88,9 @@ class PaymentTaskBuilder {
     }
 
     private fun createUnsignedTransaction(payment: Payment): Single<UnsignedTransaction> {
-        val transactionRequest = generateTransactionRequest(payment)
+        val transactionRequest = transactionBuilder.generateTransactionRequest(payment)
         return EthereumService
                 .getApi()
                 .createTransaction(transactionRequest)
-    }
-
-    private fun generateTransactionRequest(payment: Payment): TransactionRequest {
-        return TransactionRequest()
-                .setValue(payment.value)
-                .setFromAddress(payment.fromAddress)
-                .setToAddress(payment.toAddress)
-    }
-
-    private fun generateTransactionRequest(transaction: UnsignedW3Transaction): TransactionRequest {
-        return TransactionRequest()
-                .setValue(transaction.value)
-                .setFromAddress(transaction.from)
-                .setToAddress(transaction.to)
-                .setData(transaction.data)
-                .setGas(transaction.gas)
-                .setGasPrice(transaction.gasPrice)
-                .setNonce(transaction.nonce)
     }
 }

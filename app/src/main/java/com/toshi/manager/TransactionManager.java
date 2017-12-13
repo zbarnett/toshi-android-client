@@ -44,7 +44,7 @@ import com.toshi.model.sofa.SofaMessage;
 import com.toshi.model.sofa.SofaType;
 import com.toshi.util.LocaleUtil;
 import com.toshi.util.LogUtil;
-import com.toshi.util.PaymentTaskBuilder;
+import com.toshi.util.PaymentTask.PaymentTaskBuilder;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.notification.ChatNotificationManager;
 import com.toshi.view.notification.ExternalPaymentNotificationManager;
