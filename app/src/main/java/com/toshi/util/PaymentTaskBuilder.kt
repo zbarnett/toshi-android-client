@@ -53,6 +53,7 @@ class PaymentTaskBuilder {
 
     private fun addUserToPaymentTask(builder: Builder, toPaymentAddress: String): Single<Builder> {
         return recipientManager.getUserFromPaymentAddress(toPaymentAddress)
+                .onErrorReturn { null }
                 .map { user -> builder.setUser(user) }
     }
 
