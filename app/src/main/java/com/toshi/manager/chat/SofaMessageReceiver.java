@@ -56,8 +56,6 @@ import java.util.concurrent.TimeoutException;
 
 public class SofaMessageReceiver {
 
-    private final static String USER_AGENT = "Android " + BuildConfig.APPLICATION_ID + " - " + BuildConfig.VERSION_NAME +  ":" + BuildConfig.VERSION_CODE;
-
     private final ProtocolStore protocolStore;
     private final SignalServiceMessageReceiver messageReceiver;
     private final HDWallet wallet;
@@ -80,7 +78,7 @@ public class SofaMessageReceiver {
                         this.wallet.getOwnerAddress(),
                         this.protocolStore.getPassword(),
                         this.protocolStore.getSignalingKey(),
-                        USER_AGENT);
+                        BuildConfig.USER_AGENT);
 
         this.taskGroupUpdate = new GroupUpdateTask(this.messageReceiver, messageSender, conversationStore);
         this.taskHandleMessage = new HandleMessageTask(this.messageReceiver, conversationStore, this.wallet, messageSender);

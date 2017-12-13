@@ -58,8 +58,6 @@ import rx.subscriptions.CompositeSubscription;
 
 public class SofaMessageSender {
 
-    private final static String USER_AGENT = "Android " + BuildConfig.APPLICATION_ID + " - " + BuildConfig.VERSION_NAME +  ":" + BuildConfig.VERSION_CODE;
-
     private final CompositeSubscription subscriptions;
     private final ConversationStore conversationStore;
     private final HDWallet wallet;
@@ -88,7 +86,7 @@ public class SofaMessageSender {
                         this.wallet.getOwnerAddress(),
                         this.protocolStore.getPassword(),
                         this.protocolStore,
-                        USER_AGENT,
+                        BuildConfig.USER_AGENT,
                         Optional.absent(),
                         Optional.absent()
                 );

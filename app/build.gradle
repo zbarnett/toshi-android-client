@@ -47,6 +47,10 @@ android {
     }
 
     def webDebugEnabled = 'WEB_DEBUG_ENABLED'
+    def userAgent = { String applicationIdSuffix -> "Android " +
+            getDefaultConfig().applicationId + applicationIdSuffix + " - " +
+            getDefaultConfig().versionName + ":" +
+            getDefaultConfig().versionCode }
 
     buildTypes {
         debug {
@@ -55,6 +59,7 @@ android {
             debuggable true
             minifyEnabled false
             buildConfigField "boolean", webDebugEnabled, "true"
+            buildConfigField "String", "USER_AGENT", "\"${userAgent(".debug")}\""
         }
         developer {
             applicationIdSuffix ".developer"
@@ -64,6 +69,7 @@ android {
             debuggable false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             buildConfigField "boolean", webDebugEnabled, "true"
+            buildConfigField "String", "USER_AGENT", "\"${userAgent(".developer")}\""
         }
         release {
             multiDexEnabled true
@@ -72,6 +78,7 @@ android {
             debuggable false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             buildConfigField "boolean", webDebugEnabled, "false"
+            buildConfigField "String", "USER_AGENT", "\"${userAgent("")}\""
         }
     }
 
