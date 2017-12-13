@@ -24,20 +24,22 @@ import com.toshi.model.sofa.Payment
 class TransactionRequestBuilder {
 
     fun generateTransactionRequest(payment: Payment): TransactionRequest {
-        return TransactionRequest()
-                .setValue(payment.value)
-                .setFromAddress(payment.fromAddress)
-                .setToAddress(payment.toAddress)
+        return TransactionRequest(
+                value = payment.value,
+                from = payment.fromAddress,
+                to = payment.toAddress
+        )
     }
 
     fun generateTransactionRequest(transaction: UnsignedW3Transaction): TransactionRequest {
-        return TransactionRequest()
-                .setValue(transaction.value)
-                .setFromAddress(transaction.from)
-                .setToAddress(transaction.to)
-                .setData(transaction.data)
-                .setGas(transaction.gas)
-                .setGasPrice(transaction.gasPrice)
-                .setNonce(transaction.nonce)
+        return TransactionRequest(
+                value = transaction.value,
+                from = transaction.from,
+                to = transaction.to,
+                data = transaction.data,
+                gas = transaction.gas,
+                gasPrice = transaction.gasPrice,
+                nonce = transaction.nonce
+        )
     }
 }
