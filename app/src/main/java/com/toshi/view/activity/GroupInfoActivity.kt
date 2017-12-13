@@ -114,6 +114,9 @@ class GroupInfoActivity : AppCompatActivity() {
         viewModel.isMuted.observe(this, Observer {
             isMuted -> isMuted?.let { notificationSwitch.isChecked = !it }
         })
+        viewModel.isMutedError.observe(this, Observer {
+            toast(R.string.notification_toggle_error)
+        })
     }
 
     private fun updateView(group: Group) {
