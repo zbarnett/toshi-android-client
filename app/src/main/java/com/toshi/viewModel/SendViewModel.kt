@@ -50,6 +50,11 @@ class SendViewModel : ViewModel() {
 
     fun sendPayment(paymentTask: PaymentTask) = transactionManager.sendExternalPayment(paymentTask)
 
+    fun isPaymentAddressValid(paymentAddress: String?): Boolean {
+        val regex = Regex("^0x[a-fA-F0-9]{40}\$")
+        return paymentAddress?.let { regex.matches(paymentAddress) } ?: false
+    }
+
     override fun onCleared() {
         super.onCleared()
         subscriptions.clear()

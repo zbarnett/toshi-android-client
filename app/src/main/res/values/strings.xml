@@ -304,4 +304,5 @@
     <string name="edit">Edit</string>
     <string name="leave_group_dialog_message">Are you sure you want to leave?</string>
     <string name="notifications">Notifications</string>
+    <string name="invalid_payment_address">Invalid payment address</string>
 </resources>

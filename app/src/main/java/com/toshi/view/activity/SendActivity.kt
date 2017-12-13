@@ -47,7 +47,6 @@ class SendActivity : AppCompatActivity() {
     }
 
     private lateinit var viewModel: SendViewModel
-    private var encodedEthAmount: String? = null
 
     override fun onCreate(inState: Bundle?) {
         super.onCreate(inState)
@@ -68,7 +67,7 @@ class SendActivity : AppCompatActivity() {
     }
 
     private fun generateAmount() {
-        encodedEthAmount = intent.getStringExtra(AmountActivity.INTENT_EXTRA__ETH_AMOUNT)
+        val encodedEthAmount = getEncodedEthAmountFromIntent()
         encodedEthAmount
                 ?.let { viewModel.generateAmount(it) }
                 ?: toast(R.string.invalid_eth_amount)
@@ -95,6 +94,14 @@ class SendActivity : AppCompatActivity() {
     }
 
     private fun handleSendPaymentClicked() {
+        val paymentAddress = getRecipientAddress()
+        val isPaymentValid = viewModel.isPaymentAddressValid(paymentAddress)
+        if (!isPaymentValid) {
+            toast(R.string.invalid_payment_address)
+            return
+        }
+
+        val encodedEthAmount = getEncodedEthAmountFromIntent()
         encodedEthAmount
                 ?.let { showPaymentConfirmationDialog(it) }
                 ?: toast(R.string.invalid_eth_amount)
@@ -126,6 +133,8 @@ class SendActivity : AppCompatActivity() {
         val userInput = recipientAddress.text.toString()
         return if (userInput.contains(":")) userInput.split(":")[1] else userInput
     }
+
+    private fun getEncodedEthAmountFromIntent() = intent.getStringExtra(AmountActivity.INTENT_EXTRA__ETH_AMOUNT)
 
     private fun initObservers() {
         viewModel.localAmount.observe(this, Observer {
