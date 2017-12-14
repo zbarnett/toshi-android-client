@@ -19,17 +19,21 @@ package com.toshi.viewModel
 
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
+import com.toshi.R
+import com.toshi.model.local.Group
 import com.toshi.model.local.User
 import com.toshi.util.LogUtil
 import com.toshi.util.SingleLiveEvent
 import com.toshi.view.BaseApplication
-import rx.Single
 import rx.android.schedulers.AndroidSchedulers
 import rx.subjects.PublishSubject
 import rx.subscriptions.CompositeSubscription
 import java.util.concurrent.TimeUnit
 
 class GroupParticipantsViewModel : ViewModel() {
+
+    private val sofaMessageManager by lazy { BaseApplication.get().sofaMessageManager }
+    private val recipientManager by lazy { BaseApplication.get().recipientManager }
 
     private val subscriptions by lazy { CompositeSubscription() }
     private val querySubject by lazy { PublishSubject.create<String>() }
@@ -38,6 +42,9 @@ class GroupParticipantsViewModel : ViewModel() {
 
     val searchResults by lazy { SingleLiveEvent<List<User>>() }
     val selectedParticipants by lazy { MutableLiveData<List<User>>() }
+    val isUpdatingGroup by lazy { MutableLiveData<Boolean>() }
+    val participantsAdded by lazy { SingleLiveEvent<Unit>() }
+    val error by lazy { SingleLiveEvent<Int>() }
 
     init {
         subscribeForQueryChanges()
@@ -58,7 +65,8 @@ class GroupParticipantsViewModel : ViewModel() {
                         { LogUtil.e(javaClass, "Error while listening for query changes $it") }
                 )
 
-        val defaultSub = getContacts()
+        val defaultSub = recipientManager
+                .loadAllUserContacts()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { cacheDefaultResults(it) },
@@ -77,10 +85,11 @@ class GroupParticipantsViewModel : ViewModel() {
         if (searchResults.value == null) searchResults.value = defaultResults
     }
 
-    fun queryUpdated(query: CharSequence) = querySubject.onNext(query.toString())
+    fun queryUpdated(query: CharSequence?) = querySubject.onNext(query.toString())
 
     private fun runSearchQuery(query: String) {
-        val searchSub = searchOnlineUsers(query)
+        val searchSub = recipientManager
+                .searchOnlineUsers(query)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { searchResults.value = it },
@@ -88,18 +97,6 @@ class GroupParticipantsViewModel : ViewModel() {
                 )
 
         this.subscriptions.add(searchSub)
-    }
-
-    private fun searchOnlineUsers(query: String): Single<List<User>> {
-        return BaseApplication.get()
-                .recipientManager
-                .searchOnlineUsers(query)
-    }
-
-    private fun getContacts(): Single<List<User>> {
-        return BaseApplication.get()
-                .recipientManager
-                .loadAllUserContacts()
     }
 
     fun addSelectedParticipant(user: User) {
@@ -111,5 +108,24 @@ class GroupParticipantsViewModel : ViewModel() {
         this.selectedParticipants.value = this.participants
     }
 
-    override fun onCleared() = this.subscriptions.clear()
+    fun updateGroup(groupId: String) {
+        if (isUpdatingGroup.value == true) return
+        val subscription =
+                Group.fromId(groupId)
+                .map { it.addMembers(selectedParticipants.value) }
+                .flatMapCompletable { sofaMessageManager.updateConversationFromGroup(it) }
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe { isUpdatingGroup.value = true }
+                .doAfterTerminate { isUpdatingGroup.value = false }
+                .subscribe(
+                        { participantsAdded.value = null },
+                        { error.value = R.string.add_participants_error }
+                )
+        this.subscriptions.add(subscription)
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        this.subscriptions.clear()
+    }
 }

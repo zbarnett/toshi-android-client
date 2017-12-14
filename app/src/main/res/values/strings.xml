@@ -308,4 +308,7 @@
     <string name="notification_toggle_error">Unable to update notifications</string>
     <string name="payment_error">Unable to send a payment to this address</string>
     <string name="done">Done</string>
+    <string name="add_participants_error">Unable to add participants</string>
+    <string name="invalid_group">Invalid group</string>
+    <string name="add_participants">Add participants</string>
 </resources>

@@ -122,6 +122,11 @@ public class Group extends RealmObject {
         return this;
     }
 
+    public Group addMembers(final List<User> members) {
+        for (User user : members) addMember(user);
+        return this;
+    }
+
     public Group removeMember(final User member) {
         this.members.remove(member);
         return this;
