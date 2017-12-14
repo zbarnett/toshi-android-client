@@ -61,5 +61,7 @@ class ChatMessageQueue(private val outgoingMessageQueue: AsyncOutgoingMessageQue
         outgoingMessageQueue.send(sofaMessage)
     }
 
+    fun updateRecipient(recipient: Recipient) = outgoingMessageQueue.updateRecipient(recipient)
+
     fun clear() = outgoingMessageQueue.clear()
 }

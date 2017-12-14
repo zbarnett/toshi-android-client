@@ -30,6 +30,7 @@ import com.toshi.manager.chat.SofaMessageRegistration;
 import com.toshi.manager.chat.SofaMessageSender;
 import com.toshi.manager.model.SofaMessageTask;
 import com.toshi.manager.store.ConversationStore;
+import com.toshi.model.local.ConversationObservables;
 import com.toshi.model.local.Conversation;
 import com.toshi.model.local.Group;
 import com.toshi.model.local.IncomingMessage;
@@ -50,13 +51,11 @@ import org.whispersystems.signalservice.internal.configuration.SignalServiceUrl;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
-import kotlin.Triple;
 import rx.Completable;
 import rx.Observable;
 import rx.Single;
 import rx.Subscription;
 import rx.schedulers.Schedulers;
-import rx.subjects.PublishSubject;
 
 public final class SofaMessageManager {
     private final ConversationStore conversationStore;
@@ -207,10 +206,7 @@ public final class SofaMessageManager {
         return this.conversationStore.getConversationChangedObservable();
     }
 
-    // Returns a pair of RxSubjects, the first being the observable for new messages
-    // the second being the observable for updated messages
-    // the third being the observable for any changes to the conversation (i.e. if the name or avatar is changed)
-    public final Triple<PublishSubject<SofaMessage>, PublishSubject<SofaMessage>, PublishSubject<Conversation>> registerForConversationChanges(final String threadId) {
+    public final ConversationObservables registerForConversationChanges(final String threadId) {
         return this.conversationStore.registerForChanges(threadId);
     }
 

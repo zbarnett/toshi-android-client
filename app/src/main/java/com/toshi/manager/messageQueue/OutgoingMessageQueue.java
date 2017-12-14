@@ -135,6 +135,10 @@ queue.clear(); // Cleans up all state, and unsubscribes everything.
         processPreInitMessagesQueue();
     }
 
+    public void updateRecipient(final Recipient recipient) {
+        this.recipient = recipient;
+    }
+
     private void attachMessagesReadyForSendingSubscriber() {
         if (this.isAsync) {
             this.messagesReadyForSending

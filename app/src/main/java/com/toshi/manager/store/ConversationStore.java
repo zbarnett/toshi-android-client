@@ -21,6 +21,7 @@ package com.toshi.manager.store;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.toshi.model.local.ConversationObservables;
 import com.toshi.model.local.Conversation;
 import com.toshi.model.local.Group;
 import com.toshi.model.local.LocalStatusMessage;
@@ -40,7 +41,6 @@ import io.realm.Realm;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
 import io.realm.Sort;
-import kotlin.Triple;
 import rx.Completable;
 import rx.Observable;
 import rx.Single;
@@ -61,12 +61,9 @@ public class ConversationStore {
     private final static PublishSubject<Conversation> CONVERSATION_UPDATED_SUBJECT = PublishSubject.create();
     private final static ExecutorService dbThread = Executors.newSingleThreadExecutor();
 
-    // Returns a triple of RxSubjects, the first being the observable for new messages
-    // the second being the observable for updated messages,
-    // the third being the observable for any changes to the conversation (i.e. if the name or avatar is changed)
-    public Triple<PublishSubject<SofaMessage>, PublishSubject<SofaMessage>, PublishSubject<Conversation>> registerForChanges(final String threadId) {
+    public ConversationObservables registerForChanges(final String threadId) {
         watchedThreadId = threadId;
-        return new Triple<>(NEW_MESSAGE_SUBJECT, UPDATED_MESSAGE_SUBJECT, CONVERSATION_UPDATED_SUBJECT);
+        return new ConversationObservables(NEW_MESSAGE_SUBJECT, UPDATED_MESSAGE_SUBJECT, CONVERSATION_UPDATED_SUBJECT);
     }
 
     public Observable<SofaMessage> registerForDeletedMessages(final String threadId) {
@@ -363,7 +360,7 @@ public class ConversationStore {
                 .flatMap(this::copyOrUpdateGroup)
                 .subscribeOn(Schedulers.from(dbThread))
                 .subscribe(
-                        this::broadcastConversationChanged,
+                        this::broadcastConversationUpdated,
                         this::handleError
                 );
     }

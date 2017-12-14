@@ -144,10 +144,10 @@ class ChatViewModel(private val threadId: String) : ViewModel() {
 
     private fun initChatMessageStore(recipient: Recipient) {
         ChatNotificationManager.suppressNotificationsForConversation(recipient.threadId)
+        val conversationObservables = sofaMessageManager.registerForConversationChanges(recipient.threadId)
 
-        val chatSub = sofaMessageManager
-                .registerForConversationChanges(recipient.threadId)
-                .first
+        val chatSub = conversationObservables
+                .newMessageSubject
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -155,9 +155,8 @@ class ChatViewModel(private val threadId: String) : ViewModel() {
                         { LogUtil.exception(javaClass, it) }
                 )
 
-        val updateSub = sofaMessageManager
-                .registerForConversationChanges(recipient.threadId)
-                .second
+        val updateSub = conversationObservables
+                .updateMessageSubject
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -165,11 +164,12 @@ class ChatViewModel(private val threadId: String) : ViewModel() {
                         { LogUtil.exception(javaClass, it) }
                 )
 
-        val updateConversationSub = sofaMessageManager
-                .registerForConversationChanges(recipient.threadId)
-                .third
+        val updateConversationSub = conversationObservables
+                .conversationUpdatedSubject
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext { chatMessageQueue.updateRecipient(it.recipient) }
+                .doOnNext { this.recipient.value = it.recipient }
                 .subscribe(
                         { updateConversation.value = it },
                         { LogUtil.exception(javaClass, it) }
