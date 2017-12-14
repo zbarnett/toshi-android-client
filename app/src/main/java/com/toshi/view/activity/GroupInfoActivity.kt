@@ -72,6 +72,7 @@ class GroupInfoActivity : AppCompatActivity() {
         leaveGroup.setOnClickListener { showLeaveGroupConfirmationDialog() }
         edit.setOnClickListener { startGroupEditActivity(viewModel.group.value) }
         notificationsWrapper.setOnClickListener { viewModel.muteConversation(notificationSwitch.isChecked) }
+        addParticipants.setOnClickListener { startAddParticipantsActivity(viewModel.group.value) }
     }
 
     private fun showLeaveGroupConfirmationDialog() {
@@ -86,6 +87,10 @@ class GroupInfoActivity : AppCompatActivity() {
 
     private fun startGroupEditActivity(group: Group?) = startActivityAndFinish<ConversationSetupActivity> {
         putExtra(ConversationSetupActivity.EXTRA__GROUP_ID_FOR_EDITING, group?.id)
+    }
+
+    private fun startAddParticipantsActivity(group: Group?) = startActivityAndFinish<AddGroupParticipantsActivity> {
+        putExtra(AddGroupParticipantsActivity.EXTRA__GROUP_ID, group?.id)
     }
 
     private fun processIntentData() {

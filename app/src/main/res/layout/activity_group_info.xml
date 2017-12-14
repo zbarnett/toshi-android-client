@@ -151,43 +151,79 @@
                 style="@style/listSubTitleStyle"
                 tools:text="2 participants"/>
 
+            <LinearLayout
+                android:id="@+id/addParticipants"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="?android:selectableItemBackground">
+
+                <android.support.v4.widget.Space
+                    android:layout_width="26dp"
+                    android:layout_height="0dp" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_group_add"/>
+
+                <android.support.v4.widget.Space
+                    android:layout_width="22dp"
+                    android:layout_height="0dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textColor="@color/colorPrimary"
+                    android:text="@string/add_participants"/>
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"
+                android:layout_marginLeft="72dp"/>
+
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/participants"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:background="@color/subTitleBackgroundColor"/>
+
+            <FrameLayout
+                android:id="@+id/leaveGroup"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:background="?android:selectableItemBackground">
+
+                <TextView
+                    android:id="@+id/label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:textSize="17sp"
+                    android:textColor="@color/textColorPrimary"
+                    android:text="@string/leave_group"/>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right|center_vertical"
+                    app:srcCompat="@drawable/ic_chevron_right" />
+
+            </FrameLayout>
+
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="20dp"
-        android:background="@color/subTitleBackgroundColor"/>
-
-    <FrameLayout
-        android:id="@+id/leaveGroup"
-        android:layout_width="match_parent"
-        android:layout_height="54dp"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:background="?android:selectableItemBackground">
-
-        <TextView
-            android:id="@+id/label"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:textSize="17sp"
-            android:textColor="@color/textColorPrimary"
-            android:text="@string/leave_group"/>
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right|center_vertical"
-            app:srcCompat="@drawable/ic_chevron_right" />
-
-    </FrameLayout>
 
     <View
         android:layout_width="match_parent"
