@@ -35,7 +35,7 @@ import com.toshi.model.local.User
 import com.toshi.view.activity.ConversationSetupActivity
 import com.toshi.view.adapter.SelectGroupParticipantAdapter
 import com.toshi.viewModel.GroupParticipantsViewModel
-import kotlinx.android.synthetic.main.fragment_group_participants.*
+import kotlinx.android.synthetic.main.view_group_participants.*
 
 class GroupParticipantsFragment : Fragment() {
 
@@ -43,7 +43,7 @@ class GroupParticipantsFragment : Fragment() {
     private lateinit var userAdapter: SelectGroupParticipantAdapter
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater?.inflate(R.layout.fragment_group_participants, container, false)
+        return inflater?.inflate(R.layout.view_group_participants, container, false)
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) = init()
