@@ -17,6 +17,7 @@
 
 package com.toshi.viewModel
 
+import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import android.graphics.Bitmap
 import android.net.Uri
@@ -36,25 +37,25 @@ import rx.subscriptions.CompositeSubscription
 class GroupSetupViewModel : ViewModel() {
 
     private val subscriptions by lazy { CompositeSubscription() }
-    private var isCreatingGroup = false
 
     val conversationCreated by lazy { SingleLiveEvent<Conversation>() }
     val groupUpdated by lazy { SingleLiveEvent<Group>() }
     val group by lazy { SingleLiveEvent<Group>() }
     val error by lazy { SingleLiveEvent<Throwable>() }
+    val isCreatingGroup by lazy { MutableLiveData<Boolean>() }
 
     fun createGroup(participants: List<User>,
                     avatarUri: Uri?,
                     groupName: String) {
-        if (isCreatingGroup) return
-        isCreatingGroup = true
+        if (isCreatingGroup.value == true) return
         val subscription = generateAvatarFromUri(avatarUri)
                 .map { avatar -> tryGeneratePlaceholderAvatar(avatar, groupName) }
                 .map { avatar -> createGroupObject(participants, avatar, groupName) }
                 .flatMap { addCurrentUserToGroup(it) }
                 .flatMap { createConversationFromGroup(it) }
                 .observeOn(AndroidSchedulers.mainThread())
-                .doAfterTerminate { isCreatingGroup = false }
+                .doOnSubscribe { isCreatingGroup.value = true }
+                .doAfterTerminate { isCreatingGroup.value = false }
                 .subscribe(
                         { conversationCreated.value = it },
                         { error.value = it }
@@ -78,13 +79,13 @@ class GroupSetupViewModel : ViewModel() {
     fun updateGroup(group: Group,
                     avatarUri: Uri?,
                     groupName: String) {
-        if (isCreatingGroup) return
+        if (isCreatingGroup.value == true) return
         val subscription = generateAvatarFromUri(avatarUri)
                 .map { avatar -> updateGroupObject(group, avatar, groupName) }
                 .flatMapCompletable { saveUpdatedGroup(it) }
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe { isCreatingGroup = true }
-                .doAfterTerminate { isCreatingGroup = false }
+                .doOnSubscribe { isCreatingGroup.value = true }
+                .doAfterTerminate { isCreatingGroup.value = false }
                 .subscribe(
                         { groupUpdated.value = group },
                         { error.value = it }

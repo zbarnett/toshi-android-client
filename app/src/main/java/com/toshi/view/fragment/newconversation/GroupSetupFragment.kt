@@ -32,6 +32,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import com.toshi.R
 import com.toshi.extensions.addHorizontalLineDivider
+import com.toshi.extensions.isVisible
 import com.toshi.extensions.toast
 import com.toshi.model.local.Group
 import com.toshi.model.local.User
@@ -129,6 +130,9 @@ class GroupSetupFragment : Fragment() {
                 (this.activity as ConversationSetupActivity).finish()
             })
         }
+        viewModel.isCreatingGroup.observe(this, Observer {
+            isCreatingGroup -> isCreatingGroup?.let { loadingSpinner.isVisible(it) }
+        })
     }
 
     private fun updateUiFromGroup(group: Group?) {
