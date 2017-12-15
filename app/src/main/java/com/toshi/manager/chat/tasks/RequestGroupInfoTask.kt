@@ -18,19 +18,17 @@
 package com.toshi.manager.chat.tasks
 
 import com.toshi.model.local.User
-import com.toshi.util.LogUtil
 import org.whispersystems.signalservice.api.SignalServiceMessageSender
-import org.whispersystems.signalservice.api.crypto.UntrustedIdentityException
 import org.whispersystems.signalservice.api.messages.SignalServiceDataMessage
 import org.whispersystems.signalservice.api.messages.SignalServiceGroup
 import org.whispersystems.signalservice.api.push.SignalServiceAddress
-import java.io.IOException
+import rx.Completable
 
 class RequestGroupInfoTask(
         private val signalMessageSender: SignalServiceMessageSender
-) {
-    fun run(sender: User, group: SignalServiceGroup) {
-        try {
+) : BaseGroupTask() {
+    fun run(sender: User, group: SignalServiceGroup): Completable {
+        return Completable.fromAction {
             val signalGroup = SignalServiceGroup
                     .newBuilder(SignalServiceGroup.Type.REQUEST_INFO)
                     .withId(group.groupId)
@@ -41,11 +39,7 @@ class RequestGroupInfoTask(
                     .withTimestamp(System.currentTimeMillis())
                     .build()
             signalMessageSender.sendMessage(SignalServiceAddress(sender.toshiId), dataMessage)
-        } catch (ex: Exception) {
-            when (ex) {
-                is IOException, is UntrustedIdentityException -> LogUtil.exception(javaClass, "Unable to request group info")
-                else -> throw ex
-            }
         }
+        .onErrorResumeNext { handleException(it) }
     }
 }

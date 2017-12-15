@@ -30,8 +30,8 @@ import com.toshi.manager.chat.SofaMessageRegistration;
 import com.toshi.manager.chat.SofaMessageSender;
 import com.toshi.manager.model.SofaMessageTask;
 import com.toshi.manager.store.ConversationStore;
-import com.toshi.model.local.ConversationObservables;
 import com.toshi.model.local.Conversation;
+import com.toshi.model.local.ConversationObservables;
 import com.toshi.model.local.Group;
 import com.toshi.model.local.IncomingMessage;
 import com.toshi.model.local.Recipient;
@@ -115,16 +115,14 @@ public final class SofaMessageManager {
     }
 
     public final Completable updateConversationFromGroup(final Group group) {
-        return Completable.fromAction(() -> {
-            messageSender.sendGroupUpdate(group);
-            this.conversationStore.saveGroup(group);
-        }).subscribeOn(Schedulers.io());
+        return messageSender.sendGroupUpdate(group)
+                .andThen(Completable.fromAction(() -> this.conversationStore.saveGroup(group)))
+                .subscribeOn(Schedulers.io());
     }
 
     @NotNull
     public Completable leaveGroup(@NotNull final Group group) {
-        return Completable
-                .fromAction(() -> this.messageSender.leaveGroup(group))
+        return this.messageSender.leaveGroup(group)
                 .andThen(this.conversationStore.deleteByThreadId(group.getId()))
                 .doAfterTerminate(() -> ChatNotificationManager.removeNotificationsForConversation(group.getId()))
                 .subscribeOn(Schedulers.io());

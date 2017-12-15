@@ -17,42 +17,34 @@
 
 package com.toshi.manager.chat.tasks
 
-import com.toshi.exception.GroupCreationException
 import com.toshi.model.local.Group
 import org.whispersystems.libsignal.util.Hex
 import org.whispersystems.signalservice.api.SignalServiceMessageSender
 import org.whispersystems.signalservice.api.messages.SignalServiceDataMessage
 import org.whispersystems.signalservice.api.messages.SignalServiceGroup
-import org.whispersystems.signalservice.api.push.exceptions.EncapsulatedExceptions
+import rx.Completable
 import rx.Single
-import java.io.IOException
 
 class CreateGroupTask(
         private val signalMessageSender: SignalServiceMessageSender
-) {
+) : BaseGroupTask() {
     fun run(group: Group): Single<Group> {
-        return Single.fromCallable<Group> {
-            try {
-                val signalGroup = SignalServiceGroup
-                        .newBuilder(SignalServiceGroup.Type.UPDATE)
-                        .withId(Hex.fromStringCondensed(group.id))
-                        .withName(group.title)
-                        .withMembers(group.memberIds)
-                        .withAvatar(group.avatar.stream)
-                        .build()
-                val groupDataMessage = SignalServiceDataMessage
-                        .newBuilder()
-                        .withTimestamp(System.currentTimeMillis())
-                        .asGroupMessage(signalGroup)
-                        .build()
-                signalMessageSender.sendMessage(group.memberAddresses, groupDataMessage)
-                group
-            } catch (ex: Exception) {
-                when (ex) {
-                    is IOException, is EncapsulatedExceptions -> throw GroupCreationException(ex)
-                    else -> throw ex
-                }
-            }
+        return Completable.fromAction {
+            val signalGroup = SignalServiceGroup
+                    .newBuilder(SignalServiceGroup.Type.UPDATE)
+                    .withId(Hex.fromStringCondensed(group.id))
+                    .withName(group.title)
+                    .withMembers(group.memberIds)
+                    .withAvatar(group.avatar.stream)
+                    .build()
+            val groupDataMessage = SignalServiceDataMessage
+                    .newBuilder()
+                    .withTimestamp(System.currentTimeMillis())
+                    .asGroupMessage(signalGroup)
+                    .build()
+            signalMessageSender.sendMessage(group.memberAddresses, groupDataMessage)
         }
+        .onErrorResumeNext { handleException(it) }
+        .toSingle { group }
     }
 }

@@ -21,20 +21,24 @@ import com.toshi.model.local.Group
 import org.whispersystems.signalservice.api.SignalServiceMessageSender
 import org.whispersystems.signalservice.api.messages.SignalServiceDataMessage
 import org.whispersystems.signalservice.api.messages.SignalServiceGroup
+import rx.Completable
 
 class LeaveGroupTask(
         private val signalMessageSender: SignalServiceMessageSender
-) {
-    fun run(group: Group) {
-        val signalGroup = SignalServiceGroup
-                .newBuilder(SignalServiceGroup.Type.QUIT)
-                .withId(group.idBytes)
-                .build()
-        val dataMessage = SignalServiceDataMessage
-                .newBuilder()
-                .asGroupMessage(signalGroup)
-                .withTimestamp(System.currentTimeMillis())
-                .build()
-        signalMessageSender.sendMessage(group.memberAddresses, dataMessage)
+) : BaseGroupTask() {
+    fun run(group: Group): Completable {
+        return Completable.fromAction {
+            val signalGroup = SignalServiceGroup
+                    .newBuilder(SignalServiceGroup.Type.QUIT)
+                    .withId(group.idBytes)
+                    .build()
+            val dataMessage = SignalServiceDataMessage
+                    .newBuilder()
+                    .asGroupMessage(signalGroup)
+                    .withTimestamp(System.currentTimeMillis())
+                    .build()
+            signalMessageSender.sendMessage(group.memberAddresses, dataMessage)
+        }
+        .onErrorResumeNext { handleException(it) }
     }
 }

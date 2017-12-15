@@ -49,6 +49,7 @@ import org.whispersystems.signalservice.internal.configuration.SignalCdnUrl;
 import org.whispersystems.signalservice.internal.configuration.SignalServiceConfiguration;
 import org.whispersystems.signalservice.internal.configuration.SignalServiceUrl;
 
+import rx.Completable;
 import rx.Single;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -164,20 +165,20 @@ public class SofaMessageSender {
         return new CreateGroupTask(this.signalMessageSender).run(group);
     }
 
-    public void requestGroupInfo(final User sender, final SignalServiceGroup group) {
-        new RequestGroupInfoTask(this.signalMessageSender).run(sender, group);
+    public Completable requestGroupInfo(final User sender, final SignalServiceGroup group) {
+        return new RequestGroupInfoTask(this.signalMessageSender).run(sender, group);
     }
 
-    public void sendGroupInfo(@NotNull final String messageSource, @NotNull final Group group) {
-        new SendGroupInfoTask(this.signalMessageSender).run(messageSource, group);
+    public Completable sendGroupInfo(@NotNull final String messageSource, @NotNull final Group group) {
+        return new SendGroupInfoTask(this.signalMessageSender).run(messageSource, group);
     }
 
-    public void sendGroupUpdate(@NotNull final Group group) {
-        new SendGroupUpdateTask(this.signalMessageSender).run(group);
+    public Completable sendGroupUpdate(@NotNull final Group group) {
+        return new SendGroupUpdateTask(this.signalMessageSender).run(group);
     }
 
-    public void leaveGroup(final Group group) {
-        new LeaveGroupTask(this.signalMessageSender).run(group);
+    public Completable leaveGroup(final Group group) {
+        return new LeaveGroupTask(this.signalMessageSender).run(group);
     }
 
     private void updateExistingMessage(final Recipient receiver, final SofaMessage message) {

@@ -37,6 +37,7 @@ import com.toshi.view.BaseApplication
 import org.whispersystems.signalservice.api.SignalServiceMessageReceiver
 import org.whispersystems.signalservice.api.messages.SignalServiceDataMessage
 import rx.Single
+import rx.schedulers.Schedulers
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
@@ -162,9 +163,18 @@ class HandleMessageTask(
             Single.just(signalMessage.group)
                     .flatMap { Group.fromSignalGroup(it) }
                     .map { handleGetGroupFromSignalGroup(it) }
-                    .doOnError { messageSender.requestGroupInfo(sender, signalMessage.group) }
+                    .doOnError { requestGroupInfo(sender, signalMessage) }
                     .onErrorReturn { Recipient(Group.emptyGroup(signalMessage.group.groupId)) }
         }
+    }
+
+    private fun requestGroupInfo(sender: User, signalMessage: DecryptedSignalMessage) {
+        messageSender.requestGroupInfo(sender, signalMessage.group)
+                .subscribeOn(Schedulers.io())
+                .subscribe(
+                        {},
+                        { LogUtil.e(javaClass, "Error requesting group info") }
+                )
     }
 
     private fun handleGetGroupFromSignalGroup(group: Group?): Recipient {

@@ -17,20 +17,18 @@
 
 package com.toshi.manager.chat.tasks
 
-import com.toshi.exception.GroupCreationException
 import com.toshi.model.local.Group
 import org.whispersystems.libsignal.util.Hex
 import org.whispersystems.signalservice.api.SignalServiceMessageSender
 import org.whispersystems.signalservice.api.messages.SignalServiceDataMessage
 import org.whispersystems.signalservice.api.messages.SignalServiceGroup
-import org.whispersystems.signalservice.api.push.exceptions.EncapsulatedExceptions
-import java.io.IOException
+import rx.Completable
 
 class SendGroupUpdateTask(
         private val signalMessageSender: SignalServiceMessageSender
-) {
-    fun run(group: Group) {
-        try {
+) : BaseGroupTask() {
+    fun run(group: Group): Completable {
+        return Completable.fromAction {
             val signalGroup = SignalServiceGroup.newBuilder(SignalServiceGroup.Type.UPDATE)
                     .withId(Hex.fromStringCondensed(group.id))
                     .withName(group.title)
@@ -42,11 +40,7 @@ class SendGroupUpdateTask(
                     .asGroupMessage(signalGroup)
                     .build()
             signalMessageSender.sendMessage(group.memberAddresses, groupDataMessage)
-        } catch (ex: Exception) {
-            when (ex) {
-                is IOException, is EncapsulatedExceptions -> throw GroupCreationException(ex)
-                else -> throw ex
-            }
         }
+        .onErrorResumeNext { handleException(it) }
     }
 }

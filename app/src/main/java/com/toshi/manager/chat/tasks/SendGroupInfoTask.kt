@@ -17,22 +17,20 @@
 
 package com.toshi.manager.chat.tasks
 
-import com.toshi.exception.GroupCreationException
 import com.toshi.model.local.Group
 import org.whispersystems.libsignal.util.Hex
 import org.whispersystems.signalservice.api.SignalServiceMessageSender
 import org.whispersystems.signalservice.api.messages.SignalServiceDataMessage
 import org.whispersystems.signalservice.api.messages.SignalServiceGroup
 import org.whispersystems.signalservice.api.push.SignalServiceAddress
-import org.whispersystems.signalservice.api.push.exceptions.EncapsulatedExceptions
-import java.io.IOException
+import rx.Completable
 
 class SendGroupInfoTask(
         private val signalMessageSender: SignalServiceMessageSender
-) {
-    fun run(requestingUserAddress: String, group: Group) {
-        if (!shouldSendGroupInfo(requestingUserAddress, group)) return
-        try {
+) : BaseGroupTask() {
+    fun run(requestingUserAddress: String, group: Group): Completable {
+        if (!shouldSendGroupInfo(requestingUserAddress, group)) return Completable.complete()
+        return Completable.fromAction {
             val signalGroup = SignalServiceGroup.newBuilder(SignalServiceGroup.Type.UPDATE)
                     .withId(Hex.fromStringCondensed(group.id))
                     .withName(group.title)
@@ -45,12 +43,8 @@ class SendGroupInfoTask(
                     .build()
             val address = SignalServiceAddress(requestingUserAddress)
             signalMessageSender.sendMessage(address, groupDataMessage)
-        } catch (ex: Exception) {
-            when (ex) {
-                is IOException, is EncapsulatedExceptions -> throw GroupCreationException(ex)
-                else -> throw ex
-            }
         }
+        .onErrorResumeNext { handleException(it) }
     }
 
     private fun shouldSendGroupInfo(requestingUserAddress: String, group: Group) = group.memberIds.contains(requestingUserAddress)

@@ -50,10 +50,11 @@ class GroupUpdateTask(
         val signalGroup = dataMessage.groupInfo.get()
         Group
                 .fromSignalGroup(signalGroup)
+                .flatMapCompletable { messageSender.sendGroupInfo(messageSource, it) }
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .subscribe(
-                        { group -> messageSender.sendGroupInfo(messageSource, group) },
+                        {},
                         { LogUtil.e(javaClass, "Request for group info failed.") }
                 )
     }
