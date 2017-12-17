@@ -19,26 +19,24 @@ package com.toshi.model.local
 
 import android.support.annotation.IntDef
 import com.toshi.R
-import com.toshi.model.sofa.SofaMessage
 import com.toshi.view.BaseApplication
 
-class LocalStatusMessage {
+class LocalStatusMessage(val type: Long, val sender: User?) {
     companion object {
         const val NEW_GROUP = 0L
         const val USER_LEFT = 1L
-
-        fun loadString(sofaMessage: SofaMessage): String {
-            val type = sofaMessage.payload.toLong()
-            return when (type) {
-                LocalStatusMessage.NEW_GROUP -> BaseApplication.get().getString(R.string.lsm_group_created)
-                LocalStatusMessage.USER_LEFT -> formatUserLeftMessage(sofaMessage)
-                else -> ""
-            }
-        }
-
-        private fun formatUserLeftMessage(sofaMessage: SofaMessage) =
-                String.format(BaseApplication.get().getString(R.string.lsm_user_left), sofaMessage.sender.displayName)
     }
+
+    fun loadString(): String {
+        return when (type) {
+            NEW_GROUP -> BaseApplication.get().getString(R.string.lsm_group_created)
+            USER_LEFT -> formatUserLeftMessage()
+            else -> ""
+        }
+    }
+
+    private fun formatUserLeftMessage() =
+            String.format(BaseApplication.get().getString(R.string.lsm_user_left), sender?.displayName)
 
     @IntDef(NEW_GROUP, USER_LEFT)
     annotation class Type

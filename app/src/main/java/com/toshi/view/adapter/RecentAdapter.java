@@ -246,7 +246,9 @@ public class RecentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                     return request.toUserVisibleString(sentByLocal, sofaMessage.getSendState());
                 }
                 case SofaType.LOCAL_STATUS_MESSAGE: {
-                    return LocalStatusMessage.Companion.loadString(sofaMessage);
+                    final LocalStatusMessage localStatusMessage =
+                            SofaAdapters.get().localStatusMessageRequestFrom(sofaMessage.getPayload());
+                    return localStatusMessage.loadString();
                 }
                 case SofaType.COMMAND_REQUEST:
                 case SofaType.INIT_REQUEST:

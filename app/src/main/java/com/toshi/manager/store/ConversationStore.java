@@ -21,12 +21,13 @@ package com.toshi.manager.store;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.toshi.model.local.ConversationObservables;
 import com.toshi.model.local.Conversation;
+import com.toshi.model.local.ConversationObservables;
 import com.toshi.model.local.Group;
 import com.toshi.model.local.LocalStatusMessage;
 import com.toshi.model.local.Recipient;
 import com.toshi.model.local.User;
+import com.toshi.model.sofa.SofaAdapters;
 import com.toshi.model.sofa.SofaMessage;
 import com.toshi.util.LogUtil;
 import com.toshi.view.BaseApplication;
@@ -147,8 +148,11 @@ public class ConversationStore {
     }
 
     private Single<Conversation> addGroupCreatedStatusMessage(@NonNull final Conversation conversation) {
-        final SofaMessage statusMessage = new SofaMessage().makeNewLocalStatusMessage(LocalStatusMessage.NEW_GROUP);
-        return saveMessage(conversation.getRecipient(), statusMessage);
+        final LocalStatusMessage localStatusMessage =
+                new LocalStatusMessage(LocalStatusMessage.NEW_GROUP, null);
+        final String localStatusMessageJson = SofaAdapters.get().toJson(localStatusMessage);
+        final SofaMessage sofaMessage = new SofaMessage().makeNewLocalStatusMessage(localStatusMessageJson);
+        return saveMessage(conversation.getRecipient(), sofaMessage);
     }
 
     private Single<Conversation> saveMessage(
@@ -365,11 +369,12 @@ public class ConversationStore {
                 );
     }
 
-    private Single<Conversation> addUserLeftStatusMessage(@NonNull final Conversation conversation, @NonNull User user) {
-        final SofaMessage statusMessage = new SofaMessage()
-                .makeNewLocalStatusMessage(LocalStatusMessage.USER_LEFT)
-                .setSender(user);
-        return saveMessage(conversation.getRecipient(), statusMessage);
+    private Single<Conversation> addUserLeftStatusMessage(@NonNull final Conversation conversation, @NonNull User sender) {
+        final LocalStatusMessage localStatusMessage =
+                new LocalStatusMessage(LocalStatusMessage.USER_LEFT, sender);
+        final String localStatusMessageJson = SofaAdapters.get().toJson(localStatusMessage);
+        final SofaMessage sofaMessage = new SofaMessage().makeNewLocalStatusMessage(localStatusMessageJson);
+        return saveMessage(conversation.getRecipient(), sofaMessage);
     }
 
     public boolean areUnreadMessages() {

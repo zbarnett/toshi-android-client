@@ -21,6 +21,7 @@ package com.toshi.model.sofa;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.JsonDataException;
 import com.squareup.moshi.Moshi;
+import com.toshi.model.local.LocalStatusMessage;
 import com.toshi.model.local.UnsignedW3Transaction;
 import com.toshi.model.network.SofaError;
 import com.toshi.model.network.SofaErrors;
@@ -40,6 +41,7 @@ public class SofaAdapters {
     private final JsonAdapter<InitRequest> initRequestJsonAdapter;
     private final JsonAdapter<UnsignedW3Transaction> unsignedW3TransactionAdapter;
     private final JsonAdapter<SofaErrors> errorAdapter;
+    private final JsonAdapter<LocalStatusMessage> localStatusMessageJsonAdapter;
 
     public static SofaAdapters get() {
         if (instance == null) {
@@ -58,6 +60,7 @@ public class SofaAdapters {
         this.initRequestJsonAdapter = moshi.adapter(InitRequest.class);
         this.unsignedW3TransactionAdapter = moshi.adapter(UnsignedW3Transaction.class);
         this.errorAdapter = moshi.adapter(SofaErrors.class);
+        this.localStatusMessageJsonAdapter = moshi.adapter(LocalStatusMessage.class);
     }
 
     public String toJson(final Message sofaMessage) {
@@ -77,6 +80,11 @@ public class SofaAdapters {
 
     public String toJson(final Init init) {
         return SofaType.createHeader(SofaType.INIT) + this.initAdapter.toJson(init);
+    }
+
+    public String toJson(final LocalStatusMessage localStatusMessage) {
+        return SofaType.createHeader(SofaType.LOCAL_STATUS_MESSAGE)
+                + this.localStatusMessageJsonAdapter.toJson(localStatusMessage);
     }
 
     public Message messageFrom(final String payload) throws IOException {
@@ -124,6 +132,14 @@ public class SofaAdapters {
             final SofaErrors sofaErrors = errorAdapter.fromJson(payload);
             if (sofaErrors.getErrors().size() == 0) return null;
             return sofaErrors.getErrors().get(0);
+        } catch (final JsonDataException ex) {
+            throw new IOException(ex);
+        }
+    }
+
+    public LocalStatusMessage localStatusMessageRequestFrom(final String payload) throws IOException {
+        try {
+            return localStatusMessageJsonAdapter.fromJson(payload);
         } catch (final JsonDataException ex) {
             throw new IOException(ex);
         }

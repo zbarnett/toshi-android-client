@@ -20,13 +20,12 @@ package com.toshi.view.adapter.viewholder
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import com.toshi.model.local.LocalStatusMessage
-import com.toshi.model.sofa.SofaMessage
 import kotlinx.android.synthetic.main.list_item__local_status_message.view.*
 
 class LocalStatusMessageViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
 
-    fun setMessage(sofaMessage: SofaMessage) {
-        val string = LocalStatusMessage.loadString(sofaMessage)
-        itemView.message.text = string
+    fun setMessage(localStatusMessage: LocalStatusMessage) {
+        val statusMessage = localStatusMessage.loadString()
+        itemView.message.text = statusMessage
     }
 }

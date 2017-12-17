@@ -25,6 +25,7 @@ import android.view.ViewGroup;
 
 import com.toshi.R;
 import com.toshi.model.local.ChainPosition;
+import com.toshi.model.local.LocalStatusMessage;
 import com.toshi.model.local.Recipient;
 import com.toshi.model.local.User;
 import com.toshi.model.sofa.Message;
@@ -342,7 +343,8 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
 
             case SofaType.LOCAL_STATUS_MESSAGE: {
                 final LocalStatusMessageViewHolder vh = (LocalStatusMessageViewHolder) holder;
-                vh.setMessage(sofaMessage);
+                final LocalStatusMessage localStatusMessage = SofaAdapters.get().localStatusMessageRequestFrom(payload);
+                vh.setMessage(localStatusMessage);
                 break;
             }
         }
