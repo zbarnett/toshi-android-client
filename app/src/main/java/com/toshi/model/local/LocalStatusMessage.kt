@@ -21,22 +21,54 @@ import android.support.annotation.IntDef
 import com.toshi.R
 import com.toshi.view.BaseApplication
 
-class LocalStatusMessage(val type: Long, val sender: User?) {
+class LocalStatusMessage(
+        val type: Long,
+        val sender: User?,
+        val newUsers: List<User>?) {
+
     companion object {
         const val NEW_GROUP = 0L
         const val USER_LEFT = 1L
+        const val USER_ADDED = 2L
     }
 
     fun loadString(): String {
         return when (type) {
             NEW_GROUP -> BaseApplication.get().getString(R.string.lsm_group_created)
             USER_LEFT -> formatUserLeftMessage()
+            USER_ADDED -> formatUserAddedMessage()
             else -> ""
         }
     }
 
-    private fun formatUserLeftMessage() =
-            String.format(BaseApplication.get().getString(R.string.lsm_user_left), sender?.displayName)
+    private fun formatUserLeftMessage() = String.format(BaseApplication.get().getString(R.string.lsm_user_left), sender?.displayName)
+
+    private fun formatUserAddedMessage(): String {
+        val displayNameOfSender = sender?.displayName ?: ""
+        return newUsers?.let {
+            return when (newUsers.size) {
+                0 -> ""
+                1 -> BaseApplication.get().getString(R.string.lsm_added_user, displayNameOfSender, newUsers[0].displayName)
+                in 2..3 -> {
+                    val firstUsers = joinToString(newUsers.size - 1, newUsers)
+                    val lastUser = newUsers.last().displayName
+                    BaseApplication.get().getString(R.string.lsm_added_users, displayNameOfSender, firstUsers, lastUser)
+                }
+                else -> {
+                    val numberOfNamesToShow = 2
+                    val firstUsers = joinToString(numberOfNamesToShow, newUsers)
+                    val numberOfLeftoverUsers = newUsers.size - numberOfNamesToShow
+                    BaseApplication.get().getString(R.string.lsm_added_users_wrapped, displayNameOfSender, firstUsers, numberOfLeftoverUsers)
+                }
+            }
+        } ?: ""
+    }
+
+    private fun joinToString(n: Int, newUsers: List<User>): String {
+        return newUsers
+                .take(n)
+                .joinToString(separator = ", ") { it.displayName }
+    }
 
     @IntDef(NEW_GROUP, USER_LEFT)
     annotation class Type

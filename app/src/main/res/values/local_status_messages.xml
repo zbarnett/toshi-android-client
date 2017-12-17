@@ -19,4 +19,7 @@
 <resources>
     <string name="lsm_group_created">Group created</string>
     <string name="lsm_user_left">%s left the group</string>
+    <string name="lsm_added_user">%1$s added %2$s to the group</string>
+    <string name="lsm_added_users">%1$s added %2$s and %3$s to the group</string>
+    <string name="lsm_added_users_wrapped">%1$s added %2$s and %3$d others to the group</string>
 </resources>

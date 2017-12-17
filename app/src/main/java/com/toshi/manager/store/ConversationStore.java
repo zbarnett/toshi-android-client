@@ -149,7 +149,7 @@ public class ConversationStore {
 
     private Single<Conversation> addGroupCreatedStatusMessage(@NonNull final Conversation conversation) {
         final LocalStatusMessage localStatusMessage =
-                new LocalStatusMessage(LocalStatusMessage.NEW_GROUP, null);
+                new LocalStatusMessage(LocalStatusMessage.NEW_GROUP, null, null);
         final String localStatusMessageJson = SofaAdapters.get().toJson(localStatusMessage);
         final SofaMessage sofaMessage = new SofaMessage().makeNewLocalStatusMessage(localStatusMessageJson);
         return saveMessage(conversation.getRecipient(), sofaMessage);
@@ -371,10 +371,36 @@ public class ConversationStore {
 
     private Single<Conversation> addUserLeftStatusMessage(@NonNull final Conversation conversation, @NonNull User sender) {
         final LocalStatusMessage localStatusMessage =
-                new LocalStatusMessage(LocalStatusMessage.USER_LEFT, sender);
+                new LocalStatusMessage(LocalStatusMessage.USER_LEFT, sender, null);
         final String localStatusMessageJson = SofaAdapters.get().toJson(localStatusMessage);
         final SofaMessage sofaMessage = new SofaMessage().makeNewLocalStatusMessage(localStatusMessageJson);
         return saveMessage(conversation.getRecipient(), sofaMessage);
+    }
+
+    public Single<Conversation> addNewGroupParticipantsStatusMessage(@NonNull final String groupId,
+                                                     @NonNull final User sender,
+                                                     final List<User> newUsers) {
+        return loadByThreadId(groupId)
+                .subscribeOn(Schedulers.io())
+                .flatMap(conversation -> addNewGroupParticipantsStatusMessage(conversation, sender, newUsers))
+                .doOnSuccess(this::broadcastConversationUpdated)
+                .doOnError(throwable -> LogUtil.e(getClass(), "Error while creating new status message " + throwable));
+    }
+
+    private Single<Conversation> addNewGroupParticipantsStatusMessage(final Conversation conversation,
+                                                                      final User sender,
+                                                                      final List<User> newUsers) {
+        final SofaMessage statusMessage = generateAddStatusMessage(sender, newUsers);
+        if (statusMessage == null) return Single.just(conversation);
+        return saveMessage(conversation.getRecipient(), statusMessage);
+    }
+
+    private SofaMessage generateAddStatusMessage(final User sender, final List<User> newUsers) {
+        if (newUsers.isEmpty()) return null;
+        final LocalStatusMessage localStatusMessage =
+                new LocalStatusMessage(LocalStatusMessage.USER_ADDED, sender, newUsers);
+        final String localStatusMessageJson = SofaAdapters.get().toJson(localStatusMessage);
+        return new SofaMessage().makeNewLocalStatusMessage(localStatusMessageJson);
     }
 
     public boolean areUnreadMessages() {
