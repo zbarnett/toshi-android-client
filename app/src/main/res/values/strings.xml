@@ -311,4 +311,5 @@
     <string name="add_participants_error">Unable to add participants</string>
     <string name="invalid_group">Invalid group</string>
     <string name="add_participants">Add participants</string>
+    <string name="you">You</string>
 </resources>

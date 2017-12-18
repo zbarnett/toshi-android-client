@@ -28,6 +28,7 @@ import com.toshi.crypto.signal.store.SignalTrustStore;
 import com.toshi.manager.chat.SofaMessageReceiver;
 import com.toshi.manager.chat.SofaMessageRegistration;
 import com.toshi.manager.chat.SofaMessageSender;
+import com.toshi.manager.chat.tasks.NewGroupParticipantsTask;
 import com.toshi.manager.model.SofaMessageTask;
 import com.toshi.manager.store.ConversationStore;
 import com.toshi.model.local.Conversation;
@@ -115,9 +116,20 @@ public final class SofaMessageManager {
     }
 
     public final Completable updateConversationFromGroup(final Group group) {
-        return messageSender.sendGroupUpdate(group)
+        return BaseApplication
+                .get()
+                .getUserManager()
+                .getCurrentUser()
+                .map(User::getToshiId)
+                .flatMapCompletable(localUserId -> updateNewParticipants(group, localUserId))
+                .andThen(messageSender.sendGroupUpdate(group))
                 .andThen(Completable.fromAction(() -> this.conversationStore.saveGroup(group)))
                 .subscribeOn(Schedulers.io());
+    }
+
+    private Completable updateNewParticipants(final Group group, final String localUserId) {
+        return new NewGroupParticipantsTask(this.conversationStore)
+                .run(group.getId(), localUserId, group.getMemberIds());
     }
 
     @NotNull

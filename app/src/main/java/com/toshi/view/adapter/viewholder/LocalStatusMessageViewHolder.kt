@@ -24,8 +24,8 @@ import kotlinx.android.synthetic.main.list_item__local_status_message.view.*
 
 class LocalStatusMessageViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
 
-    fun setMessage(localStatusMessage: LocalStatusMessage) {
-        val statusMessage = localStatusMessage.loadString()
+    fun setMessage(localStatusMessage: LocalStatusMessage, isSenderLocalUser: Boolean) {
+        val statusMessage = localStatusMessage.loadString(isSenderLocalUser)
         itemView.message.text = statusMessage
     }
 }

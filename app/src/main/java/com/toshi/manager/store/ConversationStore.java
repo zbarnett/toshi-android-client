@@ -148,8 +148,7 @@ public class ConversationStore {
     }
 
     private Single<Conversation> addGroupCreatedStatusMessage(@NonNull final Conversation conversation) {
-        final LocalStatusMessage localStatusMessage =
-                new LocalStatusMessage(LocalStatusMessage.NEW_GROUP, null, null);
+        final LocalStatusMessage localStatusMessage = new LocalStatusMessage(LocalStatusMessage.NEW_GROUP);
         final String localStatusMessageJson = SofaAdapters.get().toJson(localStatusMessage);
         final SofaMessage sofaMessage = new SofaMessage().makeNewLocalStatusMessage(localStatusMessageJson);
         return saveMessage(conversation.getRecipient(), sofaMessage);
@@ -370,8 +369,7 @@ public class ConversationStore {
     }
 
     private Single<Conversation> addUserLeftStatusMessage(@NonNull final Conversation conversation, @NonNull User sender) {
-        final LocalStatusMessage localStatusMessage =
-                new LocalStatusMessage(LocalStatusMessage.USER_LEFT, sender, null);
+        final LocalStatusMessage localStatusMessage = new LocalStatusMessage(LocalStatusMessage.USER_LEFT, sender);
         final String localStatusMessageJson = SofaAdapters.get().toJson(localStatusMessage);
         final SofaMessage sofaMessage = new SofaMessage().makeNewLocalStatusMessage(localStatusMessageJson);
         return saveMessage(conversation.getRecipient(), sofaMessage);
@@ -397,8 +395,7 @@ public class ConversationStore {
 
     private SofaMessage generateAddStatusMessage(final User sender, final List<User> newUsers) {
         if (newUsers.isEmpty()) return null;
-        final LocalStatusMessage localStatusMessage =
-                new LocalStatusMessage(LocalStatusMessage.USER_ADDED, sender, newUsers);
+        final LocalStatusMessage localStatusMessage = new LocalStatusMessage(LocalStatusMessage.USER_ADDED, sender, newUsers);
         final String localStatusMessageJson = SofaAdapters.get().toJson(localStatusMessage);
         return new SofaMessage().makeNewLocalStatusMessage(localStatusMessageJson);
     }

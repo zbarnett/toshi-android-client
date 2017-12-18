@@ -24,7 +24,11 @@ import com.toshi.view.BaseApplication
 class LocalStatusMessage(
         val type: Long,
         val sender: User?,
-        val newUsers: List<User>?) {
+        val newUsers: List<User>?
+) {
+
+    constructor(type: Long) : this(type, null, null)
+    constructor(type: Long, sender: User?) : this(type, sender, null)
 
     companion object {
         const val NEW_GROUP = 0L
@@ -32,19 +36,21 @@ class LocalStatusMessage(
         const val USER_ADDED = 2L
     }
 
-    fun loadString(): String {
+    fun loadString(isSenderLocalUser: Boolean): String {
         return when (type) {
             NEW_GROUP -> BaseApplication.get().getString(R.string.lsm_group_created)
             USER_LEFT -> formatUserLeftMessage()
-            USER_ADDED -> formatUserAddedMessage()
+            USER_ADDED -> formatUserAddedMessage(isSenderLocalUser)
             else -> ""
         }
     }
 
     private fun formatUserLeftMessage() = String.format(BaseApplication.get().getString(R.string.lsm_user_left), sender?.displayName)
 
-    private fun formatUserAddedMessage(): String {
-        val displayNameOfSender = sender?.displayName ?: ""
+    private fun formatUserAddedMessage(isSenderLocalUser: Boolean): String {
+        val displayNameOfSender = if (isSenderLocalUser) BaseApplication.get().getString(R.string.you)
+        else sender?.displayName ?: ""
+
         return newUsers?.let {
             return when (newUsers.size) {
                 0 -> ""

@@ -344,7 +344,11 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
             case SofaType.LOCAL_STATUS_MESSAGE: {
                 final LocalStatusMessageViewHolder vh = (LocalStatusMessageViewHolder) holder;
                 final LocalStatusMessage localStatusMessage = SofaAdapters.get().localStatusMessageRequestFrom(payload);
-                vh.setMessage(localStatusMessage);
+                final User localUser = getCurrentLocalUser();
+                final User sender = localStatusMessage.getSender();
+                final boolean isSenderLocalUser = (localUser != null && sender != null)
+                        && localUser.getToshiId().equals(sender.getToshiId());
+                vh.setMessage(localStatusMessage, isSenderLocalUser);
                 break;
             }
         }
