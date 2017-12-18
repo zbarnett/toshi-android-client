@@ -21,6 +21,7 @@ package com.toshi.model.local;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.toshi.util.FileUtil;
 import com.toshi.view.BaseApplication;
@@ -31,6 +32,7 @@ import org.whispersystems.signalservice.api.messages.SignalServiceAttachmentPoin
 import org.whispersystems.signalservice.api.messages.SignalServiceGroup;
 import org.whispersystems.signalservice.api.push.SignalServiceAddress;
 
+import java.io.File;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Collections;
@@ -74,33 +76,37 @@ public class Group extends RealmObject {
             this.title = group.getName().get();
         }
 
-        processAvatar(group, messageReceiver);
-
         if (group.getMembers().isPresent()) {
             return lookupUsers(group.getMembers().get())
                     .map(this.members::addAll)
                     .flatMapCompletable(__ -> processAvatar(group, messageReceiver))
-                    .toSingleDefault(this);
+                    .toSingle(() -> this);
         }
 
-        return Single.just(this);
+        return processAvatar(group, messageReceiver)
+                .toSingle(() -> this);
     }
 
     private Completable processAvatar(final SignalServiceGroup group, final SignalServiceMessageReceiver messageReceiver) {
         if (group.getAvatar().isPresent()) {
-
             return Single.fromCallable(() -> {
                 final SignalServiceAttachmentPointer attachment = group.getAvatar().get().asPointer();
                 return FileUtil.writeAttachmentToFileFromMessageReceiver(attachment, messageReceiver);
             })
-            .flatMap(file -> FileUtil.compressImage(FileUtil.MAX_SIZE, file))
+            .flatMap(this::compressImage)
             .map(file -> BitmapFactory.decodeFile(file.getAbsolutePath()))
             .map(Avatar::new)
             .map(avatar -> this.avatar = avatar)
-            .toCompletable();
+            .toCompletable()
+            .onErrorComplete();
         }
 
         return Completable.complete();
+    }
+
+    private Single<File> compressImage(@Nullable final File file) {
+        if (file == null) return Single.error(new Throwable("File is null when trying to compress it"));
+        return FileUtil.compressImage(FileUtil.MAX_SIZE, file);
     }
 
     private Single<List<User>> lookupUsers(final List<String> userIds) {
