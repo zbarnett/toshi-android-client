@@ -83,7 +83,10 @@ class GroupParticipantsFragment : Fragment() {
         userAdapter.setSelectedUsers(selectedUsers)
     }
 
-    private fun handleUserClicked(user: User) = viewModel.addSelectedParticipant(user)
+    private fun handleUserClicked(user: User) {
+        userAdapter.addOrRemoveUser(user)
+        viewModel.addSelectedParticipant(user)
+    }
 
     private fun initObservers() {
         initSearch()
