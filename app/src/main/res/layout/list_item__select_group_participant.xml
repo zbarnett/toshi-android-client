@@ -16,7 +16,7 @@
   ~     along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<FrameLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -34,25 +34,25 @@
         app:civ_border_width="1dp"
         app:civ_border_color="@color/divider"/>
 
+    <android.support.v4.widget.Space
+        android:layout_width="12dp"
+        android:layout_height="match_parent"/>
+
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
         android:orientation="vertical"
-        android:layout_gravity="center_vertical"
-        android:layout_marginLeft="56dp">
+        android:layout_gravity="center_vertical">
 
         <TextView
             android:id="@+id/name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/TextStyleMedium"
             android:textSize="14sp"
             android:textColor="@color/textColorPrimary"
-            tools:text="Username"/>
-
-        <android.support.v4.widget.Space
-            android:layout_width="0dp"
-            android:layout_height="3dp" />
+            tools:text="Username"
+            style="@style/MediumEllipsizeEndStyle"/>
 
         <TextView
             android:id="@+id/username"
@@ -60,9 +60,14 @@
             android:layout_height="wrap_content"
             android:textSize="14sp"
             android:textColor="@color/textColorSecondary"
-            tools:text="username"/>
+            tools:text="username"
+            style="@style/MediumEllipsizeEndStyle"/>
 
     </LinearLayout>
+
+    <android.support.v4.widget.Space
+        android:layout_width="12dp"
+        android:layout_height="match_parent"/>
 
     <CheckBox
         android:id="@+id/checkbox"
@@ -74,11 +79,4 @@
         android:clickable="false"
         android:layout_gravity="right|center_vertical"/>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginLeft="56dp"
-        android:layout_gravity="bottom"
-        android:background="@color/divider"/>
-
-</FrameLayout>
+</LinearLayout>
