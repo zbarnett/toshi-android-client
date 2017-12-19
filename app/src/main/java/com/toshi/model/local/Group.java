@@ -96,6 +96,7 @@ public class Group extends RealmObject {
             .flatMap(this::compressImage)
             .map(file -> BitmapFactory.decodeFile(file.getAbsolutePath()))
             .map(Avatar::new)
+            .onErrorResumeNext(avatar -> getCurrentAvatarIfNull())
             .map(avatar -> this.avatar = avatar)
             .toCompletable()
             .onErrorComplete();
@@ -121,6 +122,11 @@ public class Group extends RealmObject {
                 .toList()
                 .toSingle()
                 .subscribeOn(Schedulers.io());
+    }
+
+    private Single<Avatar> getCurrentAvatarIfNull() {
+        if (this.avatar != null) return Single.just(this.avatar);
+        else return fromId(this.id).map(group -> group.avatar);
     }
 
     public Group addMember(final User member) {
