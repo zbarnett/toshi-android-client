@@ -57,6 +57,12 @@ public class SelectGroupParticipantAdapter extends RecyclerView.Adapter<SelectGr
         return this;
     }
 
+    public SelectGroupParticipantAdapter addOrRemoveUser(final User user) {
+        if (this.selectedUsers.contains(user)) this.selectedUsers.remove(user);
+        else this.selectedUsers.add(user);
+        return this;
+    }
+
     @Override
     public SelectGroupParticipantViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         final View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item__select_group_participant, parent, false);

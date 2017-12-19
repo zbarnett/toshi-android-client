@@ -99,11 +99,14 @@ class AddGroupParticipantsActivity : AppCompatActivity() {
 
     private fun initAdapter() {
         userAdapter = SelectGroupParticipantAdapter().setOnItemClickListener(this::handleUserClicked)
-        val selectedUsers = viewModel.selectedParticipants.value ?: listOf<User>()
+        val selectedUsers = viewModel.selectedParticipants.value ?: emptyList()
         userAdapter.setSelectedUsers(selectedUsers)
     }
 
-    private fun handleUserClicked(user: User) = viewModel.addSelectedParticipant(user)
+    private fun handleUserClicked(user: User) {
+        userAdapter.addOrRemoveUser(user)
+        viewModel.addSelectedParticipant(user)
+    }
 
     private fun initObservers() {
         initSearch()
