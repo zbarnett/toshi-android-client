@@ -30,7 +30,8 @@ import com.toshi.extensions.toast
 import com.toshi.model.local.User
 import com.toshi.view.adapter.SelectGroupParticipantAdapter
 import com.toshi.view.adapter.listeners.TextChangedListener
-import com.toshi.viewModel.GroupParticipantsViewModel
+import com.toshi.viewModel.AddGroupParticipantsViewModel
+import com.toshi.viewModel.ViewModelFactory.AddGroupParticipantsViewModelFactory
 import kotlinx.android.synthetic.main.view_group_participants.*
 
 class AddGroupParticipantsActivity : AppCompatActivity() {
@@ -39,7 +40,7 @@ class AddGroupParticipantsActivity : AppCompatActivity() {
         const val EXTRA__GROUP_ID = "extra_group_id"
     }
 
-    private lateinit var viewModel: GroupParticipantsViewModel
+    private lateinit var viewModel: AddGroupParticipantsViewModel
     private lateinit var userAdapter: SelectGroupParticipantAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,7 +63,17 @@ class AddGroupParticipantsActivity : AppCompatActivity() {
     }
 
     private fun initViewModel() {
-        viewModel = ViewModelProviders.of(this).get(GroupParticipantsViewModel::class.java)
+        val groupId = getGroupIdFromIntent()
+        if (groupId == null) {
+            toast(R.string.invalid_group)
+            finish()
+            return
+        }
+
+        viewModel = ViewModelProviders.of(
+                this,
+                AddGroupParticipantsViewModelFactory(groupId)
+        ).get(AddGroupParticipantsViewModel::class.java)
     }
 
     private fun initClickListeners() {
