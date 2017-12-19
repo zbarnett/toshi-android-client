@@ -8,7 +8,9 @@ import com.toshi.model.local.User
 import com.toshi.util.LogUtil
 import com.toshi.util.SingleLiveEvent
 import com.toshi.view.BaseApplication
+import rx.Single
 import rx.android.schedulers.AndroidSchedulers
+import rx.schedulers.Schedulers
 import rx.subjects.PublishSubject
 import rx.subscriptions.CompositeSubscription
 import java.util.concurrent.TimeUnit
@@ -70,8 +72,14 @@ class AddGroupParticipantsViewModel(val groupId: String) : ViewModel() {
     fun queryUpdated(query: CharSequence?) = querySubject.onNext(query.toString())
 
     private fun runSearchQuery(query: String) {
-        val searchSub = recipientManager
-                .searchOnlineUsers(query)
+        val searchSub =
+                Single.zip(
+                        recipientManager.searchOnlineUsers(query),
+                        getGroupMembers(groupId),
+                        { searchResult, groupMembers -> Pair(searchResult, groupMembers) }
+                )
+                .subscribeOn(Schedulers.io())
+                .map { filterSearchResult(it.first, it.second) }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { searchResults.value = it },
@@ -80,6 +88,17 @@ class AddGroupParticipantsViewModel(val groupId: String) : ViewModel() {
 
         this.subscriptions.add(searchSub)
     }
+
+    private fun filterSearchResult(searchResults: List<User>, groupMembers: List<User>): List<User> {
+        val filteredList = mutableListOf<User>()
+        for (searchUser in searchResults) {
+            val contains = groupMembers.any { searchUser.toshiId == it.toshiId }
+            if (!contains) filteredList.add(searchUser)
+        }
+        return filteredList
+    }
+
+    private fun getGroupMembers(groupId: String) = Group.fromId(groupId).map { it.members }
 
     fun addSelectedParticipant(user: User) {
         if (participants.contains(user)) participants.remove(user)
