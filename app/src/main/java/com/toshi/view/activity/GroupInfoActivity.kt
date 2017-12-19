@@ -141,6 +141,7 @@ class GroupInfoActivity : AppCompatActivity() {
             layoutManager = LinearLayoutManager(this.context)
             itemAnimator = DefaultItemAnimator()
             adapter = userAdapter
+            isNestedScrollingEnabled = false
             addHorizontalLineDivider()
         }
     }
