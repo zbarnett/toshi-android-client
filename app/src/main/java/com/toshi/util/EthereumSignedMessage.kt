@@ -18,6 +18,11 @@ class EthereumSignedMessage(private val id: String, private val personalMessage:
     }
 
     @Throws(UnsupportedEncodingException::class)
+    fun signMessage(): Single<String> {
+        return signMessage(TypeConverter.toJsonHex(personalMessage.getDataFromMessageAsBytes()))
+    }
+
+    @Throws(UnsupportedEncodingException::class)
     private fun getEthereumSignedMessage(personalMessage: PersonalMessage): String {
         val resultArray = ("\u0019Ethereum Signed Message:\n"
                 + personalMessage.getDataFromMessageAsBytes().size
@@ -26,6 +31,15 @@ class EthereumSignedMessage(private val id: String, private val personalMessage:
     }
 
     private fun signPersonalMessage(unsignedValue: String): Single<String> {
+        return getWallet()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .flatMap { wallet -> Single.fromCallable { wallet.hashAndSignTransactionWithoutMinus27(unsignedValue) } }
+                .map { mapToMethodCall(it) }
+                .subscribeOn(Schedulers.io())
+    }
+
+    private fun signMessage(unsignedValue: String): Single<String> {
         return getWallet()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

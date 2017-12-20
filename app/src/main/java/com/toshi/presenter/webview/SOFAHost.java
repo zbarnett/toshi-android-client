@@ -53,4 +53,9 @@ import android.webkit.JavascriptInterface;
     public void signPersonalMessage(final String id, final String msgParams) {
         this.listener.signPersonalMessage(id, msgParams);
     }
+
+    @JavascriptInterface
+    public void signMessage(final String id, final String from, final String data) {
+        this.listener.signMessage(id, from, data);
+    }
 }

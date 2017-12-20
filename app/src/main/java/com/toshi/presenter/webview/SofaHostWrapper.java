@@ -46,6 +46,7 @@ import com.toshi.view.fragment.DialogFragment.PaymentConfirmationDialog;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -227,6 +228,62 @@ import rx.subscriptions.CompositeSubscription;
         try {
             final EthereumSignedMessage ethereumSignedMessage = new EthereumSignedMessage(id, personalMessage);
             final Subscription sub = ethereumSignedMessage.signPersonalMessage()
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                            this::executeJavascriptMethod,
+                            throwable -> LogUtil.e(getClass(), "Error " + throwable)
+                    );
+            this.subscriptions.add(sub);
+        } catch (UnsupportedEncodingException e) {
+            LogUtil.e(getClass(), "Error " + e);
+        }
+    }
+
+    @Override
+    public void signMessage(final String id, final String from, final String data) {
+        if (!from.equalsIgnoreCase(this.wallet.getPaymentAddress())) {
+            doCallBack(id, String.format("{\\\"error\\\":\\\"%s\\\"}",
+                    "Invalid Address"));
+            return;
+        }
+        if (data.length() != 66) {
+            doCallBack(id, String.format("{\\\"error\\\":\\\"%s\\\"}",
+                    "Invalid Message Length"));
+            return;
+        } else if (!data.substring(0, 2).equalsIgnoreCase("0x")) {
+            doCallBack(id, String.format("{\\\"error\\\":\\\"%s\\\"}",
+                    "Invalid Message Data"));
+            return;
+        } else {
+            try {
+                new BigInteger(data.substring(2), 16);
+            } catch (final NumberFormatException e) {
+                doCallBack(id, String.format("{\\\"error\\\":\\\"%s\\\"}",
+                        "Invalid Message Data"));
+                return;
+            }
+        }
+        final PersonalMessage personalMessage = new PersonalMessage(from, data);
+        showSignMessageDialog(id, personalMessage);
+    }
+
+    private void showSignMessageDialog(final String id, final PersonalMessage personalMessage) {
+        if (this.activity == null) return;
+        DialogUtil.getBaseDialog(
+                this.activity,
+                this.activity.getString(R.string.eth_sign_title),
+                this.activity.getString(R.string.eth_sign_warning) + "\n\n" +
+                TypeConverter.toJsonHex(personalMessage.getDataFromMessageAsBytes()),
+                R.string.agree,
+                R.string.cancel,
+                (dialog, which) -> handleSignMessageClicked(id, personalMessage)
+        ).show();
+    }
+
+    private void handleSignMessageClicked(final String id, final PersonalMessage personalMessage) {
+        try {
+            final EthereumSignedMessage ethereumSignedMessage = new EthereumSignedMessage(id, personalMessage);
+            final Subscription sub = ethereumSignedMessage.signMessage()
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
                             this::executeJavascriptMethod,

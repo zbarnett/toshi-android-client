@@ -23,4 +23,5 @@ package com.toshi.presenter.webview;
     void signTransaction(String id, String unsignedTransaction);
     void publishTransaction(String id, String signedTransaction);
     void signPersonalMessage(String id, String msgParams);
+    void signMessage(String id, String from, String data);
 }
