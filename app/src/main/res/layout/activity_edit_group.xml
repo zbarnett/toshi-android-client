@@ -1,0 +1,143 @@
+<!--
+  ~ 	Copyright (c) 2017. Toshi Inc
+  ~
+  ~ 	This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            style="@style/Toolbar">
+
+            <ImageButton
+                android:id="@+id/closeButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scaleType="fitCenter"
+                android:tint="@color/textColorContrast"
+                app:srcCompat="@drawable/ic_arrow_back"
+                style="@style/closeButtonStyle"/>
+
+            <android.support.v4.widget.Space
+                android:layout_width="16dp"
+                android:layout_height="0dp" />
+
+            <TextView
+                android:id="@+id/toolbarTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/Toolbar.TitleText"
+                android:text="@string/edit_group"/>
+
+            <android.support.v4.widget.Space
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+
+            <ImageButton
+                android:id="@+id/update"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="16dp"
+                android:scaleType="fitCenter"
+                android:tint="@color/textColorContrast"
+                app:srcCompat="@drawable/ic_done"
+                style="@style/clickableBorderlessBackground"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <android.support.v4.widget.Space
+                android:layout_width="0dp"
+                android:layout_height="30dp"/>
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/avatar"
+                android:layout_width="104dp"
+                android:layout_height="104dp"
+                android:layout_gravity="center_horizontal"
+                android:src="@color/textColorHint"
+                app:civ_border_width="1dp"
+                app:civ_border_color="@color/divider"/>
+
+            <android.support.v4.widget.Space
+                android:layout_width="0dp"
+                android:layout_height="15dp"/>
+
+            <TextView
+                android:id="@+id/editGroupPhoto"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:textSize="14sp"
+                android:textColor="@color/colorPrimary"
+                android:text="@string/edit_group_photo"/>
+
+            <android.support.v4.widget.Space
+                android:layout_width="0dp"
+                android:layout_height="27dp"/>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginRight="@dimen/activity_horizontal_margin">
+
+                <EditText
+                    android:id="@+id/groupName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:maxLines="1"
+                    android:imeOptions="actionNext"
+                    android:hint="@string/group_name"/>
+
+            </android.support.design.widget.TextInputLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/loadingSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:background="@color/semi_transparent_overlay">
+
+        <ProgressBar
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"/>
+
+    </FrameLayout>
+
+</FrameLayout>
