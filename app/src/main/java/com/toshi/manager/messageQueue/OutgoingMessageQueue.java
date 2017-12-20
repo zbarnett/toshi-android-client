@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import rx.Observable;
+import rx.Scheduler;
 import rx.Subscription;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
@@ -48,13 +49,12 @@ queue.send(sofaMessage); // This message will be sent immediately.
 queue.clear(); // Cleans up all state, and unsubscribes everything.
 } </pre>
  */
-/* package */ class OutgoingMessageQueue {
+/* package */ abstract class OutgoingMessageQueue {
 
     private final PublishSubject<SofaMessage> messagesReadyForSending;
     private final List<SofaMessage> preInitMessagesQueue;
     private final CompositeSubscription subscriptions;
     private Recipient recipient;
-    private final boolean isAsync;
 
     /**
      * Constructs OutgoingMessageQueue.
@@ -63,13 +63,11 @@ queue.clear(); // Cleans up all state, and unsubscribes everything.
      * to queue messages already via {@link #send(SofaMessage)}.
      *
      * @return the constructed OutgoingMessageQueue
-     * @param isAsync
      */
-    /* package */ OutgoingMessageQueue(final boolean isAsync) {
+    /* package */ OutgoingMessageQueue() {
         this.messagesReadyForSending = PublishSubject.create();
         this.preInitMessagesQueue = new ArrayList<>();
         this.subscriptions = new CompositeSubscription();
-        this.isAsync = isAsync;
     }
 
     /**
@@ -140,14 +138,10 @@ queue.clear(); // Cleans up all state, and unsubscribes everything.
     }
 
     private void attachMessagesReadyForSendingSubscriber() {
-        if (this.isAsync) {
-            this.messagesReadyForSending
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(Schedulers.io());
-        }
-
         final Subscription subscription =
                 this.messagesReadyForSending
+                .subscribeOn(getSubscribeThread())
+                .observeOn(getObserveThread())
                 .subscribe(
                         this::sendAndSaveMessage,
                         this::handleSendingMessageError
@@ -185,4 +179,7 @@ queue.clear(); // Cleans up all state, and unsubscribes everything.
     private void handleMessageQueueError(final Throwable throwable) {
         LogUtil.exception(getClass(), "Error during processing message queue", throwable);
     }
+
+    /* package */ abstract Scheduler getSubscribeThread();
+    /* package */ abstract Scheduler getObserveThread();
 }
