@@ -85,8 +85,8 @@ class GroupInfoActivity : AppCompatActivity() {
         ) { _, _ -> viewModel.leaveGroup() }.show()
     }
 
-    private fun startGroupEditActivity(group: Group?) = startActivityAndFinish<ConversationSetupActivity> {
-        putExtra(ConversationSetupActivity.EXTRA__GROUP_ID_FOR_EDITING, group?.id)
+    private fun startGroupEditActivity(group: Group?) = startActivityAndFinish<EditGroupActivity> {
+        putExtra(EditGroupActivity.EXTRA__GROUP_ID, group?.id)
     }
 
     private fun startAddParticipantsActivity(group: Group?) = startActivityAndFinish<AddGroupParticipantsActivity> {
