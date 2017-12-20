@@ -28,18 +28,16 @@ import com.toshi.model.local.User
 import com.toshi.util.ImageUtil
 import com.toshi.util.SingleLiveEvent
 import com.toshi.view.BaseApplication
-import rx.Completable
-import rx.Single
 import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
 import rx.subscriptions.CompositeSubscription
 
 class GroupSetupViewModel : ViewModel() {
 
+    private val sofaMessageManager by lazy { BaseApplication.get().sofaMessageManager }
+    private val userManager by lazy { BaseApplication.get().userManager }
     private val subscriptions by lazy { CompositeSubscription() }
 
     val conversationCreated by lazy { SingleLiveEvent<Conversation>() }
-    val groupUpdated by lazy { SingleLiveEvent<Group>() }
     val group by lazy { SingleLiveEvent<Group>() }
     val error by lazy { SingleLiveEvent<Throwable>() }
     val isCreatingGroup by lazy { MutableLiveData<Boolean>() }
@@ -63,36 +61,6 @@ class GroupSetupViewModel : ViewModel() {
         this.subscriptions.add(subscription)
     }
 
-    fun fetchGroup(groupId: String?) {
-        val subscription = BaseApplication.get()
-                .recipientManager
-                .getGroupFromId(groupId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        { group.value = it },
-                        { error.value = it }
-                )
-        subscriptions.add(subscription)
-    }
-
-    fun updateGroup(group: Group,
-                    avatarUri: Uri?,
-                    groupName: String) {
-        if (isCreatingGroup.value == true) return
-        val subscription = generateAvatarFromUri(avatarUri)
-                .map { avatar -> updateGroupObject(group, avatar, groupName) }
-                .flatMapCompletable { saveUpdatedGroup(it) }
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe { isCreatingGroup.value = true }
-                .doAfterTerminate { isCreatingGroup.value = false }
-                .subscribe(
-                        { groupUpdated.value = group },
-                        { error.value = it }
-                )
-        this.subscriptions.add(subscription)
-    }
-
     private fun createGroupObject(participants: List<User>,
                                   avatar: Bitmap?,
                                   groupName: String): Group {
@@ -101,37 +69,16 @@ class GroupSetupViewModel : ViewModel() {
                 .setAvatar(avatar)
     }
 
-    private fun updateGroupObject(group: Group,
-                                  newAvatar: Bitmap?,
-                                  groupName: String): Group {
-        newAvatar?.let { group.setAvatar(newAvatar) }
-        group.title = groupName
-        return group
-    }
+    private fun addCurrentUserToGroup(group: Group) = userManager.currentUser.map { group.addMember(it) }
 
-    private fun addCurrentUserToGroup(group: Group): Single<Group> {
-        return BaseApplication
-                .get()
-                .userManager
-                .currentUser
-                .map { group.addMember(it) }
-    }
-
-    private fun createConversationFromGroup(group: Group): Single<Conversation> {
-        return BaseApplication
-                .get()
-                .sofaMessageManager
-                .createConversationFromGroup(group)
-    }
-
-    private fun saveUpdatedGroup(group: Group): Completable {
-        return BaseApplication
-                .get()
-                .sofaMessageManager
-                .updateConversationFromGroup(group)
-    }
+    private fun createConversationFromGroup(group: Group) = sofaMessageManager.createConversationFromGroup(group)
 
     private fun generateAvatarFromUri(avatarUri: Uri?) = ImageUtil.loadAsBitmap(avatarUri, BaseApplication.get())
+
     private fun tryGeneratePlaceholderAvatar(avatar: Bitmap?, groupName: String) = avatar.let { avatar } ?: groupName.toIdenticon()
-    override fun onCleared() = subscriptions.clear()
+
+    override fun onCleared() {
+        super.onCleared()
+        subscriptions.clear()
+    }
 }

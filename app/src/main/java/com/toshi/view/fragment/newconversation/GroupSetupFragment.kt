@@ -34,7 +34,6 @@ import com.toshi.R
 import com.toshi.extensions.addHorizontalLineDivider
 import com.toshi.extensions.isVisible
 import com.toshi.extensions.toast
-import com.toshi.model.local.Group
 import com.toshi.model.local.User
 import com.toshi.util.ImageUtil
 import com.toshi.util.LogUtil
@@ -48,7 +47,6 @@ class GroupSetupFragment : Fragment() {
     private val userAdapter: GroupParticipantAdapter by lazy { GroupParticipantAdapter() }
     private lateinit var viewModel: GroupSetupViewModel
     private var selectedParticipants: List<User> = emptyList()
-    private var groupId: String? = null
 
     var avatarUri: Uri? = null
         set(value) { field = value; ImageUtil.renderFileIntoTarget(value, avatar) }
@@ -56,11 +54,6 @@ class GroupSetupFragment : Fragment() {
     fun setSelectedParticipants(selectedParticipants: List<User>): GroupSetupFragment {
         this.selectedParticipants = selectedParticipants
         userAdapter.addUsers(this.selectedParticipants)
-        return this
-    }
-
-    fun setGroupId(groupId: String): Fragment {
-        this.groupId = groupId
         return this
     }
 
@@ -121,29 +114,9 @@ class GroupSetupFragment : Fragment() {
             LogUtil.exception(this::class.java, it)
             toast(R.string.error__group_creation, Toast.LENGTH_LONG)
         })
-        groupId?.let {
-            viewModel.fetchGroup(it)
-            viewModel.group.observe(this, Observer {
-                updateUiFromGroup(it)
-            })
-            viewModel.groupUpdated.observe(this, Observer {
-                (this.activity as ConversationSetupActivity).finish()
-            })
-        }
         viewModel.isCreatingGroup.observe(this, Observer {
             isCreatingGroup -> isCreatingGroup?.let { loadingSpinner.isVisible(it) }
         })
-    }
-
-    private fun updateUiFromGroup(group: Group?) {
-        group?.let {
-            setSelectedParticipants(group.members)
-            ImageUtil.load(group.avatar, avatar)
-            groupName.setText(group.title)
-            initNumberOfParticipantsView()
-            create.setText(R.string.update_group)
-            create.setOnClickListener { viewModel.updateGroup(group, avatarUri, groupName.text.toString()) }
-        }
     }
 
     private fun initNameListener() {

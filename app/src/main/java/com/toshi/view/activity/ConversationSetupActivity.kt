@@ -49,7 +49,6 @@ class ConversationSetupActivity : AppCompatActivity() {
         private val PICK_IMAGE = 1
         private val CAPTURE_IMAGE = 2
         private val INTENT_TYPE = "image/*"
-        val EXTRA__GROUP_ID_FOR_EDITING = "extra_group_id_for_editing"
     }
 
     private val chooserDialog by lazy { ChooserDialog.newInstance() }
@@ -74,13 +73,6 @@ class ConversationSetupActivity : AppCompatActivity() {
     private fun initView() = setContentView(R.layout.activity_new_conversation)
 
     private fun openCorrectFragment(savedInstanceState: Bundle?) {
-        val groupIdForEditing = intent?.getStringExtra(EXTRA__GROUP_ID_FOR_EDITING)
-        groupIdForEditing?.let {
-            intent.removeExtra(EXTRA__GROUP_ID_FOR_EDITING)
-            openFragment(GroupSetupFragment().setGroupId(groupIdForEditing))
-            return
-        }
-
         if (savedInstanceState == null) openFragment(UserParticipantsFragment())
     }
 
