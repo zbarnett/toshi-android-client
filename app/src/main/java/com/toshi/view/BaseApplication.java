@@ -18,7 +18,10 @@
 package com.toshi.view;
 
 
-import android.content.ComponentCallbacks2;
+import android.arch.lifecycle.Lifecycle;
+import android.arch.lifecycle.LifecycleObserver;
+import android.arch.lifecycle.OnLifecycleEvent;
+import android.arch.lifecycle.ProcessLifecycleOwner;
 import android.content.IntentFilter;
 import android.support.multidex.MultiDexApplication;
 
@@ -36,7 +39,7 @@ import com.toshi.util.LogUtil;
 import io.realm.Realm;
 import rx.subjects.BehaviorSubject;
 
-public final class BaseApplication extends MultiDexApplication {
+public final class BaseApplication extends MultiDexApplication implements LifecycleObserver {
 
     private static BaseApplication instance;
     public static BaseApplication get() { return instance; }
@@ -60,8 +63,19 @@ public final class BaseApplication extends MultiDexApplication {
     }
 
     private void init() {
+        initLifecycleObserver();
         initToshiManager();
         initConnectivityMonitor();
+    }
+
+    private void initLifecycleObserver() {
+        ProcessLifecycleOwner.get()
+                .getLifecycle()
+                .addObserver(this);
+    }
+
+    private void initToshiManager() {
+        this.toshiManager = new ToshiManager();
     }
 
     private void initConnectivityMonitor() {
@@ -71,26 +85,17 @@ public final class BaseApplication extends MultiDexApplication {
         isConnectedSubject().onNext(NetworkChangeReceiver.getCurrentConnectivityStatus(this));
     }
 
-    private void initToshiManager() {
-        this.toshiManager = new ToshiManager();
+    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    public void onResumed() {
+        if (!this.inBackground) return;
+        this.inBackground = false;
+        this.toshiManager.getSofaMessageManager().resumeMessageReceiving();
     }
 
-    public void applicationResumed() {
-        if (this.inBackground) {
-            this.inBackground = false;
-            this.toshiManager.getSofaMessageManager().resumeMessageReceiving();
-        }
-    }
-
-    @Override
-    public void onTrimMemory(final int level) {
-        // This is a method for detecting the application going into the background:
-        // http://stackoverflow.com/a/19920353
-        if (level == ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN) {
-            this.inBackground = true;
-            this.toshiManager.getSofaMessageManager().disconnect();
-        }
-        super.onTrimMemory(level);
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    public void onStop() {
+        this.inBackground = true;
+        this.toshiManager.getSofaMessageManager().disconnect();
     }
 
     public BehaviorSubject<Boolean> isConnectedSubject() {

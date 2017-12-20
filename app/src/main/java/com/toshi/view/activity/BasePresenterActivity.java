@@ -27,7 +27,6 @@ import android.support.v7.app.AppCompatActivity;
 import com.toshi.presenter.Presenter;
 import com.toshi.presenter.PresenterLoader;
 import com.toshi.presenter.factory.PresenterFactory;
-import com.toshi.view.BaseApplication;
 
 public abstract class BasePresenterActivity<P extends Presenter<V>, V> extends AppCompatActivity {
     private Presenter<V> presenter;
@@ -55,12 +54,6 @@ public abstract class BasePresenterActivity<P extends Presenter<V>, V> extends A
                 onPresenterDestroyed();
             }
         });
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        ((BaseApplication)getApplication()).applicationResumed();
     }
 
     @Override
