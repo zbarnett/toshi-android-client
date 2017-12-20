@@ -69,60 +69,66 @@
                 style="@style/clickableBorderlessBackground"/>
         </LinearLayout>
 
-        <LinearLayout
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="match_parent"
+            android:fillViewport="true">
 
-            <android.support.v4.widget.Space
-                android:layout_width="0dp"
-                android:layout_height="30dp"/>
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/avatar"
-                android:layout_width="104dp"
-                android:layout_height="104dp"
-                android:layout_gravity="center_horizontal"
-                android:src="@color/textColorHint"
-                app:civ_border_width="1dp"
-                app:civ_border_color="@color/divider"/>
-
-            <android.support.v4.widget.Space
-                android:layout_width="0dp"
-                android:layout_height="15dp"/>
-
-            <TextView
-                android:id="@+id/editGroupPhoto"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:paddingTop="5dp"
-                android:paddingBottom="5dp"
-                android:textSize="14sp"
-                android:textColor="@color/colorPrimary"
-                android:text="@string/edit_group_photo"/>
-
-            <android.support.v4.widget.Space
-                android:layout_width="0dp"
-                android:layout_height="27dp"/>
-
-            <android.support.design.widget.TextInputLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginRight="@dimen/activity_horizontal_margin">
+                android:orientation="vertical">
 
-                <EditText
-                    android:id="@+id/groupName"
+                <android.support.v4.widget.Space
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"/>
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/avatar"
+                    android:layout_width="104dp"
+                    android:layout_height="104dp"
+                    android:layout_gravity="center_horizontal"
+                    android:src="@color/textColorHint"
+                    app:civ_border_width="1dp"
+                    app:civ_border_color="@color/divider"/>
+
+                <android.support.v4.widget.Space
+                    android:layout_width="0dp"
+                    android:layout_height="15dp"/>
+
+                <TextView
+                    android:id="@+id/editGroupPhoto"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+                    android:textSize="14sp"
+                    android:textColor="@color/colorPrimary"
+                    android:text="@string/edit_group_photo"/>
+
+                <android.support.v4.widget.Space
+                    android:layout_width="0dp"
+                    android:layout_height="27dp"/>
+
+                <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:singleLine="true"
-                    android:maxLines="1"
-                    android:imeOptions="actionNext"
-                    android:hint="@string/group_name"/>
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin">
 
-            </android.support.design.widget.TextInputLayout>
-        </LinearLayout>
+                    <EditText
+                        android:id="@+id/groupName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:singleLine="true"
+                        android:maxLines="1"
+                        android:imeOptions="actionNext"
+                        android:hint="@string/group_name"/>
+
+                </android.support.design.widget.TextInputLayout>
+            </LinearLayout>
+        </ScrollView>
     </LinearLayout>
 
     <FrameLayout
