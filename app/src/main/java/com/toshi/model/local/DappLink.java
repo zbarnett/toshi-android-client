@@ -21,11 +21,11 @@ package com.toshi.model.local;
 import com.toshi.model.network.App;
 import com.toshi.view.adapter.ToshiEntityAdapter;
 
-public class Dapp extends App {
+public class DappLink extends App {
 
     private final String address;
 
-    public Dapp(final String address) {
+    public DappLink(final String address) {
         this.address = address;
     }
 

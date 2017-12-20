@@ -22,7 +22,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.toshi.R;
-import com.toshi.model.local.Dapp;
+import com.toshi.model.local.DappLink;
 import com.toshi.util.LocaleUtil;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.adapter.listeners.OnItemClickListener;
@@ -30,14 +30,14 @@ import com.toshi.view.adapter.listeners.OnItemClickListener;
 public class SearchAppDappViewHolder extends RecyclerView.ViewHolder {
 
     private Button launchDappButton;
-    private Dapp dapp;
+    private DappLink dapp;
 
     public SearchAppDappViewHolder(View itemView) {
         super(itemView);
         this.launchDappButton = (Button) itemView.findViewById(R.id.dapp_launch_button);
     }
 
-    public SearchAppDappViewHolder setDapp(final Dapp dapp) {
+    public SearchAppDappViewHolder setDapp(final DappLink dapp) {
         this.dapp = dapp;
         final String textResource = BaseApplication.get().getResources().getString(R.string.launch_dapp);
         final String buttonText = String.format(LocaleUtil.getLocale(), textResource,  this.dapp.getAddress());
@@ -45,7 +45,7 @@ public class SearchAppDappViewHolder extends RecyclerView.ViewHolder {
         return this;
     }
 
-    public SearchAppDappViewHolder setListener(final OnItemClickListener<Dapp> listener) {
+    public SearchAppDappViewHolder setListener(final OnItemClickListener<DappLink> listener) {
         this.launchDappButton.setOnClickListener(view -> listener.onItemClick(this.dapp));
         return this;
     }

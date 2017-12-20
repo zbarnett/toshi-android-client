@@ -170,10 +170,10 @@
                     android:layout_height="wrap_content"
                     android:textSize="16sp"
                     android:textColor="@color/categoryTextColor"
-                    android:text="@string/featured_apps"/>
+                    android:text="@string/featured_dapps"/>
 
                 <TextView
-                    android:id="@+id/moreLatestApps"
+                    android:id="@+id/moreFeaturedDapps"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="right"
@@ -191,7 +191,7 @@
 
             <!-- Latest apps -->
             <android.support.v7.widget.RecyclerView
-                android:id="@+id/featuredApps"
+                android:id="@+id/featuredDapps"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="143dp"

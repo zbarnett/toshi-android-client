@@ -22,6 +22,8 @@ import com.toshi.manager.network.DirectoryService;
 import com.toshi.manager.network.IdService;
 import com.toshi.model.network.App;
 import com.toshi.model.network.AppSearchResult;
+import com.toshi.model.network.Dapp;
+import com.toshi.model.network.SearchResult;
 import com.toshi.model.network.ServerTime;
 
 import java.util.List;
@@ -60,11 +62,11 @@ public class AppsManager {
                 .subscribeOn(Schedulers.io());
     }
 
-    public Single<List<App>> getLatestApps(final int limit) {
+    public Single<List<Dapp>> getFeaturedDapps(final int limit) {
         return IdService
                 .getApi()
-                .getApps(false, true, limit)
-                .map(AppSearchResult::getResults)
+                .getDapps(limit)
+                .map(SearchResult::getResults)
                 .subscribeOn(Schedulers.io());
     }
 

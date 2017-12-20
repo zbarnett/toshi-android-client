@@ -32,6 +32,7 @@ import java.util.List;
 
 public class HorizontalAdapter<T extends ToshiEntity> extends RecyclerView.Adapter<HorizontalViewHolder> {
 
+    private final boolean showRating;
     private List<T> elements;
     private OnItemClickListener<T> listener;
 
@@ -40,6 +41,11 @@ public class HorizontalAdapter<T extends ToshiEntity> extends RecyclerView.Adapt
     }
 
     public HorizontalAdapter(final int numberOfPlaceholders) {
+        this(numberOfPlaceholders, true);
+    }
+
+    public HorizontalAdapter(final int numberOfPlaceholders, final boolean showRating) {
+        this.showRating = showRating;
         this.elements = new ArrayList<>();
         for (int i = 0; i < numberOfPlaceholders; i++) {
             this.elements.add(null);
@@ -60,6 +66,12 @@ public class HorizontalAdapter<T extends ToshiEntity> extends RecyclerView.Adapt
     @Override
     public HorizontalViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         final View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item__horizontal, parent, false);
+        if (!showRating) {
+            View ratingView = v.findViewById(R.id.rating_view);
+            if (ratingView != null) {
+                ratingView.setVisibility(View.GONE);
+            }
+        }
         return new HorizontalViewHolder<T>(v);
     }
 

@@ -22,6 +22,7 @@ import android.arch.lifecycle.ViewModel
 import com.toshi.model.local.ToshiEntity
 import com.toshi.model.local.User
 import com.toshi.model.network.App
+import com.toshi.model.network.Dapp
 import com.toshi.util.LogUtil
 import com.toshi.util.SingleLiveEvent
 import com.toshi.view.BaseApplication
@@ -34,13 +35,13 @@ class BrowseViewModel : ViewModel() {
 
     val search by lazy { SingleLiveEvent<List<ToshiEntity>>() }
     val topRatedApps by lazy { MutableLiveData<List<App>>() }
-    val featuredApps by lazy { MutableLiveData<List<App>>() }
+    val featuredDapps by lazy { MutableLiveData<List<Dapp>>() }
     val topRatedPublicUsers by lazy { MutableLiveData<List<User>>() }
     val latestPublicUsers by lazy { MutableLiveData<List<User>>() }
 
     init {
         fetchTopRatedApps()
-        fetchFeaturedApps()
+        fetchFeaturedDapps()
         fetchTopRatedPublicUsers()
         fetchLatestPublicUsers()
     }
@@ -57,12 +58,12 @@ class BrowseViewModel : ViewModel() {
         this.subscriptions.add(sub)
     }
 
-    private fun fetchFeaturedApps() {
+    private fun fetchFeaturedDapps() {
         val sub = getAppManager()
-                .getLatestApps(10)
+                .getFeaturedDapps(10)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        { featuredApps.value = it },
+                        { featuredDapps.value = it },
                         { LogUtil.exception(javaClass, "Error while fetching featured apps $it") }
                 )
 

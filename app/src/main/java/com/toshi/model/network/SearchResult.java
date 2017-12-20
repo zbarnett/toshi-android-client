@@ -15,18 +15,14 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.toshi.util;
+package com.toshi.model.network;
 
-import android.support.annotation.IntDef;
+import java.util.List;
 
-public class BrowseType {
-    @IntDef({VIEW_TYPE_TOP_RATED_APPS,
-            VIEW_TYPE_FEATURED_DAPPS,
-            VIEW_TYPE_TOP_RATED_PUBLIC_USERS,
-            VIEW_TYPE_LATEST_PUBLIC_USERS})
-    public @interface Type {}
-    public static final int VIEW_TYPE_TOP_RATED_APPS = 1;
-    public static final int VIEW_TYPE_FEATURED_DAPPS = 2;
-    public static final int VIEW_TYPE_TOP_RATED_PUBLIC_USERS = 3;
-    public static final int VIEW_TYPE_LATEST_PUBLIC_USERS = 4;
+public class SearchResult<T> {
+    private List<T> results;
+
+    public List<T> getResults() {
+        return this.results;
+    }
 }

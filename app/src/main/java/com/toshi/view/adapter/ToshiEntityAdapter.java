@@ -24,7 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.toshi.R;
-import com.toshi.model.local.Dapp;
+import com.toshi.model.local.DappLink;
 import com.toshi.model.local.ToshiEntity;
 import com.toshi.view.adapter.listeners.OnItemClickListener;
 import com.toshi.view.adapter.viewholder.SearchAppDappViewHolder;
@@ -44,9 +44,9 @@ public class ToshiEntityAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     public final static int DAPP_LINK = 3;
 
     private List<ToshiEntity> toshiEntities;
-    private Dapp dapp;
+    private DappLink dapp;
     public OnItemClickListener<ToshiEntity> itemClickListener;
-    public OnItemClickListener<Dapp> dappLaunchClicked;
+    public OnItemClickListener<DappLink> dappLaunchClicked;
 
     public ToshiEntityAdapter() {
         this.toshiEntities = new ArrayList<>();
@@ -66,7 +66,7 @@ public class ToshiEntityAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     public void addDapp(final String DappAddress) {
-        this.dapp = new Dapp(DappAddress);
+        this.dapp = new DappLink(DappAddress);
     }
 
     public void removeDapp() {

@@ -29,10 +29,12 @@ import com.toshi.manager.UserManager;
 import com.toshi.model.local.ToshiEntity;
 import com.toshi.model.local.User;
 import com.toshi.model.network.App;
+import com.toshi.model.network.Dapp;
 import com.toshi.util.BrowseType;
 import com.toshi.util.LogUtil;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.activity.BrowseMoreActivity;
+import com.toshi.view.activity.ViewDappActivity;
 import com.toshi.view.activity.ViewUserActivity;
 import com.toshi.view.adapter.BrowseAdapter;
 import com.toshi.view.custom.HorizontalLineDivider;
@@ -44,7 +46,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 
-import static com.toshi.util.BrowseType.VIEW_TYPE_LATEST_APPS;
+import static com.toshi.util.BrowseType.VIEW_TYPE_FEATURED_DAPPS;
 import static com.toshi.util.BrowseType.VIEW_TYPE_LATEST_PUBLIC_USERS;
 import static com.toshi.util.BrowseType.VIEW_TYPE_TOP_RATED_APPS;
 import static com.toshi.util.BrowseType.VIEW_TYPE_TOP_RATED_PUBLIC_USERS;
@@ -89,8 +91,8 @@ public class BrowseMorePresenter implements Presenter<BrowseMoreActivity> {
             case VIEW_TYPE_TOP_RATED_APPS: {
                 return this.activity.getString(R.string.top_rated_apps);
             }
-            case VIEW_TYPE_LATEST_APPS: {
-                return this.activity.getString(R.string.featured_apps);
+            case VIEW_TYPE_FEATURED_DAPPS: {
+                return this.activity.getString(R.string.featured_dapps);
             }
             case VIEW_TYPE_TOP_RATED_PUBLIC_USERS: {
                 return this.activity.getString(R.string.top_rated_public_users);
@@ -127,7 +129,11 @@ public class BrowseMorePresenter implements Presenter<BrowseMoreActivity> {
         final BrowseAdapter adapter = isPublicUserViewType
                 ? new BrowseAdapter<User>(5)
                 : new BrowseAdapter<App>(6);
-        adapter.setOnItemClickListener(this::handleItemClicked);
+        if (getViewType() == VIEW_TYPE_FEATURED_DAPPS) {
+            adapter.setOnItemClickListener(this::handleDappItemClicked);
+        } else {
+            adapter.setOnItemClickListener(this::handleItemClicked);
+        }
         recyclerView.setAdapter(adapter);
     }
 
@@ -138,11 +144,22 @@ public class BrowseMorePresenter implements Presenter<BrowseMoreActivity> {
         this.activity.startActivity(intent);
     }
 
+    private void handleDappItemClicked(final Object elem) {
+        if (elem == null) return;
+        final Dapp dapp = ((Dapp) elem);
+        final Intent intent = new Intent(this.activity, ViewDappActivity.class)
+                .putExtra(ViewDappActivity.EXTRA__DAPP_ADDRESS, dapp.getAddress())
+                .putExtra(ViewDappActivity.EXTRA__DAPP_AVATAR, dapp.getAvatar())
+                .putExtra(ViewDappActivity.EXTRA__DAPP_ABOUT, dapp.getAbout())
+                .putExtra(ViewDappActivity.EXTRA__DAPP_NAME, dapp.getName());
+        this.activity.startActivity(intent);
+    }
+
     private void fetchData() {
         if (getViewType() == VIEW_TYPE_TOP_RATED_APPS) {
             fetchTopRatedApps();
-        } else if (getViewType() == VIEW_TYPE_LATEST_APPS) {
-            fetchLatestApps();
+        } else if (getViewType() == VIEW_TYPE_FEATURED_DAPPS) {
+            fetchFeaturedDapps();
         } else if (getViewType() == VIEW_TYPE_TOP_RATED_PUBLIC_USERS) {
             fetchTopRatedPublicUsers();
         } else {
@@ -175,7 +192,7 @@ public class BrowseMorePresenter implements Presenter<BrowseMoreActivity> {
         this.subscriptions.add(sub);
     }
 
-    private void fetchLatestApps() {
+    private void fetchFeaturedDapps() {
         if (this.browseList != null && this.browseList.size() > 0) {
             handleApps(this.browseList);
             scrollToRetainedPosition();
@@ -184,7 +201,7 @@ public class BrowseMorePresenter implements Presenter<BrowseMoreActivity> {
 
         final Subscription sub =
                 getAppManager()
-                .getLatestApps(100)
+                .getFeaturedDapps(100)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

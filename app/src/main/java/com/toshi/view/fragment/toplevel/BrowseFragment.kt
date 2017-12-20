@@ -33,17 +33,19 @@ import com.toshi.R
 import com.toshi.extensions.addHorizontalLineDivider
 import com.toshi.extensions.isVisible
 import com.toshi.extensions.startActivity
-import com.toshi.model.local.Dapp
+import com.toshi.model.local.DappLink
 import com.toshi.model.local.ToshiEntity
 import com.toshi.model.local.User
 import com.toshi.model.network.App
+import com.toshi.model.network.Dapp
 import com.toshi.util.BrowseType
-import com.toshi.util.BrowseType.VIEW_TYPE_LATEST_APPS
+import com.toshi.util.BrowseType.VIEW_TYPE_FEATURED_DAPPS
 import com.toshi.util.BrowseType.VIEW_TYPE_LATEST_PUBLIC_USERS
 import com.toshi.util.BrowseType.VIEW_TYPE_TOP_RATED_APPS
 import com.toshi.util.BrowseType.VIEW_TYPE_TOP_RATED_PUBLIC_USERS
 import com.toshi.util.LogUtil
 import com.toshi.view.activity.BrowseMoreActivity
+import com.toshi.view.activity.ViewDappActivity
 import com.toshi.view.activity.ViewUserActivity
 import com.toshi.view.activity.WebViewActivity
 import com.toshi.view.adapter.HorizontalAdapter
@@ -60,7 +62,7 @@ class BrowseFragment : Fragment(), TopLevelFragment {
     companion object {
         private const val TAG = "BrowseFragment"
         private const val TOP_RATED_APPS_SCROLL_POSITION = "topRatedAppsScrollPosition"
-        private const val FEATURED_APPS_SCROLL_POSITION = "featuredAppsScrollPosition"
+        private const val FEATURED_APPS_SCROLL_POSITION = "featuredDappsScrollPosition"
         private const val TOP_RATED_USERS_SCROLL_POSITION = "topRatedUsersScrollPosition"
         private const val LATEST_USERS_SCROLL_POSITION = "latestUsersScrollPosition"
     }
@@ -72,7 +74,7 @@ class BrowseFragment : Fragment(), TopLevelFragment {
     private lateinit var viewModel: BrowseViewModel
 
     private var topRatedAppsScrollPosition = 0
-    private var featuredAppsScrollPosition = 0
+    private var featuredDappsScrollPosition = 0
     private var topRatedUsersScrollPosition = 0
     private var latestUsersScrollPosition = 0
 
@@ -88,7 +90,7 @@ class BrowseFragment : Fragment(), TopLevelFragment {
         initClickListeners()
         initSearchAppsRecyclerView()
         iniTopRatedAppsRecycleView()
-        initLatestAppsRecycleView()
+        initFeaturedDappsRecycleView()
         initTopRatedPublicUsersRecyclerView()
         initLatestPublicUsersRecyclerView()
         initSearchView()
@@ -98,7 +100,7 @@ class BrowseFragment : Fragment(), TopLevelFragment {
     private fun restoreScrollPosition(inState: Bundle?) {
         inState?.let {
             topRatedAppsScrollPosition = it.getInt(TOP_RATED_APPS_SCROLL_POSITION, 0)
-            featuredAppsScrollPosition = it.getInt(FEATURED_APPS_SCROLL_POSITION, 0)
+            featuredDappsScrollPosition = it.getInt(FEATURED_APPS_SCROLL_POSITION, 0)
             topRatedUsersScrollPosition = it.getInt(TOP_RATED_USERS_SCROLL_POSITION, 0)
             latestUsersScrollPosition = it.getInt(LATEST_USERS_SCROLL_POSITION, 0)
         }
@@ -110,7 +112,7 @@ class BrowseFragment : Fragment(), TopLevelFragment {
 
     private fun initClickListeners() {
         moreTopRatedApps.setOnClickListener { startBrowseActivity(VIEW_TYPE_TOP_RATED_APPS) }
-        moreLatestApps.setOnClickListener { startBrowseActivity(VIEW_TYPE_LATEST_APPS) }
+        moreFeaturedDapps.setOnClickListener { startBrowseActivity(VIEW_TYPE_FEATURED_DAPPS) }
         moreTopRatedPublicUsers.setOnClickListener { startBrowseActivity(VIEW_TYPE_TOP_RATED_PUBLIC_USERS) }
         moreLatestPublicUsers.setOnClickListener { startBrowseActivity(VIEW_TYPE_LATEST_PUBLIC_USERS) }
         clearButton.setOnClickListener { search.text = null }
@@ -145,13 +147,13 @@ class BrowseFragment : Fragment(), TopLevelFragment {
         recyclerView.layoutManager.scrollToPosition(topRatedAppsScrollPosition)
     }
 
-    private fun initLatestAppsRecycleView() {
+    private fun initFeaturedDappsRecycleView() {
         val recyclerView = initRecyclerView(
-                featuredApps,
-                HorizontalAdapter<App>(4),
-                OnItemClickListener { startProfileActivity(it) }
+                featuredDapps,
+                HorizontalAdapter<Dapp>(4, false),
+                OnItemClickListener { startDappLaunchActivity(it) }
         )
-        recyclerView.layoutManager.scrollToPosition(featuredAppsScrollPosition)
+        recyclerView.layoutManager.scrollToPosition(featuredDappsScrollPosition)
     }
 
     private fun initTopRatedPublicUsersRecyclerView() {
@@ -175,6 +177,17 @@ class BrowseFragment : Fragment(), TopLevelFragment {
     private fun startProfileActivity(toshiEntity: ToshiEntity?) {
         toshiEntity?.toshiId?.let {
             startActivity<ViewUserActivity> { putExtra(ViewUserActivity.EXTRA__USER_ADDRESS, it) }
+        }
+    }
+
+    private fun startDappLaunchActivity(toshiEntity: ToshiEntity?) {
+        if (toshiEntity is Dapp) {
+            startActivity<ViewDappActivity> {
+                putExtra(ViewDappActivity.EXTRA__DAPP_ADDRESS, toshiEntity.address)
+                putExtra(ViewDappActivity.EXTRA__DAPP_AVATAR, toshiEntity.avatar)
+                putExtra(ViewDappActivity.EXTRA__DAPP_ABOUT, toshiEntity.about)
+                putExtra(ViewDappActivity.EXTRA__DAPP_NAME, toshiEntity.name)
+            }
         }
     }
 
@@ -216,7 +229,7 @@ class BrowseFragment : Fragment(), TopLevelFragment {
     private fun handleSearchPressed() {
         if (searchAdapter.numberOfApps != 1) return
         val appToLaunch = searchAdapter.firstApp
-        if (appToLaunch is Dapp) {
+        if (appToLaunch is DappLink) {
             startActivity<WebViewActivity> { putExtra(WebViewActivity.EXTRA__ADDRESS, appToLaunch.address) }
         }
     }
@@ -244,8 +257,8 @@ class BrowseFragment : Fragment(), TopLevelFragment {
         viewModel.topRatedApps.observe(this, Observer {
             topRatedApps -> topRatedApps?.let { handleTopRatedApps(it) }
         })
-        viewModel.featuredApps.observe(this, Observer {
-            featuredApps -> featuredApps?.let { handleFeaturedApps(it) }
+        viewModel.featuredDapps.observe(this, Observer {
+            featuredDapps -> featuredDapps?.let { handleFeaturedDapps(it) }
         })
         viewModel.topRatedPublicUsers.observe(this, Observer {
             topRatedPublicUsers -> topRatedPublicUsers?.let { handleTopRatedPublicUser(it) }
@@ -260,8 +273,8 @@ class BrowseFragment : Fragment(), TopLevelFragment {
         adapter.setItems(apps)
     }
 
-    private fun handleFeaturedApps(apps: List<App>) {
-        val adapter = featuredApps.adapter as HorizontalAdapter<ToshiEntity>
+    private fun handleFeaturedDapps(apps: List<com.toshi.model.network.Dapp>) {
+        val adapter = featuredDapps.adapter as HorizontalAdapter<ToshiEntity>
         adapter.setItems(apps)
     }
 
@@ -282,8 +295,8 @@ class BrowseFragment : Fragment(), TopLevelFragment {
     private fun setOutState(outState: Bundle?): Bundle? {
         val topRatedAppsLayoutManager = topRatedApps.layoutManager as LinearLayoutManager
         topRatedAppsScrollPosition = topRatedAppsLayoutManager.findFirstCompletelyVisibleItemPosition()
-        val featuredAppsLayoutManager = featuredApps.layoutManager as LinearLayoutManager
-        featuredAppsScrollPosition = featuredAppsLayoutManager.findFirstCompletelyVisibleItemPosition()
+        val featuredAppsLayoutManager = featuredDapps.layoutManager as LinearLayoutManager
+        featuredDappsScrollPosition = featuredAppsLayoutManager.findFirstCompletelyVisibleItemPosition()
         val topRatedUsersLayoutManager = topRatedPublicUsers.layoutManager as LinearLayoutManager
         topRatedUsersScrollPosition = topRatedUsersLayoutManager.findFirstCompletelyVisibleItemPosition()
         val featuredUsersLayoutManager = latestPublicUsers.layoutManager as LinearLayoutManager
@@ -291,7 +304,7 @@ class BrowseFragment : Fragment(), TopLevelFragment {
 
         return outState?.apply {
             putInt(TOP_RATED_APPS_SCROLL_POSITION, topRatedAppsScrollPosition)
-            putInt(FEATURED_APPS_SCROLL_POSITION, featuredAppsScrollPosition)
+            putInt(FEATURED_APPS_SCROLL_POSITION, featuredDappsScrollPosition)
             putInt(TOP_RATED_USERS_SCROLL_POSITION, topRatedUsersScrollPosition)
             putInt(LATEST_USERS_SCROLL_POSITION, latestUsersScrollPosition) }
     }
