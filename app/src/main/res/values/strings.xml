@@ -292,7 +292,7 @@
     <string name="user_update_error">Error updating profile. Try a different username</string>
     <string name="user_unavailable">User unavailable</string>
     <string name="invalid_eth_amount">Invalid amount</string>
-    <string name="edit_group">Edit</string>
+    <string name="edit_group">Edit group</string>
     <string name="leave">Leave</string>
     <string name="error_leave_group">Unable to leave group</string>
     <string name="local_currency_to_eth_error">Couldn\'t do currency conversion. Check your network connection.</string>
@@ -312,4 +312,7 @@
     <string name="invalid_group">Invalid group</string>
     <string name="add_participants">Add participants</string>
     <string name="you">You</string>
+    <string name="edit_group_photo">Edit group photo</string>
+    <string name="unable_to_fetch_group">Unable to fetch group</string>
+    <string name="unable_to_update_group">Unable to update group</string>
 </resources>
