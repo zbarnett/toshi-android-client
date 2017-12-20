@@ -41,6 +41,8 @@ class GroupSetupViewModel : ViewModel() {
     val group by lazy { SingleLiveEvent<Group>() }
     val error by lazy { SingleLiveEvent<Throwable>() }
     val isCreatingGroup by lazy { MutableLiveData<Boolean>() }
+    var selectedParticipants: List<User>? = null
+    var avatarUri: Uri? = null
 
     fun createGroup(participants: List<User>,
                     avatarUri: Uri?,

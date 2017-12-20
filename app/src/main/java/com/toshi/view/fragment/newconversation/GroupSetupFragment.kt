@@ -24,8 +24,6 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -39,6 +37,7 @@ import com.toshi.util.ImageUtil
 import com.toshi.util.LogUtil
 import com.toshi.view.activity.ConversationSetupActivity
 import com.toshi.view.adapter.GroupParticipantAdapter
+import com.toshi.view.adapter.listeners.TextChangedListener
 import com.toshi.viewModel.GroupSetupViewModel
 import kotlinx.android.synthetic.main.fragment_group_setup.*
 
@@ -46,14 +45,13 @@ class GroupSetupFragment : Fragment() {
 
     private val userAdapter: GroupParticipantAdapter by lazy { GroupParticipantAdapter() }
     private lateinit var viewModel: GroupSetupViewModel
-    private var selectedParticipants: List<User> = emptyList()
-
+    private val selectedParticipants = mutableListOf<User>()
     var avatarUri: Uri? = null
-        set(value) { field = value; ImageUtil.renderFileIntoTarget(value, avatar) }
+        set(value) { viewModel.avatarUri = value; ImageUtil.renderFileIntoTarget(value, avatar) }
 
     fun setSelectedParticipants(selectedParticipants: List<User>): GroupSetupFragment {
-        this.selectedParticipants = selectedParticipants
-        userAdapter.addUsers(this.selectedParticipants)
+        this.selectedParticipants.clear()
+        this.selectedParticipants.addAll(selectedParticipants)
         return this
     }
 
@@ -72,18 +70,26 @@ class GroupSetupFragment : Fragment() {
 
     private fun initViewModel() {
         viewModel = ViewModelProviders.of(this.activity).get(GroupSetupViewModel::class.java)
+        if (!selectedParticipants.isEmpty()) viewModel.selectedParticipants = selectedParticipants
     }
 
     private fun initView() {
         initRecyclerView()
+        addSelectedParticipantsToAdapter()
         initNumberOfParticipantsView()
-        initAvatarPlaceholder()
+        loadAvatar()
     }
 
     private fun initClickListeners() {
-        create.setOnClickListener { viewModel.createGroup(selectedParticipants, avatarUri, groupName.text.toString()) }
+        create.setOnClickListener { createGroup() }
         closeButton.setOnClickListener { this.activity.onBackPressed() }
         avatar.setOnClickListener { (this.activity as ConversationSetupActivity).showImageChooserDialog() }
+    }
+
+    private fun createGroup() {
+        val avatarUri = viewModel.avatarUri
+        val selectedParticipants = viewModel.selectedParticipants
+        selectedParticipants?.let { viewModel.createGroup(it, avatarUri, groupName.text.toString()) }
     }
 
     private fun initRecyclerView() {
@@ -95,14 +101,18 @@ class GroupSetupFragment : Fragment() {
         }
     }
 
+    private fun addSelectedParticipantsToAdapter() = viewModel.selectedParticipants?.let { userAdapter.addUsers(it) }
+
     private fun initNumberOfParticipantsView() {
-        val participantSize = this.selectedParticipants.size
+        val participantSize = viewModel.selectedParticipants?.size ?: 0
         val participantsLabel = this.resources.getQuantityString(R.plurals.participants, participantSize, participantSize)
         numberOfParticipants.text = participantsLabel
     }
 
-    private fun initAvatarPlaceholder() {
-        avatar.setImageResource(R.drawable.ic_camera_with_background)
+    private fun loadAvatar() {
+        viewModel.avatarUri?.let {
+            ImageUtil.renderFileIntoTarget(viewModel.avatarUri, avatar)
+        } ?: avatar.setImageResource(R.drawable.ic_camera_with_background)
     }
 
     private fun initObservers() {
@@ -120,10 +130,10 @@ class GroupSetupFragment : Fragment() {
     }
 
     private fun initNameListener() {
-        groupName.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable) { create.isEnabled = s.toString().isNotEmpty() }
-            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
+        groupName.addTextChangedListener(object : TextChangedListener() {
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                create.isEnabled = s.toString().isNotEmpty()
+            }
         })
     }
 }
