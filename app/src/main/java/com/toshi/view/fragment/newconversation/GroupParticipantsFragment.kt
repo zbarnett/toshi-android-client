@@ -86,6 +86,8 @@ class GroupParticipantsFragment : Fragment() {
     private fun handleUserClicked(user: User) {
         userAdapter.addOrRemoveUser(user)
         viewModel.addSelectedParticipant(user)
+        search.text = null
+        search.requestFocus()
     }
 
     private fun initObservers() {
