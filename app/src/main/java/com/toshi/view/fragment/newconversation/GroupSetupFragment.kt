@@ -34,6 +34,7 @@ import com.toshi.extensions.isVisible
 import com.toshi.extensions.toast
 import com.toshi.model.local.User
 import com.toshi.util.ImageUtil
+import com.toshi.util.KeyboardUtil
 import com.toshi.util.LogUtil
 import com.toshi.view.activity.ConversationSetupActivity
 import com.toshi.view.adapter.GroupParticipantAdapter
@@ -90,6 +91,7 @@ class GroupSetupFragment : Fragment() {
         val avatarUri = viewModel.avatarUri
         val selectedParticipants = viewModel.selectedParticipants
         selectedParticipants?.let { viewModel.createGroup(it, avatarUri, groupName.text.toString()) }
+        KeyboardUtil.hideKeyboard(groupName)
     }
 
     private fun initRecyclerView() {
