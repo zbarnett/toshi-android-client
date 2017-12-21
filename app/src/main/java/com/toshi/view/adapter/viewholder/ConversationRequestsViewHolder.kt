@@ -26,8 +26,8 @@ import kotlinx.android.synthetic.main.list_item__conversation_requests.view.*
 
 class ConversationRequestsViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
     fun setNumberOfConversationRequests(numberOfRequests: Int): ConversationRequestsViewHolder {
-        val numberOfRequestsText = itemView.resources.getQuantityString(R.plurals.conversation_request, numberOfRequests, numberOfRequests)
-        itemView.numberOfRequests.text = numberOfRequestsText
+        val numberOfRequestsText = itemView.context.getString(R.string.number_of_message_requests, numberOfRequests)
+        itemView.messageRequests.text = numberOfRequestsText
         return this
     }
 

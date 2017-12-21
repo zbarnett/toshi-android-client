@@ -318,4 +318,5 @@
     <string name="edit_group_photo">Edit group photo</string>
     <string name="unable_to_fetch_group">Unable to fetch group</string>
     <string name="unable_to_update_group">Unable to update group</string>
+    <string name="number_of_message_requests">Message requests (%d)</string>
 </resources>
