@@ -78,10 +78,10 @@ class ConversationRequestActivity : AppCompatActivity() {
             updatedConversation -> updatedConversation?.let { requestsAdapter.addConversation(it) }
         })
         viewModel.acceptConversation.observe(this, Observer {
-            acceptedConversation -> acceptedConversation?.let { requestsAdapter.remove(it); finishIfEmpty() }
+            acceptedConversation -> acceptedConversation?.let { requestsAdapter.remove(it); goToConversation(it) }
         })
         viewModel.rejectConversation.observe(this, Observer {
-            rejectedConversation -> rejectedConversation?.let { requestsAdapter.remove(it); finishIfEmpty() }
+            rejectedConversation -> rejectedConversation?.let { requestsAdapter.remove(it); goToConversation(it) }
         })
     }
 
@@ -93,7 +93,7 @@ class ConversationRequestActivity : AppCompatActivity() {
 
     private fun getConversationsAndLocalUser() = viewModel.getUnacceptedConversationsAndLocalUser()
 
-    private fun finishIfEmpty() {
-        if (requestsAdapter.itemCount == 0) finish()
+    private fun goToConversation(conversation: Conversation) {
+        startActivityAndFinish<ChatActivity> { putExtra(ChatActivity.EXTRA__THREAD_ID, conversation.threadId) }
     }
 }
