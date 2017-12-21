@@ -81,7 +81,7 @@ class ConversationRequestActivity : AppCompatActivity() {
             acceptedConversation -> acceptedConversation?.let { requestsAdapter.remove(it); goToConversation(it) }
         })
         viewModel.rejectConversation.observe(this, Observer {
-            rejectedConversation -> rejectedConversation?.let { requestsAdapter.remove(it); goToConversation(it) }
+            rejectedConversation -> rejectedConversation?.let { requestsAdapter.remove(it); finishIfEmpty() }
         })
     }
 
@@ -95,5 +95,9 @@ class ConversationRequestActivity : AppCompatActivity() {
 
     private fun goToConversation(conversation: Conversation) {
         startActivityAndFinish<ChatActivity> { putExtra(ChatActivity.EXTRA__THREAD_ID, conversation.threadId) }
+    }
+
+    private fun finishIfEmpty() {
+        if (requestsAdapter.itemCount == 0) finish()
     }
 }
