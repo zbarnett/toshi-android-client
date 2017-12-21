@@ -34,6 +34,7 @@ import com.toshi.model.local.SendState;
 import com.toshi.model.network.SofaError;
 import com.toshi.model.sofa.SofaMessage;
 import com.toshi.util.ImageUtil;
+import com.toshi.util.SingleClickableSpan;
 import com.toshi.view.adapter.listeners.OnItemClickListener;
 import com.vdurmont.emoji.EmojiParser;
 
@@ -191,9 +192,9 @@ public final class TextViewHolder extends RecyclerView.ViewHolder {
             final int currentStartPos = this.text.indexOf(word, lastEndPos);
             final int currentEndPos = this.text.indexOf(word, lastEndPos) + word.length();
 
-            spannableString.setSpan(new ClickableSpan() {
+            spannableString.setSpan(new SingleClickableSpan() {
                 @Override
-                public void onClick(final View view) {
+                public void onSingleClick(final View view) {
                    handleSpannedClicked(view, listener, this);
                 }
             }, currentStartPos,
