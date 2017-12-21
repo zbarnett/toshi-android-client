@@ -107,12 +107,13 @@ public class SofaMessageSender {
     private void attachSubscriber() {
         final Subscription sub =
                 this.messageQueue
-                        .observeOn(Schedulers.io())
-                        .subscribeOn(Schedulers.io())
-                        .subscribe(
-                                this::processTask,
-                                this::handleMessageError
-                        );
+                .onBackpressureBuffer(25)
+                .observeOn(Schedulers.io())
+                .subscribeOn(Schedulers.io())
+                .subscribe(
+                        this::processTask,
+                        this::handleMessageError
+                );
         this.subscriptions.add(sub);
     }
 

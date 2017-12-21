@@ -140,6 +140,7 @@ queue.clear(); // Cleans up all state, and unsubscribes everything.
     private void attachMessagesReadyForSendingSubscriber() {
         final Subscription subscription =
                 this.messagesReadyForSending
+                .onBackpressureBuffer(25)
                 .subscribeOn(getSubscribeThread())
                 .observeOn(getObserveThread())
                 .subscribe(
