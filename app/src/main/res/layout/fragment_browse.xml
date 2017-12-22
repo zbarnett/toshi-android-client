@@ -116,7 +116,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="16sp"
                     android:textColor="@color/categoryTextColor"
-                    android:text="@string/top_rated_apps"/>
+                    android:text="@string/top_rated"/>
 
                 <TextView
                     android:id="@+id/moreTopRatedApps"
@@ -170,7 +170,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="16sp"
                     android:textColor="@color/categoryTextColor"
-                    android:text="@string/featured_dapps"/>
+                    android:text="@string/featured"/>
 
                 <TextView
                     android:id="@+id/moreFeaturedDapps"

@@ -89,10 +89,10 @@ public class BrowseMorePresenter implements Presenter<BrowseMoreActivity> {
     private String getTitle() {
         switch (getViewType()) {
             case VIEW_TYPE_TOP_RATED_APPS: {
-                return this.activity.getString(R.string.top_rated_apps);
+                return this.activity.getString(R.string.top_rated);
             }
             case VIEW_TYPE_FEATURED_DAPPS: {
-                return this.activity.getString(R.string.featured_dapps);
+                return this.activity.getString(R.string.featured);
             }
             case VIEW_TYPE_TOP_RATED_PUBLIC_USERS: {
                 return this.activity.getString(R.string.top_rated_public_users);

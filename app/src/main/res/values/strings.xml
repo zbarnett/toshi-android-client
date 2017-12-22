@@ -228,8 +228,8 @@
     <string name="public_profile_message">Setting your profile to public will allow it to show up on the Browse page. Others will be able to message you from there.</string>
     <string name="top_rated_public_users">Top Rated Public Users</string>
     <string name="more">More</string>
-    <string name="top_rated_apps">Top Rated Apps</string>
-    <string name="featured_dapps">Featured Dapps</string>
+    <string name="top_rated">Top Rated</string>
+    <string name="featured">Featured</string>
     <string name="latest_public_users">Latest Public Users</string>
     <string name="error__group_creation">Unable to create group</string>
     <string name="qr_code_message">Use this QR code to let others add you on Toshi.</string>
