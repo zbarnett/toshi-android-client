@@ -100,6 +100,11 @@ class GroupParticipantsViewModel : ViewModel() {
         this.selectedParticipants.value = this.participants
     }
 
+    fun clearParticipants() {
+        this.participants.clear()
+        this.selectedParticipants.value = this.participants
+    }
+
     override fun onCleared() {
         super.onCleared()
         this.subscriptions.clear()

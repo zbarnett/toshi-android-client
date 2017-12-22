@@ -17,6 +17,7 @@
 
 package com.toshi.view.fragment.newconversation
 
+import android.app.Activity
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
@@ -60,12 +61,21 @@ class GroupParticipantsFragment : Fragment() {
     }
 
     private fun initClickListeners() {
-        closeButton.setOnClickListener { this.activity.onBackPressed() }
+        closeButton.setOnClickListener { onBackPressed() }
         clearButton.setOnClickListener { search.text = null }
-        next.setOnClickListener { handleNextClicked() }
+        next.setOnClickListener { handleNextClicked(activity) }
     }
 
-    private fun handleNextClicked() = (this.activity as ConversationSetupActivity).openGroupSetupFlow(viewModel.selectedParticipants.value!!)
+    private fun onBackPressed() {
+        viewModel.clearParticipants()
+        activity.onBackPressed()
+    }
+
+    private fun handleNextClicked(activity: Activity) {
+        if (activity is ConversationSetupActivity) {
+            activity.openGroupSetupFlow(viewModel.selectedParticipants.value ?: listOf())
+        } else throw IllegalStateException("Activity is not a ConversationSetupActivity")
+    }
 
     private fun initRecyclerView() {
         initAdapter()
