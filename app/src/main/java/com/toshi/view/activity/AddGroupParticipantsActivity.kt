@@ -128,7 +128,10 @@ class AddGroupParticipantsActivity : AppCompatActivity() {
 
     private fun initSearch() {
         search.addTextChangedListener(object : TextChangedListener() {
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { viewModel.queryUpdated(s) }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                clearButton.isVisible(s.toString().isNotEmpty())
+                viewModel.queryUpdated(s)
+            }
         })
     }
 
