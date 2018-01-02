@@ -24,16 +24,20 @@ import com.toshi.view.BaseApplication
 class LocalStatusMessage(
         val type: Long,
         val sender: User?,
-        val newUsers: List<User>?
+        val newUsers: List<User>?,
+        val groupName: String?
 ) {
 
-    constructor(type: Long) : this(type, null, null)
-    constructor(type: Long, sender: User?) : this(type, sender, null)
+    constructor(type: Long) : this(type, null, null, null)
+    constructor(type: Long, sender: User?) : this(type, sender, null, null)
+    constructor(type: Long, sender: User?, newUsers: List<User>) : this(type, sender, newUsers, null)
+    constructor(type: Long, groupName: String) : this(type, null, null, groupName)
 
     companion object {
         const val NEW_GROUP = 0L
         const val USER_LEFT = 1L
         const val USER_ADDED = 2L
+        const val ADDED_TO_GROUP = 3L
     }
 
     fun loadString(isSenderLocalUser: Boolean): String {
@@ -41,6 +45,7 @@ class LocalStatusMessage(
             NEW_GROUP -> BaseApplication.get().getString(R.string.lsm_group_created)
             USER_LEFT -> formatUserLeftMessage()
             USER_ADDED -> formatUserAddedMessage(isSenderLocalUser)
+            ADDED_TO_GROUP -> formatAddedToGroup()
             else -> ""
         }
     }
@@ -75,6 +80,8 @@ class LocalStatusMessage(
                 .take(n)
                 .joinToString(separator = ", ") { it.displayName }
     }
+
+    private fun formatAddedToGroup() = BaseApplication.get().getString(R.string.lsm_added_to_group, groupName ?: "")
 
     @IntDef(NEW_GROUP, USER_LEFT)
     annotation class Type

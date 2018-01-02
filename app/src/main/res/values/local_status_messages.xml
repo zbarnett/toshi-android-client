@@ -22,4 +22,5 @@
     <string name="lsm_added_user">%1$s added %2$s to the group</string>
     <string name="lsm_added_users">%1$s added %2$s and %3$s to the group</string>
     <string name="lsm_added_users_wrapped">%1$s added %2$s and %3$d others to the group</string>
+    <string name="lsm_added_to_group">You were added to %s</string>
 </resources>

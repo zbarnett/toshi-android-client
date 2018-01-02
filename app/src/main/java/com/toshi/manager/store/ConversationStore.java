@@ -133,15 +133,23 @@ public class ConversationStore {
             final Conversation conversationToStore = getOrCreateConversation(group);
             final Realm realm = BaseApplication.get().getRealm();
             realm.beginTransaction();
+            final boolean isConversationEmpty = conversationToStore.getAllMessages() == null || conversationToStore.getAllMessages().isEmpty();
+            if (isConversationEmpty) addAddedToGroupStatusMessage(conversationToStore, group);
             conversationToStore.updateRecipient(new Recipient(group));
             final Conversation storedConversation = realm.copyToRealmOrUpdate(conversationToStore);
             realm.commitTransaction();
             final Conversation conversationForBroadcast = realm.copyFromRealm(storedConversation);
             realm.close();
-
             return conversationForBroadcast;
         })
         .subscribeOn(Schedulers.from(dbThread));
+    }
+
+    private void addAddedToGroupStatusMessage(final Conversation conversationToStore, final Group group) {
+        final LocalStatusMessage localStatusMessage = new LocalStatusMessage(LocalStatusMessage.ADDED_TO_GROUP, group.getTitle());
+        final String localStatusMessageJson = SofaAdapters.get().toJson(localStatusMessage);
+        final SofaMessage sofaMessage = new SofaMessage().makeNewLocalStatusMessage(localStatusMessageJson);
+        conversationToStore.addMessage(sofaMessage);
     }
 
     private Single<Conversation> addGroupCreatedStatusMessage(@NonNull final Conversation conversation) {
