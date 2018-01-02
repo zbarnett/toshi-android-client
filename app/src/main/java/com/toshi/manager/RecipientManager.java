@@ -74,7 +74,7 @@ public class RecipientManager {
     public Single<User> getUserFromUsername(final String username) {
         return Single
                 .concat(
-                        this.userStore.loadForUsername(username).toSingle(),
+                        this.userStore.loadForUsername(username),
                         this.fetchAndCacheFromNetworkByUsername(username))
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
@@ -86,7 +86,7 @@ public class RecipientManager {
     public Single<User> getUserFromToshiId(final String toshiId) {
         return Single
                 .concat(
-                        this.userStore.loadForToshiId(toshiId).toSingle(),
+                        this.userStore.loadForToshiId(toshiId),
                         this.fetchAndCacheFromNetworkByToshiId(toshiId))
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
@@ -142,7 +142,11 @@ public class RecipientManager {
     }
 
     private void cacheUser(final User user) {
-        this.userStore.save(user);
+        this.userStore.save(user)
+                .subscribe(
+                        () -> {},
+                        throwable -> LogUtil.e(getClass(), "Error while saving user to db " + throwable)
+                );
     }
 
     public Single<List<User>> loadAllContacts() {

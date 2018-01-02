@@ -21,59 +21,55 @@ package com.toshi.manager.store;
 import com.toshi.model.local.User;
 import com.toshi.view.BaseApplication;
 
-import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-import io.realm.Case;
 import io.realm.Realm;
-import io.realm.RealmQuery;
-import rx.Observable;
+import rx.Completable;
 import rx.Single;
+import rx.schedulers.Schedulers;
 
 public class UserStore {
 
-    public Observable<User> loadForToshiId(final String toshiId) {
-        return Observable.fromCallable(() -> loadWhere("owner_address", toshiId));
+    private final static ExecutorService dbThread = Executors.newSingleThreadExecutor();
+
+    public Single<User> loadForToshiId(final String toshiId) {
+        return loadWhere("owner_address", toshiId);
     }
 
     public Single<User> loadForPaymentAddress(final String address) {
-        return Single.fromCallable(() -> loadWhere("payment_address", address));
+        return loadWhere("payment_address", address);
     }
 
-    public Observable<User> loadForUsername(final String username) {
-        return Observable.fromCallable(() -> loadWhere("username", username));
+    public Single<User> loadForUsername(final String username) {
+        return loadWhere("username", username);
+
     }
 
-    public Single<List<User>> queryUsername(final String query) {
-        return Single.fromCallable(() -> filter("username", query));
+    public Completable save(final User user) {
+        return Completable.fromAction(() -> {
+            final Realm realm = BaseApplication.get().getRealm();
+            realm.beginTransaction();
+            realm.insertOrUpdate(user);
+            realm.commitTransaction();
+            realm.close();
+        })
+        .subscribeOn(Schedulers.from(dbThread));
     }
 
-    public void save(final User user) {
-        final Realm realm = BaseApplication.get().getRealm();
-        realm.beginTransaction();
-        realm.insertOrUpdate(user);
-        realm.commitTransaction();
-        realm.close();
-    }
+    private Single<User> loadWhere(final String fieldName, final String value) {
+        return Single.fromCallable(() -> {
+            final Realm realm = BaseApplication.get().getRealm();
+            final User user = realm
+                    .where(User.class)
+                    .equalTo(fieldName, value)
+                    .findFirst();
 
-    private User loadWhere(final String fieldName, final String value) {
-        final Realm realm = BaseApplication.get().getRealm();
-        final User user =
-                realm.where(User.class)
-                .equalTo(fieldName, value)
-                .findFirst();
-
-        final User queriedUser = user == null ? null : realm.copyFromRealm(user);
-        realm.close();
-        return queriedUser;
-    }
-
-    private List<User> filter(final String fieldName, final String value) {
-        final Realm realm = BaseApplication.get().getRealm();
-        final RealmQuery<User> query = realm.where(User.class);
-        query.contains(fieldName, value, Case.INSENSITIVE);
-        final List<User> result = realm.copyFromRealm(query.findAll());
-        realm.close();
-        return result;
+            final User queriedUser = user == null ? null : realm.copyFromRealm(user);
+            realm.close();
+            return queriedUser;
+        })
+        .subscribeOn(Schedulers.from(dbThread));
     }
 
     public void clear() {
