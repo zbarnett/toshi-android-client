@@ -90,15 +90,9 @@ public class ConversationStore {
         copyOrUpdateGroup(group)
                 .observeOn(Schedulers.immediate())
                 .subscribe(
-                        this::handleGroupSaved,
+                        this::broadcastConversation,
                         this::handleError
                 );
-    }
-
-    @NonNull
-    private void handleGroupSaved(final Conversation conversation) {
-        broadcastConversationChanged(conversation);
-        broadcastConversationUpdated(conversation);
     }
 
     public Single<Conversation> createNewConversationFromGroup(@NonNull final Group group) {
@@ -367,9 +361,15 @@ public class ConversationStore {
                 .map(group -> group.removeMember(user))
                 .flatMap(this::copyOrUpdateGroup)
                 .subscribe(
-                        this::broadcastConversationUpdated,
+                        this::broadcastConversation,
                         this::handleError
                 );
+    }
+
+    @NonNull
+    private void broadcastConversation(final Conversation conversation) {
+        broadcastConversationChanged(conversation);
+        broadcastConversationUpdated(conversation);
     }
 
     private Single<Conversation> addUserLeftStatusMessage(@NonNull final Conversation conversation, @NonNull User sender) {
