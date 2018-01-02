@@ -24,12 +24,11 @@ import android.support.annotation.Nullable;
 import com.toshi.model.local.Conversation;
 import com.toshi.model.local.ConversationObservables;
 import com.toshi.model.local.Group;
-import com.toshi.model.local.LocalStatusMessage;
 import com.toshi.model.local.Recipient;
 import com.toshi.model.local.User;
-import com.toshi.model.sofa.SofaAdapters;
 import com.toshi.model.sofa.SofaMessage;
 import com.toshi.util.LogUtil;
+import com.toshi.util.statusMessage.StatusMessageBuilder;
 import com.toshi.view.BaseApplication;
 
 import org.jetbrains.annotations.NotNull;
@@ -127,8 +126,7 @@ public class ConversationStore {
             final Conversation conversationToStore = getOrCreateConversation(group);
             final Realm realm = BaseApplication.get().getRealm();
             realm.beginTransaction();
-            final boolean isConversationEmpty = conversationToStore.getAllMessages() == null || conversationToStore.getAllMessages().isEmpty();
-            if (isConversationEmpty) addAddedToGroupStatusMessage(conversationToStore, group);
+            addAddedToGroupStatusMessageIfEmpty(conversationToStore, group);
             conversationToStore.updateRecipient(new Recipient(group));
             final Conversation storedConversation = realm.copyToRealmOrUpdate(conversationToStore);
             realm.commitTransaction();
@@ -139,18 +137,17 @@ public class ConversationStore {
         .subscribeOn(Schedulers.from(dbThread));
     }
 
-    private void addAddedToGroupStatusMessage(final Conversation conversationToStore, final Group group) {
-        final LocalStatusMessage localStatusMessage = new LocalStatusMessage(LocalStatusMessage.ADDED_TO_GROUP, group.getTitle());
-        final String localStatusMessageJson = SofaAdapters.get().toJson(localStatusMessage);
-        final SofaMessage sofaMessage = new SofaMessage().makeNewLocalStatusMessage(localStatusMessageJson);
-        conversationToStore.addMessage(sofaMessage);
+    private void addAddedToGroupStatusMessageIfEmpty(final Conversation conversation, final Group group) {
+        final boolean isConversationEmpty = conversation.getAllMessages() == null || conversation.getAllMessages().isEmpty();
+        if (isConversationEmpty) {
+            final SofaMessage statusMessage = StatusMessageBuilder.buildAddedToGroupStatusMessage(group);
+            conversation.addMessage(statusMessage);
+        }
     }
 
     private Single<Conversation> addGroupCreatedStatusMessage(@NonNull final Conversation conversation) {
-        final LocalStatusMessage localStatusMessage = new LocalStatusMessage(LocalStatusMessage.NEW_GROUP);
-        final String localStatusMessageJson = SofaAdapters.get().toJson(localStatusMessage);
-        final SofaMessage sofaMessage = new SofaMessage().makeNewLocalStatusMessage(localStatusMessageJson);
-        return saveMessage(conversation.getRecipient(), sofaMessage);
+        final SofaMessage localStatusMessage = StatusMessageBuilder.buildGroupCreatedStatusMessage();
+        return saveMessage(conversation.getRecipient(), localStatusMessage);
     }
 
     private Single<Conversation> saveMessage(
@@ -363,15 +360,13 @@ public class ConversationStore {
     }
 
     private Single<Conversation> addUserLeftStatusMessage(@NonNull final Conversation conversation, @NonNull User sender) {
-        final LocalStatusMessage localStatusMessage = new LocalStatusMessage(LocalStatusMessage.USER_LEFT, sender);
-        final String localStatusMessageJson = SofaAdapters.get().toJson(localStatusMessage);
-        final SofaMessage sofaMessage = new SofaMessage().makeNewLocalStatusMessage(localStatusMessageJson);
-        return saveMessage(conversation.getRecipient(), sofaMessage);
+        final SofaMessage localStatusMessage = StatusMessageBuilder.buildUserLeftStatusMessage(sender);
+        return saveMessage(conversation.getRecipient(), localStatusMessage);
     }
 
     public Single<Conversation> addNewGroupParticipantsStatusMessage(@NonNull final String groupId,
-                                                     @NonNull final User sender,
-                                                     final List<User> newUsers) {
+                                                                     @NonNull final User sender,
+                                                                     final List<User> newUsers) {
         return loadByThreadId(groupId)
                 .flatMap(conversation -> addNewGroupParticipantsStatusMessage(conversation, sender, newUsers))
                 .doOnSuccess(this::broadcastConversationUpdated)
@@ -381,16 +376,9 @@ public class ConversationStore {
     private Single<Conversation> addNewGroupParticipantsStatusMessage(final Conversation conversation,
                                                                       final User sender,
                                                                       final List<User> newUsers) {
-        final SofaMessage statusMessage = generateAddStatusMessage(sender, newUsers);
+        final SofaMessage statusMessage = StatusMessageBuilder.buildAddStatusMessage(sender, newUsers);
         if (statusMessage == null) return Single.just(conversation);
         return saveMessage(conversation.getRecipient(), statusMessage);
-    }
-
-    private SofaMessage generateAddStatusMessage(final User sender, final List<User> newUsers) {
-        if (newUsers.isEmpty()) return null;
-        final LocalStatusMessage localStatusMessage = new LocalStatusMessage(LocalStatusMessage.USER_ADDED, sender, newUsers);
-        final String localStatusMessageJson = SofaAdapters.get().toJson(localStatusMessage);
-        return new SofaMessage().makeNewLocalStatusMessage(localStatusMessageJson);
     }
 
     public boolean areUnreadMessages() {
