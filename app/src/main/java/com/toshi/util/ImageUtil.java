@@ -27,7 +27,9 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.widget.ImageView;
 
+import com.bumptech.glide.DrawableTypeRequest;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.Target;
 import com.google.common.io.Files;
@@ -163,10 +165,12 @@ public class ImageUtil {
         .subscribeOn(Schedulers.io());
     }
 
-    public static Bitmap loadNotificationIcon(final Recipient sender) throws ExecutionException, InterruptedException {
-        return Glide
-                .with(BaseApplication.get())
-                .load(sender.isGroup() ? sender.getGroupAvatar().getBytes() : sender.getUserAvatar())
+    public static Bitmap loadNotificationIcon(final Recipient recipient) throws ExecutionException, InterruptedException {
+        final RequestManager requestManager = Glide.with(BaseApplication.get());
+        final DrawableTypeRequest typeRequest = recipient.isGroup()
+                ? requestManager.load(recipient.getGroupAvatar().getBytes())
+                : requestManager.load(recipient.getUserAvatar());
+        return (Bitmap) typeRequest
                 .asBitmap()
                 .transform(new CropCircleTransformation(BaseApplication.get()))
                 .into(200, 200)
