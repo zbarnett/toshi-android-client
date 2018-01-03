@@ -32,12 +32,14 @@ class LocalStatusMessage(
     constructor(type: Long, sender: User?) : this(type, sender, null, null)
     constructor(type: Long, sender: User?, newUsers: List<User>) : this(type, sender, newUsers, null)
     constructor(type: Long, groupName: String) : this(type, null, null, groupName)
+    constructor(type: Long, sender: User?, groupName: String) : this(type, sender, null, groupName)
 
     companion object {
         const val NEW_GROUP = 0L
         const val USER_LEFT = 1L
         const val USER_ADDED = 2L
         const val ADDED_TO_GROUP = 3L
+        const val GROUP_NAME_UPDATED = 4L
     }
 
     fun loadString(isSenderLocalUser: Boolean): String {
@@ -46,6 +48,7 @@ class LocalStatusMessage(
             USER_LEFT -> formatUserLeftMessage()
             USER_ADDED -> formatUserAddedMessage(isSenderLocalUser)
             ADDED_TO_GROUP -> formatAddedToGroup()
+            GROUP_NAME_UPDATED -> formatGroupNameUpdated(isSenderLocalUser)
             else -> ""
         }
     }
@@ -82,6 +85,12 @@ class LocalStatusMessage(
     }
 
     private fun formatAddedToGroup() = BaseApplication.get().getString(R.string.lsm_added_to_group, groupName ?: "")
+
+    private fun formatGroupNameUpdated(isSenderLocalUser: Boolean): String {
+        val displayNameOfSender = if (isSenderLocalUser) BaseApplication.get().getString(R.string.you)
+        else sender?.displayName ?: ""
+        return BaseApplication.get().getString(R.string.lsm_group_info_updated, displayNameOfSender, groupName ?: "")
+    }
 
     @IntDef(NEW_GROUP, USER_LEFT)
     annotation class Type

@@ -55,5 +55,12 @@ class StatusMessageBuilder {
             val localStatusMessageJson = SofaAdapters.get().toJson(localStatusMessage)
             return SofaMessage().makeNewLocalStatusMessage(localStatusMessageJson)
         }
+
+        @JvmStatic
+        fun addGroupNameUpdatedStatusMessage(sender: User, updatedGroupName: String): SofaMessage {
+            val localStatusMessage = LocalStatusMessage(LocalStatusMessage.GROUP_NAME_UPDATED, sender, updatedGroupName)
+            val localStatusMessageJson = SofaAdapters.get().toJson(localStatusMessage)
+            return SofaMessage().makeNewLocalStatusMessage(localStatusMessageJson)
+        }
     }
 }
