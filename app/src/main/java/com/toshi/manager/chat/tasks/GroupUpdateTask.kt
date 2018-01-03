@@ -72,15 +72,8 @@ class GroupUpdateTask(
     }
 
     private fun handleGroupUpdate(messageSource: String, signalGroup: SignalServiceGroup?) {
-        val groupId = Hex.toHexString(signalGroup?.groupId)
-        val signalGroupIds = signalGroup?.members?.get() ?: emptyList()
-        NewGroupParticipantsTask(conversationStore)
-                .run(groupId, messageSource, signalGroupIds)
-                .onErrorComplete()
-                .andThen(Group().updateFromSignalGroup(signalGroup, messageReceiver))
-                .subscribe(
-                        { this.conversationStore.saveGroup(it) },
-                        { LogUtil.e(javaClass, "Error creating incoming group. $it") }
-                )
+        signalGroup?.let {
+            UpdateGroupInfoTask(conversationStore, messageReceiver).run(messageSource, it)
+        }
     }
 }

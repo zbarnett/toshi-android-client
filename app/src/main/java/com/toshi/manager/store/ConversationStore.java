@@ -381,6 +381,14 @@ public class ConversationStore {
         return saveMessage(conversation.getRecipient(), statusMessage);
     }
 
+    public Completable addGroupNameUpdatedStatusMessage(final Recipient recipient,
+                                                        final User sender,
+                                                        final String updatedGroupName) {
+        final SofaMessage statusMessage = StatusMessageBuilder.addGroupNameUpdatedStatusMessage(sender, updatedGroupName);
+        return saveMessage(recipient, statusMessage)
+                .toCompletable();
+    }
+
     public boolean areUnreadMessages() {
         final Realm realm = BaseApplication.get().getRealm();
         final Conversation result = realm
