@@ -261,10 +261,6 @@ public class ConversationStore {
         .subscribeOn(Schedulers.from(dbThread));
     }
 
-    private void broadcastConversationChanged(final Conversation conversation) {
-        CONVERSATION_CHANGED_SUBJECT.onNext(conversation);
-    }
-
     public Single<Conversation> loadByThreadId(final String threadId) {
         return Single.fromCallable(
             () -> loadWhere(THREAD_ID_FIELD, threadId)
@@ -364,12 +360,6 @@ public class ConversationStore {
                         this::broadcastConversation,
                         this::handleError
                 );
-    }
-
-    @NonNull
-    private void broadcastConversation(final Conversation conversation) {
-        broadcastConversationChanged(conversation);
-        broadcastConversationUpdated(conversation);
     }
 
     private Single<Conversation> addUserLeftStatusMessage(@NonNull final Conversation conversation, @NonNull User sender) {
@@ -488,6 +478,15 @@ public class ConversationStore {
             return;
         }
         DELETED_MESSAGE_SUBJECT.onNext(deletedMessage);
+    }
+
+    private void broadcastConversation(final Conversation conversation) {
+        broadcastConversationChanged(conversation);
+        broadcastConversationUpdated(conversation);
+    }
+
+    private void broadcastConversationChanged(final Conversation conversation) {
+        CONVERSATION_CHANGED_SUBJECT.onNext(conversation);
     }
 
     private void broadcastConversationUpdated(final Conversation conversation) {
