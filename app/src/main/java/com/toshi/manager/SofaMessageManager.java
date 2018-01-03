@@ -28,6 +28,7 @@ import com.toshi.crypto.signal.store.SignalTrustStore;
 import com.toshi.manager.chat.SofaMessageReceiver;
 import com.toshi.manager.chat.SofaMessageRegistration;
 import com.toshi.manager.chat.SofaMessageSender;
+import com.toshi.manager.chat.tasks.NewGroupNameTask;
 import com.toshi.manager.chat.tasks.NewGroupParticipantsTask;
 import com.toshi.manager.model.SofaMessageTask;
 import com.toshi.manager.store.ConversationStore;
@@ -121,15 +122,27 @@ public final class SofaMessageManager {
                 .getUserManager()
                 .getCurrentUser()
                 .map(User::getToshiId)
-                .flatMapCompletable(localUserId -> updateNewParticipants(group, localUserId))
+                .flatMapCompletable(localUserId -> updateGroup(group, localUserId))
                 .andThen(messageSender.sendGroupUpdate(group))
                 .andThen(Completable.fromAction(() -> this.conversationStore.saveGroup(group)))
                 .subscribeOn(Schedulers.io());
     }
 
+    private Completable updateGroup(final Group group, final String localUserId) {
+        return updateNewParticipants(group, localUserId)
+                .andThen(updateGroupName(group, localUserId));
+    }
+
     private Completable updateNewParticipants(final Group group, final String localUserId) {
         return new NewGroupParticipantsTask(this.conversationStore)
-                .run(group.getId(), localUserId, group.getMemberIds());
+                .run(group.getId(), localUserId, group.getMemberIds())
+                .onErrorComplete();
+    }
+
+    private Completable updateGroupName(final Group group, final String localUserId) {
+        return new NewGroupNameTask(conversationStore)
+                .run(localUserId, group.getId(), group.getTitle())
+                .onErrorComplete();
     }
 
     @NotNull

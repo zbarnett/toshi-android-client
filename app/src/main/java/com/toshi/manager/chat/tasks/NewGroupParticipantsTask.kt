@@ -20,6 +20,7 @@ package com.toshi.manager.chat.tasks
 import com.toshi.manager.store.ConversationStore
 import com.toshi.model.local.Group
 import com.toshi.model.local.User
+import com.toshi.util.LogUtil
 import com.toshi.view.BaseApplication
 import rx.Completable
 import rx.Observable
@@ -34,6 +35,7 @@ class NewGroupParticipantsTask(private val conversationStore: ConversationStore)
                 .getGroupFromId(groupId)
                 .map { findNewGroupParticipants(it, participantsIds) }
                 .flatMapCompletable { addNewGroupParticipantsStatusMessage(groupId, senderId, it) }
+                .doOnError { LogUtil.e(javaClass, "Error while updating group participants $it") }
     }
 
     private fun addNewGroupParticipantsStatusMessage(groupId: String, senderId: String, newParticipantsIds: List<String>): Completable {
