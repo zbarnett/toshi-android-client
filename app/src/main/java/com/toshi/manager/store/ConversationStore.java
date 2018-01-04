@@ -21,6 +21,7 @@ package com.toshi.manager.store;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.toshi.extensions.SofaMessageUtil;
 import com.toshi.model.local.Conversation;
 import com.toshi.model.local.ConversationObservables;
 import com.toshi.model.local.Group;
@@ -168,11 +169,10 @@ public class ConversationStore {
 
             if (message != null) {
                 final SofaMessage storedMessage = realm.copyToRealmOrUpdate(message);
-                if(conversationToStore.getThreadId().equals(watchedThreadId)) {
-                    conversationToStore.setLatestMessage(storedMessage);
-                } else {
-                    conversationToStore.setLatestMessageAndUpdateUnreadCounter(storedMessage);
-                }
+                final boolean updateUnreadCounter = !conversationToStore.getThreadId().equals(watchedThreadId)
+                        && !SofaMessageUtil.isLocalStatusMessage(storedMessage);
+                if (updateUnreadCounter) conversationToStore.setLatestMessageAndUpdateUnreadCounter(storedMessage);
+                else conversationToStore.setLatestMessage(storedMessage);
                 broadcastNewChatMessage(receiver.getThreadId(), message);
             }
 

@@ -2,6 +2,7 @@ package com.toshi.viewModel
 
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
+import com.toshi.extensions.isLocalStatusMessage
 import com.toshi.util.LogUtil
 import com.toshi.view.BaseApplication
 import rx.android.schedulers.AndroidSchedulers
@@ -17,7 +18,9 @@ class MainViewModel : ViewModel() {
     }
 
     private fun attachUnreadMessagesSubscription() {
-        val allChangesSubscription = getSofaMessageManager().registerForAllConversationChanges()
+        val allChangesSubscription = getSofaMessageManager()
+                .registerForAllConversationChanges()
+                .filter { !it.latestMessage.isLocalStatusMessage() }
                 .flatMap { getSofaMessageManager().areUnreadMessages().toObservable() }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -40,6 +43,7 @@ class MainViewModel : ViewModel() {
     private fun getSofaMessageManager() = BaseApplication.get().sofaMessageManager
 
     override fun onCleared() {
+        super.onCleared()
         subscriptions.clear()
     }
 }
