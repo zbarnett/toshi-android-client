@@ -4,7 +4,7 @@ import com.toshi.model.local.UnsignedW3Transaction;
 import com.toshi.model.network.TransactionRequest;
 import com.toshi.model.sofa.Payment;
 import com.toshi.model.sofa.SofaAdapters;
-import com.toshi.util.PaymentTask.TransactionRequestBuilder;
+import com.toshi.util.paymentTask.TransactionRequestBuilder;
 
 import org.junit.Test;
 

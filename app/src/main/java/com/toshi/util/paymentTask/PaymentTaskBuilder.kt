@@ -15,7 +15,7 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.toshi.util.PaymentTask
+package com.toshi.util.paymentTask
 
 import com.toshi.crypto.util.TypeConverter
 import com.toshi.manager.model.PaymentTask
