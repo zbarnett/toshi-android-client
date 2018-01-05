@@ -363,21 +363,13 @@ public class ConversationStore {
         return saveMessage(conversation.getRecipient(), localStatusMessage);
     }
 
-    public Single<Conversation> addNewGroupParticipantsStatusMessage(@NonNull final String groupId,
-                                                                     @NonNull final User sender,
-                                                                     final List<User> newUsers) {
-        return loadByThreadId(groupId)
-                .flatMap(conversation -> addNewGroupParticipantsStatusMessage(conversation, sender, newUsers))
-                .doOnSuccess(this::broadcastConversationUpdated)
-                .doOnError(throwable -> LogUtil.e(getClass(), "Error while creating new status message " + throwable));
-    }
-
-    private Single<Conversation> addNewGroupParticipantsStatusMessage(final Conversation conversation,
-                                                                      final User sender,
-                                                                      final List<User> newUsers) {
+    public Completable addNewGroupParticipantsStatusMessage(final Recipient recipient,
+                                                            final User sender,
+                                                            final List<User> newUsers) {
         final SofaMessage statusMessage = StatusMessageBuilder.buildAddStatusMessage(sender, newUsers);
-        if (statusMessage == null) return Single.just(conversation);
-        return saveMessage(conversation.getRecipient(), statusMessage);
+        if (statusMessage == null) return Completable.error(new Throwable("Status message is null"));
+        return saveMessage(recipient, statusMessage)
+                .toCompletable();
     }
 
     public Completable addGroupNameUpdatedStatusMessage(final Recipient recipient,
