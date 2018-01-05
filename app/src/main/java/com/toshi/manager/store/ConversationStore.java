@@ -86,13 +86,12 @@ public class ConversationStore {
                 .filter(thread -> thread != null);
     }
 
-    public void saveGroup(@NonNull final Group group) {
-        copyOrUpdateGroup(group)
+    public Completable saveGroup(@NonNull final Group group) {
+        return copyOrUpdateGroup(group)
                 .observeOn(Schedulers.immediate())
-                .subscribe(
-                        this::broadcastConversation,
-                        this::handleError
-                );
+                .doOnSuccess(this::broadcastConversation)
+                .doOnError(this::handleError)
+                .toCompletable();
     }
 
     public Single<Conversation> createNewConversationFromGroup(@NonNull final Group group) {

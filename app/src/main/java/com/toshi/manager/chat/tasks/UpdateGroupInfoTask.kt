@@ -34,8 +34,9 @@ class UpdateGroupInfoTask(
     fun run(messageSource: String, signalGroup: SignalServiceGroup) {
         updateGroupName(messageSource, signalGroup)
                 .andThen(updateParticipants(messageSource, signalGroup))
+                .flatMapCompletable { conversationStore.saveGroup(it) }
                 .subscribe(
-                        { this.conversationStore.saveGroup(it) },
+                        {},
                         { LogUtil.e(javaClass, "Error creating incoming group. $it") }
                 )
     }

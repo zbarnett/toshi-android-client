@@ -124,7 +124,7 @@ public final class SofaMessageManager {
                 .map(User::getToshiId)
                 .flatMapCompletable(localUserId -> updateGroup(group, localUserId))
                 .andThen(messageSender.sendGroupUpdate(group))
-                .andThen(Completable.fromAction(() -> this.conversationStore.saveGroup(group)))
+                .andThen(this.conversationStore.saveGroup(group))
                 .subscribeOn(Schedulers.io());
     }
 
