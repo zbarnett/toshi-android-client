@@ -19,6 +19,7 @@ package com.toshi.manager.chat.tasks
 
 import com.toshi.manager.store.ConversationStore
 import com.toshi.model.local.Group
+import com.toshi.model.local.Recipient
 import com.toshi.model.local.User
 import com.toshi.util.LogUtil
 import com.toshi.view.BaseApplication
@@ -33,20 +34,20 @@ class NewGroupParticipantsTask(private val conversationStore: ConversationStore)
     fun run(groupId: String, senderId: String, participantsIds: List<String>): Completable {
         return recipientManager
                 .getGroupFromId(groupId)
-                .map { findNewGroupParticipants(it, participantsIds) }
-                .flatMapCompletable { addNewGroupParticipantsStatusMessage(groupId, senderId, it) }
+                .map { Recipient(it) }
+                .flatMapCompletable { addNewGroupParticipantsStatusMessage(it, senderId, participantsIds) }
                 .doOnError { LogUtil.e(javaClass, "Error while updating group participants $it") }
     }
 
-    private fun addNewGroupParticipantsStatusMessage(groupId: String, senderId: String, newParticipantsIds: List<String>): Completable {
+    private fun addNewGroupParticipantsStatusMessage(recipient: Recipient?, senderId: String, participantsIds: List<String>): Completable {
+        val newParticipantsIds = findNewGroupParticipants(recipient?.group, participantsIds)
         if (newParticipantsIds.isEmpty()) return Completable.complete()
         return Single.zip(
                 getUserFromId(senderId),
                 getNewParticipants(newParticipantsIds),
                 { user, newParticipants -> Pair(user, newParticipants) }
         )
-        .flatMap { conversationStore.addNewGroupParticipantsStatusMessage(groupId, it.first, it.second) }
-        .toCompletable()
+        .flatMapCompletable { addStatusMessageAndUpdateGroup(recipient, it.first, it.second) }
     }
 
     private fun getNewParticipants(newUsers: List<String>): Single<List<User>> {
@@ -63,5 +64,20 @@ class NewGroupParticipantsTask(private val conversationStore: ConversationStore)
             val localGroupIds = group.memberIds
             participantsIds.filter { !localGroupIds.contains(it) }
         } ?: emptyList()
+    }
+
+    private fun addStatusMessageAndUpdateGroup(recipient: Recipient?, sender: User, newUsers: List<User>): Completable {
+        return recipient?.let {
+            conversationStore
+                    .addNewGroupParticipantsStatusMessage(recipient, sender, newUsers)
+                    .andThen(updateGroup(it.group, newUsers))
+        } ?: Completable.error(Throwable("Recipient is null"))
+    }
+
+    private fun updateGroup(group: Group?, newUsers: List<User>): Completable {
+        return group?.let {
+            it.addMembers(newUsers)
+            conversationStore.saveGroup(it)
+        } ?: Completable.error(Throwable("Group is null"))
     }
 }
