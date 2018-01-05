@@ -18,13 +18,11 @@
 package com.toshi.manager.chat.tasks
 
 import com.toshi.manager.store.ConversationStore
-import com.toshi.model.local.Group
 import com.toshi.util.LogUtil
 import org.spongycastle.util.encoders.Hex
 import org.whispersystems.signalservice.api.SignalServiceMessageReceiver
 import org.whispersystems.signalservice.api.messages.SignalServiceGroup
 import rx.Completable
-import rx.Single
 
 class UpdateGroupInfoTask(
         private val conversationStore: ConversationStore,
@@ -34,7 +32,7 @@ class UpdateGroupInfoTask(
     fun run(messageSource: String, signalGroup: SignalServiceGroup) {
         updateGroupName(messageSource, signalGroup)
                 .andThen(updateParticipants(messageSource, signalGroup))
-                .flatMapCompletable { conversationStore.saveGroup(it) }
+                .andThen(updateAvatar(signalGroup))
                 .subscribe(
                         {},
                         { LogUtil.e(javaClass, "Error creating incoming group. $it") }
@@ -42,19 +40,27 @@ class UpdateGroupInfoTask(
     }
 
     private fun updateGroupName(messageSource: String, signalGroup: SignalServiceGroup): Completable {
-        if (signalGroup.groupId == null || signalGroup.name?.get() == null) return Completable.complete()
+        if (signalGroup.groupId == null || signalGroup.name?.get() == null) return Completable.error(Throwable("Signal group id is null"))
         val groupId = Hex.toHexString(signalGroup.groupId)
         return NewGroupNameTask(conversationStore)
                 .run(messageSource, groupId, signalGroup.name.get())
                 .onErrorComplete()
     }
 
-    private fun updateParticipants(messageSource: String, signalGroup: SignalServiceGroup): Single<Group> {
+    private fun updateParticipants(messageSource: String, signalGroup: SignalServiceGroup): Completable {
+        if (signalGroup.groupId == null) return Completable.error(Throwable("Signal group id is null"))
         val groupId = Hex.toHexString(signalGroup.groupId)
         val signalGroupIds = signalGroup.members?.get() ?: emptyList()
         return NewGroupParticipantsTask(conversationStore)
                 .run(groupId, messageSource, signalGroupIds)
                 .onErrorComplete()
-                .andThen(Group().updateFromSignalGroup(signalGroup, messageReceiver))
+    }
+
+    private fun updateAvatar(signalGroup: SignalServiceGroup): Completable {
+        if (signalGroup.groupId == null) return Completable.error(Throwable("Signal group id is null"))
+        val groupId = Hex.toHexString(signalGroup.groupId)
+        return NewGroupAvatarTask(conversationStore, messageReceiver)
+                .run(groupId, signalGroup)
+                .onErrorComplete()
     }
 }

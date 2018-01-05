@@ -43,9 +43,7 @@ import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 import rx.Completable;
-import rx.Observable;
 import rx.Single;
-import rx.schedulers.Schedulers;
 
 public class Group extends RealmObject {
 
@@ -68,35 +66,17 @@ public class Group extends RealmObject {
         this.members.addAll(members);
     }
 
-    public Single<Group> updateFromSignalGroup(final SignalServiceGroup group, final SignalServiceMessageReceiver messageReceiver) {
-        this.id = Hex.toHexString(group.getGroupId());
-        this.members = new RealmList<>();
-
-        if (group.getName().isPresent()) {
-            this.title = group.getName().get();
-        }
-
-        if (group.getMembers().isPresent()) {
-            return lookupUsers(group.getMembers().get())
-                    .map(this.members::addAll)
-                    .flatMapCompletable(__ -> processAvatar(group, messageReceiver))
-                    .toSingle(() -> this);
-        }
-
-        return processAvatar(group, messageReceiver)
-                .toSingle(() -> this);
-    }
-
-    private Completable processAvatar(final SignalServiceGroup group, final SignalServiceMessageReceiver messageReceiver) {
+    public Completable processAvatar(final SignalServiceGroup group, final SignalServiceMessageReceiver messageReceiver) {
         if (group.getAvatar().isPresent()) {
             return Single.fromCallable(() -> {
                 final SignalServiceAttachmentPointer attachment = group.getAvatar().get().asPointer();
                 return FileUtil.writeAttachmentToFileFromMessageReceiver(attachment, messageReceiver);
             })
             .flatMap(this::compressImage)
-            .map(file -> BitmapFactory.decodeFile(file.getAbsolutePath()))
+            .map(File::getAbsolutePath)
+            .map(BitmapFactory::decodeFile)
             .map(Avatar::new)
-            .onErrorResumeNext(avatar -> getCurrentAvatarIfNull())
+            .onErrorResumeNext(__ -> Single.just(this.avatar))
             .map(avatar -> this.avatar = avatar)
             .toCompletable()
             .onErrorComplete();
@@ -108,25 +88,6 @@ public class Group extends RealmObject {
     private Single<File> compressImage(@Nullable final File file) {
         if (file == null) return Single.error(new Throwable("File is null when trying to compress it"));
         return FileUtil.compressImage(FileUtil.MAX_SIZE, file);
-    }
-
-    private Single<List<User>> lookupUsers(final List<String> userIds) {
-        return Observable
-                .from(userIds)
-                .flatMap( uid -> BaseApplication
-                            .get()
-                            .getRecipientManager()
-                            .getUserFromToshiId(uid)
-                            .toObservable()
-                )
-                .toList()
-                .toSingle()
-                .subscribeOn(Schedulers.io());
-    }
-
-    private Single<Avatar> getCurrentAvatarIfNull() {
-        if (this.avatar != null) return Single.just(this.avatar);
-        else return fromId(this.id).map(group -> group.avatar);
     }
 
     public Group addMember(final User member) {
