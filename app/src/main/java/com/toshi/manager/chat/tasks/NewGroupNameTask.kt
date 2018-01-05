@@ -18,6 +18,7 @@
 package com.toshi.manager.chat.tasks
 
 import com.toshi.manager.store.ConversationStore
+import com.toshi.model.local.Group
 import com.toshi.model.local.Recipient
 import com.toshi.model.local.User
 import com.toshi.util.LogUtil
@@ -29,18 +30,30 @@ class NewGroupNameTask(val conversationStore: ConversationStore) {
 
     private val recipientManager by lazy { BaseApplication.get().recipientManager }
 
-    fun run(messageSource: String, groupId: String, newGroupName: String): Completable {
+    fun run(messageSource: String, groupId: String, newGroupName: String?): Completable {
         return Single.zip(
                 recipientManager.getGroupFromId(groupId),
                 recipientManager.getUserFromToshiId(messageSource),
                 { group, sender -> Pair(Recipient(group), sender) }
         )
-        .flatMapCompletable { addGroupNameUpdatedStatusMessage(it.first, it.second, newGroupName) }
+        .flatMapCompletable { addStatusMessageAndUpdateGroup(it.first, it.second, newGroupName) }
         .doOnError { LogUtil.e(javaClass, "Error while adding group info updated status message $it") }
     }
 
-    private fun addGroupNameUpdatedStatusMessage(recipient: Recipient, sender: User, newGroupName: String): Completable {
-        return if (newGroupName != recipient.group.title) conversationStore.addGroupNameUpdatedStatusMessage(recipient, sender, newGroupName)
-        else Completable.complete()
+    private fun addStatusMessageAndUpdateGroup(recipient: Recipient?, sender: User, newGroupName: String?): Completable {
+        val group = recipient?.group
+        val nameChanged = newGroupName != null && group != null && newGroupName != group.title
+        return if (nameChanged) {
+            conversationStore
+                    .addGroupNameUpdatedStatusMessage(recipient, sender, newGroupName)
+                    .andThen(updateGroup(recipient?.group, newGroupName))
+        } else Completable.complete()
+    }
+
+    private fun updateGroup(group: Group?, newGroupName: String?): Completable {
+        return if (group != null && newGroupName != null) {
+            group.title = newGroupName
+            conversationStore.saveGroup(group)
+        } else Completable.error(Throwable("Group/name is null"))
     }
 }
