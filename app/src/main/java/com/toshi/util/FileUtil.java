@@ -88,9 +88,25 @@ public class FileUtil {
         return file;
     }
 
+    public @Nullable static File writeAvatarToFileFromMessageReceiver(
+            final SignalServiceAttachmentPointer attachment,
+            final SignalServiceMessageReceiver messageReceiver,
+            final String groupId) {
+        return writeAttachmentToFileFromMessageReceiver(attachment, messageReceiver, groupId);
+    }
+
     public @Nullable static File writeAttachmentToFileFromMessageReceiver(
             final SignalServiceAttachmentPointer attachment,
             final SignalServiceMessageReceiver messageReceiver) {
+        final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd-HHmmss");
+        final String fileId = dateFormatter.format(new Date());
+        return writeAttachmentToFileFromMessageReceiver(attachment, messageReceiver, fileId);
+    }
+
+    private @Nullable static File writeAttachmentToFileFromMessageReceiver(
+            final SignalServiceAttachmentPointer attachment,
+            final SignalServiceMessageReceiver messageReceiver,
+            final String fileId) {
         File file = null;
         try {
             final String tempName = String.format("%d", attachment.getId());
@@ -98,7 +114,7 @@ public class FileUtil {
             final int maxFileSize = 20 * 1024 * 1024;
             final InputStream inputStream = messageReceiver.retrieveAttachment(attachment, file, maxFileSize);
 
-            final File destFile = constructAttachmentFile(attachment.getContentType());
+            final File destFile = constructAttachmentFile(attachment.getContentType(), fileId);
             return writeToFileFromInputStream(destFile, inputStream);
         } catch (IOException | InvalidMessageException e) {
             LogUtil.exception(FileUtil.class, "Error during writing attachment to file", e);
@@ -110,7 +126,7 @@ public class FileUtil {
         }
     }
 
-    private static File constructAttachmentFile(final String contentType) throws IOException {
+    private static File constructAttachmentFile(final String contentType, final String fileId) throws IOException {
         final File baseDirectory = BaseApplication.get().getFilesDir();
         final String directoryPath = contentType.startsWith("image/") ? "images" : "files";
         final File outputDirectory = new File(baseDirectory, directoryPath);
@@ -120,9 +136,7 @@ public class FileUtil {
         }
 
         final String extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(contentType);
-        final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd-HHmmss");
-        final String baseName = dateFormatter.format(new Date());
-        final String filename = String.format("%s.%s", baseName, extension);
+        final String filename = String.format("%s.%s", fileId, extension);
         return new File(outputDirectory, filename);
     }
 
