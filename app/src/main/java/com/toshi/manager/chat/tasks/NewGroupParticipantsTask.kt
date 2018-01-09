@@ -27,7 +27,10 @@ import rx.Completable
 import rx.Observable
 import rx.Single
 
-class NewGroupParticipantsTask(private val conversationStore: ConversationStore) {
+class NewGroupParticipantsTask(
+        private val conversationStore: ConversationStore,
+        private val addStatusMessage: Boolean = true
+) {
 
     private val recipientManager by lazy { BaseApplication.get().recipientManager }
 
@@ -67,17 +70,20 @@ class NewGroupParticipantsTask(private val conversationStore: ConversationStore)
     }
 
     private fun addStatusMessageAndUpdateGroup(recipient: Recipient?, sender: User, newUsers: List<User>): Completable {
-        return recipient?.let {
-            conversationStore
-                    .addNewGroupParticipantsStatusMessage(recipient, sender, newUsers)
-                    .andThen(updateGroup(it.group, newUsers))
-        } ?: Completable.error(Throwable("Recipient is null"))
+        return recipient?.group?.let {
+            if (addStatusMessage) {
+                addStatusMessage(recipient, sender, newUsers)
+                        .andThen(updateGroup(it, newUsers))
+            } else updateGroup(it, newUsers)
+        } ?: Completable.error(Throwable("Recipient/Group is null"))
     }
 
-    private fun updateGroup(group: Group?, newUsers: List<User>): Completable {
-        return group?.let {
-            it.addMembers(newUsers)
-            conversationStore.saveGroup(it)
-        } ?: Completable.error(Throwable("Group is null"))
+    private fun addStatusMessage(recipient: Recipient, sender: User, newUsers: List<User>): Completable {
+        return conversationStore.addNewGroupParticipantsStatusMessage(recipient, sender, newUsers)
+    }
+
+    private fun updateGroup(group: Group, newUsers: List<User>): Completable {
+        group.addMembers(newUsers)
+        return conversationStore.saveGroup(group)
     }
 }

@@ -26,7 +26,10 @@ import com.toshi.view.BaseApplication
 import rx.Completable
 import rx.Single
 
-class NewGroupNameTask(val conversationStore: ConversationStore) {
+class NewGroupNameTask(
+        private val conversationStore: ConversationStore,
+        private val addStatusMessage: Boolean = true
+) {
 
     private val recipientManager by lazy { BaseApplication.get().recipientManager }
 
@@ -41,19 +44,23 @@ class NewGroupNameTask(val conversationStore: ConversationStore) {
     }
 
     private fun addStatusMessageAndUpdateGroup(recipient: Recipient?, sender: User, newGroupName: String?): Completable {
-        val group = recipient?.group
-        val nameChanged = newGroupName != null && group != null && newGroupName != group.title
-        return if (nameChanged) {
-            conversationStore
-                    .addGroupNameUpdatedStatusMessage(recipient, sender, newGroupName)
-                    .andThen(updateGroup(recipient?.group, newGroupName))
-        } else Completable.complete()
+        return recipient?.group?.let {
+            val hasNameChanged = newGroupName != null && newGroupName != it.title
+            if (hasNameChanged && addStatusMessage) addStatusMessage(recipient, sender, newGroupName)
+                    .andThen(updateGroup(it, newGroupName))
+            else if (hasNameChanged) updateGroup(it, newGroupName)
+            else Completable.complete()
+        } ?: Completable.error(Throwable("Recipient/Group is null"))
     }
 
-    private fun updateGroup(group: Group?, newGroupName: String?): Completable {
-        return if (group != null && newGroupName != null) {
+    private fun addStatusMessage(recipient: Recipient?, sender: User, newGroupName: String?): Completable {
+        return conversationStore.addGroupNameUpdatedStatusMessage(recipient, sender, newGroupName)
+    }
+
+    private fun updateGroup(group: Group, newGroupName: String?): Completable {
+        return newGroupName?.let {
             group.title = newGroupName
             conversationStore.saveGroup(group)
-        } else Completable.error(Throwable("Group/name is null"))
+        } ?: Completable.error(Throwable("Group name is null"))
     }
 }

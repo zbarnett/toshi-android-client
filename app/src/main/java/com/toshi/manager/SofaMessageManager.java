@@ -134,13 +134,13 @@ public final class SofaMessageManager {
     }
 
     private Completable updateNewParticipants(final Group group, final String localUserId) {
-        return new NewGroupParticipantsTask(this.conversationStore)
+        return new NewGroupParticipantsTask(this.conversationStore, true)
                 .run(group.getId(), localUserId, group.getMemberIds())
                 .onErrorComplete();
     }
 
     private Completable updateGroupName(final Group group, final String localUserId) {
-        return new NewGroupNameTask(conversationStore)
+        return new NewGroupNameTask(conversationStore, true)
                 .run(localUserId, group.getId(), group.getTitle())
                 .onErrorComplete();
     }

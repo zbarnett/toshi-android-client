@@ -66,6 +66,12 @@ public class Group extends RealmObject {
         this.members.addAll(members);
     }
 
+    public Group createFromSignalGroup(final SignalServiceGroup signalServiceGroup) {
+        this.id = Hex.toHexString(signalServiceGroup.getGroupId());
+        this.title = signalServiceGroup.getName().orNull();
+        return this;
+    }
+
     public Completable processAvatar(final SignalServiceGroup group, final SignalServiceMessageReceiver messageReceiver) {
         if (group.getAvatar().isPresent()) {
             return Single.fromCallable(() -> {

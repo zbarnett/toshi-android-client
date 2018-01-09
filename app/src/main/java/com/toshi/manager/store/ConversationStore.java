@@ -126,7 +126,6 @@ public class ConversationStore {
             final Conversation conversationToStore = getOrCreateConversation(group);
             final Realm realm = BaseApplication.get().getRealm();
             realm.beginTransaction();
-            addAddedToGroupStatusMessageIfEmpty(conversationToStore, group);
             conversationToStore.updateRecipient(new Recipient(group));
             final Conversation storedConversation = realm.copyToRealmOrUpdate(conversationToStore);
             realm.commitTransaction();
@@ -137,12 +136,10 @@ public class ConversationStore {
         .subscribeOn(Schedulers.from(dbThread));
     }
 
-    private void addAddedToGroupStatusMessageIfEmpty(final Conversation conversation, final Group group) {
-        final boolean isConversationEmpty = conversation.getAllMessages() == null || conversation.getAllMessages().isEmpty();
-        if (isConversationEmpty) {
-            final SofaMessage statusMessage = StatusMessageBuilder.buildAddedToGroupStatusMessage(group);
-            conversation.addMessage(statusMessage);
-        }
+    public Completable addAddedToGroupStatusMessageIfEmpty(final Recipient recipient) {
+        final SofaMessage statusMessage = StatusMessageBuilder.buildAddedToGroupStatusMessage(recipient.getGroup());
+        return saveMessage(recipient, statusMessage)
+                .toCompletable();
     }
 
     private Single<Conversation> addGroupCreatedStatusMessage(@NonNull final Conversation conversation) {

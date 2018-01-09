@@ -30,28 +30,34 @@ class UpdateGroupInfoTask(
 ) {
 
     fun run(messageSource: String, signalGroup: SignalServiceGroup) {
-        updateGroupName(messageSource, signalGroup)
-                .andThen(updateParticipants(messageSource, signalGroup))
-                .andThen(updateAvatar(signalGroup))
+        GroupCreatedTask(conversationStore)
+                .run(signalGroup)
+                .flatMapCompletable { updateGroupInfo(messageSource, signalGroup, !it) }
                 .subscribe(
                         {},
                         { LogUtil.e(javaClass, "Error creating incoming group. $it") }
                 )
     }
 
-    private fun updateGroupName(messageSource: String, signalGroup: SignalServiceGroup): Completable {
-        if (signalGroup.groupId == null || signalGroup.name?.get() == null) return Completable.error(Throwable("Signal group id is null"))
+    private fun updateGroupInfo(messageSource: String, signalGroup: SignalServiceGroup, addStatusMessage: Boolean): Completable {
+        return updateGroupName(messageSource, signalGroup, addStatusMessage)
+                .andThen(updateParticipants(messageSource, signalGroup, addStatusMessage))
+                .andThen(updateAvatar(signalGroup))
+    }
+
+    private fun updateGroupName(messageSource: String, signalGroup: SignalServiceGroup, addStatusMessage: Boolean): Completable {
+        if (signalGroup.groupId == null || !signalGroup.name.isPresent) return Completable.error(Throwable("Signal groupId/name is null"))
         val groupId = Hex.toHexString(signalGroup.groupId)
-        return NewGroupNameTask(conversationStore)
+        return NewGroupNameTask(conversationStore, addStatusMessage)
                 .run(messageSource, groupId, signalGroup.name.get())
                 .onErrorComplete()
     }
 
-    private fun updateParticipants(messageSource: String, signalGroup: SignalServiceGroup): Completable {
+    private fun updateParticipants(messageSource: String, signalGroup: SignalServiceGroup, addStatusMessage: Boolean): Completable {
         if (signalGroup.groupId == null) return Completable.error(Throwable("Signal group id is null"))
         val groupId = Hex.toHexString(signalGroup.groupId)
         val signalGroupIds = signalGroup.members?.get() ?: emptyList()
-        return NewGroupParticipantsTask(conversationStore)
+        return NewGroupParticipantsTask(conversationStore, addStatusMessage)
                 .run(groupId, messageSource, signalGroupIds)
                 .onErrorComplete()
     }
