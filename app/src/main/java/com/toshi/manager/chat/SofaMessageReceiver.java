@@ -51,12 +51,20 @@ import org.whispersystems.signalservice.internal.configuration.SignalServiceConf
 import org.whispersystems.signalservice.internal.configuration.SignalServiceUrl;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+
+import rx.Observable;
+import rx.Single;
+import rx.Subscription;
+import rx.schedulers.Schedulers;
 
 public class SofaMessageReceiver {
 
     private final static String USER_AGENT = "Android " + BuildConfig.APPLICATION_ID + " - " + BuildConfig.VERSION_NAME +  ":" + BuildConfig.VERSION_CODE;
+    public final static int INCOMING_MESSAGE_TIMEOUT = 10;
 
     private final ProtocolStore protocolStore;
     private final SignalServiceMessageReceiver messageReceiver;
@@ -66,6 +74,8 @@ public class SofaMessageReceiver {
 
     private SignalServiceMessagePipe messagePipe;
     private boolean isReceivingMessages;
+    private Subscription messagesSubscription;
+    private final ExecutorService messageReceiverThread = Executors.newSingleThreadExecutor();
 
     public SofaMessageReceiver(@NonNull final HDWallet wallet,
                                @NonNull final ProtocolStore protocolStore,
@@ -93,26 +103,35 @@ public class SofaMessageReceiver {
         }
 
         this.isReceivingMessages = true;
-        new Thread(() -> {
-            while (isReceivingMessages) {
-                try {
-                    final IncomingMessage incomingMessage = fetchLatestMessage();
-                    ChatNotificationManager.showNotification(incomingMessage);
-                } catch (TimeoutException e) {
-                    // Nop -- this is expected to happen
-                }
-            }
-        }).start();
+
+        this.messagesSubscription = fetchLatestMessage()
+                .toObservable()
+                .onErrorResumeNext(this::returnNullIfTimeoutException)
+                .repeatWhen(completed -> completed)
+                .subscribe(
+                        ChatNotificationManager::showNotification,
+                        throwable -> LogUtil.e(getClass(), "Error while receiving messages " + throwable)
+                );
+    }
+
+    private Observable returnNullIfTimeoutException(final Throwable throwable) {
+        if (throwable instanceof TimeoutException) return Observable.just(null); // TimeoutException is expected
+        else return Observable.error(throwable);
+    }
+
+    public Single<IncomingMessage> fetchLatestMessage() {
+        return Single.fromCallable(this::tryFetchLatestMessage)
+                .subscribeOn(Schedulers.from(messageReceiverThread));
     }
 
     @WorkerThread
-    public IncomingMessage fetchLatestMessage() throws TimeoutException {
+    private IncomingMessage tryFetchLatestMessage() throws TimeoutException {
         if (this.messagePipe == null) {
             this.messagePipe = messageReceiver.createMessagePipe();
         }
 
         try {
-            final SignalServiceEnvelope envelope = messagePipe.read(10, TimeUnit.SECONDS);
+            final SignalServiceEnvelope envelope = messagePipe.read(INCOMING_MESSAGE_TIMEOUT, TimeUnit.SECONDS);
             return decryptIncomingSignalServiceEnvelope(envelope);
         } catch (final TimeoutException ex) {
             throw new TimeoutException(ex.getMessage());
@@ -162,6 +181,7 @@ public class SofaMessageReceiver {
 
     public void shutdown() {
         this.isReceivingMessages = false;
+        if (this.messagesSubscription != null) this.messagesSubscription.unsubscribe();
         if (this.messagePipe != null) {
             this.messagePipe.shutdown();
             this.messagePipe = null;

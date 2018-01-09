@@ -51,7 +51,6 @@ import org.jetbrains.annotations.NotNull;
 import org.whispersystems.signalservice.internal.configuration.SignalServiceUrl;
 
 import java.util.List;
-import java.util.concurrent.TimeoutException;
 
 import rx.Completable;
 import rx.Observable;
@@ -406,14 +405,8 @@ public final class SofaMessageManager {
         this.messageSender.sendPendingMessage(sofaMessage);
     }
 
-    public IncomingMessage fetchLatestMessage() throws TimeoutException {
-        try {
-            while (this.messageReceiver == null) {
-                Thread.sleep(200);
-            }
-        } catch (final InterruptedException e) {
-            throw new TimeoutException(e.toString());
-        }
+    public Single<IncomingMessage> fetchLatestMessage() throws InterruptedException {
+        while (this.messageReceiver == null) Thread.sleep(200);
         return this.messageReceiver.fetchLatestMessage();
     }
 

@@ -47,10 +47,13 @@ import com.toshi.view.BaseApplication;
 import com.toshi.view.notification.ChatNotificationManager;
 
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import rx.Completable;
 import rx.Single;
+
+import static com.toshi.manager.chat.SofaMessageReceiver.INCOMING_MESSAGE_TIMEOUT;
 
 public class GcmMessageReceiver extends FirebaseMessagingService {
 
@@ -155,11 +158,8 @@ public class GcmMessageReceiver extends FirebaseMessagingService {
     private void tryShowIncomingMessage() {
         final IncomingMessage incomingMessage;
         try {
-            incomingMessage = BaseApplication
-                .get()
-                .getSofaMessageManager()
-                .fetchLatestMessage();
-        } catch (final TimeoutException e) {
+            incomingMessage = getIncomingMessage();
+        } catch (InterruptedException | TimeoutException e) {
             LogUtil.i(getClass(), "Fetched all new messages");
             return;
         }
@@ -167,7 +167,16 @@ public class GcmMessageReceiver extends FirebaseMessagingService {
         ChatNotificationManager.showNotification(incomingMessage);
         // There may be more messages.
         tryShowIncomingMessage();
+    }
 
+    private IncomingMessage getIncomingMessage() throws TimeoutException, InterruptedException {
+        return BaseApplication
+                .get()
+                .getSofaMessageManager()
+                .fetchLatestMessage()
+                .timeout(INCOMING_MESSAGE_TIMEOUT, TimeUnit.SECONDS)
+                .toBlocking()
+                .value();
     }
 
     private void updatePayment(final Payment payment) {
