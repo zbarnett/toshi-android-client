@@ -41,4 +41,9 @@ public class Contact extends RealmObject {
     public User getUser() {
         return user;
     }
+
+    public void cascadeDelete() {
+        if (this.user != null) this.user.deleteFromRealm();
+        deleteFromRealm();
+    }
 }

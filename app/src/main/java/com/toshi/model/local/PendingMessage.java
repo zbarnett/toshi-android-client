@@ -55,4 +55,10 @@ public class PendingMessage extends RealmObject {
         this.privateKey = sofaMessage.getPrivateKey();
         return this;
     }
+
+    public void cascadeDelete() {
+        if (this.receiver != null) this.receiver.cascadeDelete();
+        if (this.sofaMessage != null) this.sofaMessage.cascadeDelete();
+        deleteFromRealm();
+    }
 }

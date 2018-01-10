@@ -48,4 +48,9 @@ public class PendingTransaction extends RealmObject {
         this.sofaMessage = sofaMessage;
         return this;
     }
+
+    public void cascadeDelete() {
+        if (this.sofaMessage != null) this.sofaMessage.cascadeDelete();
+        deleteFromRealm();
+    }
 }

@@ -65,11 +65,11 @@ public class ContactStore {
         return Completable.fromAction(() -> {
             final Realm realm = BaseApplication.get().getRealm();
             realm.beginTransaction();
-            realm
+            final Contact contactToDelete = realm
                     .where(Contact.class)
                     .equalTo("owner_address", user.getToshiId())
-                    .findFirst()
-                    .deleteFromRealm();
+                    .findFirst();
+            if (contactToDelete != null) contactToDelete.cascadeDelete();
             realm.commitTransaction();
             realm.close();
         })

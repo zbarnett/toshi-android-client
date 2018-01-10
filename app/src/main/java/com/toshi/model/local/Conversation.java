@@ -145,4 +145,12 @@ public class Conversation extends RealmObject implements ConversationItem {
         final Conversation otherConversationMessage = (Conversation) other;
         return otherConversationMessage.getThreadId().equals(this.threadId);
     }
+
+    public void cascadeDelete() {
+        if (this.recipient != null) this.recipient.cascadeDelete();
+        if (this.latestMessage != null) this.latestMessage.cascadeDelete();
+        if (this.allMessages != null) this.allMessages.deleteAllFromRealm();
+        if (this.conversationStatus != null) this.conversationStatus.deleteFromRealm();
+        deleteFromRealm();
+    }
 }

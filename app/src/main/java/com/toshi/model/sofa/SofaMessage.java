@@ -230,4 +230,10 @@ public class SofaMessage extends RealmObject {
     public int hashCode() {
         return privateKey.hashCode();
     }
+
+    public void cascadeDelete() {
+        if (this.sender != null) this.sender.deleteFromRealm();
+        if (this.errorMessage != null) this.errorMessage.deleteFromRealm();
+        deleteFromRealm();
+    }
 }

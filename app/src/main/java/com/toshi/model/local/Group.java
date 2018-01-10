@@ -198,4 +198,10 @@ public class Group extends RealmObject {
         group.id = Hex.toHexString(id);
         return group;
     }
+
+    public void cascadeDelete() {
+        if (this.members != null) this.members.deleteAllFromRealm();
+        if (this.avatar != null) this.avatar.deleteFromRealm();
+        deleteFromRealm();
+    }
 }

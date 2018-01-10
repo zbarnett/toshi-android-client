@@ -291,11 +291,11 @@ public class ConversationStore {
         return Completable.fromAction(() -> {
             final Realm realm = BaseApplication.get().getRealm();
             realm.beginTransaction();
-            realm
+            final Conversation conversationToDelete = realm
                     .where(Conversation.class)
                     .equalTo(THREAD_ID_FIELD, threadId)
-                    .findFirst()
-                    .deleteFromRealm();
+                    .findFirst();
+            if (conversationToDelete != null) conversationToDelete.cascadeDelete();
             realm.commitTransaction();
             realm.close();
         })

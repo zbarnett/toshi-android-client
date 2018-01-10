@@ -87,4 +87,10 @@ public class Recipient extends RealmObject {
     public String getUserAvatar() {
         return this.user.getAvatar();
     }
+
+    public void cascadeDelete() {
+        if (this.user != null) this.user.deleteFromRealm();
+        if (this.group != null) this.group.cascadeDelete();
+        deleteFromRealm();
+    }
 }
