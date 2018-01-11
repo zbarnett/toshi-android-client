@@ -89,7 +89,7 @@ public class Recipient extends RealmObject {
     }
 
     public void cascadeDelete() {
-        if (this.user != null) this.user.deleteFromRealm();
+        // Don't remove this user because it might be used somewhere else
         if (this.group != null) this.group.cascadeDelete();
         deleteFromRealm();
     }

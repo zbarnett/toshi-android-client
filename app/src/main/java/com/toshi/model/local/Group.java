@@ -200,7 +200,7 @@ public class Group extends RealmObject {
     }
 
     public void cascadeDelete() {
-        if (this.members != null) this.members.deleteAllFromRealm();
+        // Don't remove these users because they might be used somewhere else
         if (this.avatar != null) this.avatar.deleteFromRealm();
         deleteFromRealm();
     }
