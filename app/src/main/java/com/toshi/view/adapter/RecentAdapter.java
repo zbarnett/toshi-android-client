@@ -166,10 +166,15 @@ public class RecentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
     public void updateUnacceptedConversation(final Conversation conversation) {
-        if (this.unacceptedConversations.contains(conversation)) return;
-        this.unacceptedConversations.add(conversation);
-        addRequestsViewAndDivider();
-        notifyDataSetChanged();
+        if (this.unacceptedConversations.contains(conversation)) {
+            final int index = this.unacceptedConversations.indexOf(conversation);
+            this.unacceptedConversations.set(index, conversation);
+            notifyItemChanged(REQUESTS_POSITION);
+        } else {
+            this.unacceptedConversations.add(conversation);
+            addRequestsViewAndDivider();
+            notifyDataSetChanged();
+        }
     }
 
     private void addRequestsViewAndDivider() {
