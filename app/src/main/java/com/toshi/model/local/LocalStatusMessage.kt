@@ -17,7 +17,6 @@
 
 package com.toshi.model.local
 
-import android.support.annotation.IntDef
 import com.toshi.R
 import com.toshi.view.BaseApplication
 
@@ -62,20 +61,38 @@ class LocalStatusMessage(
         return newUsers?.let {
             return when (newUsers.size) {
                 0 -> ""
-                1 -> BaseApplication.get().getString(R.string.lsm_added_user, displayNameOfSender, newUsers[0].displayName)
+                1 -> formatUserAddedString(isSenderLocalUser, newUsers[0])
                 in 2..3 -> {
                     val firstUsers = joinToString(newUsers.size - 1, newUsers)
                     val lastUser = newUsers.last().displayName
-                    BaseApplication.get().getString(R.string.lsm_added_users, displayNameOfSender, firstUsers, lastUser)
+                    sender?.let {
+                        BaseApplication.get().getString(R.string.lsm_added_users, displayNameOfSender, firstUsers, lastUser)
+                    } ?: BaseApplication.get().getString(R.string.lsm_added_users_without_sender, firstUsers, lastUser)
                 }
                 else -> {
                     val numberOfNamesToShow = 2
                     val firstUsers = joinToString(numberOfNamesToShow, newUsers)
                     val numberOfLeftoverUsers = newUsers.size - numberOfNamesToShow
-                    BaseApplication.get().getString(R.string.lsm_added_users_wrapped, displayNameOfSender, firstUsers, numberOfLeftoverUsers)
+                    sender?.let {
+                        BaseApplication.get().getString(R.string.lsm_added_users_wrapped, displayNameOfSender, firstUsers, numberOfLeftoverUsers)
+                    } ?: BaseApplication.get().getString(R.string.lsm_added_users_wrapped_without_sender, firstUsers, numberOfLeftoverUsers)
                 }
             }
         } ?: ""
+    }
+
+    private fun formatUserAddedString(isSenderLocalUser: Boolean, newUser: User): String {
+        return sender?.let { formatUserAddedWithSender(isSenderLocalUser, it, newUser) }
+                ?: formatUserAddedWithoutSender(newUser)
+    }
+
+    private fun formatUserAddedWithSender(isSenderLocalUser: Boolean, sender: User, newUser: User): String {
+        val displayNameOfSender = if (isSenderLocalUser) BaseApplication.get().getString(R.string.you) else sender.displayName
+        return BaseApplication.get().getString(R.string.lsm_added_user, displayNameOfSender, newUser.displayName)
+    }
+
+    private fun formatUserAddedWithoutSender(newUser: User): String {
+        return BaseApplication.get().getString(R.string.lsm_added_user_without_sender, newUser.displayName)
     }
 
     private fun joinToString(n: Int, newUsers: List<User>): String {
@@ -87,11 +104,16 @@ class LocalStatusMessage(
     private fun formatAddedToGroup() = BaseApplication.get().getString(R.string.lsm_added_to_group, groupName ?: "")
 
     private fun formatGroupNameUpdated(isSenderLocalUser: Boolean): String {
-        val displayNameOfSender = if (isSenderLocalUser) BaseApplication.get().getString(R.string.you)
-        else sender?.displayName ?: ""
+        return sender?.let { formatGroupNameUpdatedWithSender(isSenderLocalUser, it) }
+                ?: formatGroupNameUpdatedWithoutSender()
+    }
+
+    private fun formatGroupNameUpdatedWithSender(isSenderLocalUser: Boolean, sender: User): String {
+        val displayNameOfSender = if (isSenderLocalUser) BaseApplication.get().getString(R.string.you) else sender.displayName
         return BaseApplication.get().getString(R.string.lsm_group_info_updated, displayNameOfSender, groupName ?: "")
     }
 
-    @IntDef(NEW_GROUP, USER_LEFT)
-    annotation class Type
+    private fun formatGroupNameUpdatedWithoutSender(): String {
+        return BaseApplication.get().getString(R.string.lsm_group_info_updated_without_sender, groupName ?: "")
+    }
 }

@@ -17,6 +17,7 @@
 
 package com.toshi.manager.chat.tasks
 
+import com.toshi.extensions.NETWORK_TIMEOUT_SECONDS
 import com.toshi.manager.store.ConversationStore
 import com.toshi.model.local.User
 import com.toshi.util.LogUtil
@@ -42,7 +43,7 @@ class LeftGroupTask(private val conversationStore: ConversationStore) {
         return try {
             recipientManager
                     .getUserFromToshiId(id)
-                    .timeout(10, TimeUnit.SECONDS)
+                    .timeout(NETWORK_TIMEOUT_SECONDS, TimeUnit.SECONDS)
                     .toBlocking()
                     .value()
         } catch (e: TimeoutException) {

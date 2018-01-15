@@ -17,6 +17,8 @@
 
 package com.toshi.manager.chat.tasks
 
+import com.toshi.extensions.DB_TIMEOUT_SECONDS
+import com.toshi.extensions.NETWORK_TIMEOUT_SECONDS
 import com.toshi.manager.store.ConversationStore
 import com.toshi.model.local.Group
 import com.toshi.model.local.Recipient
@@ -25,6 +27,7 @@ import com.toshi.util.LogUtil
 import com.toshi.view.BaseApplication
 import rx.Completable
 import rx.Single
+import java.util.concurrent.TimeUnit
 
 class NewGroupNameTask(
         private val conversationStore: ConversationStore,
@@ -35,30 +38,40 @@ class NewGroupNameTask(
 
     fun run(messageSource: String, groupId: String, newGroupName: String?): Completable {
         return Single.zip(
-                recipientManager.getGroupFromId(groupId),
-                recipientManager.getUserFromToshiId(messageSource),
-                { group, sender -> Pair(Recipient(group), sender) }
+                getGroupFromId(groupId),
+                getUserFromToshiId(messageSource),
+                { group, sender -> Pair(group, sender) }
         )
         .flatMapCompletable { addStatusMessageAndUpdateGroup(it.first, it.second, newGroupName) }
         .doOnError { LogUtil.e(javaClass, "Error while adding group info updated status message $it") }
     }
 
-    private fun addStatusMessageAndUpdateGroup(recipient: Recipient?, sender: User, newGroupName: String?): Completable {
-        if (recipient != null && recipient.group != null && newGroupName != null) {
-            val hasNameChanged = newGroupName != recipient.group.title
+    private fun getGroupFromId(groupId: String) = recipientManager
+            .getGroupFromId(groupId)
+            .timeout(DB_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            .onErrorReturn { null }
+
+    private fun getUserFromToshiId(messageSource: String) = recipientManager
+            .getUserFromToshiId(messageSource)
+            .timeout(NETWORK_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            .onErrorReturn { null }
+
+    private fun addStatusMessageAndUpdateGroup(group: Group?, sender: User?, newGroupName: String?): Completable {
+        if (group != null && newGroupName != null) {
+            val hasNameChanged = newGroupName != group.title
             return if (hasNameChanged && addStatusMessage) {
-                addStatusMessage(recipient, sender, newGroupName)
-                        .andThen(updateGroup(recipient.group, newGroupName))
+                addStatusMessage(Recipient(group), sender, newGroupName)
+                        .andThen(updateGroup(group, newGroupName))
             } else if (hasNameChanged) {
-                updateGroup(recipient.group, newGroupName)
+                updateGroup(group, newGroupName)
             } else {
                 Completable.complete()
             }
         }
-        return Completable.error(Throwable("Recipient/Group is null"))
+        return Completable.error(Throwable("Group/Group name is null"))
     }
 
-    private fun addStatusMessage(recipient: Recipient, sender: User, newGroupName: String): Completable {
+    private fun addStatusMessage(recipient: Recipient, sender: User?, newGroupName: String): Completable {
         return conversationStore
                 .addGroupNameUpdatedStatusMessage(recipient, sender, newGroupName)
                 .toCompletable()

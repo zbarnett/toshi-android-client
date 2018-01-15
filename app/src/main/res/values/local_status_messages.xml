@@ -20,8 +20,12 @@
     <string name="lsm_group_created">Group created</string>
     <string name="lsm_user_left">%s left the group</string>
     <string name="lsm_added_user">%1$s added %2$s to the group</string>
+    <string name="lsm_added_user_without_sender">%s was added the group</string>
     <string name="lsm_added_users">%1$s added %2$s and %3$s to the group</string>
+    <string name="lsm_added_users_without_sender">%1$s and %2$s were added to the group</string>
     <string name="lsm_added_users_wrapped">%1$s added %2$s and %3$d others to the group</string>
+    <string name="lsm_added_users_wrapped_without_sender">%1$s and %2$d others were added to the group</string>
     <string name="lsm_added_to_group">You were added to %s</string>
     <string name="lsm_group_info_updated">%1$s renamed the group to %2$s</string>
+    <string name="lsm_group_info_updated_without_sender">Group renamed to %s</string>
 </resources>

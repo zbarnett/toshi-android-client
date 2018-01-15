@@ -273,7 +273,7 @@ public class ConversationStore {
 
     public Single<Conversation> addNewGroupMembersStatusMessage(
         @NonNull final Recipient recipient,
-        @NonNull final User sender,
+        @Nullable final User sender,
         @NonNull final List<User> newUsers) {
         final SofaMessage statusMessage = StatusMessageBuilder.buildAddStatusMessage(sender, newUsers);
         if (statusMessage == null) throw new IllegalStateException("Status message is null");
@@ -282,7 +282,7 @@ public class ConversationStore {
 
     public Single<Conversation> addGroupNameUpdatedStatusMessage(
         @NonNull final Recipient recipient,
-        @NonNull final User sender,
+        @Nullable final User sender,
         @NonNull final String updatedGroupName) {
         final SofaMessage statusMessage = StatusMessageBuilder.addGroupNameUpdatedStatusMessage(sender, updatedGroupName);
         return saveMessage(recipient, statusMessage);

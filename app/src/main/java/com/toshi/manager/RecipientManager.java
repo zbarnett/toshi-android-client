@@ -30,6 +30,7 @@ import com.toshi.model.local.Group;
 import com.toshi.model.local.Recipient;
 import com.toshi.model.local.Report;
 import com.toshi.model.local.User;
+import com.toshi.model.network.SearchResult;
 import com.toshi.model.network.ServerTime;
 import com.toshi.model.network.UserSearchResults;
 import com.toshi.util.LogUtil;
@@ -126,6 +127,14 @@ public class RecipientManager {
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .doOnSuccess(this::cacheUser);
+    }
+
+    public Single<List<User>> fetchUsersFromToshiIds(final List<String> userIds) {
+        return IdService
+                .getApi()
+                .getUsers(userIds)
+                .map(SearchResult::getResults)
+                .subscribeOn(Schedulers.io());
     }
 
     private Observable<User> fetchAndCacheFromNetworkByPaymentAddress(final String paymentAddress) {

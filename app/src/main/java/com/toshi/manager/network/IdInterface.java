@@ -27,6 +27,8 @@ import com.toshi.model.network.ServerTime;
 import com.toshi.model.network.UserDetails;
 import com.toshi.model.network.UserSearchResults;
 
+import java.util.List;
+
 import okhttp3.MultipartBody;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -53,6 +55,9 @@ public interface IdInterface {
     // Works for username or toshiId
     @GET("/v1/user/{id}")
     Single<User> getUser(@Path("id") String userId);
+
+    @GET("/v1/search/user")
+    Single<SearchResult<User>> getUsers(@Query("toshi_id") List<String> userIds);
 
     // Works for username or toshiId
     @Headers("Cache-control: no-cache")

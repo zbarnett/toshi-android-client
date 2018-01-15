@@ -42,7 +42,7 @@ class StatusMessageBuilder {
         }
 
         @JvmStatic
-        fun buildAddStatusMessage(sender: User, newUsers: List<User>): SofaMessage? {
+        fun buildAddStatusMessage(sender: User?, newUsers: List<User>): SofaMessage? {
             if (newUsers.isEmpty()) return null
             val localStatusMessage = LocalStatusMessage(LocalStatusMessage.USER_ADDED, sender, newUsers)
             val localStatusMessageJson = SofaAdapters.get().toJson(localStatusMessage)
@@ -57,7 +57,7 @@ class StatusMessageBuilder {
         }
 
         @JvmStatic
-        fun addGroupNameUpdatedStatusMessage(sender: User, updatedGroupName: String): SofaMessage {
+        fun addGroupNameUpdatedStatusMessage(sender: User?, updatedGroupName: String): SofaMessage {
             val localStatusMessage = LocalStatusMessage(LocalStatusMessage.GROUP_NAME_UPDATED, sender, updatedGroupName)
             val localStatusMessageJson = SofaAdapters.get().toJson(localStatusMessage)
             return SofaMessage().makeNewLocalStatusMessage(localStatusMessageJson)
