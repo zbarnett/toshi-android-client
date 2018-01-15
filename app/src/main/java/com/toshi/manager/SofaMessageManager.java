@@ -29,7 +29,7 @@ import com.toshi.manager.chat.SofaMessageReceiver;
 import com.toshi.manager.chat.SofaMessageRegistration;
 import com.toshi.manager.chat.SofaMessageSender;
 import com.toshi.manager.chat.tasks.NewGroupNameTask;
-import com.toshi.manager.chat.tasks.NewGroupParticipantsTask;
+import com.toshi.manager.chat.tasks.NewGroupMembersTask;
 import com.toshi.manager.model.SofaMessageTask;
 import com.toshi.manager.store.ConversationStore;
 import com.toshi.model.local.Conversation;
@@ -123,7 +123,6 @@ public final class SofaMessageManager {
                 .map(User::getToshiId)
                 .flatMapCompletable(localUserId -> updateGroup(group, localUserId))
                 .andThen(messageSender.sendGroupUpdate(group))
-                .andThen(this.conversationStore.saveGroup(group))
                 .subscribeOn(Schedulers.io());
     }
 
@@ -133,7 +132,7 @@ public final class SofaMessageManager {
     }
 
     private Completable updateNewParticipants(final Group group, final String localUserId) {
-        return new NewGroupParticipantsTask(this.conversationStore, true)
+        return new NewGroupMembersTask(this.conversationStore, true)
                 .run(group.getId(), localUserId, group.getMemberIds())
                 .onErrorComplete();
     }

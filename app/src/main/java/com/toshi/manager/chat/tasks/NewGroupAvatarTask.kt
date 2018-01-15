@@ -18,7 +18,7 @@
 package com.toshi.manager.chat.tasks
 
 import com.toshi.manager.store.ConversationStore
-import com.toshi.model.local.Group
+import com.toshi.model.local.Avatar
 import org.whispersystems.signalservice.api.SignalServiceMessageReceiver
 import org.whispersystems.signalservice.api.messages.SignalServiceGroup
 import rx.Completable
@@ -29,14 +29,8 @@ class NewGroupAvatarTask(
 ) {
 
     fun run(groupId: String, signalGroup: SignalServiceGroup): Completable {
-        return Group.fromId(groupId)
-                .flatMapCompletable { processAvatarAndUpdateGroup(it, signalGroup) }
-    }
-
-    private fun processAvatarAndUpdateGroup(group: Group?, signalGroup: SignalServiceGroup): Completable {
-        return group?.let {
-            it.processAvatar(signalGroup, messageReceiver)
-                    .andThen(conversationStore.saveGroup(it))
-        } ?: Completable.error(Throwable("Group is null"))
+        return Avatar
+                .processFromSignalGroup(signalGroup, messageReceiver)
+                .flatMapCompletable { avatar -> conversationStore.saveGroupAvatar(groupId, avatar) }
     }
 }

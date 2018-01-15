@@ -19,20 +19,14 @@ package com.toshi.model.local;
 
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
-import com.toshi.util.FileUtil;
 import com.toshi.view.BaseApplication;
 
 import org.spongycastle.util.encoders.Hex;
-import org.whispersystems.signalservice.api.SignalServiceMessageReceiver;
-import org.whispersystems.signalservice.api.messages.SignalServiceAttachmentPointer;
 import org.whispersystems.signalservice.api.messages.SignalServiceGroup;
 import org.whispersystems.signalservice.api.push.SignalServiceAddress;
 
-import java.io.File;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Collections;
@@ -42,7 +36,6 @@ import java.util.List;
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
-import rx.Completable;
 import rx.Single;
 
 public class Group extends RealmObject {
@@ -66,34 +59,9 @@ public class Group extends RealmObject {
         this.members.addAll(members);
     }
 
-    public Group createFromSignalGroup(final SignalServiceGroup signalServiceGroup) {
+    public Group(final SignalServiceGroup signalServiceGroup) {
         this.id = Hex.toHexString(signalServiceGroup.getGroupId());
         this.title = signalServiceGroup.getName().orNull();
-        return this;
-    }
-
-    public Completable processAvatar(final SignalServiceGroup group, final SignalServiceMessageReceiver messageReceiver) {
-        if (group.getAvatar().isPresent()) {
-            return Single.fromCallable(() -> {
-                final SignalServiceAttachmentPointer attachment = group.getAvatar().get().asPointer();
-                return FileUtil.writeAvatarToFileFromMessageReceiver(attachment, messageReceiver, this.id);
-            })
-            .flatMap(this::compressImage)
-            .map(File::getAbsolutePath)
-            .map(BitmapFactory::decodeFile)
-            .map(Avatar::new)
-            .onErrorResumeNext(__ -> Single.just(this.avatar))
-            .map(avatar -> this.avatar = avatar)
-            .toCompletable()
-            .onErrorComplete();
-        }
-
-        return Completable.complete();
-    }
-
-    private Single<File> compressImage(@Nullable final File file) {
-        if (file == null) return Single.error(new Throwable("File is null when trying to compress it"));
-        return FileUtil.compressImage(FileUtil.MAX_SIZE, file);
     }
 
     public Group addMember(final User member) {
@@ -142,6 +110,11 @@ public class Group extends RealmObject {
 
     public Group setAvatar(final Bitmap avatar) {
         this.avatar = new Avatar(avatar);
+        return this;
+    }
+
+    public Group setAvatar(final Avatar avatar) {
+        this.avatar = avatar;
         return this;
     }
 

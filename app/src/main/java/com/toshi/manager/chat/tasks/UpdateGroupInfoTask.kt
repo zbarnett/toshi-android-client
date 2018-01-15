@@ -57,7 +57,7 @@ class UpdateGroupInfoTask(
         if (signalGroup.groupId == null) return Completable.error(Throwable("Signal group id is null"))
         val groupId = Hex.toHexString(signalGroup.groupId)
         val signalGroupIds = signalGroup.members?.get() ?: emptyList()
-        return NewGroupParticipantsTask(conversationStore, addStatusMessage)
+        return NewGroupMembersTask(conversationStore, addStatusMessage)
                 .run(groupId, messageSource, signalGroupIds)
                 .onErrorComplete()
     }

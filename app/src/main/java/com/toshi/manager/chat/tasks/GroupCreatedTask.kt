@@ -19,7 +19,6 @@ package com.toshi.manager.chat.tasks
 
 import com.toshi.manager.store.ConversationStore
 import com.toshi.model.local.Group
-import com.toshi.model.local.Recipient
 import org.whispersystems.signalservice.api.messages.SignalServiceGroup
 import rx.Single
 
@@ -33,9 +32,8 @@ class GroupCreatedTask(private val conversationStore: ConversationStore) {
 
     private fun saveGroupAndAddStatusMessage(isNewGroup: Boolean, signalGroup: SignalServiceGroup): Single<Boolean> {
         if (!isNewGroup) return Single.just(isNewGroup)
-        val newGroup = Group().createFromSignalGroup(signalGroup)
-        return conversationStore.saveGroup(newGroup)
-                .andThen(conversationStore.addAddedToGroupStatusMessageIfEmpty(Recipient(newGroup)))
+        return conversationStore.saveSignalGroup(signalGroup)
+                .flatMapCompletable { conversationStore.addAddedToGroupStatusMessage(it).toCompletable() }
                 .toSingle { isNewGroup }
     }
 }

@@ -27,33 +27,33 @@ import rx.Completable
 import rx.Observable
 import rx.Single
 
-class NewGroupParticipantsTask(
+class NewGroupMembersTask(
         private val conversationStore: ConversationStore,
         private val addStatusMessage: Boolean = true
 ) {
 
     private val recipientManager by lazy { BaseApplication.get().recipientManager }
 
-    fun run(groupId: String, senderId: String, participantsIds: List<String>): Completable {
+    fun run(groupId: String, senderId: String, memberIds: List<String>): Completable {
         return recipientManager
                 .getGroupFromId(groupId)
                 .map { Recipient(it) }
-                .flatMapCompletable { addNewGroupParticipantsStatusMessage(it, senderId, participantsIds) }
-                .doOnError { LogUtil.e(javaClass, "Error while updating group participants $it") }
+                .flatMapCompletable { addNewGroupMembersStatusMessage(it, senderId, memberIds) }
+                .doOnError { LogUtil.e(javaClass, "Error while updating group members $it") }
     }
 
-    private fun addNewGroupParticipantsStatusMessage(recipient: Recipient?, senderId: String, participantsIds: List<String>): Completable {
-        val newParticipantsIds = findNewGroupParticipants(recipient?.group, participantsIds)
-        if (newParticipantsIds.isEmpty()) return Completable.complete()
+    private fun addNewGroupMembersStatusMessage(recipient: Recipient?, senderId: String, memberIds: List<String>): Completable {
+        val newMemberIds = findNewGroupMembers(recipient?.group, memberIds)
+        if (newMemberIds.isEmpty()) return Completable.complete()
         return Single.zip(
                 getUserFromId(senderId),
-                getNewParticipants(newParticipantsIds),
-                { user, newParticipants -> Pair(user, newParticipants) }
+                getNewMembers(newMemberIds),
+                { user, newMembers -> Pair(user, newMembers) }
         )
         .flatMapCompletable { addStatusMessageAndUpdateGroup(recipient, it.first, it.second) }
     }
 
-    private fun getNewParticipants(newUsers: List<String>): Single<List<User>> {
+    private fun getNewMembers(newUsers: List<String>): Single<List<User>> {
         return Observable.from(newUsers)
                 .flatMap { getUserFromId(it).toObservable() }
                 .toList()
@@ -62,28 +62,29 @@ class NewGroupParticipantsTask(
 
     private fun getUserFromId(id: String) = recipientManager.getUserFromToshiId(id)
 
-    private fun findNewGroupParticipants(group: Group?, participantsIds: List<String>): List<String> {
+    private fun findNewGroupMembers(group: Group?, memberIds: List<String>): List<String> {
         return group?.let {
             val localGroupIds = group.memberIds
-            participantsIds.filter { !localGroupIds.contains(it) }
+            memberIds.filter { !localGroupIds.contains(it) }
         } ?: emptyList()
     }
 
-    private fun addStatusMessageAndUpdateGroup(recipient: Recipient?, sender: User, newUsers: List<User>): Completable {
+    private fun addStatusMessageAndUpdateGroup(recipient: Recipient?, sender: User, newMembers: List<User>): Completable {
         return recipient?.group?.let {
             if (addStatusMessage) {
-                addStatusMessage(recipient, sender, newUsers)
-                        .andThen(updateGroup(it, newUsers))
-            } else updateGroup(it, newUsers)
+                addStatusMessage(recipient, sender, newMembers)
+                        .andThen(updateGroup(it, newMembers))
+            } else updateGroup(it, newMembers)
         } ?: Completable.error(Throwable("Recipient/Group is null"))
     }
 
     private fun addStatusMessage(recipient: Recipient, sender: User, newUsers: List<User>): Completable {
-        return conversationStore.addNewGroupParticipantsStatusMessage(recipient, sender, newUsers)
+        return conversationStore
+                .addNewGroupMembersStatusMessage(recipient, sender, newUsers)
+                .toCompletable()
     }
 
-    private fun updateGroup(group: Group, newUsers: List<User>): Completable {
-        group.addMembers(newUsers)
-        return conversationStore.saveGroup(group)
+    private fun updateGroup(group: Group, newMembers: List<User>): Completable {
+        return conversationStore.addNewMembersToGroup(group.id, newMembers)
     }
 }

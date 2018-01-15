@@ -44,23 +44,29 @@ class NewGroupNameTask(
     }
 
     private fun addStatusMessageAndUpdateGroup(recipient: Recipient?, sender: User, newGroupName: String?): Completable {
-        return recipient?.group?.let {
-            val hasNameChanged = newGroupName != null && newGroupName != it.title
-            if (hasNameChanged && addStatusMessage) addStatusMessage(recipient, sender, newGroupName)
-                    .andThen(updateGroup(it, newGroupName))
-            else if (hasNameChanged) updateGroup(it, newGroupName)
-            else Completable.complete()
-        } ?: Completable.error(Throwable("Recipient/Group is null"))
+        if (recipient != null && recipient.group != null && newGroupName != null) {
+            val hasNameChanged = newGroupName != recipient.group.title
+            return if (hasNameChanged && addStatusMessage) {
+                addStatusMessage(recipient, sender, newGroupName)
+                        .andThen(updateGroup(recipient.group, newGroupName))
+            } else if (hasNameChanged) {
+                updateGroup(recipient.group, newGroupName)
+            } else {
+                Completable.complete()
+            }
+        }
+        return Completable.error(Throwable("Recipient/Group is null"))
     }
 
-    private fun addStatusMessage(recipient: Recipient?, sender: User, newGroupName: String?): Completable {
-        return conversationStore.addGroupNameUpdatedStatusMessage(recipient, sender, newGroupName)
+    private fun addStatusMessage(recipient: Recipient, sender: User, newGroupName: String): Completable {
+        return conversationStore
+                .addGroupNameUpdatedStatusMessage(recipient, sender, newGroupName)
+                .toCompletable()
     }
 
     private fun updateGroup(group: Group, newGroupName: String?): Completable {
         return newGroupName?.let {
-            group.title = newGroupName
-            conversationStore.saveGroup(group)
+            conversationStore.saveGroupTitle(group.id, newGroupName)
         } ?: Completable.error(Throwable("Group name is null"))
     }
 }

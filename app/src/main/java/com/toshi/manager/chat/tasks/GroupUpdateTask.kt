@@ -65,8 +65,9 @@ class GroupUpdateTask(
         BaseApplication.get()
                 .recipientManager
                 .getUserFromToshiId(messageSource)
+                .flatMapCompletable { user -> conversationStore.removeUserFromGroup(Hex.toHexString(signalGroup.groupId), user) }
                 .subscribe(
-                        { conversationStore.removeUserFromGroup(it, Hex.toHexString(signalGroup.groupId)) },
+                        {},
                         { LogUtil.e(javaClass, "Error handling leave group. $it") }
                 )
     }
