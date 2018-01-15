@@ -55,6 +55,7 @@ import com.toshi.util.PaymentType
 import com.toshi.util.PermissionUtil
 import com.toshi.util.ResendHandler
 import com.toshi.util.SoundManager
+import com.toshi.view.BaseApplication
 import com.toshi.view.adapter.MessageAdapter
 import com.toshi.view.custom.SpeedyLinearLayoutManager
 import kotlinx.android.synthetic.main.activity_chat.*
@@ -505,11 +506,11 @@ class ChatActivity : AppCompatActivity() {
             }
             CAPTURE_IMAGE -> {
                 val fileName = viewModel.capturedImageName
-                fileName?.let { viewModel.compressAndSendMediaMessage(it) }
+                fileName?.let { viewModel.sendMediaMessage(File(BaseApplication.get().filesDir, fileName)) }
             }
             CONFIRM_ATTACHMENT -> {
                 val filePath = resultIntent?.getStringExtra(AttachmentConfirmationActivity.ATTACHMENT_PATH)
-                filePath?.let { viewModel.compressAndSendMediaMessage(File(filePath)) }
+                filePath?.let { viewModel.sendMediaMessage(File(filePath)) }
             }
         }
     }

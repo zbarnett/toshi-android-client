@@ -277,16 +277,11 @@ class ChatViewModel(private val threadId: String) : ViewModel() {
         }
     }
 
-    fun compressAndSendMediaMessage(fileName: String) {
-        val file = File(BaseApplication.get().filesDir, fileName)
-        compressAndSendMediaMessage(file)
-    }
-
-    fun compressAndSendMediaMessage(file: File) {
+    fun sendMediaMessage(file: File) {
         val sub = FileUtil.compressImage(FileUtil.MAX_SIZE.toLong(), file)
                 .subscribe(
                         { compressedFile -> sendMediaMessage(compressedFile.absolutePath) },
-                        { LogUtil.exception(javaClass, it) }
+                        { LogUtil.exception(javaClass, "Unable to compress image $it") }
                 )
 
         subscriptions.add(sub)

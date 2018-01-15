@@ -145,6 +145,7 @@ public class FileUtil {
         return new File(BaseApplication.get().getFilesDir(), filename);
     }
 
+    @Nullable
     public static String getMimeTypeFromFilename(final String filename) {
         if (filename == null) return null;
         final String strippedFilename = filename.replaceAll("\\s","");
@@ -157,6 +158,7 @@ public class FileUtil {
             if (file.length() <= maxSize) return file;
             final int compressPercentage = (int)(((double)maxSize / file.length()) * 100);
             final Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+            if (bitmap == null) return file; // Return original file if bitmap is null
             final OutputStream outputStream = new FileOutputStream(file);
             bitmap.compress(Bitmap.CompressFormat.JPEG, compressPercentage, outputStream);
             return file;
