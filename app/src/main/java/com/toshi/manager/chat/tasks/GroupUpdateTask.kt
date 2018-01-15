@@ -22,8 +22,6 @@ import com.toshi.manager.store.ConversationStore
 import com.toshi.model.local.Group
 import com.toshi.model.local.IncomingMessage
 import com.toshi.util.LogUtil
-import com.toshi.view.BaseApplication
-import org.spongycastle.util.encoders.Hex
 import org.whispersystems.signalservice.api.SignalServiceMessageReceiver
 import org.whispersystems.signalservice.api.messages.SignalServiceDataMessage
 import org.whispersystems.signalservice.api.messages.SignalServiceGroup
@@ -39,7 +37,7 @@ class GroupUpdateTask(
         val signalGroup = dataMessage.groupInfo.get()
         when (signalGroup.type) {
             SignalServiceGroup.Type.REQUEST_INFO -> handleRequestGroupInfo(messageSource, dataMessage)
-            SignalServiceGroup.Type.QUIT -> handleLeaveGroup(messageSource, dataMessage)
+            SignalServiceGroup.Type.QUIT -> handleLeaveGroup(messageSource, signalGroup)
             else -> handleGroupUpdate(messageSource, signalGroup)
         }
         return null
@@ -59,22 +57,11 @@ class GroupUpdateTask(
                 )
     }
 
-    private fun handleLeaveGroup(messageSource: String, dataMessage: SignalServiceDataMessage) {
-        if (!dataMessage.groupInfo.isPresent) return
-        val signalGroup = dataMessage.groupInfo.get()
-        BaseApplication.get()
-                .recipientManager
-                .getUserFromToshiId(messageSource)
-                .flatMapCompletable { user -> conversationStore.removeUserFromGroup(Hex.toHexString(signalGroup.groupId), user) }
-                .subscribe(
-                        {},
-                        { LogUtil.e(javaClass, "Error handling leave group. $it") }
-                )
+    private fun handleLeaveGroup(messageSource: String, signalGroup: SignalServiceGroup) {
+        LeftGroupTask(conversationStore).run(messageSource, signalGroup)
     }
 
-    private fun handleGroupUpdate(messageSource: String, signalGroup: SignalServiceGroup?) {
-        signalGroup?.let {
-            UpdateGroupInfoTask(conversationStore, messageReceiver).run(messageSource, it)
-        }
+    private fun handleGroupUpdate(messageSource: String, signalGroup: SignalServiceGroup) {
+        UpdateGroupInfoTask(conversationStore, messageReceiver).run(messageSource, signalGroup)
     }
 }

@@ -18,7 +18,6 @@
 package com.toshi.manager.chat.tasks
 
 import com.toshi.manager.store.ConversationStore
-import com.toshi.util.LogUtil
 import org.spongycastle.util.encoders.Hex
 import org.whispersystems.signalservice.api.SignalServiceMessageReceiver
 import org.whispersystems.signalservice.api.messages.SignalServiceGroup
@@ -30,19 +29,10 @@ class UpdateGroupInfoTask(
 ) {
 
     fun run(messageSource: String, signalGroup: SignalServiceGroup) {
-        GroupCreatedTask(conversationStore)
-                .run(signalGroup)
-                .flatMapCompletable { updateGroupInfo(messageSource, signalGroup, !it) }
-                .subscribe(
-                        {},
-                        { LogUtil.e(javaClass, "Error creating incoming group. $it") }
-                )
-    }
-
-    private fun updateGroupInfo(messageSource: String, signalGroup: SignalServiceGroup, addStatusMessage: Boolean): Completable {
-        return updateGroupName(messageSource, signalGroup, addStatusMessage)
-                .andThen(updateParticipants(messageSource, signalGroup, addStatusMessage))
-                .andThen(updateAvatar(signalGroup))
+        val isNewGroup = GroupCreatedTask(conversationStore).run(signalGroup).toBlocking().value()
+        updateGroupName(messageSource, signalGroup, !isNewGroup).await()
+        updateParticipants(messageSource, signalGroup, !isNewGroup).await()
+        updateAvatar(signalGroup).await()
     }
 
     private fun updateGroupName(messageSource: String, signalGroup: SignalServiceGroup, addStatusMessage: Boolean): Completable {
