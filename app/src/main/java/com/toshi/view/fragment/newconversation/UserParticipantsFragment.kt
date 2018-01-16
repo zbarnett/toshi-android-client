@@ -28,7 +28,6 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.toshi.BuildConfig
 import com.toshi.R
 import com.toshi.extensions.addHorizontalLineDivider
 import com.toshi.extensions.isVisible
@@ -52,18 +51,13 @@ class UserParticipantsFragment : Fragment() {
 
     private fun init() {
         initViewModel()
-        initView()
         initClickListeners()
+        initRecyclerView()
         initObservers()
     }
 
     private fun initViewModel() {
         viewModel = ViewModelProviders.of(this.activity).get(UserParticipantsViewModel::class.java)
-    }
-
-    private fun initView() {
-        newGroup.isVisible(BuildConfig.DEBUG)
-        initRecyclerView()
     }
 
     private fun initClickListeners() {
