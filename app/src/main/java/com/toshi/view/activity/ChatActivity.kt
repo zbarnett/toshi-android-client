@@ -55,6 +55,7 @@ import com.toshi.util.PaymentType
 import com.toshi.util.PermissionUtil
 import com.toshi.util.ResendHandler
 import com.toshi.util.SoundManager
+import com.toshi.util.keyboard.KeyboardListener
 import com.toshi.view.BaseApplication
 import com.toshi.view.adapter.MessageAdapter
 import com.toshi.view.custom.SpeedyLinearLayoutManager
@@ -87,6 +88,7 @@ class ChatActivity : AppCompatActivity() {
     private lateinit var viewModel: ChatViewModel
     private lateinit var messageAdapter: MessageAdapter
     private lateinit var layoutManager: SpeedyLinearLayoutManager
+    private lateinit var keyboardListener: KeyboardListener
 
     override fun onCreate(inState: Bundle?) {
         super.onCreate(inState)
@@ -100,6 +102,7 @@ class ChatActivity : AppCompatActivity() {
         initNetworkView()
         initRecyclerView()
         initControlView()
+        initKeyboardListener()
         initClickListeners()
         loadConversation()
         initObservers()
@@ -171,11 +174,22 @@ class ChatActivity : AppCompatActivity() {
 
     private fun initClickListeners() {
         chatInput
-                .setOnSendMessageClicked { viewModel.sendMessage(it) }
+                .setOnSendMessageClicked { viewModel.sendMessage(it); forceScrollToBottom(false) }
                 .setOnAttachmentClicked { checkExternalStoragePermission() }
                 .setOnCameraClickedListener { checkCameraPermission() }
         controlView.setOnControlClickedListener { handleControlClicked(it) }
         closeButton.setOnClickListener { hideKeyboard(); finish() }
+    }
+
+    private fun initKeyboardListener() {
+        keyboardListener = KeyboardListener(this) { forceScrollToBottom(false) }
+    }
+
+    private fun forceScrollToBottom(animate: Boolean) {
+        if (messageAdapter.itemCount == 0) return
+        val bottomPosition = messageAdapter.itemCount - 1
+        if (animate) messagesList.smoothScrollToPosition(bottomPosition)
+        else messagesList.scrollToPosition(bottomPosition)
     }
 
     private fun checkExternalStoragePermission() {
@@ -542,6 +556,7 @@ class ChatActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        this.messageAdapter.clear()
+        keyboardListener.clear()
+        messageAdapter.clear()
     }
 }
