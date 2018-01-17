@@ -88,6 +88,10 @@ public class Recipient extends RealmObject {
         return this.user.getAvatar();
     }
 
+    public boolean isRecipientInvalid() {
+        return this.user == null && group == null;
+    }
+
     public void cascadeDelete() {
         // Don't remove this user because it might be used somewhere else
         if (this.group != null) this.group.cascadeDelete();

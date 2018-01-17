@@ -125,7 +125,9 @@ public class RecentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public void setConversations(final List<Conversation> conversations) {
         if (conversations.isEmpty()) return;
         this.conversations.clear();
-        this.conversations.addAll(conversations);
+        for (final Conversation conversation : conversations) {
+            if (!conversation.isRecipientInvalid()) this.conversations.add(conversation);
+        }
         addRequestsViewAndDivider();
         notifyDataSetChanged();
     }

@@ -57,7 +57,7 @@ public class PendingMessageStore {
         final PendingMessage pendingMessage = realm.copyFromRealm(result);
 
         realm.beginTransaction();
-        result.cascadeDelete();
+        result.deleteFromRealm();
         realm.commitTransaction();
         realm.close();
 

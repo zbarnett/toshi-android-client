@@ -128,6 +128,10 @@ public class Conversation extends RealmObject implements ConversationItem {
         return this.recipient;
     }
 
+    public boolean isRecipientInvalid() {
+        return this.recipient == null || this.recipient.isRecipientInvalid();
+    }
+
     public ConversationStatus getConversationStatus() {
         return conversationStatus;
     }
