@@ -81,8 +81,17 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
 
     private void initInjectsAndEmbeds() {
         this.webClient = new SofaWebViewClient(this.loadedListener);
-        this.sofaInjector = new SofaInjector(this.loadedListener);
         this.sofaHostWrapper = new SofaHostWrapper(this.activity, this.activity.getBinding().webview);
+
+        final Subscription sub = BaseApplication.get()
+            .getToshiManager()
+            .getWallet()
+            .subscribeOn(Schedulers.io())
+            .subscribe(
+                wallet -> this.sofaInjector = new SofaInjector(this.loadedListener, wallet),
+                ex -> LogUtil.exception(getClass(), ex)
+            );
+        subscriptions.add(sub);
     }
 
     private void initWebSettings() {

@@ -21,6 +21,7 @@ package com.toshi.presenter.webview;
 import android.support.annotation.NonNull;
 
 import com.toshi.R;
+import com.toshi.crypto.HDWallet;
 import com.toshi.manager.network.interceptor.DeviceInfoUserAgentInterceptor;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.custom.listener.OnLoadListener;
@@ -44,6 +45,7 @@ import rx.subscriptions.CompositeSubscription;
     private final OkHttpClient client;
     private final CompositeSubscription subscriptions;
     private final OnLoadListener listener;
+    private final HDWallet wallet;
 
     private String sofaScript;
 
@@ -52,8 +54,9 @@ import rx.subscriptions.CompositeSubscription;
      *
      * If there is no <script> tag then nothing will be injected
      */
-    /* package */ SofaInjector(@NonNull final OnLoadListener listener) {
+    /* package */ SofaInjector(@NonNull final OnLoadListener listener, final HDWallet wallet) {
         this.listener = listener;
+        this.wallet = wallet;
         this.client = buildHttpClient();
         this.subscriptions = new CompositeSubscription();
         asyncLoadSofaScript();
@@ -124,13 +127,15 @@ import rx.subscriptions.CompositeSubscription;
             }
         }
 
-        this.sofaScript = "<script>" + sb.toString() + "</script>\n";
+        this.sofaScript = "<script type=\"text/javascript\">" + sb.toString() + "</script>\n";
 
         return Completable.complete();
     }
 
     private String getRcpUrlInjection() {
-        return String.format("window.SOFA = {config: {rcpUrl: \"%s\"}};", BaseApplication.get().getResources().getString(R.string.rcp_url));
+        return String.format("window.SOFA = {config: {accounts: [\"%s\"], rcpUrl: \"%s\"}};",
+                this.wallet.getPaymentAddress(),
+                BaseApplication.get().getResources().getString(R.string.rcp_url));
     }
 
     private String injectSofaScript(final String body) {
