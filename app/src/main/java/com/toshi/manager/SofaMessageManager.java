@@ -128,7 +128,8 @@ public final class SofaMessageManager {
 
     private Completable updateGroup(final Group group, final String localUserId) {
         return updateNewParticipants(group, localUserId)
-                .andThen(updateGroupName(group, localUserId));
+                .andThen(updateGroupName(group, localUserId))
+                .andThen(updateGroupAvatar(group));
     }
 
     private Completable updateNewParticipants(final Group group, final String localUserId) {
@@ -140,6 +141,12 @@ public final class SofaMessageManager {
     private Completable updateGroupName(final Group group, final String localUserId) {
         return new NewGroupNameTask(conversationStore, true)
                 .run(localUserId, group.getId(), group.getTitle())
+                .onErrorComplete();
+    }
+
+    private Completable updateGroupAvatar(final Group group) {
+        if (group.getAvatar() == null) Completable.complete();
+        return conversationStore.saveGroupAvatar(group.getId(), group.getAvatar())
                 .onErrorComplete();
     }
 
