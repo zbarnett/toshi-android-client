@@ -232,7 +232,7 @@ public class SofaMessage extends RealmObject {
     }
 
     public void cascadeDelete() {
-        if (this.sender != null) this.sender.deleteFromRealm();
+        // Don't remove this user because it might be used somewhere else
         if (this.errorMessage != null) this.errorMessage.deleteFromRealm();
         deleteFromRealm();
     }
