@@ -34,7 +34,7 @@ import com.toshi.util.BuildTypes
 import com.toshi.util.PaymentType
 import com.toshi.util.ScannerResultType
 import com.toshi.view.adapter.listeners.TextChangedListener
-import com.toshi.view.fragment.DialogFragment.PaymentConfirmationDialog
+import com.toshi.view.fragment.PaymentConfirmationFragment
 import com.toshi.viewModel.SendViewModel
 import kotlinx.android.synthetic.main.activity_send.*
 
@@ -114,14 +114,14 @@ class SendActivity : AppCompatActivity() {
     }
 
     private fun showPaymentConfirmationDialog(encodedEthAmount: String) {
-        val dialog = PaymentConfirmationDialog.newInstanceExternalPayment(
+        val dialog = PaymentConfirmationFragment.newInstanceExternalPayment(
                 getRecipientAddress(),
                 encodedEthAmount,
                 null,
                 PaymentType.TYPE_SEND
         )
-        dialog.setOnPaymentConfirmationApprovedListener { _, paymentTask -> onPaymentApproved(paymentTask) }
-        dialog.show(supportFragmentManager, PaymentConfirmationDialog.TAG)
+        dialog.setOnPaymentConfirmationApprovedListener { onPaymentApproved(it) }
+        dialog.show(supportFragmentManager, PaymentConfirmationFragment.TAG)
     }
 
     private fun onPaymentApproved(paymentTask: PaymentTask) {

@@ -18,11 +18,11 @@
 package com.toshi.presenter.webview;
 
 
+import android.graphics.Bitmap;
 import android.os.Build;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
+import android.support.annotation.MainThread;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Pair;
 import android.webkit.WebView;
 
 import com.toshi.R;
@@ -42,12 +42,15 @@ import com.toshi.util.DialogUtil;
 import com.toshi.util.EthereumSignedMessage;
 import com.toshi.util.LogUtil;
 import com.toshi.view.BaseApplication;
-import com.toshi.view.fragment.DialogFragment.PaymentConfirmationDialog;
+import com.toshi.view.fragment.PaymentConfirmationFragment;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 
+import kotlin.Unit;
+import rx.Completable;
+import rx.Single;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.subscriptions.CompositeSubscription;
@@ -59,11 +62,13 @@ import rx.subscriptions.CompositeSubscription;
     private final SOFAHost sofaHost;
     private final HDWallet wallet;
     private final CompositeSubscription subscriptions;
+    private String url;
 
-    /* package */ SofaHostWrapper(final AppCompatActivity activity, final WebView webView) {
+    /* package */ SofaHostWrapper(final AppCompatActivity activity, final WebView webView, final String url) {
         this.activity = activity;
         this.subscriptions = new CompositeSubscription();
         this.webView = webView;
+        this.url = url;
         this.sofaHost = new SOFAHost(this);
         this.wallet = getWallet();
     }
@@ -85,7 +90,7 @@ import rx.subscriptions.CompositeSubscription;
         final GetAccountsCallback callback =
                 new GetAccountsCallback().setResult(this.wallet.getPaymentAddress());
 
-        doCallBack(id, callback.toJsonEncodedString());
+        postCallbackTask(id, callback.toJsonEncodedString());
     }
 
     public void approveTransaction(final String id, final String unsignedTransaction) {
@@ -93,7 +98,7 @@ import rx.subscriptions.CompositeSubscription;
         final ApproveTransactionCallback callback =
                 new ApproveTransactionCallback()
                         .setResult(shouldApprove);
-        doCallBack(id, callback.toJsonEncodedString());
+        postCallbackTask(id, callback.toJsonEncodedString());
     }
 
     private boolean shouldApproveTransaction(final String unsignedTransaction) {
@@ -109,6 +114,31 @@ import rx.subscriptions.CompositeSubscription;
     }
 
     public void signTransaction(final String id, final String unsignedTransaction) {
+        final Subscription sub =
+                getWebViewInfo(this.webView)
+                .subscribe(
+                        pair -> signTransaction(id, unsignedTransaction, url, pair.first, pair.second),
+                        throwable -> LogUtil.e(getClass(), "Error while retrieving web view info " + throwable)
+                );
+
+        this.subscriptions.add(sub);
+    }
+
+    @MainThread
+    private Single<Pair<String, Bitmap>> getWebViewInfo(final WebView webView) {
+        return Single.fromCallable(() -> {
+            final String title = webView.getTitle();
+            final Bitmap favicon = webView.getFavicon();
+            return new Pair<>(title, favicon);
+        })
+        .subscribeOn(AndroidSchedulers.mainThread());
+    }
+
+    public void signTransaction(final String id,
+                                final String unsignedTransaction,
+                                final String url,
+                                final String title,
+                                final Bitmap favicon) {
         final UnsignedW3Transaction transaction;
         try {
             transaction = SofaAdapters.get().unsignedW3TransactionFrom(unsignedTransaction);
@@ -117,26 +147,25 @@ import rx.subscriptions.CompositeSubscription;
             return;
         }
         if (this.activity == null) return;
-        final PaymentConfirmationDialog dialog =
-                PaymentConfirmationDialog
+        final PaymentConfirmationFragment dialog =
+                PaymentConfirmationFragment.Companion
                         .newInstanceWebPayment(
                                 unsignedTransaction,
                                 transaction.getTo(),
                                 transaction.getValue(),
                                 id,
-                                null
+                                null,
+                                url,
+                                title,
+                                favicon
                         );
-        dialog.show(this.activity.getSupportFragmentManager(), PaymentConfirmationDialog.TAG);
-        dialog.setOnPaymentConfirmationApprovedListener(this::handleApprovedClicked)
-                .setOnPaymentConfirmationCanceledListener(this::handleAcceptedCanceled);
+        dialog.show(activity.getSupportFragmentManager(), PaymentConfirmationFragment.TAG);
+        dialog.setOnPaymentConfirmationApprovedListener(this::handlePaymentApproved)
+                .setOnPaymentConfirmationCanceledListener(this::handleCanceledClicked);
     }
 
-    private void handleApprovedClicked(final Bundle bundle, final PaymentTask paymentTask) {
-        final String callbackId = bundle.getString(PaymentConfirmationDialog.CALLBACK_ID);
-        handlePaymentApproved(callbackId, paymentTask);
-    }
-
-    private void handlePaymentApproved(final String callbackId, final PaymentTask paymentTask) {
+    private Unit handlePaymentApproved(final PaymentTask paymentTask) {
+        final String callbackId = paymentTask.getCallbackId();
         final Subscription sub = BaseApplication
                 .get()
                 .getTransactionManager()
@@ -147,6 +176,7 @@ import rx.subscriptions.CompositeSubscription;
                 );
 
         this.subscriptions.add(sub);
+        return null;
     }
 
     private void handleSignedW3Transaction(final String callbackId, final SignedTransaction signedTransaction) {
@@ -155,19 +185,19 @@ import rx.subscriptions.CompositeSubscription;
                         .setSkeleton(signedTransaction.getSkeleton())
                         .setSignature(signedTransaction.getSignature());
         try {
-            doCallBack(callbackId, callback.toJsonEncodedString());
+            postCallbackTask(callbackId, callback.toJsonEncodedString());
         } catch (Exception e) {
             LogUtil.exception(getClass(), e);
-            doCallBack(callbackId, String.format("{\\\"error\\\":\\\"%s\\\"}", e.getMessage()));
+            postCallbackTask(callbackId, String.format("{\\\"error\\\":\\\"%s\\\"}", e.getMessage()));
         }
     }
 
-    private void handleAcceptedCanceled(final Bundle bundle) {
-        final String callbackId = bundle.getString(PaymentConfirmationDialog.CALLBACK_ID);
+    private Unit handleCanceledClicked(final String callbackId) {
         final RejectTransactionCallback callback =
                 new RejectTransactionCallback()
                         .setError(BaseApplication.get().getString(R.string.error__reject_transaction));
-        doCallBack(callbackId, callback.toJsonEncodedString());
+        postCallbackTask(callbackId, callback.toJsonEncodedString());
+        return null;
     }
 
     public void publishTransaction(final String callbackId, final String signedTransactionPayload) {
@@ -188,18 +218,31 @@ import rx.subscriptions.CompositeSubscription;
     }
 
     private void handleSentTransaction(final String callbackId, final SentTransaction sentTransaction) {
-        doCallBack(callbackId, String.format(
+        postCallbackTask(callbackId, String.format(
                 "{\\\"result\\\":\\\"%s\\\"}",
                 sentTransaction.getTxHash()
         ));
     }
 
-    private void doCallBack(final String id, final String encodedCallback) {
-        new Handler(Looper.getMainLooper()).post(() -> {
-            if (activity == null) return;
+    private void postCallbackTask(final String id, final String encodedCallback) {
+        if (activity == null) return;
+        final Subscription sub =
+                doCallback(id, encodedCallback)
+                .subscribe(
+                        () -> {},
+                        throwable -> LogUtil.e(getClass(), "Error while executing javascript method " + throwable)
+                );
+
+        subscriptions.add(sub);
+    }
+
+    @MainThread
+    private Completable doCallback(final String id, final String encodedCallback) {
+        return Completable.fromAction(() -> {
             final String methodCall = String.format("SOFA.callback(\"%s\",\"%s\")", id, encodedCallback);
             executeJavascriptMethod(methodCall);
-        });
+        })
+        .subscribeOn(AndroidSchedulers.mainThread());
     }
 
     @Override
@@ -242,23 +285,23 @@ import rx.subscriptions.CompositeSubscription;
     @Override
     public void signMessage(final String id, final String from, final String data) {
         if (!from.equalsIgnoreCase(this.wallet.getPaymentAddress())) {
-            doCallBack(id, String.format("{\\\"error\\\":\\\"%s\\\"}",
+            postCallbackTask(id, String.format("{\\\"error\\\":\\\"%s\\\"}",
                     "Invalid Address"));
             return;
         }
         if (data.length() != 66) {
-            doCallBack(id, String.format("{\\\"error\\\":\\\"%s\\\"}",
+            postCallbackTask(id, String.format("{\\\"error\\\":\\\"%s\\\"}",
                     "Invalid Message Length"));
             return;
         } else if (!data.substring(0, 2).equalsIgnoreCase("0x")) {
-            doCallBack(id, String.format("{\\\"error\\\":\\\"%s\\\"}",
+            postCallbackTask(id, String.format("{\\\"error\\\":\\\"%s\\\"}",
                     "Invalid Message Data"));
             return;
         } else {
             try {
                 new BigInteger(data.substring(2), 16);
             } catch (final NumberFormatException e) {
-                doCallBack(id, String.format("{\\\"error\\\":\\\"%s\\\"}",
+                postCallbackTask(id, String.format("{\\\"error\\\":\\\"%s\\\"}",
                         "Invalid Message Data"));
                 return;
             }

@@ -260,9 +260,7 @@
     <string name="balance_dialog_body">You haven\'t backed up your passphrase yet. Without it you risk losing money.</string>
     <string name="backup">Backup</string>
     <string name="payment_request_confirmation_title">Confirm payment request</string>
-    <string name="payment_request_confirmation_body">Do you want to accept the %1$s (%2$s) request from %3$s?</string>
     <string name="payment_confirmation_title">Confirm payment</string>
-    <string name="payment_confirmation_body">Do you want to send %1$s (%2$s) to %3$s?</string>
     <string name="scan_error_payment">This isn\'t a payment address QR Code. You can find it under Me/Balance/Deposit</string>
     <string name="confirm">Confirm</string>
     <string name="app_version">App version: %s</string>
@@ -300,7 +298,6 @@
     <string name="personal_sign_title">This webpage is requesting your signature</string>
     <string name="eth_sign_title">This webpage is requesting your signature</string>
     <string name="eth_sign_warning">Warning: Only sign messages from sites you fully trust as signing messages can have dangerous side effects.</string>
-    <string name="gas_price_message">Estimated Ethereum network fees: %1$s (%2$s ETH)</string>
     <string name="gas_price_error">Unable to estimate Ethereum network fees</string>
     <string name="leave_group">Leave group</string>
     <string name="edit">Edit</string>
@@ -319,4 +316,14 @@
     <string name="unable_to_fetch_group">Unable to fetch group</string>
     <string name="unable_to_update_group">Unable to update group</string>
     <string name="number_of_message_requests">Message requests (%d)</string>
+    <string name="confirm_payment">Confirm Payment</string>
+    <string name="recipient">Recipient</string>
+    <string name="amount">Amount</string>
+    <string name="fetching_network_fees">Fetching estimated network fees…</string>
+    <string name="invalid_user">Invalid user</string>
+    <string name="currency_error">Unable to fetch local currency rate</string>
+    <string name="total">Total</string>
+    <string name="est_network_fees">Est. Network Fees</string>
+    <string name="your_balance">Your balance: %s</string>
+    <string name="insufficient_balance">Insufficient balance: %s</string>
 </resources>

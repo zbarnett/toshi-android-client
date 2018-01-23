@@ -19,4 +19,4 @@ package com.toshi.model.local
 
 import java.math.BigDecimal
 
-data class GasPrice(val ethAmount: BigDecimal, val localAmount: String)
+data class EthAndFiat(val ethAmount: BigDecimal, val localAmount: String)

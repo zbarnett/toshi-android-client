@@ -8,45 +8,45 @@ import com.toshi.manager.model.PaymentTask
 import com.toshi.model.local.User
 import com.toshi.model.sofa.Payment
 import com.toshi.model.sofa.PaymentRequest
-import com.toshi.view.fragment.DialogFragment.PaymentConfirmationDialog
+import com.toshi.view.fragment.PaymentConfirmationFragment
 
 class ResendHandler(private val activity: AppCompatActivity) {
 
     fun showResendPaymentConfirmationDialog(receiver: User,
                                             payment: Payment,
                                             listener: (PaymentTask) -> Unit) {
-        val dialog = PaymentConfirmationDialog.newInstanceToshiPayment(
+        val dialog = PaymentConfirmationFragment.newInstanceToshiPayment(
                 receiver.toshiId,
                 payment.value, null,
                 PaymentType.TYPE_SEND
         )
 
-        dialog.show(this.activity.supportFragmentManager, PaymentConfirmationDialog.TAG)
-        dialog.setOnPaymentConfirmationApprovedListener { _, paymentTask -> listener(paymentTask) }
+        dialog.show(this.activity.supportFragmentManager, PaymentConfirmationFragment.TAG)
+        dialog.setOnPaymentConfirmationApprovedListener { listener(it) }
     }
 
     fun showPaymentConfirmationDialog(receiver: User,
                                       amount: String,
                                       listener: (PaymentTask) -> Unit) {
-        val dialog = PaymentConfirmationDialog.newInstanceToshiPayment(
+        val dialog = PaymentConfirmationFragment.newInstanceToshiPayment(
                 receiver.toshiId,
                 amount, null,
                 PaymentType.TYPE_SEND
         )
-        dialog.show(this.activity.supportFragmentManager, PaymentConfirmationDialog.TAG)
-        dialog.setOnPaymentConfirmationApprovedListener { _, paymentTask -> listener(paymentTask) }
+        dialog.show(this.activity.supportFragmentManager, PaymentConfirmationFragment.TAG)
+        dialog.setOnPaymentConfirmationApprovedListener { listener(it) }
     }
 
     fun showPaymentRequestConfirmationDialog(receiver: User,
                                              paymentRequest: PaymentRequest,
                                              listener: (PaymentTask) -> Unit) {
-        val dialog = PaymentConfirmationDialog.newInstanceToshiPayment(
+        val dialog = PaymentConfirmationFragment.newInstanceToshiPayment(
                 receiver.toshiId,
                 paymentRequest.value, null,
                 PaymentType.TYPE_REQUEST
         )
-        dialog.show(this.activity.supportFragmentManager, PaymentConfirmationDialog.TAG)
-        dialog.setOnPaymentConfirmationApprovedListener { _, paymentTask -> listener(paymentTask) }
+        dialog.show(this.activity.supportFragmentManager, PaymentConfirmationFragment.TAG)
+        dialog.setOnPaymentConfirmationApprovedListener { listener(it) }
     }
 
     fun showResendDialog(listener: () -> Unit,

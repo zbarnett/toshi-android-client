@@ -621,9 +621,9 @@ public class TransactionManager {
                 .buildPaymentTask(fromPaymentAddress, toPaymentAddress, ethAmount);
     }
 
-    public Single<PaymentTask> buildPaymentTask(final UnsignedW3Transaction unsignedW3Transaction) {
+    public Single<PaymentTask> buildPaymentTask(final String callbackId, final UnsignedW3Transaction unsignedW3Transaction) {
         return this.paymentTaskBuilder
-                .buildPaymentTask(unsignedW3Transaction);
+                .buildPaymentTask(callbackId, unsignedW3Transaction);
     }
 
     private User getCurrentLocalUser() {

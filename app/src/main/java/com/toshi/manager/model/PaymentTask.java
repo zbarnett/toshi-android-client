@@ -19,7 +19,7 @@ package com.toshi.manager.model;
 
 import android.support.annotation.IntDef;
 
-import com.toshi.model.local.GasPrice;
+import com.toshi.model.local.EthAndFiat;
 import com.toshi.model.local.User;
 import com.toshi.model.network.SentTransaction;
 import com.toshi.model.network.UnsignedTransaction;
@@ -42,7 +42,10 @@ public class PaymentTask {
     private UnsignedTransaction unsignedTransaction;
     private SofaMessage sofaMessage;
     private SentTransaction sentTransaction;
-    private GasPrice gasPrice;
+    private EthAndFiat paymentAmount;
+    private EthAndFiat gasPrice;
+    private EthAndFiat totalAmount;
+    private String callbackId;
 
     public User getUser() {
         return user;
@@ -68,8 +71,28 @@ public class PaymentTask {
         return sentTransaction;
     }
 
-    public GasPrice getGasPrice() {
+    public EthAndFiat getPaymentAmount() {
+        return paymentAmount;
+    }
+
+    public EthAndFiat getGasPrice() {
         return gasPrice;
+    }
+
+    public EthAndFiat getTotalAmount() {
+        return totalAmount;
+    }
+
+    public String getCallbackId() {
+        return callbackId;
+    }
+
+    public boolean isToshiPayment() {
+        return this.user != null;
+    }
+
+    public boolean isW3Transaction() {
+        return this.callbackId != null;
     }
 
     public boolean isValidOutgoingTask() {
@@ -107,7 +130,10 @@ public class PaymentTask {
         this.unsignedTransaction = builder.unsignedTransaction;
         this.sofaMessage = builder.sofaMessage;
         this.sentTransaction = builder.sentTransaction;
+        this.paymentAmount = builder.paymentAmount;
         this.gasPrice = builder.gasPrice;
+        this.totalAmount = builder.totalAmount;
+        this.callbackId = builder.callbackId;
     }
 
     public static class Builder {
@@ -117,7 +143,10 @@ public class PaymentTask {
         private UnsignedTransaction unsignedTransaction;
         private SofaMessage sofaMessage;
         private SentTransaction sentTransaction;
-        private GasPrice gasPrice;
+        private EthAndFiat paymentAmount;
+        private EthAndFiat gasPrice;
+        private EthAndFiat totalAmount;
+        private String callbackId;
 
         public Builder() {}
 
@@ -128,7 +157,10 @@ public class PaymentTask {
             this.unsignedTransaction = paymentTask.unsignedTransaction;
             this.sofaMessage = paymentTask.sofaMessage;
             this.sentTransaction = paymentTask.sentTransaction;
+            this.paymentAmount = paymentTask.paymentAmount;
             this.gasPrice = paymentTask.gasPrice;
+            this.totalAmount = paymentTask.totalAmount;
+            this.callbackId = paymentTask.callbackId;
         }
 
         public Builder setUser(final User user) {
@@ -161,8 +193,23 @@ public class PaymentTask {
             return this;
         }
 
-        public Builder setGasPrice(GasPrice gasPrice) {
+        public Builder setPaymentAmount(EthAndFiat paymentAmount) {
+            this.paymentAmount = paymentAmount;
+            return this;
+        }
+
+        public Builder setGasPrice(EthAndFiat gasPrice) {
             this.gasPrice = gasPrice;
+            return this;
+        }
+
+        public Builder setTotalAmount(EthAndFiat totalAmount) {
+            this.totalAmount = totalAmount;
+            return this;
+        }
+
+        public Builder setCallbackId(String callbackId) {
+            this.callbackId = callbackId;
             return this;
         }
 
@@ -179,6 +226,9 @@ public class PaymentTask {
                 + " UnsignedTransaction: " + unsignedTransaction
                 + " SofaMessage: " + sofaMessage
                 + " SendTransaction: " + sentTransaction
-                + " gasPrice " + gasPrice;
+                + " paymentAmount " + paymentAmount
+                + " gasPrice " + gasPrice
+                + " totalAmount " + totalAmount
+                + " callbackId " + callbackId;
     }
 }

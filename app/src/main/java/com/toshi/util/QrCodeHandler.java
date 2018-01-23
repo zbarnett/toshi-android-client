@@ -22,7 +22,6 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
@@ -37,9 +36,9 @@ import com.toshi.view.BaseApplication;
 import com.toshi.view.activity.ChatActivity;
 import com.toshi.view.activity.SendActivity;
 import com.toshi.view.activity.ViewUserActivity;
-import com.toshi.view.fragment.DialogFragment.PaymentConfirmationDialog;
-import com.toshi.view.fragment.DialogFragment.PaymentConfirmationType;
+import com.toshi.view.fragment.PaymentConfirmationFragment;
 
+import kotlin.Unit;
 import rx.Single;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -119,17 +118,17 @@ public class QrCodeHandler {
     private void showToshiPaymentConfirmationDialog(final String toshiId, final QrCodePayment payment) {
         if (this.activity == null) return;
         try {
-            final PaymentConfirmationDialog dialog =
-                    PaymentConfirmationDialog
+            final PaymentConfirmationFragment dialog =
+                    PaymentConfirmationFragment.Companion
                             .newInstanceToshiPayment(
                                     toshiId,
                                     payment.getValue(),
                                     payment.getMemo(),
                                     PaymentType.TYPE_REQUEST
                             );
-            dialog.show(this.activity.getSupportFragmentManager(), PaymentConfirmationDialog.TAG);
+            dialog.show(this.activity.getSupportFragmentManager(), PaymentConfirmationFragment.TAG);
             dialog.setOnPaymentConfirmationApprovedListener(this::onPaymentApproved)
-                    .setOnPaymentConfirmationCanceledListener(this::onPaymentCanceled);
+                    .setOnPaymentConfirmationCanceledListener(__ -> onPaymentCanceled());
         } catch (InvalidQrCodePayment e) {
             handleInvalidQrCode();
         }
@@ -138,40 +137,31 @@ public class QrCodeHandler {
     private void showExternalPaymentConfirmationDialog(final QrCodePayment payment) {
         if (this.activity == null) return;
         try {
-            final PaymentConfirmationDialog dialog =
-                    PaymentConfirmationDialog
+            final PaymentConfirmationFragment dialog =
+                    PaymentConfirmationFragment.Companion
                             .newInstanceExternalPayment(
                                     payment.getAddress(),
                                     payment.getValue(),
                                     payment.getMemo(),
                                     PaymentType.TYPE_REQUEST
                             );
-            dialog.show(this.activity.getSupportFragmentManager(), PaymentConfirmationDialog.TAG);
+            dialog.show(this.activity.getSupportFragmentManager(), PaymentConfirmationFragment.TAG);
             dialog.setOnPaymentConfirmationApprovedListener(this::onPaymentApproved)
-                    .setOnPaymentConfirmationCanceledListener(this::onPaymentCanceled);
+                    .setOnPaymentConfirmationCanceledListener(__ -> onPaymentCanceled());
         } catch (InvalidQrCodePayment e) {
             handleInvalidQrCode();
         }
     }
 
-    private void onPaymentApproved(final Bundle bundle, final PaymentTask paymentTask) {
-        final @PaymentConfirmationType.Type int type = (bundle.getInt(PaymentConfirmationDialog.CONFIRMATION_TYPE));
-
-        if (type == PaymentConfirmationType.EXTERNAL) {
-            handleExternalPayment(paymentTask);
-            return;
-        }
-
-        if (type == PaymentConfirmationType.TOSHI) {
-            handleToshiPayment(bundle, paymentTask.getPayment());
-            return;
-        }
-
-        LogUtil.i(getClass(), "Unhandled type in onPaymentApproved.");
+    private Unit onPaymentApproved(final PaymentTask paymentTask) {
+        if (paymentTask.isToshiPayment()) handleToshiPayment(paymentTask);
+        else handleExternalPayment(paymentTask);
+        return null;
     }
 
-    private void onPaymentCanceled(final Bundle bundle) {
+    private Unit onPaymentCanceled() {
         this.activity.finish();
+        return null;
     }
 
     private void handleAddQrCode(final QrCode qrCode) {
@@ -295,14 +285,6 @@ public class QrCodeHandler {
         showToast(BaseApplication.get().getString(R.string.error__web_signin));
     }
 
-    private Payment createPayment(final Bundle bundle) {
-        final String value = bundle.getString(PaymentConfirmationDialog.ETH_AMOUNT);
-        final String paymentAddress = bundle.getString(PaymentConfirmationDialog.PAYMENT_ADDRESS);
-        return new Payment()
-                .setValue(value)
-                .setToAddress(paymentAddress);
-    }
-
     private void handleExternalPayment(final PaymentTask paymentTask) {
         try {
             sendExternalPayment(paymentTask);
@@ -318,10 +300,9 @@ public class QrCodeHandler {
                 .sendExternalPayment(paymentTask);
     }
 
-    private void handleToshiPayment(final Bundle bundle, final Payment payment) {
+    private void handleToshiPayment(final PaymentTask paymentTask) {
         try {
-            final String toshiId = bundle.getString(PaymentConfirmationDialog.TOSHI_ID);
-            goToChatActivityWithPayment(toshiId, payment);
+            goToChatActivityWithPayment(paymentTask.getUser().getToshiId(), paymentTask.getPayment());
         } catch (final InvalidQrCodePayment ex) {
             handleInvalidQrCode();
         }

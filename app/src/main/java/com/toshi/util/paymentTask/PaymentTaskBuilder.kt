@@ -21,13 +21,15 @@ import com.toshi.crypto.util.TypeConverter
 import com.toshi.manager.model.PaymentTask
 import com.toshi.manager.model.PaymentTask.Builder
 import com.toshi.manager.network.EthereumService
-import com.toshi.model.local.GasPrice
+import com.toshi.model.local.EthAndFiat
 import com.toshi.model.local.UnsignedW3Transaction
+import com.toshi.model.network.ExchangeRate
 import com.toshi.model.network.UnsignedTransaction
 import com.toshi.model.sofa.Payment
 import com.toshi.util.EthUtil
 import com.toshi.view.BaseApplication
 import rx.Single
+import java.math.BigDecimal
 
 class PaymentTaskBuilder {
 
@@ -47,7 +49,7 @@ class PaymentTaskBuilder {
                 .setPayment(payment)
 
         return createUnsignedTransaction(payment)
-                .flatMap { addGasPriceToPaymentTask(paymentTaskBuilder, it) }
+                .flatMap { addPaymentInfoToPaymentTask(paymentTaskBuilder, it) }
                 .flatMap { addUserToPaymentTask(paymentTaskBuilder, toPaymentAddress) }
                 .map { it.build() }
     }
@@ -58,18 +60,19 @@ class PaymentTaskBuilder {
                 .map { user -> builder.setUser(user) }
     }
 
-    fun buildPaymentTask(unsignedW3Transaction: UnsignedW3Transaction): Single<PaymentTask> {
-        val paymentTaskBuilder = Builder()
-        return createUnsignedW3Transaction(unsignedW3Transaction)
-                .flatMap { addGasPriceToPaymentTask(paymentTaskBuilder, it) }
-                .map { it.build() }
-    }
+    fun buildPaymentTask(callbackId: String, unsignedW3Transaction: UnsignedW3Transaction): Single<PaymentTask> {
+        val payment = Payment()
+                .setValue(unsignedW3Transaction.value)
+                .setFromAddress(unsignedW3Transaction.from)
+                .setToAddress(unsignedW3Transaction.to)
 
-    private fun addGasPriceToPaymentTask(builder: Builder, unsignedTransaction: UnsignedTransaction): Single<Builder> {
-        return calculateGasPrice(unsignedTransaction)
-                .map { builder
-                        .setUnsignedTransaction(unsignedTransaction)
-                        .setGasPrice(it) }
+        val paymentTaskBuilder = Builder()
+                .setCallbackId(callbackId)
+                .setPayment(payment)
+
+        return createUnsignedW3Transaction(unsignedW3Transaction)
+                .flatMap { addPaymentInfoToPaymentTask(paymentTaskBuilder, it) }
+                .map { it.build() }
     }
 
     private fun createUnsignedW3Transaction(unsignedW3Transaction: UnsignedW3Transaction): Single<UnsignedTransaction> {
@@ -79,12 +82,47 @@ class PaymentTaskBuilder {
                 .createTransaction(transactionRequest)
     }
 
-    private fun calculateGasPrice(unsignedTransaction: UnsignedTransaction): Single<GasPrice> {
+    private fun addPaymentInfoToPaymentTask(builder: Builder, unsignedTransaction: UnsignedTransaction): Single<Builder> {
+        return calculatePaymentInfo(unsignedTransaction)
+                .map { builder
+                        .setUnsignedTransaction(unsignedTransaction)
+                        .setPaymentAmount(it.paymentAmount)
+                        .setGasPrice(it.gasAmount)
+                        .setTotalAmount(it.totalAmount)
+                }
+    }
+
+    private fun calculatePaymentInfo(unsignedTransaction: UnsignedTransaction): Single<PaymentTaskInfo> {
+        val sendEthAmount = getSendEthAmount(unsignedTransaction)
+        val gasEthAmount = getGasEthAmount(unsignedTransaction)
+        val totalEthAmount = BigDecimal(0).add(sendEthAmount).add(gasEthAmount)
+
+        return balanceManager.getLocalCurrencyExchangeRate()
+                .map { mapPaymentValuesToFiat(it, sendEthAmount, gasEthAmount, totalEthAmount) }
+    }
+
+    private fun getGasEthAmount(unsignedTransaction: UnsignedTransaction): BigDecimal {
         val gas = TypeConverter.StringHexToBigInteger(unsignedTransaction.gas)
         val gasPrice = TypeConverter.StringHexToBigInteger(unsignedTransaction.gasPrice)
-        val gasEthAmount = EthUtil.weiToEth(gasPrice.multiply(gas))
-        return balanceManager.convertEthToLocalCurrencyString(gasEthAmount)
-                .map { gasLocalAmount -> GasPrice(gasEthAmount, gasLocalAmount); }
+        return EthUtil.weiToEth(gasPrice.multiply(gas))
+    }
+
+    private fun getSendEthAmount(unsignedTransaction: UnsignedTransaction): BigDecimal {
+        val weiAmount = TypeConverter.StringHexToBigInteger(unsignedTransaction.value)
+        return EthUtil.weiToEth(weiAmount)
+    }
+
+    private fun mapPaymentValuesToFiat(exchangeRate: ExchangeRate,
+                                       sendEthAmount: BigDecimal,
+                                       gasEthAmount: BigDecimal,
+                                       totalEthAmount: BigDecimal): PaymentTaskInfo {
+        val sendLocalAmount = balanceManager.toLocalCurrencyString(exchangeRate, sendEthAmount)
+        val sendAmount = EthAndFiat(sendEthAmount, sendLocalAmount)
+        val gasLocalAmount = balanceManager.toLocalCurrencyString(exchangeRate, gasEthAmount)
+        val gasAmount = EthAndFiat(gasEthAmount, gasLocalAmount)
+        val totalLocalAmount = balanceManager.toLocalCurrencyString(exchangeRate, totalEthAmount)
+        val totalAmount = EthAndFiat(totalEthAmount, totalLocalAmount)
+        return PaymentTaskInfo(sendAmount, gasAmount, totalAmount)
     }
 
     private fun createUnsignedTransaction(payment: Payment): Single<UnsignedTransaction> {
@@ -94,3 +132,9 @@ class PaymentTaskBuilder {
                 .createTransaction(transactionRequest)
     }
 }
+
+private data class PaymentTaskInfo(
+        val paymentAmount: EthAndFiat,
+        val gasAmount: EthAndFiat,
+        val totalAmount: EthAndFiat
+)

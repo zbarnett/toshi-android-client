@@ -18,6 +18,8 @@
 package com.toshi.model.network;
 
 
+import android.support.annotation.Nullable;
+
 import com.squareup.moshi.Json;
 import com.toshi.crypto.util.TypeConverter;
 import com.toshi.R;
@@ -57,6 +59,10 @@ public class Balance {
         return TypeConverter.StringHexToBigInteger(unconfirmedBalanceAsHex);
     }
 
+    @Nullable
+    public String getLocalBalance() {
+        return this.localBalance;
+    }
 
     public Single<String> getFormattedLocalBalance() {
         if (this.localBalance != null) {
@@ -68,6 +74,20 @@ public class Balance {
                 .getBalanceManager()
                 .convertEthToLocalCurrencyString(EthUtil.weiToEth(getUnconfirmedBalance()))
                 .subscribeOn(Schedulers.io());
+    }
+
+    public Single<Balance> getBalanceWithLocalBalance() {
+        if (this.localBalance != null) {
+            return Single.just(this);
+        }
+
+        return BaseApplication
+                .get()
+                .getBalanceManager()
+                .convertEthToLocalCurrencyString(EthUtil.weiToEth(getUnconfirmedBalance()))
+                .subscribeOn(Schedulers.io())
+                .doOnSuccess(localBalance -> this.localBalance = localBalance)
+                .map(__ -> this);
     }
 
     public String getFormattedUnconfirmedBalance() {

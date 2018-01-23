@@ -147,7 +147,7 @@ public class BalanceManager {
         LogUtil.exception(getClass(), "Error while fetching balance", throwable);
     }
 
-    private Single<ExchangeRate> getLocalCurrencyExchangeRate() {
+    public Single<ExchangeRate> getLocalCurrencyExchangeRate() {
         return getLocalCurrency()
                 .flatMap((code) -> fetchLatestExchangeRate(code)
                 .subscribeOn(Schedulers.io())
@@ -169,27 +169,23 @@ public class BalanceManager {
 
     public Single<String> convertEthToLocalCurrencyString(final BigDecimal ethAmount) {
         return getLocalCurrencyExchangeRate()
-                 .flatMap((exchangeRate) -> mapToString(exchangeRate, ethAmount));
+                 .map((exchangeRate) -> toLocalCurrencyString(exchangeRate, ethAmount));
     }
 
-    private Single<String> mapToString(final ExchangeRate exchangeRate,
-                               final BigDecimal ethAmount) {
-        return Single.fromCallable(() -> {
+    public String toLocalCurrencyString(final ExchangeRate exchangeRate, final BigDecimal ethAmount) {
+        final BigDecimal marketRate = exchangeRate.getRate();
+        final BigDecimal localAmount = marketRate.multiply(ethAmount);
 
-            final BigDecimal marketRate = exchangeRate.getRate();
-            final BigDecimal localAmount = marketRate.multiply(ethAmount);
+        final DecimalFormat numberFormat = CurrencyUtil.getNumberFormat();
+        numberFormat.setGroupingUsed(true);
+        numberFormat.setMaximumFractionDigits(2);
+        numberFormat.setMinimumFractionDigits(2);
 
-            final DecimalFormat numberFormat = CurrencyUtil.getNumberFormat();
-            numberFormat.setGroupingUsed(true);
-            numberFormat.setMaximumFractionDigits(2);
-            numberFormat.setMinimumFractionDigits(2);
+        final String amount = numberFormat.format(localAmount);
+        final String currencyCode = CurrencyUtil.getCode(exchangeRate.getTo());
+        final String currencySymbol = CurrencyUtil.getSymbol(exchangeRate.getTo());
 
-            final String amount = numberFormat.format(localAmount);
-            final String currencyCode = CurrencyUtil.getCode(exchangeRate.getTo());
-            final String currencySymbol = CurrencyUtil.getSymbol(exchangeRate.getTo());
-
-            return String.format("%s%s %s", currencySymbol, amount, currencyCode);
-        });
+        return String.format("%s%s %s", currencySymbol, amount, currencyCode);
     }
 
     private Single<String> getLocalCurrency() {

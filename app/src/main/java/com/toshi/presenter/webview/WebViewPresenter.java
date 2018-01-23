@@ -60,7 +60,6 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
             this.firstTimeAttaching = false;
             initLongLivingObjects();
         }
-
         initWebClient();
         initView();
     }
@@ -79,9 +78,18 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
         injectEverything();
     }
 
+    private String tryGetAddress() {
+        try {
+            return getAddress();
+        } catch (IllegalArgumentException e) {
+            return BaseApplication.get().getString(R.string.unknown_address);
+        }
+    }
+
     private void initInjectsAndEmbeds() {
+        final String address = tryGetAddress();
         this.webClient = new SofaWebViewClient(this.loadedListener);
-        this.sofaHostWrapper = new SofaHostWrapper(this.activity, this.activity.getBinding().webview);
+        this.sofaHostWrapper = new SofaHostWrapper(this.activity, this.activity.getBinding().webview, address);
 
         final Subscription sub = BaseApplication.get()
             .getToshiManager()
