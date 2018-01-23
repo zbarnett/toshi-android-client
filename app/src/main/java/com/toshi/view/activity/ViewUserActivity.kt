@@ -26,8 +26,6 @@ import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import com.toshi.R
-import com.toshi.extensions.getColorById
-import com.toshi.extensions.getDrawableById
 import com.toshi.extensions.isVisible
 import com.toshi.extensions.startActivityAndFinish
 import com.toshi.extensions.startActivityForResult
@@ -103,7 +101,7 @@ class ViewUserActivity : AppCompatActivity() {
 
     private fun initClickListeners() {
         closeButton.setOnClickListener { onBackPressed() }
-        rateUser.setOnClickListener { showRatingDialog() }
+        rate.setOnClickListener { showRatingDialog() }
         avatar.setOnClickListener { startFullscreenActivity() }
     }
 
@@ -124,7 +122,7 @@ class ViewUserActivity : AppCompatActivity() {
             user -> user?.let { handleUser(it) } ?: handleUserLoadingFailed()
         })
         viewModel.isLocalUser.observe(this, Observer {
-            isLocalUser -> isLocalUser?.let { rateUser.isVisible(!it) }
+            isLocalUser -> isLocalUser?.let { rate.isVisible(!it) }
         })
         viewModel.isFavored.observe(this, Observer {
             isFavored -> isFavored?.let { updateFavoriteState(it) }
@@ -159,20 +157,31 @@ class ViewUserActivity : AppCompatActivity() {
     }
 
     private fun updateUi(user: User) {
-        toolbarTitle.text = user.displayName
-        name.text = user.username
+        pay.isVisible(!user.isApp)
+        rate.text = getString(if (user.isApp) R.string.rate_bot else R.string.rate_this_user)
+        toolbar.title = user.displayName
         username.text = user.username
-        about.text = user.about
-        location.text = user.location
-        about.isVisible(user.about != null)
-        location.isVisible(user.location != null)
+        updateAboutText(user)
         ImageUtil.load(user.avatar, avatar)
         if (shouldPlayScanSounds()) SoundManager.getInstance().playSound(SoundManager.SCAN_ERROR)
     }
 
+    private fun updateAboutText(user: User) {
+        location.text = user.location
+        val aboutView = if (user.isApp) aboutBot else aboutUser
+        aboutView.text = user.about
+        val hasAboutContent = (user.about?.length ?: -1) > 0
+        val hasLocationContent = (user.location?.length ?: -1) > 0
+        setAboutViewVisibility(user.isApp, hasAboutContent, hasLocationContent)
+    }
+
+    private fun setAboutViewVisibility(isApp: Boolean, hasAbout: Boolean, hasLocation: Boolean) {
+        aboutBot.isVisible(hasAbout && isApp)
+        aboutUser.isVisible(hasAbout && !isApp)
+        userDescriptionSection.isVisible(!isApp && (hasAbout || hasLocation))
+    }
+
     private fun addClickListeners(user: User) {
-        favorite.setOnClickListener { viewModel.favorOrUnFavorUser(user) }
-        favorite.isEnabled = true
         messageContactButton.setOnClickListener { startChatActivity(user) }
         pay.setOnClickListener { startAmountActivityForResult() }
     }
@@ -186,16 +195,10 @@ class ViewUserActivity : AppCompatActivity() {
         putExtra(AmountActivity.VIEW_TYPE, PaymentType.TYPE_SEND)
     })
 
-    private fun updateFavoriteState(isAContact: Boolean) {
-        favorite.isSoundEffectsEnabled = isAContact
-
-        val checkMark = if (isAContact) getDrawableById(R.drawable.ic_star_selected)
-        else getDrawableById(R.drawable.ic_star_unselected)
-        favorite.setCompoundDrawablesWithIntrinsicBounds(null, checkMark, null, null)
-
-        val color = if (isAContact) getColorById(R.color.colorPrimary)
-        else getColorById(R.color.profile_icon_text_color)
-        favorite.setTextColor(color)
+    private fun updateFavoriteState(isFavored: Boolean) {
+        val menuItem = menu?.findItem(R.id.favorite) ?: return
+        if (isFavored) menuItem.title = getString(R.string.remove_from_favorites)
+        else menuItem.title = getString(R.string.save_to_favorites)
     }
 
     private fun updateMenu(isUserBlocked: Boolean) {
@@ -251,7 +254,7 @@ class ViewUserActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.rate -> showRatingDialog()
+            R.id.favorite -> favorOrUnFavor()
             R.id.block -> blockOrUnblock()
             R.id.report -> showReportDialog()
             else -> LogUtil.d(javaClass, "Not valid menu item")
@@ -260,13 +263,19 @@ class ViewUserActivity : AppCompatActivity() {
     }
 
     private fun showRatingDialog() {
-        val userAddress = viewModel.user.value?.toshiId
-        userAddress?.let { ratingHandler.showRatingDialog(it) }
+        val user = viewModel.user.value
+        user?.let { ratingHandler.showRatingDialog(it) }
     }
 
     private fun blockOrUnblock() {
         val isUserBlocked = viewModel.isUserBlocked.value
         isUserBlocked?.let { blockingHandler.showDialog(it) }
+    }
+
+    private fun favorOrUnFavor() {
+        viewModel.user.value?.let {
+            viewModel.favorOrUnFavorUser(it)
+        }
     }
 
     private fun showReportDialog() {

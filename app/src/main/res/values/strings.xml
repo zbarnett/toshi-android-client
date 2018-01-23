@@ -121,7 +121,8 @@
     <string name="username_search_response_no_match">No user found with this username</string>
     <string name="parentheses">(%1$d)</string>
     <string name="write_a_review_optional">Write a review (optional)</string>
-    <string name="rate_this_user">Rate this user</string>
+    <string name="rate_this_user">Rate user</string>
+    <string name="rate_bot">Rate bot</string>
     <string name="no_thanks">No thanks</string>
     <string name="search_people">Search people</string>
     <string name="select_picture">Select Picture</string>
@@ -310,7 +311,7 @@
     <string name="add_participants_error">Unable to add participants</string>
     <string name="invalid_group">Invalid group</string>
     <string name="add_participants">Add participants</string>
-    <string name="enter">Enter</string>
+    <string name="open">Open</string>
     <string name="you">You</string>
     <string name="edit_group_photo">Edit group photo</string>
     <string name="unable_to_fetch_group">Unable to fetch group</string>
@@ -326,4 +327,6 @@
     <string name="est_network_fees">Est. Network Fees</string>
     <string name="your_balance">Your balance: %s</string>
     <string name="insufficient_balance">Insufficient balance: %s</string>
+    <string name="save_to_favorites">Save to Favorites</string>
+    <string name="remove_from_favorites">Remove from Favorites</string>
 </resources>

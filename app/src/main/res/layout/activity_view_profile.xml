@@ -123,7 +123,7 @@
                     android:layout_height="14dp" />
 
                 <TextView
-                    android:id="@+id/about"
+                    android:id="@+id/aboutUser"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="16sp"

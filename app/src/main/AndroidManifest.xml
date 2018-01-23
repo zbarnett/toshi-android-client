@@ -71,8 +71,12 @@
                 android:value="com.toshi.view.activity.MainActivity" />
         </activity>
 
-        <activity android:name="com.toshi.view.activity.ViewUserActivity" />
-        <activity android:name="com.toshi.view.activity.ViewDappActivity" />
+        <activity
+            android:name="com.toshi.view.activity.ViewUserActivity"
+            android:theme="@style/AppTheme.profileTheme" />
+        <activity
+            android:name="com.toshi.view.activity.ViewDappActivity"
+            android:theme="@style/AppTheme.profileTheme" />
         <activity android:name="com.toshi.view.activity.GroupInfoActivity" />
         <activity android:name="com.toshi.view.activity.ViewProfileActivity" />
         <activity android:name="com.toshi.view.activity.EditProfileActivity" />

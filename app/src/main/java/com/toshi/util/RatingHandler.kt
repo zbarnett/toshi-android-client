@@ -19,6 +19,7 @@ package com.toshi.util
 
 import android.support.v7.app.AppCompatActivity
 import com.toshi.model.local.Review
+import com.toshi.model.local.User
 import com.toshi.view.fragment.DialogFragment.RateDialog
 
 class RatingHandler(
@@ -27,10 +28,11 @@ class RatingHandler(
 
     private var rateDialog: RateDialog? = null
 
-    fun showRatingDialog(userAddress: String) {
-        rateDialog = RateDialog.newInstance().apply {
+    fun showRatingDialog(user: User) {
+        if (user.toshiId == null) return
+        rateDialog = RateDialog.newInstance(user.isApp).apply {
             onRateClicked = RateDialog.OnRateDialogClickListener(
-                    { rating, reviewText -> onRateClicked(Review(rating, userAddress, reviewText)) }
+                    { rating, reviewText -> onRateClicked(Review(rating, user.toshiId, reviewText)) }
             )
         }
         rateDialog?.show(activity.supportFragmentManager, RateDialog.TAG)

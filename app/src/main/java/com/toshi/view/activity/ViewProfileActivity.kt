@@ -77,7 +77,7 @@ class ViewProfileActivity : AppCompatActivity() {
     private fun updateView(localUser: User) {
         name.text = localUser.displayName
         username.text = localUser.username
-        about.text = localUser.about
+        aboutUser.text = localUser.about
         location.text = localUser.location
         ImageUtil.load(localUser.avatar, avatar)
     }
@@ -85,7 +85,7 @@ class ViewProfileActivity : AppCompatActivity() {
     private fun handleNoUser() {
         name.text = getString(R.string.profile__unknown_name)
         username.text = ""
-        about.text = ""
+        aboutUser.text = ""
         location.text = ""
         ratingView.setStars(0.0)
     }

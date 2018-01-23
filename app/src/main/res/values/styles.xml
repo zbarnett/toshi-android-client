@@ -32,6 +32,11 @@
         <item name="android:textCursorDrawable">@drawable/cursor</item>
     </style>
 
+    <style name="AppTheme.profileTheme">
+        <item name="colorPrimaryDark">@color/textColorHint</item>
+        <item name="windowActionModeOverlay">true</item>
+    </style>
+
     <style name="FullScreenTheme" parent="AppTheme">
     </style>
 
@@ -46,6 +51,13 @@
         <item name="android:actionOverflowButtonStyle">@style/ButtonOverflow</item>
     </style>
 
+    <style name="TransparentToolbar" parent="@style/ThemeOverlay.AppCompat.ActionBar">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="selectableItemBackground">?android:selectableItemBackground</item>
+        <item name="selectableItemBackgroundBorderless">?android:selectableItemBackground</item>
+        <item name="android:actionOverflowButtonStyle">@style/RegularOverflowDark</item>
+    </style>
+
     <style name="AddToolbarTheme" parent="AppTheme">
         <item name="android:actionOverflowButtonStyle">@style/ButtonOverflow</item>
     </style>
@@ -54,11 +66,19 @@
         <item name="android:actionOverflowButtonStyle">@style/RegularOverflow</item>
     </style>
 
+    <style name="TransparentToolbarTheme" parent="AppTheme">
+        <item name="android:actionOverflowButtonStyle">@style/RegularOverflowDark</item>
+    </style>
+
     <style name="Toolbar.TitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
         <item name="android:textColor">@color/textColorContrast</item>
         <item name="android:textStyle">normal</item>
         <item name="android:textSize">20sp</item>
         <item name="android:fontFamily">@string/fontFamily_medium</item>
+    </style>
+
+    <style name="TransparentToolbar.TitleText" parent="Toolbar.TitleText">
+        <item name="android:textColor">@color/textColorSecondary</item>
     </style>
 
     <style name="TextStyleMedium">
@@ -83,6 +103,10 @@
         <item name="android:foreground">?android:attr/selectableItemBackground</item>
     </style>
 
+    <style name="ButtonAllCaps" parent="Button">
+        <item name="android:textAllCaps">true</item>
+    </style>
+
     <style name="ToggleButton" parent="android:Widget.Holo.Button.Toggle">
         <item name="android:paddingTop">10dp</item>
         <item name="android:paddingBottom">10dp</item>
@@ -103,6 +127,10 @@
         <item name="android:textStyle">bold</item>
         <item name="android:gravity">center</item>
         <item name="android:foreground">?android:attr/selectableItemBackground</item>
+    </style>
+
+    <style name="FlatButtonAllCaps" parent="FlatButton">
+        <item name="android:textAllCaps">true</item>
     </style>
 
     <style name="FlatButtonMedium" parent="FlatButton">
@@ -172,6 +200,15 @@
 
     <style name="RegularOverflow" parent="android:style/Widget.Holo.ActionButton.Overflow">
         <item name="android:src">@drawable/ic_dotted_menu</item>
+    </style>
+
+    <style name="RegularOverflowDark" parent="android:style/Widget.Holo.ActionButton.Overflow">
+        <item name="android:src">@drawable/ic_dotted_menu_dark</item>
+    </style>
+
+    <style name="ExpandedTitle" parent="TextAppearance.Design.CollapsingToolbar.Expanded">
+        <item name="android:textSize">22dp</item>
+        <item name="android:textColor">@color/textColorPrimary</item>
     </style>
 
     <style name="SwitchStyle" parent="Base.Widget.AppCompat.CompoundButton.Switch">

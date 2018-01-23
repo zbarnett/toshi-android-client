@@ -40,13 +40,20 @@ public class RateDialog extends DialogFragment {
     private FragmentRateBinding binding;
     public OnRateDialogClickListener onRateClicked;
     private int rating = MIN_RATE;
+    private int titleResource;
 
     public interface OnRateDialogClickListener {
         void onRateClicked(final int rating, final String review);
     }
 
-    public static RateDialog newInstance() {
-        return new RateDialog();
+    public static RateDialog newInstance(final boolean isApp) {
+        final RateDialog dialog = new RateDialog();
+        if (isApp) dialog.titleResource = R.string.rate_bot;
+        return dialog;
+    }
+
+    public RateDialog() {
+        titleResource = R.string.rate_this_user;
     }
 
     @NonNull
@@ -75,7 +82,7 @@ public class RateDialog extends DialogFragment {
     }
 
     private void initView() {
-        final String title = BaseApplication.get().getString(R.string.rate_this_user);
+        final String title = getString(titleResource);
         this.binding.title.setText(title);
     }
 

@@ -62,9 +62,8 @@ class ViewDappActivity : AppCompatActivity() {
     }
 
     private fun initUi() {
-        toolbarTitle.text = getNameFromIntent()
-        name.text = getNameFromIntent()
-        about.text = getAboutFromIntent()
+        toolbar.title = getNameFromIntent()
+        aboutUser.text = getAboutFromIntent()
         address.text = getAddressFromIntent()
         ImageUtil.load(getAvatarFromIntent(), avatar)
     }
