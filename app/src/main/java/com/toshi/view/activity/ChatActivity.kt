@@ -59,6 +59,7 @@ import com.toshi.util.keyboard.KeyboardListener
 import com.toshi.view.BaseApplication
 import com.toshi.view.adapter.MessageAdapter
 import com.toshi.view.custom.SpeedyLinearLayoutManager
+import com.toshi.view.notification.ChatNotificationManager
 import kotlinx.android.synthetic.main.activity_chat.*
 import java.io.File
 import java.io.IOException
@@ -94,6 +95,12 @@ class ChatActivity : AppCompatActivity() {
         super.onCreate(inState)
         setContentView(R.layout.activity_chat)
         init(inState)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val threadId = getThreadIdFromIntent()
+        ChatNotificationManager.removeNotificationsForConversation(threadId)
     }
 
     private fun init(inState: Bundle?) {
