@@ -47,12 +47,31 @@
                 android:layout_width="16dp"
                 android:layout_height="match_parent"/>
 
-            <TextView
-                android:id="@+id/title"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                style="@style/Toolbar.TitleText"
-                tools:text="DAPP address"/>
+                android:orientation="vertical"
+                android:layout_marginRight="@dimen/activity_horizontal_margin">
+
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/Toolbar.TitleText"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:textSize="16sp"
+                    tools:text="Title"/>
+
+                <TextView
+                    android:id="@+id/address"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/textColorContrast"
+                    android:textSize="12sp"
+                    tools:text="https://website.com"/>
+
+            </LinearLayout>
 
         </android.support.v7.widget.Toolbar>
 

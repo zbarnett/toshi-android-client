@@ -98,7 +98,7 @@ import rx.subscriptions.CompositeSubscription;
         return new SofaInjectResponse.Builder()
                 .setAddress(response.request().url().toString())
                 .setData(injectedBody)
-                .setMimeType(response.header("Content-Type", "text/html"))
+                .setMimeType(response.header("Content-Type", "text/html; charset=utf-8"))
                 .setEncoding(response.header("Content-Encoding", "UTF-8"))
                 .build();
     }

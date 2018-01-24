@@ -346,6 +346,10 @@ import rx.subscriptions.CompositeSubscription;
         }
     }
 
+    public void updateUrl(final String url) {
+        this.url = url;
+    }
+
     public void clear() {
         this.subscriptions.clear();
     }

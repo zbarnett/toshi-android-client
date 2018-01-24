@@ -22,4 +22,6 @@ public interface OnLoadListener {
     void onLoaded();
     void onError(final Throwable t);
     void newPageLoad(final String url);
+    void updateUrl(final String url);
+    void updateTitle(final String title);
 }

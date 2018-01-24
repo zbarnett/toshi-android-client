@@ -130,9 +130,9 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
     private void initToolbar() {
         try {
             final String address = getAddress();
-            this.activity.getBinding().title.setText(address);
+            this.activity.getBinding().address.setText(address);
         } catch (final IllegalArgumentException ex) {
-            this.activity.getBinding().title.setText(BaseApplication.get().getString(R.string.unknown_address));
+            this.activity.getBinding().address.setText(BaseApplication.get().getString(R.string.unknown_address));
         }
         this.activity.getBinding().closeButton.setOnClickListener(__ -> handleBackButtonClicked());
     }
@@ -219,6 +219,19 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
             } catch (IllegalArgumentException e) {
                 showToast(R.string.unsupported_format);
             }
+        }
+
+        @Override
+        public void updateUrl(final String url) {
+            if (activity == null) return;
+            activity.getBinding().address.setText(url);
+            sofaHostWrapper.updateUrl(url);
+        }
+
+        @Override
+        public void updateTitle(final String title) {
+            if (activity == null) return;
+            activity.getBinding().title.setText(title);
         }
     };
 
