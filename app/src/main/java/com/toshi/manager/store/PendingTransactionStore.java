@@ -25,7 +25,6 @@ import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmQuery;
-import rx.Observable;
 import rx.Single;
 import rx.subjects.PublishSubject;
 
@@ -53,8 +52,8 @@ public class PendingTransactionStore {
         return Single.fromCallable(() -> loadSingleWhere("txHash", txHash));
     }
 
-    public Observable<PendingTransaction> loadAllTransactions() {
-        return Observable.from(loadAll());
+    public Single<List<PendingTransaction>> loadAllTransactions() {
+        return Single.fromCallable(this::loadAll);
     }
 
     private PendingTransaction loadSingleWhere(final String fieldName, final String value) {

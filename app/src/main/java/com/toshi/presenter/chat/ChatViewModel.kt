@@ -23,12 +23,13 @@ import com.toshi.R
 import com.toshi.extensions.isGroupId
 import com.toshi.manager.messageQueue.AsyncOutgoingMessageQueue
 import com.toshi.manager.model.PaymentTask
+import com.toshi.manager.model.ResendToshiPaymentTask
+import com.toshi.manager.model.ToshiPaymentTask
 import com.toshi.model.local.Conversation
 import com.toshi.model.local.Group
 import com.toshi.model.local.Recipient
 import com.toshi.model.local.User
 import com.toshi.model.sofa.Control
-import com.toshi.model.sofa.Payment
 import com.toshi.model.sofa.PaymentRequest
 import com.toshi.model.sofa.SofaMessage
 import com.toshi.util.FileUtil
@@ -316,14 +317,14 @@ class ChatViewModel(private val threadId: String) : ViewModel() {
         transactionManager.updatePaymentRequestState(recipient.user, existingMessage, paymentState)
     }
 
-    fun sendPayment(paymentTask: PaymentTask) = transactionManager.sendPayment(paymentTask)
+    fun sendPayment(paymentTask: PaymentTask) {
+        if (paymentTask is ToshiPaymentTask) transactionManager.sendPayment(paymentTask)
+        else LogUtil.e(javaClass, "Invalid payment task in this context")
+    }
 
-    fun resendPayment(sofaMessage: SofaMessage, payment: Payment, paymentTask: PaymentTask) {
-        val updatedPaymentTask = PaymentTask.Builder(paymentTask)
-                .setSofaMessage(sofaMessage)
-                .setPayment(payment)
-                .build()
-        transactionManager.resendPayment(updatedPaymentTask)
+    fun resendPayment(sofaMessage: SofaMessage, paymentTask: PaymentTask) {
+        if (paymentTask is ToshiPaymentTask) transactionManager.resendPayment(ResendToshiPaymentTask(paymentTask, sofaMessage))
+        else LogUtil.e(javaClass, "Invalid payment task in this context")
     }
 
     fun resendMessage(sofaMessage: SofaMessage) = sofaMessageManager.resendPendingMessage(sofaMessage)

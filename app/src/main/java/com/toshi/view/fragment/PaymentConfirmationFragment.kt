@@ -30,7 +30,10 @@ import android.view.ViewGroup
 import com.toshi.R
 import com.toshi.extensions.getColor
 import com.toshi.extensions.isVisible
+import com.toshi.manager.model.ExternalPaymentTask
 import com.toshi.manager.model.PaymentTask
+import com.toshi.manager.model.ToshiPaymentTask
+import com.toshi.manager.model.W3PaymentTask
 import com.toshi.model.local.User
 import com.toshi.model.network.Balance
 import com.toshi.util.EthUtil
@@ -38,7 +41,6 @@ import com.toshi.util.ImageUtil
 import com.toshi.util.LogUtil
 import com.toshi.util.PaymentType
 import com.toshi.view.fragment.DialogFragment.PaymentConfirmationType
-import com.toshi.view.fragment.DialogFragment.PaymentConfirmationType.WEB
 import com.toshi.viewModel.PaymentConfirmationViewModel
 import kotlinx.android.synthetic.main.fragment_payment_confirmation.*
 
@@ -154,14 +156,10 @@ class PaymentConfirmationFragment : BottomSheetDialogFragment() {
     }
 
     private fun renderRecipientInfo(paymentTask: PaymentTask) {
-        val confirmationType = viewModel.getConfirmationType()
-        val isW3Payment = paymentTask.isW3Transaction && confirmationType == WEB
-        val isToshiPayment = paymentTask.isToshiPayment
-        val isExternalPayment = !paymentTask.isToshiPayment
-        when {
-            isW3Payment -> renderDappInfo()
-            isToshiPayment -> renderToshiUserInfo(paymentTask.user)
-            isExternalPayment -> renderExternalInfo(paymentTask)
+        when (paymentTask) {
+            is W3PaymentTask -> renderDappInfo()
+            is ToshiPaymentTask -> renderToshiUserInfo(paymentTask.user)
+            is ExternalPaymentTask -> renderExternalInfo(paymentTask)
             else -> LogUtil.exception(javaClass, "Unhandled payment $paymentTask")
         }
     }

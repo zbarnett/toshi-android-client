@@ -22,6 +22,7 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Pair
 import com.toshi.manager.model.PaymentTask
+import com.toshi.manager.model.W3PaymentTask
 import com.toshi.model.local.UnsignedW3Transaction
 import com.toshi.model.network.Balance
 import com.toshi.model.sofa.SofaAdapters
@@ -142,7 +143,7 @@ class PaymentConfirmationViewModel : ViewModel() {
         return transactionManager.buildPaymentTask(fromPaymentAddress, toPaymentAddress, ethAmount)
     }
 
-    private fun getPaymentTaskWithUnsignedW3Transaction(unsignedW3Transaction: UnsignedW3Transaction): Single<PaymentTask> {
+    private fun getPaymentTaskWithUnsignedW3Transaction(unsignedW3Transaction: UnsignedW3Transaction): Single<W3PaymentTask> {
         val callbackId = getCallbackId()
         return transactionManager.buildPaymentTask(callbackId, unsignedW3Transaction)
     }

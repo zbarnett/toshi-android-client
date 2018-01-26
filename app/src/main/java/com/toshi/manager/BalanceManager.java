@@ -237,7 +237,7 @@ public class BalanceManager {
                 .toCompletable();
     }
 
-    /* package */ Single<Payment> getTransactionStatus(final String transactionHash) {
+    public Single<Payment> getTransactionStatus(final String transactionHash) {
         return EthereumService
                 .get()
                 .getStatusOfTransaction(transactionHash);

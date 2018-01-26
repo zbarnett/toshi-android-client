@@ -28,7 +28,9 @@ import android.widget.Toast;
 import com.toshi.R;
 import com.toshi.exception.InvalidQrCode;
 import com.toshi.exception.InvalidQrCodePayment;
+import com.toshi.manager.model.ExternalPaymentTask;
 import com.toshi.manager.model.PaymentTask;
+import com.toshi.manager.model.ToshiPaymentTask;
 import com.toshi.model.local.QrCodePayment;
 import com.toshi.model.local.User;
 import com.toshi.model.sofa.Payment;
@@ -154,8 +156,9 @@ public class QrCodeHandler {
     }
 
     private Unit onPaymentApproved(final PaymentTask paymentTask) {
-        if (paymentTask.isToshiPayment()) handleToshiPayment(paymentTask);
-        else handleExternalPayment(paymentTask);
+        if (paymentTask instanceof ExternalPaymentTask) handleExternalPayment((ExternalPaymentTask) paymentTask);
+        else if (paymentTask instanceof ToshiPaymentTask) handleToshiPayment((ToshiPaymentTask) paymentTask); // The address could be associated with a Toshi user
+        else LogUtil.e(getClass(), "Invalid payment task in this context");
         return null;
     }
 
@@ -285,7 +288,7 @@ public class QrCodeHandler {
         showToast(BaseApplication.get().getString(R.string.error__web_signin));
     }
 
-    private void handleExternalPayment(final PaymentTask paymentTask) {
+    private void handleExternalPayment(final ExternalPaymentTask paymentTask) {
         try {
             sendExternalPayment(paymentTask);
         } catch (InvalidQrCodePayment invalidQrCodePayment) {
@@ -294,13 +297,26 @@ public class QrCodeHandler {
     }
 
     private void sendExternalPayment(final PaymentTask paymentTask) throws InvalidQrCodePayment {
+        if (paymentTask instanceof ExternalPaymentTask) sendExternalPaymentTask((ExternalPaymentTask) paymentTask);
+        else if (paymentTask instanceof ToshiPaymentTask) sendToshiPaymentTask((ToshiPaymentTask) paymentTask);
+        else LogUtil.e(getClass(), "Invalid payment task in this context");
+    }
+
+    private void sendExternalPaymentTask(final ExternalPaymentTask paymentTask) {
         BaseApplication
                 .get()
                 .getTransactionManager()
                 .sendExternalPayment(paymentTask);
     }
 
-    private void handleToshiPayment(final PaymentTask paymentTask) {
+    private void sendToshiPaymentTask(final ToshiPaymentTask paymentTask) {
+        BaseApplication
+                .get()
+                .getTransactionManager()
+                .sendPayment(paymentTask);
+    }
+
+    private void handleToshiPayment(final ToshiPaymentTask paymentTask) {
         try {
             goToChatActivityWithPayment(paymentTask.getUser().getToshiId(), paymentTask.getPayment());
         } catch (final InvalidQrCodePayment ex) {

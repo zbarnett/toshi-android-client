@@ -160,14 +160,14 @@ public final class SofaMessageManager {
 
     // Will store a transaction in the local database
     // but not send the message to a remote peer. It will also save the state as "SENDING".
-    /* package */ final void saveTransaction(final User user, final SofaMessage message) {
+    public final void saveTransaction(final User user, final SofaMessage message) {
         final Recipient recipient = new Recipient(user);
         final SofaMessageTask messageTask = new SofaMessageTask(recipient, message, SofaMessageTask.SAVE_TRANSACTION);
         this.messageSender.addNewTask(messageTask);
     }
 
     // Updates a pre-existing message.
-    /* package */ final void updateMessage(final Recipient recipient, final SofaMessage message) {
+    public final void updateMessage(final Recipient recipient, final SofaMessage message) {
         final SofaMessageTask messageTask = new SofaMessageTask(recipient, message, SofaMessageTask.UPDATE_MESSAGE);
         this.messageSender.addNewTask(messageTask);
     }

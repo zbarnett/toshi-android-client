@@ -317,7 +317,7 @@ class ChatActivity : AppCompatActivity() {
             val receiver = resendPaymentInfo.receiver
             val payment = SofaAdapters.get().paymentFrom(sofaMessage.payload)
             resendHandler.showResendPaymentConfirmationDialog(receiver, payment) { paymentTask ->
-                viewModel.resendPayment(sofaMessage, payment, paymentTask)
+                viewModel.resendPayment(sofaMessage, paymentTask)
             }
         } catch (e: IOException) {
             LogUtil.e(javaClass, "Error while resending payment $e")

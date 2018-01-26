@@ -29,6 +29,7 @@ import com.toshi.R;
 import com.toshi.crypto.HDWallet;
 import com.toshi.crypto.util.TypeConverter;
 import com.toshi.manager.model.PaymentTask;
+import com.toshi.manager.model.W3PaymentTask;
 import com.toshi.model.local.PersonalMessage;
 import com.toshi.model.local.UnsignedW3Transaction;
 import com.toshi.model.network.SentTransaction;
@@ -165,18 +166,25 @@ import rx.subscriptions.CompositeSubscription;
     }
 
     private Unit handlePaymentApproved(final PaymentTask paymentTask) {
-        final String callbackId = paymentTask.getCallbackId();
-        final Subscription sub = BaseApplication
+        if (paymentTask instanceof W3PaymentTask) {
+            final W3PaymentTask w3PaymentTask = (W3PaymentTask) paymentTask;
+            final String callbackId = w3PaymentTask.getCallbackId();
+            final Subscription sub = signW3Transaction(w3PaymentTask)
+                    .subscribe(
+                            signedTransaction -> handleSignedW3Transaction(callbackId, signedTransaction),
+                            throwable -> LogUtil.exception(getClass(), "Error while signing W3 transaction " + throwable)
+                    );
+
+            this.subscriptions.add(sub);
+        } else LogUtil.e(getClass(), "Invalid payment task in this context");
+        return null;
+    }
+
+    private Single<SignedTransaction> signW3Transaction(final W3PaymentTask paymentTask) {
+        return BaseApplication
                 .get()
                 .getTransactionManager()
-                .signW3Transaction(paymentTask)
-                .subscribe(
-                        signedTransaction -> handleSignedW3Transaction(callbackId, signedTransaction),
-                        throwable -> LogUtil.exception(getClass(), throwable)
-                );
-
-        this.subscriptions.add(sub);
-        return null;
+                .signW3Transaction(paymentTask);
     }
 
     private void handleSignedW3Transaction(final String callbackId, final SignedTransaction signedTransaction) {
