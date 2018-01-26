@@ -17,23 +17,36 @@
 
 package com.toshi.presenter.webview;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
+import android.provider.MediaStore;
 import android.support.annotation.StringRes;
+import android.support.v4.content.FileProvider;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.webkit.ValueCallback;
+import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Toast;
 
 import com.toshi.BuildConfig;
 import com.toshi.R;
+import com.toshi.model.local.ActivityResultHolder;
+import com.toshi.model.local.PermissionResultHolder;
 import com.toshi.presenter.Presenter;
+import com.toshi.util.FileUtil;
 import com.toshi.util.LogUtil;
+import com.toshi.util.PermissionUtil;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.activity.WebViewActivity;
 import com.toshi.view.custom.listener.OnLoadListener;
+import com.toshi.view.fragment.DialogFragment.ChooserDialog;
 
+import java.io.File;
 import java.net.URI;
 
 import rx.Subscription;
@@ -41,13 +54,23 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 
+import static android.Manifest.permission.CAMERA;
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+
 public class WebViewPresenter implements Presenter<WebViewActivity> {
+
+    private static final int PICK_IMAGE = 1;
+    private static final int CAPTURE_IMAGE = 2;
+    private static final String IMAGE_TYPE = "image/*";
 
     private WebViewActivity activity;
     private SofaWebViewClient webClient;
+    private SofaChromeWebViewClient chromeWebViewClient;
     private SofaInjector sofaInjector;
     private SofaHostWrapper sofaHostWrapper;
     private CompositeSubscription subscriptions;
+    private String capturedImagePath;
+    private ValueCallback<Uri[]> filePathCallback;
 
     private boolean firstTimeAttaching = true;
     private boolean isLoaded = false;
@@ -89,6 +112,7 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
     private void initInjectsAndEmbeds() {
         final String address = tryGetAddress();
         this.webClient = new SofaWebViewClient(this.loadedListener);
+        this.chromeWebViewClient = new SofaChromeWebViewClient(this::handleFileChooserCallback);
         this.sofaHostWrapper = new SofaHostWrapper(this.activity, this.activity.getBinding().webview, address);
 
         final Subscription sub = BaseApplication.get()
@@ -100,6 +124,12 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
                 ex -> LogUtil.exception(getClass(), ex)
             );
         subscriptions.add(sub);
+    }
+
+    private boolean handleFileChooserCallback(final ValueCallback<Uri[]> valueCallback, final WebChromeClient.FileChooserParams fileChooserParams) {
+        this.filePathCallback = valueCallback;
+        showImageChooserDialog();
+        return true;
     }
 
     private void initWebSettings() {
@@ -120,6 +150,7 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
     private void injectEverything() {
         this.activity.getBinding().webview.addJavascriptInterface(this.sofaHostWrapper.getSofaHost(), "SOFAHost");
         this.activity.getBinding().webview.setWebViewClient(this.webClient);
+        this.activity.getBinding().webview.setWebChromeClient(this.chromeWebViewClient);
     }
 
     private void initView() {
@@ -279,4 +310,106 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
         this.sofaHostWrapper = null;
     }
 
+    private void showImageChooserDialog() {
+        final ChooserDialog chooserDialog = ChooserDialog.newInstance();
+        chooserDialog.setOnChooserClickListener(new ChooserDialog.OnChooserClickListener() {
+            @Override
+            public void captureImageClicked() {
+                checkCameraPermission();
+            }
+
+            @Override
+            public void importImageFromGalleryClicked() {
+                checkExternalStoragePermission();
+            }
+        });
+        chooserDialog.show(this.activity.getSupportFragmentManager(), ChooserDialog.TAG);
+    }
+
+    private void checkExternalStoragePermission() {
+        PermissionUtil.hasPermission(
+                this.activity,
+                READ_EXTERNAL_STORAGE,
+                PermissionUtil.READ_EXTERNAL_STORAGE_PERMISSION,
+                this::startGalleryActivity
+        );
+    }
+
+    private void checkCameraPermission() {
+        PermissionUtil.hasPermission(
+                this.activity,
+                CAMERA,
+                PermissionUtil.CAMERA_PERMISSION,
+                this::startCameraActivity
+        );
+    }
+
+    public boolean tryHandlePermissionResult(final PermissionResultHolder resultHolder) {
+        final int[] grantResults = resultHolder.getGrantResults();
+        final int requestCode = resultHolder.getRequestCode();
+        if (!PermissionUtil.isPermissionGranted(grantResults)) return false;
+        if (requestCode == PermissionUtil.CAMERA_PERMISSION) {
+            startCameraActivity();
+            return true;
+        } else if (requestCode == PermissionUtil.READ_EXTERNAL_STORAGE_PERMISSION) {
+            startGalleryActivity();
+            return true;
+        }
+        return false;
+    }
+
+    private void startCameraActivity() {
+        final Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (cameraIntent.resolveActivity(this.activity.getPackageManager()) == null) return;
+        final File photoFile = FileUtil.createImageFileWithRandomName();
+        this.capturedImagePath = photoFile.getAbsolutePath();
+        final Uri photoURI = FileProvider.getUriForFile(
+                this.activity,
+                BuildConfig.APPLICATION_ID + FileUtil.FILE_PROVIDER_NAME,
+                photoFile
+        );
+        PermissionUtil.grantUriPermission(this.activity, cameraIntent, photoURI);
+        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+        this.activity.startActivityForResult(cameraIntent, CAPTURE_IMAGE);
+    }
+
+    private void startGalleryActivity() {
+        final Intent pickPictureIntent = new Intent()
+                .setType(IMAGE_TYPE)
+                .setAction(Intent.ACTION_GET_CONTENT);
+        if (pickPictureIntent.resolveActivity(this.activity.getPackageManager()) == null) return;
+        final Intent chooserIntent = Intent.createChooser(
+                pickPictureIntent,
+                this.activity.getString(R.string.select_picture)
+        );
+        this.activity.startActivityForResult(chooserIntent, PICK_IMAGE);
+    }
+
+    public boolean handleActivityResult(final ActivityResultHolder resultHolder) {
+        final int resultCode = resultHolder.getResultCode();
+        final int requestCode = resultHolder.getRequestCode();
+        if (resultCode != Activity.RESULT_OK) return false;
+        if (requestCode == PICK_IMAGE) {
+            final Uri uri = resultHolder.getIntent().getData();
+            postFileCallback(uri);
+            return true;
+        } else if (requestCode == CAPTURE_IMAGE) {
+            handleCapturesImage(this.capturedImagePath);
+            return true;
+        }
+        return false;
+    }
+
+    private void handleCapturesImage(final String path) {
+        if (this.capturedImagePath == null) return;
+        final Uri uri = Uri.fromFile(new File(path));
+        postFileCallback(uri);
+        this.capturedImagePath = null;
+    }
+
+    private void postFileCallback(final Uri uri) {
+        final Uri[] uriArray = new Uri[] {uri};
+        filePathCallback.onReceiveValue(uriArray);
+        filePathCallback = null;
+    }
 }

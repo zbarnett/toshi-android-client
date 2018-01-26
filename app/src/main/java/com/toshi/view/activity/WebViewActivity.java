@@ -17,12 +17,15 @@
 
 package com.toshi.view.activity;
 
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 
 import com.toshi.R;
 import com.toshi.databinding.ActivityWebViewBinding;
+import com.toshi.model.local.ActivityResultHolder;
+import com.toshi.model.local.PermissionResultHolder;
 import com.toshi.presenter.LoaderIds;
 import com.toshi.presenter.factory.PresenterFactory;
 import com.toshi.presenter.factory.WebViewPresenterFactory;
@@ -32,6 +35,10 @@ public class WebViewActivity extends BasePresenterActivity<WebViewPresenter, Web
 
     public static final String EXTRA__ADDRESS = "address";
     private ActivityWebViewBinding binding;
+    private WebViewPresenter presenter;
+
+    private ActivityResultHolder resultHolder;
+    private PermissionResultHolder permissionResultHolder;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -54,10 +61,55 @@ public class WebViewActivity extends BasePresenterActivity<WebViewPresenter, Web
     }
 
     @Override
-    protected void onPresenterPrepared(@NonNull WebViewPresenter presenter) {}
+    protected void onPresenterPrepared(@NonNull WebViewPresenter presenter) {
+        this.presenter = presenter;
+    }
 
     @Override
     protected int loaderId() {
         return LoaderIds.get(this.getClass().getCanonicalName());
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        tryProcessResultHolder();
+        tryProcessPermissionResultHolder();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        this.resultHolder = new ActivityResultHolder(requestCode, resultCode, data);
+        tryProcessResultHolder();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(final int requestCode,
+                                           @NonNull final String permissions[],
+                                           @NonNull final int[] grantResults) {
+        this.permissionResultHolder = new PermissionResultHolder(requestCode, permissions, grantResults);
+        tryProcessPermissionResultHolder();
+    }
+
+    private void tryProcessResultHolder() {
+        if (this.presenter == null || this.resultHolder == null) return;
+
+        if (this.presenter.handleActivityResult(this.resultHolder)) {
+            this.resultHolder = null;
+        }
+    }
+
+    private void tryProcessPermissionResultHolder() {
+        if (this.presenter == null || this.permissionResultHolder == null) return;
+        final boolean isPermissionHandled = this.presenter.tryHandlePermissionResult(this.permissionResultHolder);
+        if (isPermissionHandled) {
+            this.permissionResultHolder = null;
+        }
+    }
+
+    @Override
+    protected void onPresenterDestroyed() {
+        super.onPresenterDestroyed();
+        this.presenter = null;
     }
 }
