@@ -96,7 +96,8 @@
                 android:theme="@style/TransparentToolbarTheme"
                 style="@style/TransparentToolbar"
                 app:layout_anchor="@id/hero"
-                app:layout_collapseMode="pin">
+                app:layout_collapseMode="pin"
+                app:contentInsetStart="0dp">
 
                 <ImageButton
                     android:id="@+id/closeButton"
