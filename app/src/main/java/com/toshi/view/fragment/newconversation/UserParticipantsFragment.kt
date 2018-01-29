@@ -86,24 +86,31 @@ class UserParticipantsFragment : Fragment() {
     private fun handleUserClicked(user: User) = (this.activity as ConversationSetupActivity).openConversation(user)
 
     private fun initObservers() {
-        initSearch()
+        initSearchListener()
         viewModel.searchResults.observe(this, Observer { searchResults ->
             searchResults?.let { handleSearchResults(it) }
         })
     }
 
-    private fun initSearch() {
-        search.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable) = updateSearchUi(s.toString().isEmpty())
-            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) = viewModel.queryUpdated(s)
-        })
+    private fun initSearchListener() = search.addTextChangedListener(textWatcher)
+
+    private val textWatcher = object : TextWatcher {
+        override fun afterTextChanged(s: Editable) = updateSearchUi(s.toString().isEmpty())
+        override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+        override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) = viewModel.queryUpdated(s)
     }
 
     private fun updateSearchUi(isQueryEmpty: Boolean) {
-        clearButton.isVisible(isQueryEmpty)
+        clearButton?.isVisible(isQueryEmpty)
         if (isQueryEmpty) userAdapter.clear()
     }
 
     private fun handleSearchResults(searchResults: List<User>) = userAdapter.setUsers(searchResults)
+
+    override fun onDestroyView() {
+        removeSearchListener()
+        super.onDestroyView()
+    }
+
+    private fun removeSearchListener() = search.addTextChangedListener(textWatcher)
 }
