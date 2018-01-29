@@ -19,6 +19,7 @@ package com.toshi.view.fragment
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.content.DialogInterface
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.support.design.widget.BottomSheetBehavior
@@ -49,6 +50,7 @@ class PaymentConfirmationFragment : BottomSheetDialogFragment() {
     private lateinit var viewModel: PaymentConfirmationViewModel
     private lateinit var onPaymentApprovedListener: (PaymentTask) -> Unit
     private var onPaymentCanceledListener: ((String?) -> Unit)? = null
+    private var approvedPayment = false
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, inState: Bundle?): View? {
         return inflater?.inflate(R.layout.fragment_payment_confirmation, container, false)
@@ -97,14 +99,14 @@ class PaymentConfirmationFragment : BottomSheetDialogFragment() {
     }
 
     private fun handlePaymentCanceled() {
-        val callbackId = viewModel.getCallbackId()
-        onPaymentCanceledListener?.invoke(callbackId)
+        approvedPayment = false
         dismiss()
     }
 
     private fun handlePaymentApproved() {
         val paymentTask = viewModel.paymentTask.value
         paymentTask?.let {
+            approvedPayment = true
             onPaymentApprovedListener(paymentTask)
             dismiss()
         }
@@ -311,5 +313,11 @@ class PaymentConfirmationFragment : BottomSheetDialogFragment() {
             fragment.arguments = bundle
             return fragment
         }
+    }
+
+    override fun onDismiss(dialog: DialogInterface?) {
+        val callbackId = viewModel.getCallbackId()
+        if (!approvedPayment) onPaymentCanceledListener?.invoke(callbackId)
+        super.onDismiss(dialog)
     }
 }

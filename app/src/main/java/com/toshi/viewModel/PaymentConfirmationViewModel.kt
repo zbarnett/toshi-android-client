@@ -149,6 +149,7 @@ class PaymentConfirmationViewModel : ViewModel() {
     }
 
     private fun getBalance() {
+        balanceManager.refreshBalance() // Initiate a balance request to make sure the balance is updated
         val sub = balanceManager
                 .balanceObservable
                 .filter { it != null }

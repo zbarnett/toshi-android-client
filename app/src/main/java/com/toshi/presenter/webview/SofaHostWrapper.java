@@ -87,6 +87,7 @@ import rx.subscriptions.CompositeSubscription;
         return this.sofaHost;
     }
 
+    @Override
     public void getAccounts(final String id) {
         final GetAccountsCallback callback =
                 new GetAccountsCallback().setResult(this.wallet.getPaymentAddress());
@@ -94,6 +95,7 @@ import rx.subscriptions.CompositeSubscription;
         postCallbackTask(id, callback.toJsonEncodedString());
     }
 
+    @Override
     public void approveTransaction(final String id, final String unsignedTransaction) {
         final boolean shouldApprove = shouldApproveTransaction(unsignedTransaction);
         final ApproveTransactionCallback callback =
@@ -114,6 +116,7 @@ import rx.subscriptions.CompositeSubscription;
         return transaction.getFrom().equals(this.wallet.getPaymentAddress());
     }
 
+    @Override
     public void signTransaction(final String id, final String unsignedTransaction) {
         final Subscription sub =
                 getWebViewInfo(this.webView)
@@ -135,11 +138,11 @@ import rx.subscriptions.CompositeSubscription;
         .subscribeOn(AndroidSchedulers.mainThread());
     }
 
-    public void signTransaction(final String id,
-                                final String unsignedTransaction,
-                                final String url,
-                                final String title,
-                                final Bitmap favicon) {
+    private void signTransaction(final String id,
+                                 final String unsignedTransaction,
+                                 final String url,
+                                 final String title,
+                                 final Bitmap favicon) {
         final UnsignedW3Transaction transaction;
         try {
             transaction = SofaAdapters.get().unsignedW3TransactionFrom(unsignedTransaction);
@@ -172,12 +175,18 @@ import rx.subscriptions.CompositeSubscription;
             final Subscription sub = signW3Transaction(w3PaymentTask)
                     .subscribe(
                             signedTransaction -> handleSignedW3Transaction(callbackId, signedTransaction),
-                            throwable -> LogUtil.exception(getClass(), "Error while signing W3 transaction " + throwable)
+                            throwable -> handleTransactionError(throwable, callbackId)
                     );
 
             this.subscriptions.add(sub);
         } else LogUtil.e(getClass(), "Invalid payment task in this context");
         return null;
+    }
+
+    private void handleTransactionError(final Throwable throwable, final String callbackId) {
+        LogUtil.exception(getClass(), "Error while signing W3 transaction " + throwable);
+        final String errorMessage = createErrorMessage("Not able to sign transaction");
+        postCallbackTask(callbackId, errorMessage);
     }
 
     private Single<SignedTransaction> signW3Transaction(final W3PaymentTask paymentTask) {
@@ -196,7 +205,8 @@ import rx.subscriptions.CompositeSubscription;
             postCallbackTask(callbackId, callback.toJsonEncodedString());
         } catch (Exception e) {
             LogUtil.exception(getClass(), e);
-            postCallbackTask(callbackId, String.format("{\\\"error\\\":\\\"%s\\\"}", e.getMessage()));
+            final String errorMessage = createErrorMessage(e.getMessage());
+            postCallbackTask(callbackId, errorMessage);
         }
     }
 
@@ -208,6 +218,7 @@ import rx.subscriptions.CompositeSubscription;
         return null;
     }
 
+    @Override
     public void publishTransaction(final String callbackId, final String signedTransactionPayload) {
         final String cleanPayload = TypeConverter.jsonStringToString(signedTransactionPayload);
         final SignedTransaction transaction = new SignedTransaction()
@@ -219,10 +230,16 @@ import rx.subscriptions.CompositeSubscription;
                 .sendSignedTransaction(transaction)
                 .subscribe(
                         sentTransaction -> handleSentTransaction(callbackId, sentTransaction),
-                        throwable -> LogUtil.exception(getClass(), throwable)
+                        throwable -> handlePublishTransactionError(throwable, callbackId)
                 );
 
         this.subscriptions.add(sub);
+    }
+
+    private void handlePublishTransactionError(final Throwable throwable, final String callbackId) {
+        LogUtil.exception(getClass(), "Error while publishing transaction " + throwable);
+        final String errorMessage = createErrorMessage("Not able to publish transaction");
+        postCallbackTask(callbackId, errorMessage);
     }
 
     private void handleSentTransaction(final String callbackId, final SentTransaction sentTransaction) {
@@ -232,27 +249,6 @@ import rx.subscriptions.CompositeSubscription;
         ));
     }
 
-    private void postCallbackTask(final String id, final String encodedCallback) {
-        if (activity == null) return;
-        final Subscription sub =
-                doCallback(id, encodedCallback)
-                .subscribe(
-                        () -> {},
-                        throwable -> LogUtil.e(getClass(), "Error while executing javascript method " + throwable)
-                );
-
-        subscriptions.add(sub);
-    }
-
-    @MainThread
-    private Completable doCallback(final String id, final String encodedCallback) {
-        return Completable.fromAction(() -> {
-            final String methodCall = String.format("SOFA.callback(\"%s\",\"%s\")", id, encodedCallback);
-            executeJavascriptMethod(methodCall);
-        })
-        .subscribeOn(AndroidSchedulers.mainThread());
-    }
-
     @Override
     public void signPersonalMessage(final String id, final String msgParams) {
         try {
@@ -260,6 +256,8 @@ import rx.subscriptions.CompositeSubscription;
             showPersonalSignDialog(id, personalMessage);
         } catch (IOException e) {
             LogUtil.e(getClass(), "Error while parsing PersonalMessageSign" + e);
+            final String errorMessage = createErrorMessage("Unable to parse personal message");
+            postCallbackTask(id, errorMessage);
         }
     }
 
@@ -293,29 +291,50 @@ import rx.subscriptions.CompositeSubscription;
     @Override
     public void signMessage(final String id, final String from, final String data) {
         if (!from.equalsIgnoreCase(this.wallet.getPaymentAddress())) {
-            postCallbackTask(id, String.format("{\\\"error\\\":\\\"%s\\\"}",
-                    "Invalid Address"));
+            final String errorMessage = createErrorMessage("Invalid Address");
+            postCallbackTask(id, errorMessage);
             return;
         }
         if (data.length() != 66) {
-            postCallbackTask(id, String.format("{\\\"error\\\":\\\"%s\\\"}",
-                    "Invalid Message Length"));
+            final String errorMessage = createErrorMessage("Invalid Message Length");
+            postCallbackTask(id, errorMessage);
             return;
         } else if (!data.substring(0, 2).equalsIgnoreCase("0x")) {
-            postCallbackTask(id, String.format("{\\\"error\\\":\\\"%s\\\"}",
-                    "Invalid Message Data"));
+            final String errorMessage = createErrorMessage("Invalid Message Data");
+            postCallbackTask(id, errorMessage);
             return;
         } else {
             try {
                 new BigInteger(data.substring(2), 16);
             } catch (final NumberFormatException e) {
-                postCallbackTask(id, String.format("{\\\"error\\\":\\\"%s\\\"}",
-                        "Invalid Message Data"));
+                final String errorMessage = createErrorMessage("Invalid Message Data");
+                postCallbackTask(id, errorMessage);
                 return;
             }
         }
         final PersonalMessage personalMessage = new PersonalMessage(from, data);
         showSignMessageDialog(id, personalMessage);
+    }
+
+    private void postCallbackTask(final String id, final String encodedCallback) {
+        if (activity == null) return;
+        final Subscription sub =
+                doCallback(id, encodedCallback)
+                .subscribe(
+                        () -> {},
+                        throwable -> LogUtil.e(getClass(), "Error while executing javascript method " + throwable)
+                );
+
+        subscriptions.add(sub);
+    }
+
+    @MainThread
+    private Completable doCallback(final String id, final String encodedCallback) {
+        return Completable.fromAction(() -> {
+            final String methodCall = String.format("SOFA.callback(\"%s\",\"%s\")", id, encodedCallback);
+            executeJavascriptMethod(methodCall);
+        })
+        .subscribeOn(AndroidSchedulers.mainThread());
     }
 
     private void showSignMessageDialog(final String id, final PersonalMessage personalMessage) {
@@ -352,6 +371,10 @@ import rx.subscriptions.CompositeSubscription;
         } else {
             webView.loadUrl("javascript:" + methodCall);
         }
+    }
+
+    private String createErrorMessage(final String errorMessage) {
+        return String.format("{\\\"error\\\":\\\"%s\\\"}", errorMessage);
     }
 
     public void updateUrl(final String url) {
