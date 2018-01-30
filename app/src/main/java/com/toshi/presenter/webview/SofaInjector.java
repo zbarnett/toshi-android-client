@@ -23,6 +23,7 @@ import android.support.annotation.NonNull;
 import com.toshi.R;
 import com.toshi.crypto.HDWallet;
 import com.toshi.manager.network.interceptor.DeviceInfoUserAgentInterceptor;
+import com.toshi.util.webView.WebViewCookieJar;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.custom.listener.OnLoadListener;
 
@@ -66,6 +67,7 @@ import rx.subscriptions.CompositeSubscription;
     private OkHttpClient buildHttpClient() {
         return new OkHttpClient.Builder()
                 .addInterceptor(new DeviceInfoUserAgentInterceptor())
+                .cookieJar(new WebViewCookieJar())
                 .build();
     }
 
