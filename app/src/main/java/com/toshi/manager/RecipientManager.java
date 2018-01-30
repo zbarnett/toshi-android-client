@@ -150,7 +150,7 @@ public class RecipientManager {
                 .doOnError(t -> LogUtil.exception(getClass(), "fetchAndCacheFromNetworkByPaymentAddress", t));
     }
 
-    private void cacheUser(final User user) {
+    /* package */ void cacheUser(final User user) {
         this.userStore.save(user)
                 .subscribe(
                         () -> {},
@@ -245,6 +245,22 @@ public class RecipientManager {
                 )
                 .subscribeOn(Schedulers.io())
                 .toCompletable();
+    }
+
+    public Single<List<User>> getTopRatedPublicUsers(final int limit) {
+        return IdService
+                .getApi()
+                .getUsers(true, true, false, limit)
+                .map(UserSearchResults::getResults)
+                .subscribeOn(Schedulers.io());
+    }
+
+    public Single<List<User>> getLatestPublicUsers(final int limit) {
+        return IdService
+                .getApi()
+                .getUsers(true, false, true, limit)
+                .map(UserSearchResults::getResults)
+                .subscribeOn(Schedulers.io());
     }
 
     public Single<ServerTime> getTimestamp() {
