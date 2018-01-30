@@ -240,7 +240,6 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
             LogUtil.exception(getClass(), "Unable to load Dapp", t);
             if (activity == null) return;
             showToast(R.string.error__dapp_loading);
-            activity.finish();
         }
 
         @Override
