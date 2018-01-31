@@ -38,6 +38,7 @@ import rx.Single
 import rx.Subscription
 import rx.schedulers.Schedulers
 import rx.subjects.BehaviorSubject
+import rx.subscriptions.CompositeSubscription
 import java.io.File
 
 class UserManager {
@@ -50,6 +51,7 @@ class UserManager {
 
     private val recipientManager by lazy { BaseApplication.get().recipientManager }
     private val isConnectedSubject by lazy { BaseApplication.get().isConnectedSubject }
+    private val subscriptions by lazy { CompositeSubscription() }
 
     private val userSubject by lazy { BehaviorSubject.create<User>() }
     private val prefs by lazy { BaseApplication.get().getSharedPreferences(FileNames.USER_PREFS, Context.MODE_PRIVATE) }
@@ -66,7 +68,7 @@ class UserManager {
         // Whenever the network changes init the user.
         // This is dumb and potentially inefficient but it shouldn't have
         // any adverse effects and it is easy to improve later.
-        clearSubscriptions()
+        clearConnectivitySubscription()
         connectivitySub = isConnectedSubject
                 .skip(1) // Skip the cached value in the subject.
                 .subscribe(
@@ -107,8 +109,8 @@ class UserManager {
     private fun registerNewUser(): Completable {
         return getTimestamp()
                 .flatMap { registerNewUserWithTimestamp(it) }
+                .onErrorResumeNext { handleUserRegistrationFailed(it) } // If the user is already registered, the server will give a 400 response.
                 .doOnSuccess { updateCurrentUser(it) }
-                .doOnError { handleUserRegistrationFailed(it) }
                 .doOnError { LogUtil.exception(javaClass, "Error while registering user with timestamp") }
                 .toCompletable()
     }
@@ -120,8 +122,9 @@ class UserManager {
                 .registerUser(userDetails, serverTime.get())
     }
 
-    private fun handleUserRegistrationFailed(throwable: Throwable) {
-        if (throwable is HttpException && throwable.code() == 400) forceFetchUserFromNetwork()
+    private fun handleUserRegistrationFailed(throwable: Throwable): Single<User> {
+        return if (throwable is HttpException && throwable.code() == 400) forceFetchUserFromNetworkSingle()
+        else Single.error(throwable)
     }
 
     fun getCurrentUserObservable(): Observable<User> {
@@ -129,13 +132,24 @@ class UserManager {
         return userSubject.asObservable()
     }
 
-    private fun forceFetchUserFromNetwork(): Completable {
+    private fun forceFetchUserFromNetworkSingle(): Single<User> {
         return IdService
                 .getApi()
                 .forceGetUser(wallet.ownerAddress)
                 .doOnSuccess { updateCurrentUser(it) }
                 .doOnError { LogUtil.exception(javaClass, "Error while fetching user from network $it") }
-                .toCompletable()
+    }
+
+    private fun forceFetchUserFromNetwork() {
+        val sub = IdService
+                .getApi()
+                .forceGetUser(wallet.ownerAddress)
+                .subscribe(
+                        { updateCurrentUser(it) },
+                        { LogUtil.exception(javaClass, "Error while fetching user from network $it") }
+                )
+
+        subscriptions.add(sub)
     }
 
     private fun fetchUser(): Single<User> {
@@ -220,12 +234,13 @@ class UserManager {
     }
 
     fun clear() {
-        clearSubscriptions()
+        subscriptions.clear()
+        clearConnectivitySubscription()
         prefs.edit()
                 .putString(USER_ID, null)
                 .apply()
         userSubject.onNext(null)
     }
 
-    private fun clearSubscriptions() = connectivitySub?.unsubscribe()
+    private fun clearConnectivitySubscription() = connectivitySub?.unsubscribe()
 }
