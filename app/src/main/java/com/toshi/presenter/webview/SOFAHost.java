@@ -21,11 +21,11 @@ package com.toshi.presenter.webview;
 import android.support.annotation.NonNull;
 import android.webkit.JavascriptInterface;
 
-/* package */ class SOFAHost {
+public class SOFAHost {
 
     private final SofaHostListener listener;
 
-    /* package */ SOFAHost(@NonNull final SofaHostListener listener) {
+    public SOFAHost(@NonNull final SofaHostListener listener) {
         this.listener = listener;
     }
 

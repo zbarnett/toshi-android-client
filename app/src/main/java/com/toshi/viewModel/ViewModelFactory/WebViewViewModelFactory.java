@@ -15,15 +15,23 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.toshi.presenter.webview
+package com.toshi.viewModel.ViewModelFactory;
 
-import android.net.Uri
-import android.webkit.ValueCallback
-import android.webkit.WebChromeClient
-import android.webkit.WebView
+import android.arch.lifecycle.ViewModelProvider;
+import android.support.annotation.NonNull;
 
-class SofaChromeWebViewClient(private val fileCallback: (ValueCallback<Array<Uri>>?, FileChooserParams?) -> Boolean) : WebChromeClient() {
-    override fun onShowFileChooser(webView: WebView?, filePathCallback: ValueCallback<Array<Uri>>?, fileChooserParams: FileChooserParams?): Boolean {
-        return fileCallback(filePathCallback, fileChooserParams)
+import com.toshi.viewModel.WebViewViewModel;
+
+public class WebViewViewModelFactory implements ViewModelProvider.Factory {
+    private String url;
+
+    public WebViewViewModelFactory(final String url) {
+        this.url = url;
+    }
+
+    @NonNull
+    @Override
+    public WebViewViewModel create(@NonNull Class modelClass) {
+        return new WebViewViewModel(this.url);
     }
 }

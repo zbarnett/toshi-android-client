@@ -56,7 +56,7 @@ import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.subscriptions.CompositeSubscription;
 
-/* package */ class SofaHostWrapper implements SofaHostListener {
+public class SofaHostWrapper implements SofaHostListener {
 
     private final AppCompatActivity activity;
     private final WebView webView;
@@ -65,7 +65,7 @@ import rx.subscriptions.CompositeSubscription;
     private final CompositeSubscription subscriptions;
     private String url;
 
-    /* package */ SofaHostWrapper(final AppCompatActivity activity, final WebView webView, final String url) {
+    public  SofaHostWrapper(final AppCompatActivity activity, final WebView webView, final String url) {
         this.activity = activity;
         this.subscriptions = new CompositeSubscription();
         this.webView = webView;
@@ -83,7 +83,7 @@ import rx.subscriptions.CompositeSubscription;
                 .value();
     }
 
-    /* package */ SOFAHost getSofaHost() {
+    public SOFAHost getSofaHost() {
         return this.sofaHost;
     }
 

@@ -17,11 +17,14 @@
 
 package com.toshi.view.activity
 
+import android.os.Build
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.toshi.R
 import com.toshi.extensions.startActivity
 import com.toshi.util.ImageUtil
+import com.toshi.view.activity.webView.JellyBeanWebViewActivity
+import com.toshi.view.activity.webView.LollipopWebViewActivity
 import kotlinx.android.synthetic.main.activity_view_dapp.*
 
 class ViewDappActivity : AppCompatActivity() {
@@ -56,8 +59,14 @@ class ViewDappActivity : AppCompatActivity() {
     }
 
     private fun startWebViewActivity() {
-        startActivity<WebViewActivity> {
-            putExtra(WebViewActivity.EXTRA__ADDRESS, getAddressFromIntent())
+        if (Build.VERSION.SDK_INT >= 21) {
+            startActivity<LollipopWebViewActivity> {
+                putExtra(LollipopWebViewActivity.EXTRA__ADDRESS, getAddressFromIntent())
+            }
+        } else {
+            startActivity<JellyBeanWebViewActivity> {
+                putExtra(JellyBeanWebViewActivity.EXTRA__ADDRESS, getAddressFromIntent())
+            }
         }
     }
 

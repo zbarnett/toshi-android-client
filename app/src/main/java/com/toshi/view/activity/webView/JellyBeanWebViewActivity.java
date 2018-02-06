@@ -15,7 +15,7 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.toshi.view.activity;
+package com.toshi.view.activity.webView;
 
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
@@ -30,8 +30,9 @@ import com.toshi.presenter.LoaderIds;
 import com.toshi.presenter.factory.PresenterFactory;
 import com.toshi.presenter.factory.WebViewPresenterFactory;
 import com.toshi.presenter.webview.WebViewPresenter;
+import com.toshi.view.activity.BasePresenterActivity;
 
-public class WebViewActivity extends BasePresenterActivity<WebViewPresenter, WebViewActivity> {
+public class JellyBeanWebViewActivity extends BasePresenterActivity<WebViewPresenter, JellyBeanWebViewActivity> {
 
     public static final String EXTRA__ADDRESS = "address";
     private ActivityWebViewBinding binding;

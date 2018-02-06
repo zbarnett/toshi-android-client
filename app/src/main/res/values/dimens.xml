@@ -61,4 +61,6 @@
     <dimen name="passphrase_sign_in_spacing">8dp</dimen>
 
     <dimen name="keyboard_threshold">100dp</dimen>
+
+    <dimen name="progress_height">2dp</dimen>
 </resources>

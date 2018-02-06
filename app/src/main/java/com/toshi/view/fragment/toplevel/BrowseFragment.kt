@@ -19,6 +19,7 @@ package com.toshi.view.fragment.toplevel
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -47,7 +48,8 @@ import com.toshi.util.LogUtil
 import com.toshi.view.activity.BrowseMoreActivity
 import com.toshi.view.activity.ViewDappActivity
 import com.toshi.view.activity.ViewUserActivity
-import com.toshi.view.activity.WebViewActivity
+import com.toshi.view.activity.webView.JellyBeanWebViewActivity
+import com.toshi.view.activity.webView.LollipopWebViewActivity
 import com.toshi.view.adapter.HorizontalAdapter
 import com.toshi.view.adapter.ToshiEntityAdapter
 import com.toshi.view.adapter.listeners.OnItemClickListener
@@ -126,15 +128,25 @@ class BrowseFragment : Fragment(), TopLevelFragment {
         searchAdapter = ToshiEntityAdapter()
                 .apply {
                     itemClickListener = OnItemClickListener { startProfileActivity(it) }
-                    dappLaunchClicked = OnItemClickListener {
-                        startActivity<WebViewActivity> { putExtra(WebViewActivity.EXTRA__ADDRESS, it.address) }
-                    }
+                    dappLaunchClicked = OnItemClickListener { startWebActivity(it.address) }
                 }
 
         searchList.apply {
             adapter = searchAdapter
             layoutManager = LinearLayoutManager(context)
             addHorizontalLineDivider()
+        }
+    }
+
+    private fun startWebActivity(address: String) {
+        if (Build.VERSION.SDK_INT >= 21) {
+            startActivity<LollipopWebViewActivity> {
+                putExtra(LollipopWebViewActivity.EXTRA__ADDRESS, address)
+            }
+        } else {
+            startActivity<JellyBeanWebViewActivity> {
+                putExtra(JellyBeanWebViewActivity.EXTRA__ADDRESS, address)
+            }
         }
     }
 
@@ -230,7 +242,7 @@ class BrowseFragment : Fragment(), TopLevelFragment {
         if (searchAdapter.numberOfApps != 1) return
         val appToLaunch = searchAdapter.firstApp
         if (appToLaunch is DappLink) {
-            startActivity<WebViewActivity> { putExtra(WebViewActivity.EXTRA__ADDRESS, appToLaunch.address) }
+            startWebActivity(appToLaunch.address)
         }
     }
 

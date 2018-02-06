@@ -42,7 +42,7 @@ import com.toshi.util.FileUtil;
 import com.toshi.util.LogUtil;
 import com.toshi.util.PermissionUtil;
 import com.toshi.view.BaseApplication;
-import com.toshi.view.activity.WebViewActivity;
+import com.toshi.view.activity.webView.JellyBeanWebViewActivity;
 import com.toshi.view.custom.listener.OnLoadListener;
 import com.toshi.view.fragment.DialogFragment.ChooserDialog;
 
@@ -57,15 +57,15 @@ import rx.subscriptions.CompositeSubscription;
 import static android.Manifest.permission.CAMERA;
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 
-public class WebViewPresenter implements Presenter<WebViewActivity> {
+public class WebViewPresenter implements Presenter<JellyBeanWebViewActivity> {
 
     private static final int PICK_IMAGE = 1;
     private static final int CAPTURE_IMAGE = 2;
     private static final String IMAGE_TYPE = "image/*";
 
-    private WebViewActivity activity;
+    private JellyBeanWebViewActivity activity;
     private SofaWebViewClient webClient;
-    private SofaChromeWebViewClient chromeWebViewClient;
+    private ToshiChromeWebViewClient chromeWebViewClient;
     private SofaInjector sofaInjector;
     private SofaHostWrapper sofaHostWrapper;
     private CompositeSubscription subscriptions;
@@ -76,7 +76,7 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
     private boolean isLoaded = false;
 
     @Override
-    public void onViewAttached(final WebViewActivity view) {
+    public void onViewAttached(final JellyBeanWebViewActivity view) {
         this.activity = view;
 
         if (this.firstTimeAttaching) {
@@ -112,7 +112,7 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
     private void initInjectsAndEmbeds() {
         final String address = tryGetAddress();
         this.webClient = new SofaWebViewClient(this.loadedListener);
-        this.chromeWebViewClient = new SofaChromeWebViewClient(this::handleFileChooserCallback);
+        this.chromeWebViewClient = new ToshiChromeWebViewClient(this::handleFileChooserCallback);
         this.sofaHostWrapper = new SofaHostWrapper(this.activity, this.activity.getBinding().webview, address);
 
         final Subscription sub = BaseApplication.get()
@@ -221,11 +221,12 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
             activity.getBinding()
                     .webview
                     .loadDataWithBaseURL(
-                        response.getAddress(),
-                        response.getData(),
-                        response.getMimeType(),
-                        response.getEncoding(),
-                        null);
+                            response.getAddress(),
+                            response.getData(),
+                            response.getMimeType(),
+                            response.getEncoding(),
+                         null
+                    );
         }
 
         @Override
@@ -261,7 +262,7 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
         @Override
         public void updateTitle(final String title) {
             if (activity == null) return;
-            activity.getBinding().title.setText(title);
+            activity.getBinding().toolbarTitle.setText(title);
         }
     };
 
@@ -272,7 +273,7 @@ public class WebViewPresenter implements Presenter<WebViewActivity> {
     }
 
     private String getAddress() throws IllegalArgumentException {
-        final String url = this.activity.getIntent().getStringExtra(WebViewActivity.EXTRA__ADDRESS).trim();
+        final String url = this.activity.getIntent().getStringExtra(JellyBeanWebViewActivity.EXTRA__ADDRESS).trim();
         final URI uri = URI.create(url);
         return uri.getScheme() == null
                 ? "http://" + uri.toASCIIString()
