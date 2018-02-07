@@ -76,6 +76,23 @@ public class JellyBeanWebViewActivity extends BasePresenterActivity<WebViewPrese
         super.onResume();
         tryProcessResultHolder();
         tryProcessPermissionResultHolder();
+        resumeWebView();
+    }
+
+    private void resumeWebView() {
+        getBinding().webview.onResume();
+        getBinding().webview.resumeTimers();
+    }
+
+    @Override
+    public void onPause() {
+        pauseWebView();
+        super.onPause();
+    }
+
+    private void pauseWebView() {
+        getBinding().webview.onPause();
+        getBinding().webview.pauseTimers();
     }
 
     @Override
@@ -112,5 +129,10 @@ public class JellyBeanWebViewActivity extends BasePresenterActivity<WebViewPrese
     protected void onPresenterDestroyed() {
         super.onPresenterDestroyed();
         this.presenter = null;
+    }
+
+    public void onDestroy() {
+        getBinding().webview.destroy();
+        super.onDestroy();
     }
 }

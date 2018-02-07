@@ -223,8 +223,21 @@ class LollipopWebViewActivity : AppCompatActivity() {
         filePathCallback = null
     }
 
+    override fun onResume() {
+        super.onResume()
+        webview.onResume()
+        webview.resumeTimers()
+    }
+
+    override fun onPause() {
+        webview.onPause()
+        webview.pauseTimers()
+        super.onPause()
+    }
+
     override fun onDestroy() {
         sofaHostWrapper.clear()
+        webview.destroy()
         super.onDestroy()
     }
 }

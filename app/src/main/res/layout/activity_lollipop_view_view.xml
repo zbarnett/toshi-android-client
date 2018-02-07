@@ -74,16 +74,19 @@
 
     </android.support.v7.widget.Toolbar>
 
-    <com.toshi.view.custom.ProgressBar
-        android:id="@+id/progressBar"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/progress_height" />
+        android:layout_height="match_parent">
 
-    <WebView
-        android:id="@+id/webview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="visible"
-        tools:visibility="visible"/>
+        <WebView
+            android:id="@+id/webview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
+        <com.toshi.view.custom.ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/progress_height" />
+
+    </FrameLayout>
 </LinearLayout>
