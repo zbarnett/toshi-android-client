@@ -24,135 +24,142 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
-            android:orientation="vertical"
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:fillViewport="true">
 
             <LinearLayout
-                android:id="@+id/toolbar"
+                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                style="@style/Toolbar">
-
-                <ImageButton
-                    android:id="@+id/close_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:scaleType="fitCenter"
-                    android:tint="@color/textColorContrast"
-                    app:srcCompat="@drawable/ic_arrow_back"
-                    style="@style/closeButtonStyle"/>
-
-                <android.support.v4.widget.Space
-                    android:layout_width="16dp"
-                    android:layout_height="0dp" />
-
-                <TextView
-                    android:id="@+id/title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    style="@style/Toolbar.TitleText"
-                    android:text="@string/advanced_title"/>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/networkSwitcherWrapper"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_height="wrap_content">
 
                 <LinearLayout
-                    android:id="@+id/currentNetworkWrapper"
+                    android:id="@+id/toolbar"
                     android:layout_width="match_parent"
-                    android:layout_height="72dp"
-                    android:orientation="vertical"
-                    android:background="?android:selectableItemBackground"
-                    android:paddingLeft="@dimen/activity_horizontal_margin"
-                    android:paddingRight="@dimen/activity_horizontal_margin"
-                    android:gravity="center_vertical">
+                    android:layout_height="?attr/actionBarSize"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    style="@style/Toolbar">
 
-                    <TextView
+                    <ImageButton
+                        android:id="@+id/close_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="16sp"
-                        android:textColor="@color/textColorPrimary"
-                        android:text="@string/network"/>
+                        android:scaleType="fitCenter"
+                        android:tint="@color/textColorContrast"
+                        app:srcCompat="@drawable/ic_arrow_back"
+                        style="@style/closeButtonStyle"/>
+
+                    <android.support.v4.widget.Space
+                        android:layout_width="16dp"
+                        android:layout_height="0dp" />
 
                     <TextView
-                        android:id="@+id/currentNetwork"
+                        android:id="@+id/title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="14sp"
-                        android:textColor="@color/textColorSecondaryTransparent"
-                        tools:text="Ropsten Revival Testnet"/>
+                        style="@style/Toolbar.TitleText"
+                        android:text="@string/advanced_title"/>
 
                 </LinearLayout>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                    android:layout_marginRight="@dimen/activity_horizontal_margin"
-                    android:background="@color/divider"/>
-
-                <android.support.v4.widget.Space
-                    android:layout_width="0dp"
-                    android:layout_height="16dp" />
-
-                <TextView
+                <LinearLayout
+                    android:id="@+id/networkSwitcherWrapper"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="@dimen/activity_horizontal_margin"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                    android:textSize="14sp"
-                    android:textColor="@color/textColorBody"
-                    android:text="@string/develop_message"/>
+                    android:orientation="vertical">
 
-                <android.support.v4.widget.Space
-                    android:layout_width="0dp"
-                    android:layout_height="29dp" />
+                    <LinearLayout
+                        android:id="@+id/currentNetworkWrapper"
+                        android:layout_width="match_parent"
+                        android:layout_height="72dp"
+                        android:orientation="vertical"
+                        android:background="?android:selectableItemBackground"
+                        android:paddingLeft="@dimen/activity_horizontal_margin"
+                        android:paddingRight="@dimen/activity_horizontal_margin"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="16sp"
+                            android:textColor="@color/textColorPrimary"
+                            android:text="@string/network"/>
+
+                        <TextView
+                            android:id="@+id/currentNetwork"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="14sp"
+                            android:textColor="@color/textColorSecondaryTransparent"
+                            tools:text="Ropsten Revival Testnet"/>
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                        android:layout_marginRight="@dimen/activity_horizontal_margin"
+                        android:background="@color/divider"/>
+
+                    <android.support.v4.widget.Space
+                        android:layout_width="0dp"
+                        android:layout_height="16dp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="@dimen/activity_horizontal_margin"
+                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                        android:textSize="14sp"
+                        android:textColor="@color/textColorBody"
+                        android:text="@string/develop_message"/>
+
+                    <android.support.v4.widget.Space
+                        android:layout_width="0dp"
+                        android:layout_height="29dp" />
+
+                </LinearLayout>
+
+                <FrameLayout
+                    android:id="@+id/open_source_licenses"
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp"
+                    android:paddingLeft="@dimen/activity_horizontal_margin"
+                    android:paddingRight="@dimen/activity_horizontal_margin"
+                    android:background="?android:selectableItemBackground">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:textSize="16sp"
+                        android:textColor="@color/textColorPrimary"
+                        android:text="@string/about__licenses" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right|center_vertical"
+                        app:srcCompat="@drawable/ic_chevron_right" />
+
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/version"
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="@dimen/activity_horizontal_margin"
+                    android:textColor="@color/textColorBody"
+                    android:textSize="16sp"
+                    tools:text="VersionName"/>
 
             </LinearLayout>
 
-            <FrameLayout
-                android:id="@+id/open_source_licenses"
-                android:layout_width="match_parent"
-                android:layout_height="54dp"
-                android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:paddingRight="@dimen/activity_horizontal_margin"
-                android:background="?android:selectableItemBackground">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:textSize="16sp"
-                    android:textColor="@color/textColorPrimary"
-                    android:text="@string/about__licenses" />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="right|center_vertical"
-                    app:srcCompat="@drawable/ic_chevron_right" />
-
-            </FrameLayout>
-
-            <TextView
-                android:id="@+id/version"
-                android:layout_width="match_parent"
-                android:layout_height="54dp"
-                android:gravity="center_vertical"
-                android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:textColor="@color/textColorBody"
-                android:textSize="16sp"
-                tools:text="VersionName"/>
-
-        </LinearLayout>
+        </ScrollView>
 
         <FrameLayout
             android:id="@+id/loading_spinner"
