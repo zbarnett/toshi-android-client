@@ -71,12 +71,4 @@ public class UserStore {
         })
         .subscribeOn(Schedulers.from(dbThread));
     }
-
-    public void clear() {
-        final Realm realm = BaseApplication.get().getRealm();
-        realm.beginTransaction();
-        realm.deleteAll();
-        realm.commitTransaction();
-        realm.close();
-    }
 }

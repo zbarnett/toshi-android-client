@@ -270,7 +270,6 @@ public class RecipientManager {
     }
 
     public void clear() {
-        this.userStore.clear();
         clearCache();
     }
 
