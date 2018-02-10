@@ -57,7 +57,8 @@ class ToshiWebClient(
     private fun interceptRequest(webRequest: WebResourceRequest): WebResourceResponse? {
         val request = buildRequest(webRequest)
         val response = httpClient.newCall(request).execute()
-        return buildWebResponse(response)
+        return if (response.priorResponse()?.isRedirect == true) null
+        else buildWebResponse(response)
     }
 
     @TargetApi(21)
@@ -94,7 +95,7 @@ class ToshiWebClient(
         val reader = BufferedReader(InputStreamReader(stream))
         val text: List<String> = reader.readLines()
         for (line in text) sb.append(line).append("\n")
-        return "<script>$sb</script>"
+        return "<script type=\"text/javascript\">$sb</script>"
     }
 
     private fun getWallet() = toshiManager.wallet.toBlocking().value()
