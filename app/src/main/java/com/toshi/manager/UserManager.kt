@@ -88,7 +88,7 @@ class UserManager {
             userNeedsToRegister() -> registerNewUser()
             userNeedsToMigrate() -> migrateUser()
             SharedPrefsUtil.shouldForceUserUpdate() -> forceUpdateUser()
-            else -> fetchUser().toCompletable()
+            else -> fetchAndUpdateUser()
         }
     }
 
@@ -152,11 +152,13 @@ class UserManager {
         subscriptions.add(sub)
     }
 
-    private fun fetchUser(): Single<User> {
+    private fun fetchAndUpdateUser(): Completable {
         return recipientManager
                 .getUserFromPaymentAddress(wallet.paymentAddress)
                 .doOnSuccess { updateCurrentUser(it) }
                 .doOnError { LogUtil.exception(javaClass, "Error while fetching user from network $it") }
+                .toCompletable()
+                .onErrorComplete()
     }
 
     private fun updateCurrentUser(user: User) {
@@ -176,8 +178,9 @@ class UserManager {
         val ud = UserDetails().setPaymentAddress(wallet.paymentAddress)
         return updateUser(ud)
                 .doOnSuccess { SharedPrefsUtil.setForceUserUpdate(false) }
-                .doOnError { LogUtil.exception(javaClass, "Error while updating user $it") }
+                .doOnError { LogUtil.exception(javaClass, "Error while updating user while initiating $it") }
                 .toCompletable()
+                .onErrorComplete()
     }
 
     fun updateUser(userDetails: UserDetails): Single<User> {

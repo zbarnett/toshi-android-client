@@ -79,7 +79,7 @@ public class LogUtil  {
     @SuppressWarnings("rawtypes")
     public static void exception(final Class callingClass, final String additionalInfo) {
         final String logTag = getLogTag(callingClass);
-        final Throwable throwableWithInfo = new Throwable(additionalInfo + ": " + additionalInfo);
+        final Throwable throwableWithInfo = new Throwable(logTag + ": " + additionalInfo);
         if (!BuildConfig.DEBUG) {
             Crashlytics.logException(throwableWithInfo);
         }

@@ -18,6 +18,9 @@
 package com.toshi.manager;
 
 
+import android.widget.Toast;
+
+import com.toshi.R;
 import com.toshi.crypto.HDWallet;
 import com.toshi.crypto.signal.SignalPreferences;
 import com.toshi.manager.store.DbMigration;
@@ -33,6 +36,7 @@ import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import rx.Completable;
 import rx.Single;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subjects.BehaviorSubject;
 
@@ -82,14 +86,14 @@ public class ToshiManager {
                 .doOnSuccess(this::setWallet)
                 .doOnSuccess(__ -> SharedPrefsUtil.setHasOnboarded(false))
                 .flatMapCompletable(__ -> initManagers())
-                .doOnError(__ -> clearUserData())
+                .doOnError(__ -> signOut())
                 .subscribeOn(Schedulers.from(this.singleExecutor));
     }
 
     public Completable init(final HDWallet wallet) {
         this.setWallet(wallet);
         return initManagers()
-                .doOnError(__ -> clearUserData())
+                .doOnError(__ -> signOut())
                 .subscribeOn(Schedulers.from(this.singleExecutor));
     }
 
@@ -100,8 +104,8 @@ public class ToshiManager {
         return new HDWallet()
                 .getExistingWallet()
                 .doOnSuccess(this::setWallet)
+                .doOnError(__ -> clearUserSession())
                 .flatMapCompletable(__ -> initManagers())
-                .doOnError(__ -> clearUserData())
                 .subscribeOn(Schedulers.from(this.singleExecutor));
     }
 
@@ -123,7 +127,18 @@ public class ToshiManager {
                 this.sofaMessageManager.init(this.wallet),
                 this.userManager.init(this.wallet)
         ))
+        .observeOn(AndroidSchedulers.mainThread())
+        .doOnError(this::handleInitManagersError)
         .doOnCompleted(() -> this.areManagersInitialised = true);
+    }
+
+    private void handleInitManagersError(final Throwable throwable) {
+        LogUtil.exception(getClass(), "Error while initiating managers " + throwable);
+        Toast.makeText(
+                BaseApplication.get(),
+                R.string.init_manager_error,
+                Toast.LENGTH_SHORT
+        ).show();
     }
 
     private void initRealm() {
@@ -193,18 +208,20 @@ public class ToshiManager {
                 .toSingle();
     }
 
-    public void clearUserData() {
+    public void signOut() {
+        clearUserSession();
+        clearWalletAndSignal();
+        setSignedOutAndClearUserPrefs();
+    }
+
+    private void clearUserSession() {
         this.sofaMessageManager.clear();
         this.userManager.clear();
         this.recipientManager.clear();
         this.balanceManager.clear();
         this.transactionManager.clear();
-        this.wallet.clear();
         this.areManagersInitialised = false;
         closeDatabase();
-        SignalPreferences.clear();
-        SharedPrefsUtil.setSignedOut();
-        SharedPrefsUtil.clear();
         ImageUtil.clear();
         setWallet(null);
     }
@@ -212,5 +229,15 @@ public class ToshiManager {
     private void closeDatabase() {
         this.realmConfig = null;
         Realm.removeDefaultConfiguration();
+    }
+
+    private void clearWalletAndSignal() {
+        this.wallet.clear();
+        SignalPreferences.clear();
+    }
+
+    private void setSignedOutAndClearUserPrefs() {
+        SharedPrefsUtil.setSignedOut();
+        SharedPrefsUtil.clear();
     }
 }

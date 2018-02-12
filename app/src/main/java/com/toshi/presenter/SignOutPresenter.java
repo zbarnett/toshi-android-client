@@ -78,7 +78,7 @@ public class SignOutPresenter implements Presenter<SignOutActivity> {
         BaseApplication
                 .get()
                 .getToshiManager()
-                .clearUserData();
+                .signOut();
     }
 
     private void goToLandingActivity() {
