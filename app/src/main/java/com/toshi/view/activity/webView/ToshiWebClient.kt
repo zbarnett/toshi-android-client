@@ -19,6 +19,7 @@ package com.toshi.view.activity.webView
 
 import android.annotation.TargetApi
 import android.content.Context
+import android.os.Build
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
@@ -32,6 +33,8 @@ import okhttp3.Response
 import java.io.BufferedReader
 import java.io.ByteArrayInputStream
 import java.io.InputStreamReader
+import java.net.UnknownHostException
+import javax.net.ssl.SSLPeerUnverifiedException
 
 class ToshiWebClient(
         private val context: Context,
@@ -40,6 +43,26 @@ class ToshiWebClient(
 
     private val toshiManager by lazy { BaseApplication.get().toshiManager }
     private val httpClient by lazy { OkHttpClient.Builder().cookieJar(WebViewCookieJar()).build() }
+
+    override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+        if (request == null || view == null) return false
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+
+            /*
+            * In order to follow redirects properly, we return null in interceptRequest().
+            * Doing this breaks the web3 injection on the resulting page, so we have to reload to
+            * make sure web3 is available.
+            * */
+
+            if (request.isForMainFrame && request.isRedirect) {
+                view.loadUrl(request.url.toString())
+                return true
+            }
+        }
+        // TODO: handle API < 24 where isMainFrame is not available
+        return super.shouldOverrideUrlLoading(view, request)
+    }
 
     override fun shouldInterceptRequest(view: WebView?, url: String?): WebResourceResponse? {
         return null
@@ -56,9 +79,15 @@ class ToshiWebClient(
     @TargetApi(21)
     private fun interceptRequest(webRequest: WebResourceRequest): WebResourceResponse? {
         val request = buildRequest(webRequest)
-        val response = httpClient.newCall(request).execute()
-        return if (response.priorResponse()?.isRedirect == true) null
-        else buildWebResponse(response)
+        return try {
+            val response = httpClient.newCall(request).execute()
+            if (response.priorResponse()?.isRedirect == true) null
+            else buildWebResponse(response)
+        } catch (e: SSLPeerUnverifiedException) {
+            null
+        } catch (e: UnknownHostException) {
+            null
+        }
     }
 
     @TargetApi(21)
