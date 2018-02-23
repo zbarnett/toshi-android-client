@@ -85,6 +85,7 @@ public class ImageUtil {
                     .with(imageView.getContext())
                     .load(new ForceLoadGlideUrl(url))
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .error(R.drawable.placeholder)
                     .skipMemoryCache(true)
                     .into(imageView);
         } catch (final IllegalArgumentException ex) {
@@ -99,6 +100,7 @@ public class ImageUtil {
                 .with(imageView.getContext())
                 .load(new CachedGlideUrl(url))
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .error(R.drawable.placeholder)
                 .skipMemoryCache(true)
                 .into(imageView);
         } catch (final IllegalArgumentException ex) {

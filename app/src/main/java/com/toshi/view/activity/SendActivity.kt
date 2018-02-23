@@ -25,13 +25,14 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.toshi.BuildConfig
 import com.toshi.R
+import com.toshi.crypto.util.isPaymentAddressValid
 import com.toshi.extensions.isVisible
 import com.toshi.extensions.startActivityForResult
 import com.toshi.extensions.toast
-import com.toshi.manager.model.PaymentTask
 import com.toshi.model.local.Networks
 import com.toshi.util.BuildTypes
 import com.toshi.util.PaymentType
+import com.toshi.util.QrCodeHandler
 import com.toshi.util.ScannerResultType
 import com.toshi.view.adapter.listeners.TextChangedListener
 import com.toshi.view.fragment.PaymentConfirmationFragment
@@ -42,7 +43,6 @@ class SendActivity : AppCompatActivity() {
 
     companion object {
         const val INTENT_EXTRA__ETH_AMOUNT = "eth_amount"
-        const val ACTIVITY_RESULT = "activity_result"
         private const val PAYMENT_SCAN_REQUEST_CODE = 200
     }
 
@@ -95,7 +95,7 @@ class SendActivity : AppCompatActivity() {
 
     private fun handleSendPaymentClicked() {
         val paymentAddress = getRecipientAddress()
-        val isPaymentValid = viewModel.isPaymentAddressValid(paymentAddress)
+        val isPaymentValid = isPaymentAddressValid(paymentAddress)
         if (!isPaymentValid) {
             toast(R.string.invalid_payment_address)
             return
@@ -120,13 +120,8 @@ class SendActivity : AppCompatActivity() {
                 null,
                 PaymentType.TYPE_SEND
         )
-        dialog.setOnPaymentConfirmationApprovedListener { onPaymentApproved(it) }
         dialog.show(supportFragmentManager, PaymentConfirmationFragment.TAG)
-    }
-
-    private fun onPaymentApproved(paymentTask: PaymentTask) {
-        viewModel.sendPayment(paymentTask)
-        finish()
+        dialog.setOnPaymentConfirmationFinishedListener { finish() }
     }
 
     private fun getRecipientAddress(): String {
@@ -151,7 +146,7 @@ class SendActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, resultIntent)
         if (requestCode != PAYMENT_SCAN_REQUEST_CODE || resultCode != Activity.RESULT_OK) return
         resultIntent?.let {
-            val paymentAddress = it.getStringExtra(SendActivity.ACTIVITY_RESULT)
+            val paymentAddress = it.getStringExtra(QrCodeHandler.ACTIVITY_RESULT)
             recipientAddress.setText(paymentAddress)
         }
     }

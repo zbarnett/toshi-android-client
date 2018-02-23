@@ -6,11 +6,11 @@ import android.widget.LinearLayout
 import com.toshi.R
 import com.toshi.manager.model.PaymentTask
 import com.toshi.model.local.User
-import com.toshi.model.sofa.Payment
 import com.toshi.model.sofa.PaymentRequest
+import com.toshi.model.sofa.payment.Payment
 import com.toshi.view.fragment.PaymentConfirmationFragment
 
-class ResendHandler(private val activity: AppCompatActivity) {
+class ChatPaymentHandler(private val activity: AppCompatActivity) {
 
     fun showResendPaymentConfirmationDialog(receiver: User,
                                             payment: Payment,
@@ -20,21 +20,18 @@ class ResendHandler(private val activity: AppCompatActivity) {
                 payment.value, null,
                 PaymentType.TYPE_SEND
         )
-
         dialog.show(this.activity.supportFragmentManager, PaymentConfirmationFragment.TAG)
         dialog.setOnPaymentConfirmationApprovedListener { listener(it) }
     }
 
     fun showPaymentConfirmationDialog(receiver: User,
-                                      amount: String,
-                                      listener: (PaymentTask) -> Unit) {
+                                      amount: String) {
         val dialog = PaymentConfirmationFragment.newInstanceToshiPayment(
                 receiver.toshiId,
                 amount, null,
                 PaymentType.TYPE_SEND
         )
         dialog.show(this.activity.supportFragmentManager, PaymentConfirmationFragment.TAG)
-        dialog.setOnPaymentConfirmationApprovedListener { listener(it) }
     }
 
     fun showPaymentRequestConfirmationDialog(receiver: User,

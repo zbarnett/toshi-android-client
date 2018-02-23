@@ -30,6 +30,7 @@ public class HorizontalLineDivider extends RecyclerView.ItemDecoration {
     private int rightPadding = 0;
     private int dividerHeight = 6;
     private int startPosition = 0;
+    private int skipPositions = 0;
 
     public HorizontalLineDivider(final int color) {
         this.paint = new Paint();
@@ -56,12 +57,17 @@ public class HorizontalLineDivider extends RecyclerView.ItemDecoration {
         return this;
     }
 
+    public HorizontalLineDivider skipNEndPositions(final int skipPositions) {
+        this.skipPositions = skipPositions;
+        return this;
+    }
+
     @Override
     public void onDraw(final Canvas canvas, final RecyclerView parent, final RecyclerView.State state) {
         final int dividerLeft = parent.getPaddingLeft() + this.leftPadding;
         final int dividerRight = parent.getWidth() - parent.getPaddingRight() - this.rightPadding;
 
-        for (int i = 0; i < parent.getChildCount() - 1; i++) {
+        for (int i = 0; i < parent.getChildCount() - 1 - this.skipPositions; i++) {
             final View child = parent.getChildAt(i);
             final int childPosition = parent.getChildAdapterPosition(child);
             if (childPosition >= this.startPosition) {

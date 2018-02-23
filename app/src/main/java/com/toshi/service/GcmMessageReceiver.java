@@ -37,7 +37,7 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.toshi.model.local.IncomingMessage;
 import com.toshi.model.local.User;
-import com.toshi.model.sofa.Payment;
+import com.toshi.model.sofa.payment.Payment;
 import com.toshi.model.sofa.SofaAdapters;
 import com.toshi.model.sofa.SofaMessage;
 import com.toshi.model.sofa.SofaType;
@@ -93,13 +93,15 @@ public class GcmMessageReceiver extends FirebaseMessagingService {
 
             if (sofaMessage.getType() == SofaType.PAYMENT) {
                 final Payment payment = SofaAdapters.get().paymentFrom(sofaMessage.getPayload());
+                final boolean isTokenPayment = payment.getContractAddress() != null;
+                if (isTokenPayment) return; //Ignore incoming token payments
                 checkIfUserIsBlocked(payment);
             } else {
                 tryShowIncomingMessage();
             }
 
         } catch (final Exception ex) {
-            LogUtil.exception(getClass(), ex);
+            LogUtil.exception(getClass(), "Error while parsing incoming message: " + ex);
         }
     }
 

@@ -28,15 +28,10 @@ import android.widget.Toast;
 import com.toshi.R;
 import com.toshi.exception.InvalidQrCode;
 import com.toshi.exception.InvalidQrCodePayment;
-import com.toshi.manager.model.ExternalPaymentTask;
-import com.toshi.manager.model.PaymentTask;
-import com.toshi.manager.model.ToshiPaymentTask;
+import com.toshi.model.local.CurrencyMode;
 import com.toshi.model.local.QrCodePayment;
 import com.toshi.model.local.User;
-import com.toshi.model.sofa.Payment;
 import com.toshi.view.BaseApplication;
-import com.toshi.view.activity.ChatActivity;
-import com.toshi.view.activity.SendActivity;
 import com.toshi.view.activity.ViewUserActivity;
 import com.toshi.view.fragment.PaymentConfirmationFragment;
 
@@ -55,6 +50,7 @@ public class QrCodeHandler {
     }
 
     private static final String WEB_SIGNIN = "web-signin:";
+    public static final String ACTIVITY_RESULT = "activity_result";
 
     private CompositeSubscription subscriptions;
     private AppCompatActivity activity;
@@ -130,8 +126,8 @@ public class QrCodeHandler {
                                     PaymentType.TYPE_REQUEST
                             );
             dialog.show(this.activity.getSupportFragmentManager(), PaymentConfirmationFragment.TAG);
-            dialog.setOnPaymentConfirmationApprovedListener(this::onPaymentApproved)
-                    .setOnPaymentConfirmationCanceledListener(__ -> onPaymentCanceled());
+            dialog.setOnPaymentConfirmationCanceledListener(__ -> finishActivity())
+                    .setOnPaymentConfirmationFinishedListener(this::finishActivity);
         } catch (InvalidQrCodePayment e) {
             handleInvalidQrCode();
         }
@@ -146,25 +142,20 @@ public class QrCodeHandler {
                                     payment.getAddress(),
                                     payment.getValue(),
                                     payment.getMemo(),
-                                    PaymentType.TYPE_REQUEST
+                                    PaymentType.TYPE_REQUEST,
+                                    false,
+                                    CurrencyMode.FIAT
                             );
             dialog.show(this.activity.getSupportFragmentManager(), PaymentConfirmationFragment.TAG);
-            dialog.setOnPaymentConfirmationApprovedListener(this::onPaymentApproved)
-                    .setOnPaymentConfirmationCanceledListener(__ -> onPaymentCanceled());
+            dialog.setOnPaymentConfirmationCanceledListener(__ -> finishActivity())
+                    .setOnPaymentConfirmationFinishedListener(this::finishActivity);
         } catch (InvalidQrCodePayment e) {
             handleInvalidQrCode();
         }
     }
 
-    private Unit onPaymentApproved(final PaymentTask paymentTask) {
-        if (paymentTask instanceof ExternalPaymentTask) handleExternalPayment((ExternalPaymentTask) paymentTask);
-        else if (paymentTask instanceof ToshiPaymentTask) handleToshiPayment((ToshiPaymentTask) paymentTask); // The address could be associated with a Toshi user
-        else LogUtil.e(getClass(), "Invalid payment task in this context");
-        return null;
-    }
-
-    private Unit onPaymentCanceled() {
-        this.activity.finish();
+    private Unit finishActivity() {
+        if (this.activity != null) this.activity.finish();
         return null;
     }
 
@@ -240,7 +231,7 @@ public class QrCodeHandler {
     private void finishActivityWithResult(final QrCode qrCode) {
         if (this.activity == null) return;
         final Intent intent = new Intent()
-                .putExtra(SendActivity.ACTIVITY_RESULT, qrCode.getPayloadAsAddress().getHexAddress());
+                .putExtra(ACTIVITY_RESULT, qrCode.getPayloadAsAddress().getHexAddress());
         this.activity.setResult(Activity.RESULT_OK, intent);
         this.activity.finish();
     }
@@ -287,53 +278,6 @@ public class QrCodeHandler {
     private void handleLoginFailure(final Throwable throwable) {
         LogUtil.exception(getClass(), "Login failure", throwable);
         showToast(BaseApplication.get().getString(R.string.error__web_signin));
-    }
-
-    private void handleExternalPayment(final ExternalPaymentTask paymentTask) {
-        try {
-            sendExternalPayment(paymentTask);
-        } catch (InvalidQrCodePayment invalidQrCodePayment) {
-            handleInvalidQrCode();
-        }
-    }
-
-    private void sendExternalPayment(final PaymentTask paymentTask) throws InvalidQrCodePayment {
-        if (paymentTask instanceof ExternalPaymentTask) sendExternalPaymentTask((ExternalPaymentTask) paymentTask);
-        else if (paymentTask instanceof ToshiPaymentTask) sendToshiPaymentTask((ToshiPaymentTask) paymentTask);
-        else LogUtil.e(getClass(), "Invalid payment task in this context");
-    }
-
-    private void sendExternalPaymentTask(final ExternalPaymentTask paymentTask) {
-        BaseApplication
-                .get()
-                .getTransactionManager()
-                .sendExternalPayment(paymentTask);
-    }
-
-    private void sendToshiPaymentTask(final ToshiPaymentTask paymentTask) {
-        BaseApplication
-                .get()
-                .getTransactionManager()
-                .sendPayment(paymentTask);
-    }
-
-    private void handleToshiPayment(final ToshiPaymentTask paymentTask) {
-        try {
-            goToChatActivityWithPayment(paymentTask.getUser().getToshiId(), paymentTask.getPayment());
-        } catch (final InvalidQrCodePayment ex) {
-            handleInvalidQrCode();
-        }
-    }
-
-    private void goToChatActivityWithPayment(final String toshiId, final Payment payment) throws InvalidQrCodePayment {
-        final Intent intent = new Intent(this.activity, ChatActivity.class)
-                .putExtra(ChatActivity.EXTRA__THREAD_ID, toshiId)
-                .putExtra(ChatActivity.EXTRA__PAYMENT_ACTION, PaymentType.TYPE_SEND)
-                .putExtra(ChatActivity.EXTRA__ETH_AMOUNT, payment.getValue())
-                .putExtra(ChatActivity.EXTRA__PLAY_SCAN_SOUNDS, true);
-
-        this.activity.startActivity(intent);
-        this.activity.finish();
     }
 
     private void handleInvalidQrCode() {

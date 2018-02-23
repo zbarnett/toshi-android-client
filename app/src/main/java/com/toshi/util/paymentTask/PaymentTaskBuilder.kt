@@ -18,6 +18,7 @@
 package com.toshi.util.paymentTask
 
 import com.toshi.crypto.util.TypeConverter
+import com.toshi.manager.model.ERC20TokenPaymentTask
 import com.toshi.manager.model.ExternalPaymentTask
 import com.toshi.manager.model.PaymentTask
 import com.toshi.manager.model.ToshiPaymentTask
@@ -28,7 +29,8 @@ import com.toshi.model.local.UnsignedW3Transaction
 import com.toshi.model.local.User
 import com.toshi.model.network.ExchangeRate
 import com.toshi.model.network.UnsignedTransaction
-import com.toshi.model.sofa.Payment
+import com.toshi.model.sofa.payment.ERC20TokenPayment
+import com.toshi.model.sofa.payment.Payment
 import com.toshi.util.EthUtil
 import com.toshi.view.BaseApplication
 import rx.Single
@@ -40,20 +42,50 @@ class PaymentTaskBuilder {
     private val recipientManager by lazy { BaseApplication.get().recipientManager }
     private val transactionBuilder by lazy { TransactionRequestBuilder() }
 
-    fun buildToshiPaymentTask(fromPaymentAddress: String,
-                              toPaymentAddress: String,
-                              ethAmount: String): Single<PaymentTask> {
+    fun buildPaymentTask(fromPaymentAddress: String,
+                         toPaymentAddress: String,
+                         ethAmount: String,
+                         sendMaxAmount: Boolean): Single<PaymentTask> {
         val payment = Payment()
                 .setValue(ethAmount)
                 .setFromAddress(fromPaymentAddress)
                 .setToAddress(toPaymentAddress)
 
-        return createUnsignedTransaction(payment)
+        return payment.generateLocalPrice()
+                .flatMap { createUnsignedTransaction(payment, sendMaxAmount) }
                 .flatMap { getPaymentInfoAndUser(it, toPaymentAddress) }
-                .map { buildToshiPaymentTask(it.first, it.second, payment) }
+                .map { buildPaymentTask(it.first, it.second, payment) }
     }
 
-    private fun createUnsignedTransaction(payment: Payment): Single<UnsignedTransaction> {
+    fun buildERC20PaymentTask(fromPaymentAddress: String,
+                              toPaymentAddress: String,
+                              value: String,
+                              tokenAddress: String,
+                              tokenSymbol: String,
+                              tokenDecimals: Int): Single<ERC20TokenPaymentTask> {
+        val hexEncodedValue = TypeConverter.toJsonHex(EthUtil.ethToWei(value, tokenDecimals))
+        val decimalEncodedValue = TypeConverter.formatHexString(hexEncodedValue, tokenDecimals, EthUtil.ETH_FORMAT)
+        val erc20TokenPayment = ERC20TokenPayment(
+                hexEncodedValue,
+                tokenAddress,
+                toPaymentAddress,
+                fromPaymentAddress
+        )
+
+        return createUnsignedTransaction(erc20TokenPayment)
+                .flatMap { calculateERC20PaymentInfo(it) }
+                .map { buildPaymentTask(it, erc20TokenPayment, tokenSymbol, decimalEncodedValue) }
+    }
+
+    private fun createUnsignedTransaction(payment: Payment, sendMaxAmount: Boolean): Single<UnsignedTransaction> {
+        val transactionRequest = if (sendMaxAmount) transactionBuilder.generateMaxAmountTransactionRequest(payment)
+        else transactionBuilder.generateTransactionRequest(payment)
+        return EthereumService
+                .getApi()
+                .createTransaction(transactionRequest)
+    }
+
+    private fun createUnsignedTransaction(payment: ERC20TokenPayment): Single<UnsignedTransaction> {
         val transactionRequest = transactionBuilder.generateTransactionRequest(payment)
         return EthereumService
                 .getApi()
@@ -69,9 +101,9 @@ class PaymentTaskBuilder {
         )
     }
 
-    private fun buildToshiPaymentTask(paymentTaskInfo: PaymentTaskInfo,
-                                      receiver: User?,
-                                      payment: Payment): PaymentTask {
+    private fun buildPaymentTask(paymentTaskInfo: PaymentTaskInfo,
+                                 receiver: User?,
+                                 payment: Payment): PaymentTask {
         val paymentTask = PaymentTask(
                 paymentAmount = paymentTaskInfo.paymentAmount,
                 gasPrice = paymentTaskInfo.gasAmount,
@@ -83,6 +115,21 @@ class PaymentTaskBuilder {
         return receiver
                 ?.let { ToshiPaymentTask(paymentTask, it) }
                 ?: ExternalPaymentTask(paymentTask)
+    }
+
+    private fun buildPaymentTask(paymentTaskInfo: PaymentTaskInfo,
+                                 payment: ERC20TokenPayment,
+                                 tokenSymbol: String,
+                                 tokenValue: String): ERC20TokenPaymentTask {
+        val paymentTask = PaymentTask(
+                paymentAmount = paymentTaskInfo.paymentAmount,
+                gasPrice = paymentTaskInfo.gasAmount,
+                totalAmount = paymentTaskInfo.totalAmount,
+                unsignedTransaction = paymentTaskInfo.unsignedTransaction,
+                payment = payment
+        )
+
+        return ERC20TokenPaymentTask(paymentTask, tokenSymbol, tokenValue)
     }
 
     private fun getUserFromPaymentAddress(paymentAddress: String): Single<User> {
@@ -109,6 +156,13 @@ class PaymentTaskBuilder {
                 .createTransaction(transactionRequest)
     }
 
+    private fun calculateERC20PaymentInfo(unsignedTransaction: UnsignedTransaction): Single<PaymentTaskInfo> {
+        val sendTokenAmount = getSendEthAmount(unsignedTransaction)
+        val gasEthAmount = getGasEthAmount(unsignedTransaction)
+        return balanceManager.getLocalCurrencyExchangeRate()
+                .map { mapPaymentValuesToFiat(it, sendTokenAmount, gasEthAmount, gasEthAmount, unsignedTransaction) }
+    }
+
     private fun calculatePaymentInfo(unsignedTransaction: UnsignedTransaction): Single<PaymentTaskInfo> {
         val sendEthAmount = getSendEthAmount(unsignedTransaction)
         val gasEthAmount = getGasEthAmount(unsignedTransaction)
@@ -130,17 +184,17 @@ class PaymentTaskBuilder {
     }
 
     private fun mapPaymentValuesToFiat(exchangeRate: ExchangeRate,
-                                       sendEthAmount: BigDecimal,
+                                       sendAmount: BigDecimal,
                                        gasEthAmount: BigDecimal,
                                        totalEthAmount: BigDecimal,
                                        unsignedTransaction: UnsignedTransaction): PaymentTaskInfo {
-        val sendLocalAmount = balanceManager.toLocalCurrencyString(exchangeRate, sendEthAmount)
-        val sendAmount = EthAndFiat(sendEthAmount, sendLocalAmount)
+        val sendLocalAmount = balanceManager.toLocalCurrencyString(exchangeRate, sendAmount)
+        val sendAmountEthAndFiat = EthAndFiat(sendAmount, sendLocalAmount)
         val gasLocalAmount = balanceManager.toLocalCurrencyString(exchangeRate, gasEthAmount)
-        val gasAmount = EthAndFiat(gasEthAmount, gasLocalAmount)
+        val gasAmountEthAndFiat = EthAndFiat(gasEthAmount, gasLocalAmount)
         val totalLocalAmount = balanceManager.toLocalCurrencyString(exchangeRate, totalEthAmount)
-        val totalAmount = EthAndFiat(totalEthAmount, totalLocalAmount)
-        return PaymentTaskInfo(sendAmount, gasAmount, totalAmount, unsignedTransaction)
+        val totalAmountEthAndFiat = EthAndFiat(totalEthAmount, totalLocalAmount)
+        return PaymentTaskInfo(sendAmountEthAndFiat, gasAmountEthAndFiat, totalAmountEthAndFiat, unsignedTransaction)
     }
 
     private fun buildW3PaymentTask(paymentTaskInfo: PaymentTaskInfo,

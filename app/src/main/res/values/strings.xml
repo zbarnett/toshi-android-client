@@ -20,10 +20,10 @@
     <string name="eth_currency_code">ETH</string>
     <!-- Dialog errors -->
     <string name="dollar">$</string>
-    <string name="tab_scan">Scan</string>
+    <string name="tab_wallet">Wallet</string>
     <string name="tab_browse">Browse</string>
     <string name="tab_4">Favorites</string>
-    <string name="tab_5">Me</string>
+    <string name="tab_5">Settings</string>
     <string name="send_message">Message…</string>
     <string name="message">Message</string>
     <string name="chat__empty_state">There are no messages, yet!</string>
@@ -304,7 +304,7 @@
     <string name="edit">Edit</string>
     <string name="leave_group_dialog_message">Are you sure you want to leave?</string>
     <string name="notifications">Notifications</string>
-    <string name="invalid_payment_address">Invalid payment address</string>
+    <string name="invalid_payment_address">You can only send tokens to an Ethereum address.</string>
     <string name="notification_toggle_error">Unable to update notifications</string>
     <string name="payment_error">Unable to send a payment to this address</string>
     <string name="done">Done</string>
@@ -332,4 +332,33 @@
     <string name="untitled">Untitled</string>
     <string name="unknown">Unknown</string>
     <string name="init_manager_error">Something went wrong. Please try again</string>
+    <string name="tokens">Tokens</string>
+    <string name="collectibles">Collectibles</string>
+    <string name="wallet_address">Wallet Address</string>
+    <string name="my_wallet">My Wallet</string>
+    <string name="copy">Copy</string>
+    <string name="wallet_address_error">Error while fetching wallet address</string>
+    <string name="empty_state_tokens">No Tokens Yet</string>
+    <string name="empty_state_collectibles">No Collectibles Yet</string>
+    <string name="empty_state_tokens_message">Your tokens will show up here automatically. We scan your wallet address for popular tokens. Custom tokens are coming soon.</string>
+    <string name="share_wallet_address">Share Wallet Address</string>
+    <string name="wallet_info">Receive Ethereum and tokens at your personal public address.</string>
+    <string name="receive">Receive</string>
+    <string name="your_balance_eth_fiat">Your balance: %1$s (%2$s)</string>
+    <string name="send_token">Send %s</string>
+    <string name="erc20_balance">Your %1$s balance: %2$s %3$s</string>
+    <string name="hex_hint">0x…</string>
+    <string name="to_address">To</string>
+    <string name="paste">Paste</string>
+    <string name="max">Max</string>
+    <string name="_0_0">0.0</string>
+    <string name="invalid_token">Invalid token</string>
+    <string name="collectible_error">Error while fetching collectible</string>
+    <string name="error_fetching_tokens">Error while fetching tokens</string>
+    <string name="invalid_format">Invalid format</string>
+    <string name="send_max_amount_title">This amount is not final</string>
+    <string name="send_max_amount_message">Final transaction amount and network fees will be shown on the next screen</string>
+    <string name="wallet_address_dialog_message">Share your public wallet address to receive Ether and tokens.</string>
+    <string name="share">Share</string>
+    <string name="transaction_submitted">Transaction submitted</string>
 </resources>

@@ -19,15 +19,37 @@ package com.toshi.util.paymentTask
 
 import com.toshi.model.local.UnsignedW3Transaction
 import com.toshi.model.network.TransactionRequest
-import com.toshi.model.sofa.Payment
+import com.toshi.model.sofa.payment.ERC20TokenPayment
+import com.toshi.model.sofa.payment.Payment
 
 class TransactionRequestBuilder {
+
+    companion object {
+        private const val MAX = "max"
+    }
 
     fun generateTransactionRequest(payment: Payment): TransactionRequest {
         return TransactionRequest(
                 value = payment.value,
                 from = payment.fromAddress,
                 to = payment.toAddress
+        )
+    }
+
+    fun generateMaxAmountTransactionRequest(payment: Payment): TransactionRequest {
+        return TransactionRequest(
+                value = MAX,
+                from = payment.fromAddress,
+                to = payment.toAddress
+        )
+    }
+
+    fun generateTransactionRequest(payment: ERC20TokenPayment): TransactionRequest {
+        return TransactionRequest(
+                value = payment.value,
+                from = payment.fromAddress,
+                to = payment.toAddress,
+                tokenAddress = payment.tokenAddress
         )
     }
 

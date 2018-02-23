@@ -18,6 +18,7 @@
 package com.toshi.manager;
 
 import com.toshi.crypto.HDWallet;
+import com.toshi.manager.model.ERC20TokenPaymentTask;
 import com.toshi.manager.model.ExternalPaymentTask;
 import com.toshi.manager.model.PaymentTask;
 import com.toshi.manager.model.ResendToshiPaymentTask;
@@ -28,17 +29,20 @@ import com.toshi.manager.transaction.IncomingTransactionManager;
 import com.toshi.manager.transaction.OutgoingTransactionManager;
 import com.toshi.manager.transaction.TransactionSigner;
 import com.toshi.manager.transaction.UpdateTransactionManager;
+import com.toshi.model.local.OutgoingPaymentResult;
 import com.toshi.model.local.PendingTransaction;
 import com.toshi.model.local.UnsignedW3Transaction;
 import com.toshi.model.local.User;
 import com.toshi.model.network.SentTransaction;
 import com.toshi.model.network.SignedTransaction;
-import com.toshi.model.sofa.Payment;
 import com.toshi.model.sofa.PaymentRequest;
 import com.toshi.model.sofa.SofaMessage;
+import com.toshi.model.sofa.payment.Payment;
 import com.toshi.util.paymentTask.PaymentTaskBuilder;
 
+import rx.Observable;
 import rx.Single;
+import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 import rx.subscriptions.CompositeSubscription;
 
@@ -145,6 +149,16 @@ public class TransactionManager {
         this.outgoingTransactionManager.addOutgoingExternalPaymentTask(paymentTask);
     }
 
+    public void sendERC20TokenPayment(final ERC20TokenPaymentTask paymentTask) {
+        this.outgoingTransactionManager.addOutgoingERC20PaymentTask(paymentTask);
+    }
+
+    public Observable<OutgoingPaymentResult> getOutgoingPaymentResultObservable() {
+        return this.outgoingTransactionManager.getOutgoingPaymentResultSubject()
+                .asObservable()
+                .subscribeOn(Schedulers.io());
+    }
+
     public final void updatePayment(final Payment payment) {
         this.updateTransactionManager.updatePayment(payment);
     }
@@ -165,9 +179,27 @@ public class TransactionManager {
 
     public Single<PaymentTask> buildPaymentTask(final String fromPaymentAddress,
                                                 final String toPaymentAddress,
-                                                final String ethAmount) {
+                                                final String ethAmount,
+                                                final boolean sendMaxAmount) {
         return this.paymentTaskBuilder
-                .buildToshiPaymentTask(fromPaymentAddress, toPaymentAddress, ethAmount);
+                .buildPaymentTask(fromPaymentAddress, toPaymentAddress, ethAmount, sendMaxAmount);
+    }
+
+    public Single<ERC20TokenPaymentTask> buildPaymentTask(final String fromPaymentAddress,
+                                                          final String toPaymentAddress,
+                                                          final String ethAmount,
+                                                          final String tokenAddress,
+                                                          final String tokenSymbol,
+                                                          final int tokenDecimals) {
+        return this.paymentTaskBuilder
+                .buildERC20PaymentTask(
+                        fromPaymentAddress,
+                        toPaymentAddress,
+                        ethAmount,
+                        tokenAddress,
+                        tokenSymbol,
+                        tokenDecimals
+                );
     }
 
     public Single<W3PaymentTask> buildPaymentTask(final String callbackId, final UnsignedW3Transaction unsignedW3Transaction) {

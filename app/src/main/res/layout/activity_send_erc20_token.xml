@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ 	Copyright (c) 2017. Toshi Inc
+  ~
+  ~ 	This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        style="@style/Toolbar"
+        android:background="@color/windowBackground"
+        android:elevation="2dp">
+
+        <ImageButton
+            android:id="@+id/closeButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="fitCenter"
+            android:tint="@color/textColorSecondary"
+            app:srcCompat="@drawable/ic_arrow_back"
+            style="@style/closeButtonStyle"/>
+
+        <android.support.v4.widget.Space
+            android:layout_width="16dp"
+            android:layout_height="0dp" />
+
+        <TextView
+            android:id="@+id/toolbarTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:ellipsize="end"
+            style="@style/TransparentToolbar.TitleText"
+            tools:text="Send 0x"/>
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <android.support.v4.widget.Space
+                android:layout_width="0dp"
+                android:layout_height="20dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:textSize="14sp"
+                android:textColor="@color/textColorSecondaryTransparent"
+                android:textAllCaps="true"
+                android:text="@string/amount"
+                style="@style/TextStyleMedium"/>
+
+            <android.support.v4.widget.Space
+                android:layout_width="0dp"
+                android:layout_height="14dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <com.toshi.view.custom.PrefixSuffixEditText
+                    android:id="@+id/toAmount"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:textSize="36sp"
+                    android:singleLine="true"
+                    android:maxLines="1"
+                    android:maxLength="20"
+                    android:inputType="numberDecimal"
+                    android:textColor="@color/textColorPrimary"
+                    android:textColorHint="@color/textColorHint"
+                    android:background="@null"
+                    android:textStyle="bold"
+                    android:hint="@string/_0_0" />
+
+                <android.support.v4.widget.Space
+                    android:layout_width="8dp"
+                    android:layout_height="0dp" />
+
+                <com.toshi.view.custom.PaddingButton
+                    android:id="@+id/max"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:background="@drawable/background_with_round_corners_disabled"
+                    android:paddingLeft="17dp"
+                    android:paddingRight="17dp"
+                    app:paddingButtonText="@string/max"/>
+
+                <com.toshi.view.custom.PaddingButton
+                    android:id="@+id/currencySwitcher"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:background="@drawable/background_with_round_corners_disabled"
+                    android:paddingLeft="17dp"
+                    android:paddingRight="17dp"
+                    android:layout_marginLeft="5dp"
+                    app:paddingButtonImage="@drawable/ic_switch"
+                    app:paddingButtonText=""
+                    android:visibility="gone"/>
+
+                <android.support.v4.widget.Space
+                    android:layout_width="@dimen/activity_horizontal_margin"
+                    android:layout_height="0dp" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/toAmountConverted"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="12dp"
+                android:textSize="16sp"
+                android:textColor="@color/textColorPrimary"
+                android:textStyle="bold"
+                tools:text="$0.00 USD"
+                android:visibility="gone"
+                tools:visibility="visible"/>
+
+            <android.support.v4.widget.Space
+                android:layout_width="0dp"
+                android:layout_height="20dp" />
+
+            <TextView
+                android:id="@+id/balance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:textColor="@color/textColorSecondary"
+                tools:text="Your balance: 1000 ETH ($1.690.89 USD)"/>
+
+            <TextView
+                android:id="@+id/amountError"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="10dp"
+                android:textSize="13sp"
+                android:textColor="@color/error_color"
+                tools:text="You can only send tokens to an Ethereum address."
+                android:visibility="gone"
+                tools:visibility="visible"/>
+
+            <android.support.v4.widget.Space
+                android:layout_width="0dp"
+                android:layout_height="20dp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"/>
+
+            <android.support.v4.widget.Space
+                android:layout_width="0dp"
+                android:layout_height="20dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:textSize="14sp"
+                android:textColor="@color/textColorSecondaryTransparent"
+                android:textAllCaps="true"
+                android:text="@string/to_address"
+                style="@style/TextStyleMedium"/>
+
+            <EditText
+                android:id="@+id/toAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:textSize="18sp"
+                android:inputType="textNoSuggestions|textMultiLine"
+                android:textColor="@color/textColorPrimary"
+                android:textColorHint="@color/textColorHint"
+                style="@style/TextStyleMedium"
+                android:hint="@string/hex_hint"
+                android:background="@null"/>
+
+            <TextView
+                android:id="@+id/addressError"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="10dp"
+                android:textSize="13sp"
+                android:textColor="@color/error_color"
+                tools:text="You can only send tokens to an Ethereum address."
+                android:visibility="gone"
+                tools:visibility="visible"/>
+
+            <android.support.v4.widget.Space
+                android:layout_width="0dp"
+                android:layout_height="15dp" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin">
+
+                <com.toshi.view.custom.PaddingButton
+                    android:id="@+id/paste"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:background="@drawable/background_with_round_corners_disabled"
+                    android:paddingLeft="17dp"
+                    android:paddingRight="17dp"
+                    app:paddingButtonText="@string/paste"/>
+
+                <android.support.v4.widget.Space
+                    android:layout_width="8dp"
+                    android:layout_height="0dp" />
+
+                <com.toshi.view.custom.PaddingButton
+                    android:id="@+id/qrCodeBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:background="@drawable/background_with_round_corners_disabled"
+                    android:paddingLeft="17dp"
+                    android:paddingRight="17dp"
+                    app:paddingButtonImage="@drawable/ic_scan_qr_code"
+                    app:paddingButtonText="@string/scan_qr"/>
+
+            </LinearLayout>
+
+            <android.support.v4.widget.Space
+                android:layout_width="0dp"
+                android:layout_height="20dp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"/>
+
+            <android.support.v4.widget.Space
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:minHeight="20dp"
+                android:layout_weight="1"/>
+
+            <Button
+                android:id="@+id/continueBtn"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                style="@style/FlatButton"
+                android:textAllCaps="true"
+                android:background="@drawable/background_with_radius_disabled"
+                android:textColor="#FFFFFF"
+                android:text="@string/continue_"
+                android:enabled="false"/>
+
+            <android.support.v4.widget.Space
+                android:layout_width="0dp"
+                android:layout_height="@dimen/activity_horizontal_margin" />
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

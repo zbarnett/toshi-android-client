@@ -42,6 +42,7 @@
     <dimen name="message_list_bottom_padding">8dp</dimen>
     <dimen name="star_right_margin">2dp</dimen>
     <dimen name="avatar_size_small">44dp</dimen>
+    <dimen name="avatar_size_medium">72dp</dimen>
 
     <dimen name="rating_bar_radius">3dp</dimen>
     <dimen name="rating_bar_width">160dp</dimen>

@@ -19,11 +19,6 @@ package com.toshi.viewModel
 
 import android.arch.lifecycle.ViewModel
 import com.toshi.crypto.util.TypeConverter
-import com.toshi.crypto.util.hasValidChecksum
-import com.toshi.crypto.util.usesChecksum
-import com.toshi.manager.model.ExternalPaymentTask
-import com.toshi.manager.model.PaymentTask
-import com.toshi.manager.model.ToshiPaymentTask
 import com.toshi.util.EthUtil
 import com.toshi.util.LogUtil
 import com.toshi.util.SingleLiveEvent
@@ -34,7 +29,6 @@ class SendViewModel : ViewModel() {
 
     private val subscriptions by lazy { CompositeSubscription() }
     private val balanceManager by lazy { BaseApplication.get().balanceManager }
-    private val transactionManager by lazy { BaseApplication.get().transactionManager }
 
     val localAmount by lazy { SingleLiveEvent<String>() }
 
@@ -50,25 +44,6 @@ class SendViewModel : ViewModel() {
                 )
 
         subscriptions.add(sub)
-    }
-
-    fun sendPayment(paymentTask: PaymentTask) {
-        when (paymentTask) {
-            is ExternalPaymentTask -> transactionManager.sendExternalPayment(paymentTask)
-            is ToshiPaymentTask -> transactionManager.sendPayment(paymentTask) // The address could be associated with a Toshi user
-            else -> LogUtil.e(javaClass, "Invalid payment task in this context")
-        }
-    }
-
-    fun isPaymentAddressValid(paymentAddress: String?): Boolean {
-        val regex = Regex("^0x[a-fA-F0-9]{40}\$")
-        return paymentAddress?.let {
-            regex.matches(paymentAddress) && !hasInvalidChecksum(paymentAddress)
-        } ?: false
-    }
-
-    private fun hasInvalidChecksum(paymentAddress: String): Boolean {
-        return usesChecksum(paymentAddress) && !hasValidChecksum(paymentAddress)
     }
 
     override fun onCleared() {

@@ -28,11 +28,14 @@ import com.toshi.model.local.Network;
 import com.toshi.model.local.Networks;
 import com.toshi.model.network.Balance;
 import com.toshi.model.network.Currencies;
+import com.toshi.model.network.ERC721TokenWrapper;
 import com.toshi.model.network.ExchangeRate;
 import com.toshi.model.network.GcmDeregistration;
 import com.toshi.model.network.GcmRegistration;
 import com.toshi.model.network.ServerTime;
-import com.toshi.model.sofa.Payment;
+import com.toshi.model.network.token.ERC20Tokens;
+import com.toshi.model.network.token.ERC721Tokens;
+import com.toshi.model.sofa.payment.Payment;
 import com.toshi.util.CurrencyUtil;
 import com.toshi.util.FileNames;
 import com.toshi.util.GcmPrefsUtil;
@@ -135,6 +138,27 @@ public class BalanceManager {
         return EthereumService
                 .getApi()
                 .getBalance(this.wallet.getPaymentAddress())
+                .subscribeOn(Schedulers.io());
+    }
+
+    public Single<ERC20Tokens> getERC20Tokens() {
+        return EthereumService
+                .getApi()
+                .getTokens(this.wallet.getPaymentAddress())
+                .subscribeOn(Schedulers.io());
+    }
+
+    public Single<ERC721Tokens> getERC721Tokens() {
+        return EthereumService
+                .getApi()
+                .getCollectibles(this.wallet.getPaymentAddress())
+                .subscribeOn(Schedulers.io());
+    }
+
+    public Single<ERC721TokenWrapper> getERC721Token(final String contactAddress) {
+        return EthereumService
+                .getApi()
+                .getCollectible(this.wallet.getPaymentAddress(), contactAddress)
                 .subscribeOn(Schedulers.io());
     }
 

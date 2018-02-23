@@ -18,9 +18,18 @@
 package com.toshi.crypto.util;
 
 
+import android.support.annotation.Nullable;
+
+import com.toshi.extensions.BigDecimalUtil;
+import com.toshi.util.CurrencyUtil;
+import com.toshi.util.LocaleUtil;
+
 import org.spongycastle.util.encoders.Hex;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 
 public class TypeConverter {
 
@@ -69,6 +78,11 @@ public class TypeConverter {
         return "0x"+ n.toString(16);
     }
 
+    public static String fromHexToDecimal(final String input) {
+        final String hex = input.startsWith("0x") ? input.substring(2) : input;
+        return String.valueOf(new BigInteger(hex, 16));
+    }
+
     public static String skeletonAndSignatureToRLPEncodedHex(final String skeleton, final String signature) {
         final Object[] decoded = (Object[])RLP.decode(TypeConverter.StringHexToByteArray(skeleton), 0).getDecoded();
 
@@ -102,5 +116,44 @@ public class TypeConverter {
 
     private static boolean isEmptyString(final Object obj) {
         return obj instanceof String && ((String) obj).length() == 0;
+    }
+
+    // Set pattern to null if you want the original format
+    public static String formatHexString(final String value, final int decimals, @Nullable final String pattern) {
+        final String decimalValue = StringHexToBigInteger(value).toString();
+        final DecimalFormat df = getDecimalFormat(pattern);
+        if (decimals > 0) {
+            final BigDecimal paddedDecimalValue = getPaddedDecimalValue(decimalValue, decimals);
+            return df != null ? df.format(paddedDecimalValue) : paddedDecimalValue.toString();
+        } else return df != null ? df.format(new BigDecimal(decimalValue)) : decimalValue;
+    }
+
+    private static BigDecimal getPaddedDecimalValue(final String decimalValue, final int decimals) {
+        final char separator = LocaleUtil.getDecimalFormatSymbols().getMonetaryDecimalSeparator();
+        final String paddingFormat = "%0" + decimals + "d";
+        final String paddedDecimalValue = String.format(LocaleUtil.getLocale(), paddingFormat, new BigInteger(decimalValue));
+        final int decimalPosition = paddedDecimalValue.length() - decimals;
+        return BigDecimalUtil.createSafeBigDecimal(
+                new StringBuilder(paddedDecimalValue)
+                        .insert(decimalPosition, separator)
+                        .toString()
+        ).stripTrailingZeros();
+    }
+
+    private static DecimalFormat getDecimalFormat(@Nullable final String pattern) {
+        if (pattern != null) {
+            final DecimalFormat df = CurrencyUtil.getNumberFormat();
+            df.applyPattern(pattern);
+            df.setRoundingMode(RoundingMode.DOWN);
+            return df;
+        } else {
+            return null;
+        }
+    }
+
+    public static String formatNumber(final int value, final String format) {
+        final DecimalFormat df = CurrencyUtil.getNumberFormat();
+        df.applyPattern(format);
+        return df.format(value);
     }
 }

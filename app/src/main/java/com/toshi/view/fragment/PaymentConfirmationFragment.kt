@@ -31,10 +31,13 @@ import android.view.ViewGroup
 import com.toshi.R
 import com.toshi.extensions.getColor
 import com.toshi.extensions.isVisible
+import com.toshi.extensions.toast
+import com.toshi.manager.model.ERC20TokenPaymentTask
 import com.toshi.manager.model.ExternalPaymentTask
 import com.toshi.manager.model.PaymentTask
 import com.toshi.manager.model.ToshiPaymentTask
 import com.toshi.manager.model.W3PaymentTask
+import com.toshi.model.local.CurrencyMode
 import com.toshi.model.local.User
 import com.toshi.model.network.Balance
 import com.toshi.util.EthUtil
@@ -48,8 +51,9 @@ import kotlinx.android.synthetic.main.fragment_payment_confirmation.*
 class PaymentConfirmationFragment : BottomSheetDialogFragment() {
 
     private lateinit var viewModel: PaymentConfirmationViewModel
-    private lateinit var onPaymentApprovedListener: (PaymentTask) -> Unit
+    private var onPaymentApprovedListener: ((PaymentTask) -> Unit)? = null
     private var onPaymentCanceledListener: ((String?) -> Unit)? = null
+    private var onFinishedListener: (() -> Unit)? = null
     private var approvedPayment = false
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, inState: Bundle?): View? {
@@ -95,7 +99,7 @@ class PaymentConfirmationFragment : BottomSheetDialogFragment() {
 
     private fun initClickListeners() {
         closeButton.setOnClickListener { handlePaymentCanceled() }
-        pay.setOnButtonClickListener { handlePaymentApproved() }
+        pay.setOnClickListener { handlePaymentApproved() }
     }
 
     private fun handlePaymentCanceled() {
@@ -104,12 +108,15 @@ class PaymentConfirmationFragment : BottomSheetDialogFragment() {
     }
 
     private fun handlePaymentApproved() {
-        val paymentTask = viewModel.paymentTask.value
-        paymentTask?.let {
-            approvedPayment = true
-            onPaymentApprovedListener(paymentTask)
-            dismiss()
-        }
+        val paymentTask = viewModel.paymentTask.value ?: return
+        if (onPaymentApprovedListener != null) approveAndDismiss(paymentTask)
+        else viewModel.sendPayment(paymentTask)
+    }
+
+    private fun approveAndDismiss(paymentTask: PaymentTask) {
+        approvedPayment = true
+        onPaymentApprovedListener?.invoke(paymentTask)
+        dismiss()
     }
 
     private fun setTitle() {
@@ -120,7 +127,7 @@ class PaymentConfirmationFragment : BottomSheetDialogFragment() {
     }
 
     private fun initObservers() {
-        viewModel.isGasPriceLoading.observe(this, Observer {
+        viewModel.isLoading.observe(this, Observer {
             isLoading -> isLoading?.let { handleLoadingVisibility(it) }
         })
         viewModel.balance.observe(this, Observer {
@@ -132,12 +139,20 @@ class PaymentConfirmationFragment : BottomSheetDialogFragment() {
         viewModel.paymentTaskError.observe(this, Observer {
             paymentTaskError -> paymentTaskError?.let { handlePaymentTaskError() }
         })
+        viewModel.paymentSuccess.observe(this, Observer {
+            if (it != null) handleSuccessfulPayment()
+        })
+        viewModel.paymentError.observe(this, Observer {
+            if (it != null) handlePaymentError(it)
+        })
+        viewModel.finish.observe(this, Observer {
+            if (it != null) finishAndDismiss()
+        })
     }
 
     private fun handleLoadingVisibility(isLoading: Boolean) {
-        loadingText.isVisible(isLoading)
-        if (isLoading) pay.startLoading()
-        else pay.stopLoading()
+        loadingOverlay.isVisible(isLoading)
+        loadingSpinner.isVisible(isLoading)
     }
 
     private fun handleBalance(currentBalance: Balance) {
@@ -162,6 +177,7 @@ class PaymentConfirmationFragment : BottomSheetDialogFragment() {
             is W3PaymentTask -> renderDappInfo()
             is ToshiPaymentTask -> renderToshiUserInfo(paymentTask.user)
             is ExternalPaymentTask -> renderExternalInfo(paymentTask)
+            is ERC20TokenPaymentTask -> renderERC20TokenInfo(paymentTask)
             else -> LogUtil.exception(javaClass, "Unhandled payment $paymentTask")
         }
     }
@@ -184,19 +200,85 @@ class PaymentConfirmationFragment : BottomSheetDialogFragment() {
         externalAddress.text = paymentTask.payment.toAddress
     }
 
+    private fun renderERC20TokenInfo(paymentTask: PaymentTask) {
+        externalWrapper.isVisible(true)
+        externalAddress.text = paymentTask.payment.toAddress
+    }
+
     private fun renderPaymentInfo(paymentTask: PaymentTask) {
-        paymentInfoWrapper.isVisible(true)
-        amount.text = paymentTask.paymentAmount.localAmount
-        gasPrice.text = paymentTask.gasPrice.localAmount
-        total.text = paymentTask.totalAmount.localAmount
-        val totalEthAmount = EthUtil.ethAmountToUserVisibleString(paymentTask.totalAmount.ethAmount)
-        totalEth.text = getString(R.string.eth_amount, totalEthAmount)
+        when (paymentTask) {
+            is ERC20TokenPaymentTask -> renderERC20TokenPaymentInfo(paymentTask)
+            else -> renderETHPaymentInfo(paymentTask)
+        }
+    }
+
+    private fun renderERC20TokenPaymentInfo(paymentTask: ERC20TokenPaymentTask) {
+        ERC20PaymentInfoWrapper.isVisible(true)
+        ERC20Amount.text = "${paymentTask.tokenValue} ${paymentTask.tokenSymbol}"
+        val gasEthAmount = EthUtil.ethAmountToUserVisibleString(paymentTask.gasPrice.ethAmount)
+        ERC20GasPrice.text = getString(R.string.eth_amount, gasEthAmount)
+        ERC20GasPriceFiat.text = paymentTask.gasPrice.localAmount
+    }
+
+    private fun renderETHPaymentInfo(paymentTask: PaymentTask) {
+        ethPaymentInfoWrapper.isVisible(true)
+        val currencyMode = viewModel.getCurrencyMode()
+        when (currencyMode) {
+            CurrencyMode.ETH -> renderPaymentInfoInETHMode(paymentTask)
+            CurrencyMode.FIAT -> renderPaymentInfoInFiatMode(paymentTask)
+        }
+    }
+
+    private fun renderPaymentInfoInETHMode(paymentTask: PaymentTask) {
+        val currencyMode = CurrencyMode.ETH
+        amount.text = viewModel.getPaymentAmount(paymentTask, currencyMode)
+        gasPrice.text = viewModel.getGasPrice(paymentTask, currencyMode)
+        total.text = viewModel.getTotalAmount(paymentTask, currencyMode)
+
+        val localAmount = viewModel.getPaymentAmount(paymentTask, CurrencyMode.FIAT)
+        convertedAmount.text = localAmount
+        val localGasAmount = viewModel.getGasPrice(paymentTask, CurrencyMode.FIAT)
+        convertedGasPrice.text = localGasAmount
+        val totalAmount = viewModel.getTotalAmount(paymentTask, CurrencyMode.FIAT)
+        convertedTotal.text = totalAmount
+    }
+
+    private fun renderPaymentInfoInFiatMode(paymentTask: PaymentTask) {
+        val currencyMode = CurrencyMode.FIAT
+        amount.text = viewModel.getPaymentAmount(paymentTask, currencyMode)
+        gasPrice.text = viewModel.getGasPrice(paymentTask, currencyMode)
+        total.text = viewModel.getTotalAmount(paymentTask, currencyMode)
+
+        val localAmount = viewModel.getPaymentAmount(paymentTask, CurrencyMode.ETH)
+        convertedAmount.text = localAmount
+        val localGasAmount = viewModel.getGasPrice(paymentTask, CurrencyMode.ETH)
+        convertedGasPrice.text = localGasAmount
+        val totalAmount = viewModel.getTotalAmount(paymentTask, CurrencyMode.ETH)
+        convertedTotal.text = totalAmount
     }
 
     private fun handlePaymentTaskError() {
-        paymentInfoWrapper.isVisible(false)
-        pay.disablePayButton()
+        ethPaymentInfoWrapper.isVisible(false)
+        disablePayButton()
         setStatusMessage(getString(R.string.gas_price_error), R.color.error_color)
+    }
+
+    private fun handleSuccessfulPayment() {
+        loadingOverlay.isVisible(true)
+        successfulState.isVisible(true)
+        viewModel.finishActivityWithDelay()
+    }
+
+    private fun handlePaymentError(errorMessage: Int) {
+        loadingOverlay.isVisible(false)
+        successfulState.isVisible(false)
+        toast(errorMessage)
+    }
+
+    private fun finishAndDismiss() {
+        approvedPayment = true
+        onFinishedListener?.invoke()
+        dismiss()
     }
 
     private fun compareTotalAmountAndBalance() {
@@ -206,14 +288,24 @@ class PaymentConfirmationFragment : BottomSheetDialogFragment() {
             val currentBalanceEth = EthUtil.weiToEth(currentBalance.unconfirmedBalance)
             val totalAmountEth = totalAmount.totalAmount.ethAmount
             if (currentBalanceEth >= totalAmountEth) {
-                pay.enablePayButton()
+                enablePayButton()
                 return
             } else {
                 renderInsufficientBalance()
             }
         }
 
-        pay.disablePayButton()
+        disablePayButton()
+    }
+
+    private fun disablePayButton() {
+        pay.isClickable = false
+        pay.setBackgroundResource(R.drawable.background_with_radius_disabled)
+    }
+
+    private fun enablePayButton() {
+        pay.isClickable = true
+        pay.setBackgroundResource(R.drawable.background_with_radius_primary_color)
     }
 
     private fun renderInsufficientBalance() {
@@ -229,8 +321,16 @@ class PaymentConfirmationFragment : BottomSheetDialogFragment() {
         statusMessage.setTextColor(getColor(color))
     }
 
-    fun setOnPaymentConfirmationApprovedListener(listener: (PaymentTask) -> Unit): PaymentConfirmationFragment {
+    // Set the approve listener to null if you want PaymentConfirmation to send the transaction
+    // or you can handle it by yourself.
+    fun setOnPaymentConfirmationApprovedListener(listener: ((PaymentTask) -> Unit)?): PaymentConfirmationFragment {
         this.onPaymentApprovedListener = listener
+        return this
+    }
+
+    // Called when the transaction is finished and successful
+    fun setOnPaymentConfirmationFinishedListener(listener: (() -> Unit)?): PaymentConfirmationFragment {
+        this.onFinishedListener = listener
         return this
     }
 
@@ -257,6 +357,11 @@ class PaymentConfirmationFragment : BottomSheetDialogFragment() {
         const val DAPP_TITLE = "dapp_title"
         const val DAPP_URL = "dapp_url"
         const val DAPP_FAVICON = "dapp_favicon"
+        const val TOKEN_ADDRESS = "token_address"
+        const val TOKEN_SYMBOL = "token_symbol"
+        const val TOKEN_DECIMALS = "token_decimals"
+        const val SEND_MAX_AMOUNT = "send_max_amount"
+        const val CURRENCY_MODE = "currency"
 
         fun newInstanceToshiPayment(toshiId: String,
                                     value: String,
@@ -271,11 +376,32 @@ class PaymentConfirmationFragment : BottomSheetDialogFragment() {
 
         fun newInstanceExternalPayment(paymentAddress: String,
                                        value: String,
-                                       memo: String?,
-                                       @PaymentType.Type paymentType: Int): PaymentConfirmationFragment {
+                                       memo: String? = null,
+                                       @PaymentType.Type paymentType: Int,
+                                       sendMaxAmount: Boolean = false,
+                                       currencyMode: CurrencyMode = CurrencyMode.FIAT): PaymentConfirmationFragment {
             val bundle = Bundle().apply {
                 putInt(CONFIRMATION_TYPE, PaymentConfirmationType.EXTERNAL)
                 putString(PAYMENT_ADDRESS, paymentAddress)
+                putBoolean(SEND_MAX_AMOUNT, sendMaxAmount)
+                putSerializable(CURRENCY_MODE, currencyMode)
+            }
+            return newInstance(bundle, value, memo, paymentType)
+        }
+
+        fun newInstanceERC20TokenPayment(toAddress: String,
+                                         value: String,
+                                         tokenAddress: String,
+                                         tokenSymbol: String,
+                                         tokenDecimals: Int,
+                                         memo: String?,
+                                         @PaymentType.Type paymentType: Int): PaymentConfirmationFragment {
+            val bundle = Bundle().apply {
+                putInt(CONFIRMATION_TYPE, PaymentConfirmationType.EXTERNAL)
+                putString(PAYMENT_ADDRESS, toAddress)
+                putString(TOKEN_ADDRESS, tokenAddress)
+                putString(TOKEN_SYMBOL, tokenSymbol)
+                putInt(TOKEN_DECIMALS, tokenDecimals)
             }
             return newInstance(bundle, value, memo, paymentType)
         }

@@ -21,7 +21,7 @@ import com.toshi.model.local.EthAndFiat
 import com.toshi.model.local.User
 import com.toshi.model.network.SentTransaction
 import com.toshi.model.network.UnsignedTransaction
-import com.toshi.model.sofa.Payment
+import com.toshi.model.sofa.payment.Payment
 
 open class ToshiPaymentTask(
         override val paymentAmount: EthAndFiat,

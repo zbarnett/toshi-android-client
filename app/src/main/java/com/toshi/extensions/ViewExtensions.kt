@@ -19,6 +19,7 @@ package com.toshi.extensions
 
 import android.support.annotation.ColorRes
 import android.support.annotation.DimenRes
+import android.support.annotation.StringRes
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.view.View
@@ -35,12 +36,14 @@ fun RecyclerView.addHorizontalLineDivider(
                 + getPxSize(R.dimen.list_item_avatar_margin),
         rightPadding: Int = getPxSize(R.dimen.activity_horizontal_margin),
         color: Int = getColorById(R.color.divider),
-        startPosition: Int = 0
+        startPosition: Int = 0,
+        skipNEndPositions: Int = 0
 ): HorizontalLineDivider {
     val divider = HorizontalLineDivider(color)
             .setRightPadding(rightPadding)
             .setLeftPadding(leftPadding)
             .setStartPosition(startPosition)
+            .skipNEndPositions(skipNEndPositions)
     addItemDecoration(divider)
     return divider
 }
@@ -48,3 +51,5 @@ fun RecyclerView.addHorizontalLineDivider(
 fun View.getPxSize(@DimenRes id: Int) = resources.getDimensionPixelSize(id)
 
 fun View.getColorById(@ColorRes id: Int) = ContextCompat.getColor(context, id)
+
+fun View.getString(@StringRes id: Int): String = context.getString(id)

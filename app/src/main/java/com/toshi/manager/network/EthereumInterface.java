@@ -18,6 +18,7 @@
 package com.toshi.manager.network;
 
 import com.toshi.model.network.Balance;
+import com.toshi.model.network.ERC721TokenWrapper;
 import com.toshi.model.network.GcmDeregistration;
 import com.toshi.model.network.GcmRegistration;
 import com.toshi.model.network.SentTransaction;
@@ -25,6 +26,8 @@ import com.toshi.model.network.ServerTime;
 import com.toshi.model.network.SignedTransaction;
 import com.toshi.model.network.TransactionRequest;
 import com.toshi.model.network.UnsignedTransaction;
+import com.toshi.model.network.token.ERC20Tokens;
+import com.toshi.model.network.token.ERC721Tokens;
 
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -59,4 +62,16 @@ public interface EthereumInterface {
     Single<Void> unregisterGcm(
             @Query("timestamp") long timestamp,
             @Body GcmDeregistration gcmDeregistration);
+
+    @GET("/v1/tokens/{id}")
+    Single<ERC20Tokens> getTokens(@Path("id") String walletAddress);
+
+    @GET("/v1/collectibles/{wallet_address}")
+    Single<ERC721Tokens> getCollectibles(@Path("wallet_address") String walletAddress);
+
+    @GET("/v1/collectibles/{wallet_address}/{contract_address}")
+    Single<ERC721TokenWrapper> getCollectible(
+            @Path("wallet_address") String walletAddress,
+            @Path("contract_address") String contactAddress
+    );
 }
