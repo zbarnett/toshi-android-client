@@ -31,8 +31,7 @@
     <ImageView
         android:id="@+id/avatar"
         android:layout_width="@dimen/avatar_size_medium"
-        android:layout_height="@dimen/avatar_size_medium"
-        app:srcCompat="@color/placeholder"/>
+        android:layout_height="@dimen/avatar_size_medium" />
 
     <android.support.v4.widget.Space
         android:layout_width="16dp"
