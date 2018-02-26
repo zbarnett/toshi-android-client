@@ -48,6 +48,7 @@ import com.toshi.view.BaseApplication;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.util.concurrent.TimeUnit;
 
 import rx.Completable;
 import rx.Single;
@@ -136,38 +137,47 @@ public class BalanceManager {
     }
 
     private Single<Balance> getBalance() {
-        return EthereumService
-                .getApi()
-                .getBalance(this.wallet.getPaymentAddress())
+        return getWallet()
+                .flatMap(wallet -> EthereumService
+                        .getApi()
+                        .getBalance(wallet.getPaymentAddress())
+                )
                 .subscribeOn(Schedulers.io());
     }
 
     public Single<ERC20Tokens> getERC20Tokens() {
-        return EthereumService
-                .getApi()
-                .getTokens(this.wallet.getPaymentAddress())
+        return getWallet()
+                .flatMap(wallet -> EthereumService
+                        .getApi()
+                        .getTokens(wallet.getPaymentAddress())
+                )
                 .subscribeOn(Schedulers.io());
     }
 
     public Single<ERCToken> getERC20Token(final String contractAddress) {
-        return EthereumService
-                .getApi()
-                .getToken(this.wallet.getPaymentAddress(), contractAddress)
+        return getWallet()
+                .flatMap(wallet -> EthereumService
+                        .getApi()
+                        .getToken(wallet.getPaymentAddress(), contractAddress)
+                )
                 .subscribeOn(Schedulers.io());
     }
 
     public Single<ERC721Tokens> getERC721Tokens() {
-        return EthereumService
-                .getApi()
-                .getCollectibles(this.wallet.getPaymentAddress())
+        return getWallet()
+                .flatMap(wallet -> EthereumService
+                        .getApi()
+                        .getCollectibles(wallet.getPaymentAddress())
+                )
                 .subscribeOn(Schedulers.io());
     }
 
     public Single<ERC721TokenWrapper> getERC721Token(final String contactAddress) {
-        return EthereumService
-                .getApi()
-                .getCollectible(this.wallet.getPaymentAddress(), contactAddress)
-                .subscribeOn(Schedulers.io());
+        return getWallet()
+                .flatMap(wallet -> EthereumService
+                        .getApi()
+                        .getCollectible(wallet.getPaymentAddress(), contactAddress)
+                ).subscribeOn(Schedulers.io());
     }
 
     private void handleNewBalance(final Balance balance) {
@@ -376,6 +386,17 @@ public class BalanceManager {
                 .edit()
                 .clear()
                 .apply();
+    }
+
+    private Single<HDWallet> getWallet() {
+        return Single.fromCallable(() -> {
+            while (wallet == null) {
+                Thread.sleep(100);
+            }
+            return wallet;
+        })
+        .subscribeOn(Schedulers.io())
+        .timeout(20, TimeUnit.SECONDS);
     }
 
     private void clearConnectivitySubscription() {

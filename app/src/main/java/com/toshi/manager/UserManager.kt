@@ -40,6 +40,7 @@ import rx.schedulers.Schedulers
 import rx.subjects.BehaviorSubject
 import rx.subscriptions.CompositeSubscription
 import java.io.File
+import java.util.concurrent.TimeUnit
 
 class UserManager {
 
@@ -133,17 +134,19 @@ class UserManager {
     }
 
     private fun forceFetchUserFromNetworkSingle(): Single<User> {
-        return IdService
-                .getApi()
-                .forceGetUser(wallet.ownerAddress)
+        return getWallet()
+                .flatMap { IdService
+                        .getApi()
+                        .forceGetUser(it.ownerAddress) }
                 .doOnSuccess { updateCurrentUser(it) }
                 .doOnError { LogUtil.exception(javaClass, "Error while fetching user from network $it") }
     }
 
     private fun forceFetchUserFromNetwork() {
-        val sub = IdService
-                .getApi()
-                .forceGetUser(wallet.ownerAddress)
+        val sub = getWallet()
+                .flatMap { IdService
+                        .getApi()
+                        .forceGetUser(it.ownerAddress) }
                 .subscribe(
                         { updateCurrentUser(it) },
                         { LogUtil.exception(javaClass, "Error while fetching user from network $it") }
@@ -153,8 +156,8 @@ class UserManager {
     }
 
     private fun fetchAndUpdateUser(): Completable {
-        return recipientManager
-                .getUserFromPaymentAddress(wallet.paymentAddress)
+        return getWallet()
+                .flatMap { recipientManager.getUserFromPaymentAddress(it.paymentAddress) }
                 .doOnSuccess { updateCurrentUser(it) }
                 .doOnError { LogUtil.exception(javaClass, "Error while fetching user from network $it") }
                 .toCompletable()
@@ -190,8 +193,10 @@ class UserManager {
     }
 
     private fun updateUserWithTimestamp(userDetails: UserDetails, serverTime: ServerTime): Single<User> {
-        return IdService.getApi()
-                .updateUser(wallet.ownerAddress, userDetails, serverTime.get())
+        return getWallet()
+                .flatMap { IdService
+                        .getApi()
+                        .updateUser(it.ownerAddress, userDetails, serverTime.get()) }
                 .subscribeOn(Schedulers.io())
                 .doOnSuccess { updateCurrentUser(it) }
     }
@@ -234,6 +239,17 @@ class UserManager {
                 .toSingle()
                 .doOnError { LogUtil.exception(javaClass, "getCurrentUser $it") }
                 .onErrorReturn(null)
+    }
+
+    private fun getWallet(): Single<HDWallet> {
+        return Single.fromCallable {
+            while (wallet == null) {
+                Thread.sleep(100)
+            }
+            wallet
+        }
+        .subscribeOn(Schedulers.io())
+        .timeout(20, TimeUnit.SECONDS)
     }
 
     fun clear() {
