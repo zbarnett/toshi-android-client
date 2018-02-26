@@ -15,16 +15,16 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.toshi.manager.model
+package com.toshi.manager.model.incomingPayment
 
 import com.toshi.model.local.User
-import com.toshi.model.sofa.payment.Payment
 import com.toshi.model.sofa.SofaMessage
+import com.toshi.model.sofa.payment.Payment
 
-data class IncomingPaymentTask(
-        val payment: Payment,
+data class IncomingEthPaymentTask(
+        override val payment: Payment,
         val user: User,
         val sofaMessage: SofaMessage? = null
-) {
+) : IncomingPaymentTask(payment) {
     constructor(payment: Payment, user: User) : this(payment, user, null)
 }

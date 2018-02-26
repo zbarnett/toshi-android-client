@@ -355,6 +355,7 @@
     <string name="invalid_token">Invalid token</string>
     <string name="collectible_error">Error while fetching collectible</string>
     <string name="error_fetching_tokens">Error while fetching tokens</string>
+    <string name="error_fetching_token">Error while fetching token</string>
     <string name="invalid_format">Invalid format</string>
     <string name="send_max_amount_title">This amount is not final</string>
     <string name="send_max_amount_message">Final transaction amount and network fees will be shown on the next screen</string>

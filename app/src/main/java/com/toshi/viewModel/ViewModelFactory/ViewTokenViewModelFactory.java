@@ -15,22 +15,24 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.toshi.model.sofa.payment;
+package com.toshi.viewModel.ViewModelFactory;
 
-public class ERC20TokenPayment extends Payment {
-    private String contractAddress;
+import android.arch.lifecycle.ViewModelProvider;
+import android.support.annotation.NonNull;
 
-    public ERC20TokenPayment(final String value,
-                             final String contraxtAddress,
-                             final String toAddress,
-                             final String fromAddress) {
-        this.value = value;
-        this.toAddress = toAddress;
-        this.fromAddress = fromAddress;
-        this.contractAddress = contraxtAddress;
+import com.toshi.model.network.token.Token;
+import com.toshi.viewModel.ViewTokenViewModel;
+
+public class ViewTokenViewModelFactory implements ViewModelProvider.Factory {
+    private Token token;
+
+    public ViewTokenViewModelFactory(final Token token) {
+        this.token = token;
     }
 
-    public String getContractAddress() {
-        return this.contractAddress;
+    @NonNull
+    @Override
+    public ViewTokenViewModel create(@NonNull Class modelClass) {
+        return new ViewTokenViewModel(this.token);
     }
 }

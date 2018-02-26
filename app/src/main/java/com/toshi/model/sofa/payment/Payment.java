@@ -42,9 +42,8 @@ public class Payment {
     /* package */ String value;
     /* package */ String toAddress;
     /* package */ String fromAddress;
-    /* package */ String txHash;
-    /* package */ String status;
-    /* package */ String contractAddress; //Only used when receiving payments
+    private String txHash;
+    private String status;
 
     @IntDef({
             NOT_RELEVANT,
@@ -108,10 +107,6 @@ public class Payment {
     public Payment setStatus(final String status) {
         this.status = status;
         return this;
-    }
-
-    public String getContractAddress() {
-        return contractAddress;
     }
 
     public Payment setLocalPrice(final String localPrice) {

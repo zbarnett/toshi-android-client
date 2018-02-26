@@ -17,6 +17,8 @@
 
 package com.toshi.view.activity
 
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.toshi.R
@@ -30,15 +32,19 @@ import com.toshi.model.network.token.Token
 import com.toshi.util.EthUtil
 import com.toshi.util.ImageUtil
 import com.toshi.view.fragment.DialogFragment.ShareWalletAddressDialog
+import com.toshi.viewModel.ViewModelFactory.ViewTokenViewModelFactory
+import com.toshi.viewModel.ViewTokenViewModel
 import kotlinx.android.synthetic.main.activity_view_erc20.*
 
-class ViewERC20Activity : AppCompatActivity() {
+class ViewTokenActivity : AppCompatActivity() {
 
     companion object {
         const val ETHER_TOKEN = "ether_token"
         const val ERC20_TOKEN = "erc_token"
         const val TOKEN_TYPE = "type"
     }
+
+    private lateinit var viewModel: ViewTokenViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,32 +54,60 @@ class ViewERC20Activity : AppCompatActivity() {
 
     private fun init() {
         val tokenType = intent.getStringExtra(TOKEN_TYPE)
-        when (tokenType) {
-            ETHER_TOKEN -> initEtherView()
-            ERC20_TOKEN -> initERC20View()
+        val token = when (tokenType) {
+            ETHER_TOKEN -> EtherToken.getTokenFromIntent(intent)
+            ERC20_TOKEN -> ERCToken.getTokenFromIntent(intent)
+            else -> null
         }
-    }
-
-    private fun initEtherView() {
-        val etherToken = EtherToken.getTokenFromIntent(intent)
-        if (etherToken == null) {
+        if (token == null) {
             toast(R.string.invalid_token)
             finish()
             return
         }
-        renderEtherTokenUi(etherToken)
-        initClickListeners(etherToken)
+        initViewModel(token)
+        initObservers()
+        initClickListeners()
     }
 
-    private fun initERC20View() {
-        val erc20Token = ERCToken.getTokenFromIntent(intent)
-        if (erc20Token == null) {
-            toast(R.string.invalid_token)
-            finish()
-            return
+    private fun initViewModel(token: Token) {
+        viewModel = ViewModelProviders.of(
+                this,
+                ViewTokenViewModelFactory(token)
+        ).get(ViewTokenViewModel::class.java)
+    }
+
+    private fun initClickListeners() {
+        closeButton.setOnClickListener { finish() }
+        send.setOnClickListener { startSendActivity() }
+        receive.setOnClickListener { showShareWalletDialog() }
+    }
+
+    private fun startSendActivity() {
+        val token = viewModel.token.value
+        when (token) {
+            is EtherToken -> startActivity<SendETHActivity> { EtherToken.buildIntent(this, token) }
+            is ERCToken -> startActivity<SendERC20TokenActivity> { ERCToken.buildIntent(this, token) }
+            else -> throw IllegalStateException(Throwable("Invalid token in this context"))
         }
-        renderERCTokenUi(erc20Token)
-        initClickListeners(erc20Token)
+    }
+
+    private fun showShareWalletDialog() {
+        ShareWalletAddressDialog.newInstance().apply {
+            show(supportFragmentManager, ShareWalletAddressDialog.TAG)
+        }
+    }
+
+    private fun initObservers() {
+        viewModel.token.observe(this, Observer {
+            if (it != null) updateUi(it)
+        })
+    }
+
+    private fun updateUi(token: Token) {
+        when (token) {
+            is EtherToken -> renderEtherTokenUi(token)
+            is ERCToken -> renderERCTokenUi(token)
+        }
     }
 
     private fun renderEtherTokenUi(etherToken: EtherToken) {
@@ -89,25 +123,5 @@ class ViewERC20Activity : AppCompatActivity() {
         ImageUtil.load(ERCToken.icon, avatar)
         val tokenAmount = TypeConverter.formatHexString(ERCToken.value, ERCToken.decimals ?: 0, EthUtil.ETH_FORMAT)
         amount.text = "$tokenAmount ${ERCToken.symbol}"
-    }
-
-    private fun initClickListeners(token: Token) {
-        closeButton.setOnClickListener { finish() }
-        send.setOnClickListener { startSendActivity(token) }
-        receive.setOnClickListener { showShareWalletDialog() }
-    }
-
-    private fun startSendActivity(token: Token) {
-        when (token) {
-            is EtherToken -> startActivity<SendETHActivity> { EtherToken.buildIntent(this, token) }
-            is ERCToken -> startActivity<SendERC20TokenActivity> { ERCToken.buildIntent(this, token) }
-            else -> throw IllegalStateException(Throwable("Invalid token in this context"))
-        }
-    }
-
-    private fun showShareWalletDialog() {
-        ShareWalletAddressDialog.newInstance().apply {
-            show(supportFragmentManager, ShareWalletAddressDialog.TAG)
-        }
     }
 }

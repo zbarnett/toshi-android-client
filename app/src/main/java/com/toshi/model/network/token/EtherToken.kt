@@ -19,7 +19,7 @@ package com.toshi.model.network.token
 
 import android.content.Intent
 import com.toshi.R
-import com.toshi.view.activity.ViewERC20Activity
+import com.toshi.view.activity.ViewTokenActivity
 
 data class EtherToken(
         val symbol: String,
@@ -49,7 +49,7 @@ data class EtherToken(
                 putExtra(NAME, token.name)
                 putExtra(ETHER_VALUE, token.etherValue)
                 putExtra(FIAT_VALUE, token.fiatValue)
-                putExtra(ViewERC20Activity.TOKEN_TYPE, ViewERC20Activity.ETHER_TOKEN)
+                putExtra(ViewTokenActivity.TOKEN_TYPE, ViewTokenActivity.ETHER_TOKEN)
             }
         }
 

@@ -25,6 +25,7 @@ import com.toshi.model.local.LocalStatusMessage;
 import com.toshi.model.local.UnsignedW3Transaction;
 import com.toshi.model.network.SofaError;
 import com.toshi.model.network.SofaErrors;
+import com.toshi.model.sofa.payment.ERC20TokenPayment;
 import com.toshi.model.sofa.payment.Payment;
 
 import java.io.IOException;
@@ -38,6 +39,7 @@ public class SofaAdapters {
     private final JsonAdapter<PaymentRequest> paymentRequestAdapter;
     private final JsonAdapter<Command> commandAdapter;
     private final JsonAdapter<Payment> paymentAdapter;
+    private final JsonAdapter<ERC20TokenPayment> tokenPaymentAdapter;
     private final JsonAdapter<Init> initAdapter;
     private final JsonAdapter<InitRequest> initRequestJsonAdapter;
     private final JsonAdapter<UnsignedW3Transaction> unsignedW3TransactionAdapter;
@@ -57,6 +59,7 @@ public class SofaAdapters {
         this.paymentRequestAdapter = moshi.adapter(PaymentRequest.class);
         this.commandAdapter = moshi.adapter(Command.class);
         this.paymentAdapter = moshi.adapter(Payment.class);
+        this.tokenPaymentAdapter = moshi.adapter(ERC20TokenPayment.class);
         this.initAdapter = moshi.adapter(Init.class);
         this.initRequestJsonAdapter = moshi.adapter(InitRequest.class);
         this.unsignedW3TransactionAdapter = moshi.adapter(UnsignedW3Transaction.class);
@@ -115,6 +118,14 @@ public class SofaAdapters {
     public Payment paymentFrom(final String payload) throws IOException {
         try {
             return paymentAdapter.fromJson(payload);
+        } catch (final JsonDataException ex) {
+            throw new IOException(ex);
+        }
+    }
+
+    public ERC20TokenPayment tokenPaymentFrom(final String payload) throws IOException {
+        try {
+            return tokenPaymentAdapter.fromJson(payload);
         } catch (final JsonDataException ex) {
             throw new IOException(ex);
         }

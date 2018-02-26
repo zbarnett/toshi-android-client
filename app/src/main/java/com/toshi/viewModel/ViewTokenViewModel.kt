@@ -19,41 +19,36 @@ package com.toshi.viewModel
 
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
-import com.toshi.crypto.util.TypeConverter
-import com.toshi.extensions.createSafeBigDecimal
-import com.toshi.extensions.isValidDecimal
 import com.toshi.model.network.token.ERCToken
-import com.toshi.util.EthUtil
+import com.toshi.model.network.token.Token
 import com.toshi.util.LogUtil
 import com.toshi.view.BaseApplication
 import rx.Single
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import rx.subscriptions.CompositeSubscription
-import java.math.BigDecimal
 
-class SendERC20TokenViewModel(val token: ERCToken) : ViewModel() {
+class ViewTokenViewModel(token: Token) : ViewModel() {
 
     private val transactionManager by lazy { BaseApplication.get().transactionManager }
     private val balanceManager by lazy { BaseApplication.get().balanceManager }
     private val subscriptions by lazy { CompositeSubscription() }
-    val ERCToken by lazy { MutableLiveData<ERCToken>() }
-    val isSendingMaxAmount by lazy { MutableLiveData<Boolean>() }
+    val token by lazy { MutableLiveData<Token>() }
 
     init {
-        ERCToken.value = token
-        listenForNewIncomingTokenPayments()
+        this.token.value = token
+        if (token is ERCToken) listenForNewIncomingTokenPayments(token)
     }
 
-    private fun listenForNewIncomingTokenPayments() {
+    private fun listenForNewIncomingTokenPayments(ERCToken: ERCToken) {
         val sub = transactionManager
                 .listenForNewIncomingTokenPayments()
-                .filter { it.contractAddress == token.contractAddress }
+                .filter { it.contractAddress == ERCToken.contractAddress }
                 .flatMap { getERC20Token(it.contractAddress).toObservable() }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        { ERCToken.value = it },
+                        { this.token.value = it },
                         { LogUtil.exception(javaClass, "Error while listening to token updates $it") }
                 )
 
@@ -62,35 +57,6 @@ class SendERC20TokenViewModel(val token: ERCToken) : ViewModel() {
 
     private fun getERC20Token(contractAddress: String): Single<ERCToken> {
         return balanceManager.getERC20Token(contractAddress)
-    }
-
-    fun isAmountValid(inputAmount: String) = inputAmount.isNotEmpty() && isValidDecimal(inputAmount)
-
-    fun hasEnoughBalance(amount: String): Boolean {
-        val token = ERCToken.value
-        val inputAmount = createSafeBigDecimal(amount)
-        val balanceAmount = if (token != null) {
-            BigDecimal(TypeConverter.formatHexString(token.value, token.decimals ?: 0, null))
-        } else BigDecimal(0)
-        return inputAmount.compareTo(balanceAmount) == 0 || inputAmount.compareTo(balanceAmount) == -1
-    }
-
-    fun getMaxAmount(): String {
-        val token = ERCToken.value
-        return if (token != null) TypeConverter.formatHexString(token.value, token.decimals ?: 0, null)
-        else TypeConverter.formatNumber(0, EthUtil.ETH_FORMAT)
-    }
-
-    fun getBalanceAmount(): String {
-        val token = ERCToken.value
-        return if (token != null) TypeConverter.formatHexString(token.value, token.decimals ?: 0, EthUtil.ETH_FORMAT)
-        else TypeConverter.formatNumber(0, EthUtil.ETH_FORMAT)
-    }
-
-    fun getSymbol(): String {
-        val token = ERCToken.value
-        return if (token != null) token.symbol ?: ""
-        else ""
     }
 
     override fun onCleared() {

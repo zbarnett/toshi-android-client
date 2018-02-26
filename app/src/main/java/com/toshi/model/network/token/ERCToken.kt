@@ -19,7 +19,7 @@ package com.toshi.model.network.token
 
 import android.content.Intent
 import com.squareup.moshi.Json
-import com.toshi.view.activity.ViewERC20Activity
+import com.toshi.view.activity.ViewTokenActivity
 
 data class ERCToken(
         val symbol: String?,
@@ -47,7 +47,7 @@ data class ERCToken(
                 putExtra(DECIMALS, ERCToken.decimals)
                 putExtra(CONTRACT_ADDRESS, ERCToken.contractAddress)
                 putExtra(ICON, ERCToken.icon)
-                putExtra(ViewERC20Activity.TOKEN_TYPE, ViewERC20Activity.ERC20_TOKEN)
+                putExtra(ViewTokenActivity.TOKEN_TYPE, ViewTokenActivity.ERC20_TOKEN)
             }
         }
 

@@ -32,7 +32,7 @@ import com.toshi.extensions.toast
 import com.toshi.model.network.token.ERCToken
 import com.toshi.model.network.token.EtherToken
 import com.toshi.model.network.token.Token
-import com.toshi.view.activity.ViewERC20Activity
+import com.toshi.view.activity.ViewTokenActivity
 import com.toshi.view.adapter.TokenAdapter
 import com.toshi.view.adapter.viewholder.TokenType
 import com.toshi.view.fragment.toplevel.WalletFragment
@@ -72,8 +72,8 @@ class ERC20Fragment : RefreshFragment() {
 
     private fun startViewTokenActivity(token: Token) {
         when (token) {
-            is EtherToken -> startActivity<ViewERC20Activity> { EtherToken.buildIntent(this, token) }
-            is ERCToken -> startActivity<ViewERC20Activity> { ERCToken.buildIntent(this, token) }
+            is EtherToken -> startActivity<ViewTokenActivity> { EtherToken.buildIntent(this, token) }
+            is ERCToken -> startActivity<ViewTokenActivity> { ERCToken.buildIntent(this, token) }
             else -> throw IllegalStateException(Throwable("Invalid token in this context"))
         }
     }

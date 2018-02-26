@@ -64,12 +64,8 @@ public class GcmMessageReceiver extends FirebaseMessagingService {
         tryInitApp()
         .subscribe(
                 () -> handleIncomingMessage(message.getData()),
-                this::handleIncomingMessageError
+                throwable -> LogUtil.exception(getClass(), "Error during incoming message", throwable)
         );
-    }
-
-    private void handleIncomingMessageError(final Throwable throwable) {
-        LogUtil.exception(getClass(), "Error during incoming message", throwable);
     }
 
     private Completable tryInitApp() {
@@ -93,9 +89,10 @@ public class GcmMessageReceiver extends FirebaseMessagingService {
 
             if (sofaMessage.getType() == SofaType.PAYMENT) {
                 final Payment payment = SofaAdapters.get().paymentFrom(sofaMessage.getPayload());
-                final boolean isTokenPayment = payment.getContractAddress() != null;
-                if (isTokenPayment) return; //Ignore incoming token payments
                 checkIfUserIsBlocked(payment);
+            } else if (sofaMessage.getType() == SofaType.TOKEN_PAYMENT) {
+                final Payment payment = SofaAdapters.get().tokenPaymentFrom(sofaMessage.getPayload());
+                addIncomingPayment(payment);
             } else {
                 tryShowIncomingMessage();
             }

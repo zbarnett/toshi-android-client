@@ -112,11 +112,13 @@ class SendERC20TokenActivity : AppCompatActivity() {
     }
 
     private fun validateAddressAndShowPaymentConfirmation() {
-        val token = viewModel.token
-        addressError.isVisible(false)
-        val address = toAddress.text.toString()
-        val transferValue = toAmount.text.toString()
-        showPaymentConfirmation(token, transferValue, address)
+        val token = viewModel.ERCToken.value
+        if (token != null) {
+            addressError.isVisible(false)
+            val address = toAddress.text.toString()
+            val transferValue = toAmount.text.toString()
+            showPaymentConfirmation(token, transferValue, address)
+        } else toast(R.string.invalid_token)
     }
 
     private fun showPaymentConfirmation(ERCToken: ERCToken, value: String, toAddress: String) {
@@ -150,15 +152,18 @@ class SendERC20TokenActivity : AppCompatActivity() {
         toolbarTitle.text = getString(R.string.send_token, ERCToken.symbol)
     }
 
-    private fun renderERC20TokenBalance(ERCToken: ERCToken) {
-        val tokenValue = TypeConverter.formatHexString(ERCToken.value, ERCToken.decimals ?: 0, EthUtil.ETH_FORMAT)
-        balance.text = getString(R.string.erc20_balance, ERCToken.symbol, tokenValue, ERCToken.symbol)
-    }
-
     private fun initObservers() {
+        viewModel.ERCToken.observe(this, Observer {
+            if (it != null) renderERC20TokenBalance(it)
+        })
         viewModel.isSendingMaxAmount.observe(this, Observer {
             if (it != null) updateMaxButtonState(it)
         })
+    }
+
+    private fun renderERC20TokenBalance(ERCToken: ERCToken) {
+        val tokenValue = TypeConverter.formatHexString(ERCToken.value, ERCToken.decimals ?: 0, EthUtil.ETH_FORMAT)
+        balance.text = getString(R.string.erc20_balance, ERCToken.symbol, tokenValue, ERCToken.symbol)
     }
 
     private fun updateMaxButtonState(isSendingMaxAmount: Boolean) {
@@ -228,9 +233,9 @@ class SendERC20TokenActivity : AppCompatActivity() {
     }
 
     private fun showAmountError() {
-        val token = viewModel.token
-        val balanceAmount = TypeConverter.formatHexString(token.value, token.decimals ?: 0, EthUtil.ETH_FORMAT)
-        val balanceWithSymbol = "$balanceAmount ${token.symbol}"
+        val balanceAmount = viewModel.getBalanceAmount()
+        val symbol = viewModel.getSymbol()
+        val balanceWithSymbol = "$balanceAmount $symbol"
         amountError.isVisible(true)
         amountError.text = getString(R.string.insufficient_balance, balanceWithSymbol)
     }

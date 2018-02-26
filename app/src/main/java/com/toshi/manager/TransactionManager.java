@@ -37,6 +37,7 @@ import com.toshi.model.network.SentTransaction;
 import com.toshi.model.network.SignedTransaction;
 import com.toshi.model.sofa.PaymentRequest;
 import com.toshi.model.sofa.SofaMessage;
+import com.toshi.model.sofa.payment.ERC20TokenPayment;
 import com.toshi.model.sofa.payment.Payment;
 import com.toshi.util.paymentTask.PaymentTaskBuilder;
 
@@ -205,6 +206,13 @@ public class TransactionManager {
     public Single<W3PaymentTask> buildPaymentTask(final String callbackId, final UnsignedW3Transaction unsignedW3Transaction) {
         return this.paymentTaskBuilder
                 .buildW3PaymentTask(callbackId, unsignedW3Transaction);
+    }
+
+    public Observable<ERC20TokenPayment> listenForNewIncomingTokenPayments() {
+        return this.incomingTransactionManager
+                .getIncomingTokenPaymentsSubject()
+                .asObservable()
+                .ofType(ERC20TokenPayment.class);
     }
 
     public void clear() {

@@ -30,10 +30,12 @@ import com.toshi.util.SingleLiveEvent
 import com.toshi.view.BaseApplication
 import rx.Single
 import rx.android.schedulers.AndroidSchedulers
+import rx.schedulers.Schedulers
 import rx.subscriptions.CompositeSubscription
 
 class TokenViewModel : ViewModel() {
 
+    private val transactionManager by lazy { BaseApplication.get().transactionManager }
     private val balanceManager by lazy { BaseApplication.get().balanceManager }
     private val subscriptions by lazy { CompositeSubscription() }
 
@@ -45,8 +47,23 @@ class TokenViewModel : ViewModel() {
     val isERC721Loading by lazy { MutableLiveData<Boolean>() }
 
     init {
+        listenForNewIncomingTokenPayments()
         firstFetchERC20Tokens()
         firstFetchERC721Tokens()
+    }
+
+    private fun listenForNewIncomingTokenPayments() {
+        val sub = transactionManager
+                .listenForNewIncomingTokenPayments()
+                .flatMap { fetchERC20TokensAndAddEther().toObservable() }
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        { erc20Tokens.value = it },
+                        { erc20error.value = R.string.error_fetching_tokens }
+                )
+
+        subscriptions.add(sub)
     }
 
     private fun firstFetchERC20Tokens() {

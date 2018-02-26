@@ -15,22 +15,10 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.toshi.model.sofa.payment;
+package com.toshi.manager.model.incomingPayment
 
-public class ERC20TokenPayment extends Payment {
-    private String contractAddress;
+import com.toshi.model.sofa.payment.Payment
 
-    public ERC20TokenPayment(final String value,
-                             final String contraxtAddress,
-                             final String toAddress,
-                             final String fromAddress) {
-        this.value = value;
-        this.toAddress = toAddress;
-        this.fromAddress = fromAddress;
-        this.contractAddress = contraxtAddress;
-    }
-
-    public String getContractAddress() {
-        return this.contractAddress;
-    }
-}
+data class IncomingTokenPaymentTask(
+        override val payment: Payment
+) : IncomingPaymentTask(payment)

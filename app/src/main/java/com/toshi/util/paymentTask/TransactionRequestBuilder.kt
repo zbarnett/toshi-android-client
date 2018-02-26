@@ -49,7 +49,7 @@ class TransactionRequestBuilder {
                 value = payment.value,
                 from = payment.fromAddress,
                 to = payment.toAddress,
-                tokenAddress = payment.tokenAddress
+                tokenAddress = payment.contractAddress
         )
     }
 

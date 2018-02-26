@@ -17,14 +17,17 @@
 
 package com.toshi.manager.transaction
 
-import com.toshi.manager.model.IncomingPaymentTask
+import com.toshi.manager.model.incomingPayment.IncomingEthPaymentTask
+import com.toshi.manager.model.incomingPayment.IncomingPaymentTask
+import com.toshi.manager.model.incomingPayment.IncomingTokenPaymentTask
 import com.toshi.manager.store.PendingTransactionStore
 import com.toshi.model.local.PendingTransaction
 import com.toshi.model.local.SendState
 import com.toshi.model.local.User
-import com.toshi.model.sofa.payment.Payment
 import com.toshi.model.sofa.SofaAdapters
 import com.toshi.model.sofa.SofaMessage
+import com.toshi.model.sofa.payment.ERC20TokenPayment
+import com.toshi.model.sofa.payment.Payment
 import com.toshi.util.LogUtil
 import com.toshi.view.BaseApplication
 import rx.Single
@@ -37,9 +40,11 @@ class IncomingTransactionManager(private val pendingTransactionStore: PendingTra
 
     private val sofaMessageManager by lazy { BaseApplication.get().sofaMessageManager }
     private val recipientManager by lazy { BaseApplication.get().recipientManager }
+
     private val newIncomingPaymentQueue by lazy { PublishSubject.create<IncomingPaymentTask>() }
     private val subscriptions by lazy { CompositeSubscription() }
     private var incomingPaymentSub: Subscription? = null
+    val incomingTokenPaymentsSubject: PublishSubject<Payment> by lazy { PublishSubject.create<Payment>() }
 
     fun attachNewIncomingPaymentSubscriber() {
         // Explicitly clear first to avoid double subscription
@@ -55,19 +60,30 @@ class IncomingTransactionManager(private val pendingTransactionStore: PendingTra
     }
 
     private fun processNewIncomingPayment(paymentTask: IncomingPaymentTask) {
-        getUpdatedPayment(paymentTask)
+        when (paymentTask) {
+            is IncomingEthPaymentTask -> handleEthPaymentTask(paymentTask)
+            is IncomingTokenPaymentTask -> handleTokenPaymentTask(paymentTask)
+        }
+    }
+
+    private fun handleEthPaymentTask(ethPaymentTask: IncomingEthPaymentTask) {
+        getUpdatedPayment(ethPaymentTask)
                 .subscribe(
                         { handleIncomingPayment(it) },
                         { LogUtil.e(javaClass, "Error while getting updated payment $it") }
                 )
     }
 
-    private fun getUpdatedPayment(incomingPaymentTask: IncomingPaymentTask): Single<IncomingPaymentTask> {
-        val user = incomingPaymentTask.user
-        return incomingPaymentTask.payment
+    private fun handleTokenPaymentTask(incomingPaymentTask: IncomingTokenPaymentTask) {
+        incomingTokenPaymentsSubject.onNext(incomingPaymentTask.payment)
+    }
+
+    private fun getUpdatedPayment(incomingEthPaymentTask: IncomingEthPaymentTask): Single<IncomingEthPaymentTask> {
+        val user = incomingEthPaymentTask.user
+        return incomingEthPaymentTask.payment
                 .generateLocalPrice()
                 .map { storePayment(user, it) }
-                .map { incomingPaymentTask.copy(sofaMessage = it) }
+                .map { incomingEthPaymentTask.copy(sofaMessage = it) }
                 .subscribeOn(Schedulers.io())
     }
 
@@ -90,14 +106,21 @@ class IncomingTransactionManager(private val pendingTransactionStore: PendingTra
         return SofaMessage().makeNewFromTransaction(payment.txHash, sender, messageBody)
     }
 
-    private fun handleIncomingPayment(paymentTask: IncomingPaymentTask) {
+    private fun handleIncomingPayment(ethPaymentTask: IncomingEthPaymentTask) {
         val pendingTransaction = PendingTransaction()
-                .setTxHash(paymentTask.payment.txHash)
-                .setSofaMessage(paymentTask.sofaMessage)
+                .setTxHash(ethPaymentTask.payment.txHash)
+                .setSofaMessage(ethPaymentTask.sofaMessage)
         pendingTransactionStore.save(pendingTransaction)
     }
 
     fun addIncomingPayment(payment: Payment) {
+        when (payment) {
+            is ERC20TokenPayment -> newIncomingPaymentQueue.onNext(IncomingTokenPaymentTask(payment))
+            else -> addIncomingPaymentTask(payment)
+        }
+    }
+
+    private fun addIncomingPaymentTask(payment: Payment) {
         recipientManager.getUserFromPaymentAddress(payment.fromAddress)
                 .subscribe(
                         { addIncomingPaymentTask(it, payment) },
@@ -106,7 +129,7 @@ class IncomingTransactionManager(private val pendingTransactionStore: PendingTra
     }
 
     private fun addIncomingPaymentTask(sender: User, payment: Payment) {
-        newIncomingPaymentQueue.onNext(IncomingPaymentTask(payment, sender))
+        newIncomingPaymentQueue.onNext(IncomingEthPaymentTask(payment, sender))
     }
 
     private fun clearSubscription() = incomingPaymentSub?.unsubscribe()
