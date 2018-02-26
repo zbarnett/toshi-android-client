@@ -19,6 +19,7 @@ package com.toshi.view.adapter.viewholder
 
 import android.support.v7.widget.RecyclerView
 import android.view.View
+import android.widget.ImageView
 import com.toshi.R
 import com.toshi.crypto.util.TypeConverter
 import com.toshi.extensions.getColorById
@@ -75,7 +76,7 @@ class TokensViewHolder(private val tokenType: TokenType, itemView: View?) : Recy
         itemView.value.text = TypeConverter.formatHexString(ERCToken.value, ERCToken.decimals ?: 0, EthUtil.ETH_FORMAT)
         itemView.fiatValue.isVisible(false)
         itemView.value.setTextColor(itemView.getColorById(R.color.textColorPrimary))
-        ImageUtil.load(ERCToken.icon, itemView.avatar)
+        loadImage(ERCToken.icon, itemView.avatar)
         itemView.setOnClickListener { tokenListener?.invoke(ERCToken) }
     }
 
@@ -85,8 +86,13 @@ class TokensViewHolder(private val tokenType: TokenType, itemView: View?) : Recy
         itemView.erc721Name.text = ERCToken.name
         itemView.value.text = TypeConverter.formatHexString(ERCToken.value, ERCToken.decimals ?: 0, "0")
         itemView.value.setTextColor(itemView.getColorById(R.color.textColorSecondary))
-        ImageUtil.load(ERCToken.icon, itemView.avatar)
+        loadImage(ERCToken.icon, itemView.avatar)
         itemView.setOnClickListener { tokenListener?.invoke(ERCToken) }
+    }
+
+    private fun loadImage(url: String?, imageView: ImageView) {
+        if (url == null) imageView.setImageResource(R.color.placeholder)
+        else ImageUtil.load(url, imageView)
     }
 }
 

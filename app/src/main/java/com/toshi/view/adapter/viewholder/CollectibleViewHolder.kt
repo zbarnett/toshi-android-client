@@ -19,6 +19,8 @@ package com.toshi.view.adapter.viewholder
 
 import android.support.v7.widget.RecyclerView
 import android.view.View
+import android.widget.ImageView
+import com.toshi.R
 import com.toshi.crypto.util.TypeConverter
 import com.toshi.model.network.ERC721Token
 import com.toshi.util.ImageUtil
@@ -27,9 +29,14 @@ import kotlinx.android.synthetic.main.list_item__collectible.view.*
 class CollectibleViewHolder(private val collectibleName: String?, itemView: View?) : RecyclerView.ViewHolder(itemView) {
     fun setCollectible(collectible: ERC721Token) {
         val name = getName(collectible)
-        if (name != null) itemView.name.text = name
-        if (collectible.image != null) ImageUtil.loadFromNetwork(collectible.image, itemView.avatar)
-        if (collectible.description != null) itemView.description.text = collectible.description
+        itemView.name.text = name ?: ""
+        itemView.description.text = collectible.description ?: ""
+        loadImage(collectible.image, itemView.avatar)
+    }
+
+    private fun loadImage(url: String?, imageView: ImageView) {
+        if (url == null) imageView.setImageResource(R.color.placeholder)
+        else ImageUtil.load(url, imageView)
     }
 
     private fun getName(collectible: ERC721Token): String? {
