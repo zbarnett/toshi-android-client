@@ -149,8 +149,10 @@ import rx.subscriptions.CompositeSubscription;
     }
 
     private int getInjectionPosition(final String body) {
-        final String htmlTag = "<script";
-        return body.toLowerCase().indexOf(htmlTag);
+        final String lowerCaseBody = body.toLowerCase();
+        final int ieCheckIndex = lowerCaseBody.indexOf("<!--[if");
+        int scriptTagIndex = lowerCaseBody.indexOf("<script");
+        return ieCheckIndex < 0 ? scriptTagIndex : Math.min(scriptTagIndex, ieCheckIndex);
     }
 
     /* package */ void destroy() {

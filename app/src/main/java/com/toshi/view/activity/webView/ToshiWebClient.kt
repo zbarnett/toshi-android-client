@@ -139,7 +139,8 @@ class ToshiWebClient(
     }
 
     private fun getInjectionPosition(body: String): Int {
-        val htmlTag = "<script"
-        return body.toLowerCase().indexOf(htmlTag)
+        val ieDetectTagIndex = body.indexOf("<!--[if", 0, true)
+        val scriptTagIndex = body.indexOf("<script", 0, true)
+        return if (ieDetectTagIndex < 0) scriptTagIndex else minOf(scriptTagIndex, ieDetectTagIndex)
     }
 }
