@@ -28,8 +28,8 @@ import com.toshi.crypto.signal.store.SignalTrustStore;
 import com.toshi.manager.chat.SofaMessageReceiver;
 import com.toshi.manager.chat.SofaMessageRegistration;
 import com.toshi.manager.chat.SofaMessageSender;
-import com.toshi.manager.chat.tasks.NewGroupNameTask;
 import com.toshi.manager.chat.tasks.NewGroupMembersTask;
+import com.toshi.manager.chat.tasks.NewGroupNameTask;
 import com.toshi.manager.model.SofaMessageTask;
 import com.toshi.manager.store.ConversationStore;
 import com.toshi.model.local.Conversation;
@@ -41,7 +41,6 @@ import com.toshi.model.local.User;
 import com.toshi.model.sofa.Init;
 import com.toshi.model.sofa.SofaAdapters;
 import com.toshi.model.sofa.SofaMessage;
-import com.toshi.util.GcmPrefsUtil;
 import com.toshi.util.LocaleUtil;
 import com.toshi.util.LogUtil;
 import com.toshi.view.BaseApplication;
@@ -422,7 +421,6 @@ public final class SofaMessageManager {
         clearGcmRegistration();
         clearConnectivitySubscription();
         this.protocolStore.deleteAllSessions();
-        GcmPrefsUtil.clear();
     }
 
     private void clearMessageReceiver() {

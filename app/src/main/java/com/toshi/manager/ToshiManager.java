@@ -209,9 +209,14 @@ public class ToshiManager {
     }
 
     public void signOut() {
-        clearUserSession();
         clearWalletAndSignal();
+        clearUserSession();
         setSignedOutAndClearUserPrefs();
+    }
+
+    private void clearWalletAndSignal() {
+        this.wallet.clear();
+        SignalPreferences.clear();
     }
 
     private void clearUserSession() {
@@ -229,11 +234,6 @@ public class ToshiManager {
     private void closeDatabase() {
         this.realmConfig = null;
         Realm.removeDefaultConfiguration();
-    }
-
-    private void clearWalletAndSignal() {
-        this.wallet.clear();
-        SignalPreferences.clear();
     }
 
     private void setSignedOutAndClearUserPrefs() {
