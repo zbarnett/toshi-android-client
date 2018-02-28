@@ -259,8 +259,8 @@ class SendETHActivity : AppCompatActivity() {
         if (amountInput.isEmpty()) return
         val hasEnoughBalance = viewModel.hasEnoughBalance(amountInput)
         val isValidAmount = viewModel.isAmountValid(amountInput)
-        if (!hasEnoughBalance) showAmountError()
         if (!isValidAmount) showInvalidAmountError()
+        if (!hasEnoughBalance) showAmountError()
     }
 
     private fun validateAddress(addressInput: String) {

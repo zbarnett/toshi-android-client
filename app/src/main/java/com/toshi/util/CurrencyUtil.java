@@ -23,6 +23,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.Currency;
+import java.util.Locale;
 
 public class CurrencyUtil {
 
@@ -31,6 +32,21 @@ public class CurrencyUtil {
         final DecimalFormatSymbols symbols = numberFormat.getDecimalFormatSymbols();
         symbols.setCurrencySymbol("");
         numberFormat.setDecimalFormatSymbols(symbols);
+        return numberFormat;
+    }
+
+    public static DecimalFormat getNumberFormatWithOutGrouping() {
+        final DecimalFormat numberFormat = getNumberFormat();
+        numberFormat.setGroupingUsed(false);
+        return numberFormat;
+    }
+
+    public static DecimalFormat getNumberFormatWithOutGrouping(final Locale locale) {
+        final DecimalFormat numberFormat = (DecimalFormat) DecimalFormat.getCurrencyInstance(locale);
+        final DecimalFormatSymbols symbols = numberFormat.getDecimalFormatSymbols();
+        symbols.setCurrencySymbol("");
+        numberFormat.setDecimalFormatSymbols(symbols);
+        numberFormat.setGroupingUsed(false);
         return numberFormat;
     }
 

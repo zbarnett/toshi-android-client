@@ -25,11 +25,13 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
 import java.text.DecimalFormat;
+import java.util.Locale;
 
 public class EthUtil {
 
     public static final int BIG_DECIMAL_SCALE = 16;
-    private static final int NUM_DECIMAL_PLACES = 6;
+    private static final int NUM_ETH_DECIMAL_PLACES = 6;
+    public static final int NUM_FIAT_DECIMAL_PLACES = 2;
     private static final String USER_VISIBLE_STRING_FORMATTING = "%.6f";
     private static final BigDecimal weiToEthRatio = new BigDecimal("1000000000000000000");
     public static final String FIAT_FORMAT = "0.00";
@@ -49,7 +51,7 @@ public class EthUtil {
         return String.format(
                 LocaleUtil.getLocale(),
                 USER_VISIBLE_STRING_FORMATTING,
-                eth.setScale(NUM_DECIMAL_PLACES, BigDecimal.ROUND_DOWN));
+                eth.setScale(NUM_ETH_DECIMAL_PLACES, BigDecimal.ROUND_DOWN));
     }
 
     public static BigDecimal weiToEth(final BigInteger wei) {
@@ -76,7 +78,7 @@ public class EthUtil {
     }
 
     public static boolean isLargeEnoughForSending(final BigDecimal eth) {
-        return eth.setScale(NUM_DECIMAL_PLACES, BigDecimal.ROUND_DOWN).compareTo(BigDecimal.ZERO) == 1;
+        return eth.setScale(NUM_ETH_DECIMAL_PLACES, BigDecimal.ROUND_DOWN).compareTo(BigDecimal.ZERO) == 1;
     }
 
     public static String decimalStringToEncodedEthAmount(final String decimalString) {
@@ -88,7 +90,7 @@ public class EthUtil {
     public static String ethToFiat(final ExchangeRate exchangeRate, final BigDecimal ethAmount) {
         final BigDecimal marketRate = exchangeRate.getRate();
         final BigDecimal fiatAmount = marketRate.multiply(ethAmount, MathContext.DECIMAL64);
-        final DecimalFormat df = CurrencyUtil.getNumberFormat();
+        final DecimalFormat df = CurrencyUtil.getNumberFormatWithOutGrouping(Locale.ENGLISH);
         df.applyPattern(FIAT_FORMAT);
         return df.format(fiatAmount);
     }
@@ -96,7 +98,7 @@ public class EthUtil {
     public static String fiatToEth(final ExchangeRate exchangeRate, final BigDecimal fiatAmount) {
         final BigDecimal marketRate = exchangeRate.getRate();
         final BigDecimal ethAmount = fiatAmount.divide(marketRate, BIG_DECIMAL_SCALE, BigDecimal.ROUND_DOWN);
-        final DecimalFormat df = CurrencyUtil.getNumberFormat();
+        final DecimalFormat df = CurrencyUtil.getNumberFormatWithOutGrouping(Locale.ENGLISH);
         df.applyPattern(ETH_FORMAT);
         return df.format(ethAmount);
     }

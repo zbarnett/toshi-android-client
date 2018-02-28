@@ -22,6 +22,7 @@ import android.arch.lifecycle.ViewModel
 import com.toshi.R
 import com.toshi.crypto.util.TypeConverter
 import com.toshi.extensions.createSafeBigDecimal
+import com.toshi.extensions.isValidDecimal
 import com.toshi.model.local.CurrencyMode
 import com.toshi.model.network.Balance
 import com.toshi.model.network.ExchangeRate
@@ -32,8 +33,8 @@ import com.toshi.util.SharedPrefsUtil
 import com.toshi.view.BaseApplication
 import rx.android.schedulers.AndroidSchedulers
 import rx.subscriptions.CompositeSubscription
-import java.math.BigDecimal
 import java.math.BigInteger
+import java.util.Locale
 
 class SendEtherViewModel : ViewModel() {
 
@@ -90,15 +91,6 @@ class SendEtherViewModel : ViewModel() {
 
     fun isAmountValid(inputAmount: String): Boolean {
         return inputAmount.isNotEmpty() && isValidDecimal(inputAmount)
-    }
-
-    private fun isValidDecimal(inputAmount: String): Boolean {
-        return try {
-            BigDecimal(inputAmount)
-            true
-        } catch (e: NumberFormatException) {
-            false
-        }
     }
 
     fun getEncodedEthAmount(inputValue: String): String {
@@ -183,7 +175,7 @@ class SendEtherViewModel : ViewModel() {
     private fun getMaxEthAmount(): String {
         val balance = ethBalance.value ?: return TypeConverter.formatNumber(0, EthUtil.ETH_FORMAT)
         val ethAmount = EthUtil.weiToEth(balance.getUnconfirmedBalance())
-        val df = CurrencyUtil.getNumberFormat()
+        val df = CurrencyUtil.getNumberFormatWithOutGrouping(Locale.ENGLISH)
         df.maximumFractionDigits = EthUtil.BIG_DECIMAL_SCALE
         return df.format(ethAmount)
     }
@@ -194,8 +186,8 @@ class SendEtherViewModel : ViewModel() {
         return exchangeRate?.let {
             val ethAmount = EthUtil.weiToEth(balance.getUnconfirmedBalance())
             val localAmount = it.rate.multiply(ethAmount)
-            val df = CurrencyUtil.getNumberFormat()
-            df.applyPattern(EthUtil.FIAT_FORMAT)
+            val df = CurrencyUtil.getNumberFormatWithOutGrouping(Locale.ENGLISH)
+            df.maximumFractionDigits = EthUtil.NUM_FIAT_DECIMAL_PLACES
             return df.format(localAmount)
         } ?: defaultValue
     }

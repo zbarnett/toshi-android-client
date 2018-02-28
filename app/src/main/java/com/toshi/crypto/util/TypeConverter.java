@@ -142,7 +142,7 @@ public class TypeConverter {
 
     private static DecimalFormat getDecimalFormat(@Nullable final String pattern) {
         if (pattern != null) {
-            final DecimalFormat df = CurrencyUtil.getNumberFormat();
+            final DecimalFormat df = CurrencyUtil.getNumberFormatWithOutGrouping();
             df.applyPattern(pattern);
             df.setRoundingMode(RoundingMode.DOWN);
             return df;
@@ -152,7 +152,7 @@ public class TypeConverter {
     }
 
     public static String formatNumber(final int value, final String format) {
-        final DecimalFormat df = CurrencyUtil.getNumberFormat();
+        final DecimalFormat df = CurrencyUtil.getNumberFormatWithOutGrouping();
         df.applyPattern(format);
         return df.format(value);
     }

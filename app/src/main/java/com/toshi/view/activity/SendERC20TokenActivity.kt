@@ -207,8 +207,8 @@ class SendERC20TokenActivity : AppCompatActivity() {
         if (amountInput.isEmpty()) return
         val hasEnoughBalance = viewModel.hasEnoughBalance(amountInput)
         val isAmountValid = viewModel.isAmountValid(amountInput)
-        if (!hasEnoughBalance) showAmountError()
         if (!isAmountValid) showInvalidAmountError()
+        if (!hasEnoughBalance) showAmountError()
     }
 
     private fun validateAddress(addressInput: String) {
