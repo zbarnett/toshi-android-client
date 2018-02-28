@@ -26,6 +26,7 @@ import com.toshi.model.network.token.ERCToken
 import com.toshi.model.network.token.EtherToken
 import com.toshi.model.network.token.Token
 import com.toshi.util.EthUtil
+import com.toshi.util.LogUtil
 import com.toshi.util.SingleLiveEvent
 import com.toshi.view.BaseApplication
 import rx.Single
@@ -47,9 +48,28 @@ class TokenViewModel : ViewModel() {
     val isERC721Loading by lazy { MutableLiveData<Boolean>() }
 
     init {
+        listenForBalanceUpdates()
         listenForNewIncomingTokenPayments()
         firstFetchERC20Tokens()
         firstFetchERC721Tokens()
+    }
+
+    private fun listenForBalanceUpdates() {
+        val sub = balanceManager
+                .balanceObservable
+                .skip(1)
+                .filter { it != null }
+                .flatMap { it.getBalanceWithLocalBalance().toObservable() }
+                .map { mapBalance(it) }
+                .flatMap { fetchERC20TokensAndAddEther(it).toObservable() }
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        { erc20Tokens.value = it },
+                        { LogUtil.exception(javaClass, "Error during fetching balance $it") }
+                )
+
+        subscriptions.add(sub)
     }
 
     private fun listenForNewIncomingTokenPayments() {
@@ -97,6 +117,12 @@ class TokenViewModel : ViewModel() {
                 { tokens, etherToken -> Pair(tokens.tokens, etherToken) }
         )
         .map { addEtherTokenToTokenList(it.first, it.second) }
+    }
+
+    private fun fetchERC20TokensAndAddEther(etherToken: EtherToken): Single<List<Token>> {
+        return getERC20Tokens()
+                .map { Pair(it.tokens, etherToken) }
+                .map { addEtherTokenToTokenList(it.first, it.second) }
     }
 
     private fun getERC20Tokens(): Single<ERC20Tokens> {
