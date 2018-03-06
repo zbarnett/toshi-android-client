@@ -24,7 +24,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
 import android.view.Menu;
 
-import com.toshi.view.fragment.toplevel.BrowseFragment;
+import com.toshi.view.activity.DappFragment;
 import com.toshi.view.fragment.toplevel.FavoritesFragment;
 import com.toshi.view.fragment.toplevel.MeFragment;
 import com.toshi.view.fragment.toplevel.RecentFragment;
@@ -44,7 +44,7 @@ public class NavigationAdapter extends FragmentPagerAdapter {
         activity.getMenuInflater().inflate(menuRes, menu);
 
         fragments.clear();
-        fragments.add(new BrowseFragment());
+        fragments.add(new DappFragment());
         fragments.add(new RecentFragment());
         fragments.add(new WalletFragment());
         fragments.add(new FavoritesFragment());

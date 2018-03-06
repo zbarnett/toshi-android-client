@@ -64,4 +64,8 @@
     <dimen name="keyboard_threshold">100dp</dimen>
 
     <dimen name="progress_height">2dp</dimen>
+
+    <dimen name="dappsInputElevation">2dp</dimen>
+    <dimen name="dappsInputZ">4dp</dimen>
+    <dimen name="dappsInputMargin">40dp</dimen>
 </resources>
