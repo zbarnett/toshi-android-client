@@ -20,65 +20,59 @@ package com.toshi.view.activity
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import com.toshi.R
-import com.toshi.extensions.startActivity
+import com.toshi.extensions.addHorizontalLineDivider
+import com.toshi.extensions.getPxSize
 import com.toshi.extensions.toast
-import com.toshi.model.network.TempDapp
-import com.toshi.view.adapter.DappAdapter
-import com.toshi.view.fragment.toplevel.TopLevelFragment
-import com.toshi.viewModel.DappViewModel
-import kotlinx.android.synthetic.main.fragment_dapps.*
+import com.toshi.view.adapter.AllDappsAdapter
+import com.toshi.viewModel.ViewAllDappsViewModel
+import kotlinx.android.synthetic.main.activity_view_dapps.*
 
-class DappFragment : Fragment(), TopLevelFragment {
+class ViewAllDappsActivity : AppCompatActivity() {
 
-    companion object {
-        private const val TAG = "DappFragment"
+    private lateinit var viewModel: ViewAllDappsViewModel
+    private lateinit var allDappsAdapter: AllDappsAdapter
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_view_dapps)
+        init()
     }
-
-    private lateinit var dappAdapter: DappAdapter
-    private lateinit var viewModel: DappViewModel
-
-    override fun getFragmentTag() = TAG
-
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater?.inflate(R.layout.fragment_dapps, container, false)
-    }
-
-    override fun onViewCreated(view: View?, inState: Bundle?) = init()
 
     private fun init() {
         initViewModel()
+        initClickListeners()
         initAdapter()
         initObservers()
     }
 
     private fun initViewModel() {
-        viewModel = ViewModelProviders.of(this.activity).get(DappViewModel::class.java)
+        viewModel = ViewModelProviders.of(this).get(ViewAllDappsViewModel::class.java)
+    }
+
+    private fun initClickListeners() {
+        closeButton.setOnClickListener { finish() }
     }
 
     private fun initAdapter() {
-        dappAdapter = DappAdapter().apply {
-            onFooterClickedListener = { startActivity<ViewAllDappsActivity>() }
-        }
+        allDappsAdapter = AllDappsAdapter()
         dapps.apply {
-            adapter = dappAdapter
+            adapter = allDappsAdapter
             layoutManager = LinearLayoutManager(context)
+            addHorizontalLineDivider(leftPadding = getPxSize(R.dimen.avatar_size_medium)
+                    + getPxSize(R.dimen.activity_horizontal_margin)
+                    + getPxSize(R.dimen.activity_horizontal_margin))
         }
     }
 
     private fun initObservers() {
         viewModel.dapps.observe(this, Observer {
-            if (it != null) setDapps(it)
+            if (it != null) allDappsAdapter.setDapps(it)
         })
         viewModel.dappsError.observe(this, Observer {
             if (it != null) toast(it)
         })
     }
-
-    private fun setDapps(dapps: List<TempDapp>) = dappAdapter.setDapps(dapps)
 }

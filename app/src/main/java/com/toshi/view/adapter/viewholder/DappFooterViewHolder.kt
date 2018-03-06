@@ -20,4 +20,6 @@ package com.toshi.view.adapter.viewholder
 import android.support.v7.widget.RecyclerView
 import android.view.View
 
-class DappFooterViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView)
+class DappFooterViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
+    fun setOnClickListener(listener: () -> Unit) = itemView.setOnClickListener { listener() }
+}

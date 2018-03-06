@@ -121,6 +121,7 @@
         <activity android:name=".view.activity.SendERC20TokenActivity" />
         <activity android:name=".view.activity.ViewERC721TokensActivity" />
         <activity android:name=".view.activity.SendETHActivity" />
+        <activity android:name=".view.activity.ViewAllDappsActivity" />
 
         <meta-data
             android:name="io.fabric.ApiKey"
