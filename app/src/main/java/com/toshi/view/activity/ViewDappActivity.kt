@@ -17,71 +17,49 @@
 
 package com.toshi.view.activity
 
-import android.os.Build
 import android.os.Bundle
+import android.support.v4.widget.NestedScrollView
 import android.support.v7.app.AppCompatActivity
 import com.toshi.R
-import com.toshi.extensions.startActivity
-import com.toshi.util.ImageUtil
-import com.toshi.view.activity.webView.JellyBeanWebViewActivity
-import com.toshi.view.activity.webView.LollipopWebViewActivity
-import kotlinx.android.synthetic.main.activity_view_dapp.*
+import com.toshi.extensions.getAbsoluteY
+import kotlinx.android.synthetic.main.activity_view_dapp.header
+import kotlinx.android.synthetic.main.activity_view_dapp.name
+import kotlinx.android.synthetic.main.activity_view_dapp.scrollView
+import kotlinx.android.synthetic.main.view_dapp_header.toolbarTitle
+import kotlinx.android.synthetic.main.view_dapp_header.view.toolbar
+import kotlinx.android.synthetic.main.view_dapp_header.view.toolbarTitle
 
 class ViewDappActivity : AppCompatActivity() {
 
-    companion object {
-        const val EXTRA__DAPP_ADDRESS = "extra_dapp_address"
-        const val EXTRA__DAPP_NAME = "extra_dapp_name"
-        const val EXTRA__DAPP_AVATAR = "extra_dapp_avatar"
-        const val EXTRA__DAPP_ABOUT = "extra_dapp_about"
-    }
-
-    public override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_view_dapp)
         init()
     }
 
     private fun init() {
-        initToolbar()
-        initClickListeners()
-        initUi()
-    }
-
-    private fun initToolbar() {
-        setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayShowTitleEnabled(false)
-    }
-
-    private fun initClickListeners() {
-        closeButton.setOnClickListener { onBackPressed() }
-        enter.setOnClickListener { startWebViewActivity() }
-    }
-
-    private fun startWebViewActivity() {
-        if (Build.VERSION.SDK_INT >= 21) {
-            startActivity<LollipopWebViewActivity> {
-                putExtra(LollipopWebViewActivity.EXTRA__ADDRESS, getAddressFromIntent())
-            }
-        } else {
-            startActivity<JellyBeanWebViewActivity> {
-                putExtra(JellyBeanWebViewActivity.EXTRA__ADDRESS, getAddressFromIntent())
-            }
+        scrollView.setOnScrollChangeListener { v: NestedScrollView?, scrollX: Int, scrollY: Int, oldScrollX: Int, oldScrollY: Int ->
+            setToolbarTitleAlpha()
+            setYOfToolbarTitle()
         }
     }
 
-    private fun initUi() {
-        toolbar.title = getNameFromIntent()
-        aboutUser.text = getAboutFromIntent()
-        address.text = getAddressFromIntent()
-        ImageUtil.load(getAvatarFromIntent(), avatar)
+    private fun setToolbarTitleAlpha() {
+        val nameTop = getAbsoluteY(name) - getStartY()
+        val minY = (header.toolbar.height / 2) - (toolbarTitle.height / 2)
+        val toolbarY = header.toolbar.height - minY
+        val alpha = 1 - nameTop.toDouble() / toolbarY.toDouble()
+        val safeAlpha = if (alpha < 0) 0.0 else if (alpha > 1) 1.0 else alpha
+        toolbarTitle.alpha = safeAlpha.toFloat()
     }
 
-    private fun getAddressFromIntent() = intent.getStringExtra(EXTRA__DAPP_ADDRESS)
+    private fun setYOfToolbarTitle() {
+        val nameTop = getAbsoluteY(name) - getStartY()
+        val toolbarTitle = header.toolbar.toolbarTitle
+        val minY = (header.toolbar.height / 2) - (toolbarTitle.height / 2)
+        if (nameTop < minY) toolbarTitle.y = minY.toFloat()
+        else toolbarTitle.y = nameTop.toFloat()
+    }
 
-    private fun getNameFromIntent() = intent.getStringExtra(ViewDappActivity.EXTRA__DAPP_NAME)
-
-    private fun getAboutFromIntent() = intent.getStringExtra(ViewDappActivity.EXTRA__DAPP_ABOUT)
-
-    private fun getAvatarFromIntent() = intent.getStringExtra(ViewDappActivity.EXTRA__DAPP_AVATAR)
+    private fun getStartY() = getAbsoluteY(header.toolbar)
 }

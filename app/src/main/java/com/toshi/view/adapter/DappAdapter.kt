@@ -40,6 +40,7 @@ class DappAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val dappsList = mutableListOf<DappListItem>()
     var onFooterClickedListener: (() -> Unit)? = null
+    var onDappClickedListener: ((TempDapp) -> Unit)? = null
 
     fun setDapps(dapps: List<TempDapp>) {
         if (dapps.isEmpty()) return
@@ -100,7 +101,10 @@ class DappAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             holder is DappFooterViewHolder && dapp is DappFooter -> {
                 holder.setOnClickListener { onFooterClickedListener?.invoke() }
             }
-            holder is DappViewHolder && dapp is TempDapp -> holder.setDapp(dapp)
+            holder is DappViewHolder && dapp is TempDapp -> {
+                holder.setDapp(dapp)
+                        .setOnClickListener(dapp) { onDappClickedListener?.invoke(it) }
+            }
             else -> LogUtil.exception(javaClass, "Invalid dapp item in this context")
         }
     }

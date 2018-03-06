@@ -24,7 +24,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
 import android.view.Menu;
 
-import com.toshi.view.activity.DappFragment;
+import com.toshi.view.fragment.toplevel.DappFragment;
 import com.toshi.view.fragment.toplevel.FavoritesFragment;
 import com.toshi.view.fragment.toplevel.MeFragment;
 import com.toshi.view.fragment.toplevel.RecentFragment;

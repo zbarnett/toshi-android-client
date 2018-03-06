@@ -15,7 +15,7 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.toshi.view.activity
+package com.toshi.view.fragment.toplevel
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
@@ -29,8 +29,9 @@ import com.toshi.R
 import com.toshi.extensions.startActivity
 import com.toshi.extensions.toast
 import com.toshi.model.network.TempDapp
+import com.toshi.view.activity.ViewAllDappsActivity
+import com.toshi.view.activity.ViewDappActivity
 import com.toshi.view.adapter.DappAdapter
-import com.toshi.view.fragment.toplevel.TopLevelFragment
 import com.toshi.viewModel.DappViewModel
 import kotlinx.android.synthetic.main.fragment_dapps.*
 
@@ -64,6 +65,7 @@ class DappFragment : Fragment(), TopLevelFragment {
     private fun initAdapter() {
         dappAdapter = DappAdapter().apply {
             onFooterClickedListener = { startActivity<ViewAllDappsActivity>() }
+            onDappClickedListener = { startActivity<ViewDappActivity>() }
         }
         dapps.apply {
             adapter = dappAdapter

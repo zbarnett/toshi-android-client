@@ -24,9 +24,15 @@ import com.toshi.model.network.TempDapp
 import kotlinx.android.synthetic.main.list_item__dapp.view.*
 
 class DappViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    fun setDapp(dapp: TempDapp) {
+    fun setDapp(dapp: TempDapp): DappViewHolder {
         itemView.name.text = dapp.name
         itemView.description.text = dapp.description
         itemView.image.setImageResource(R.drawable.placeholder)
+        return this
+    }
+
+    fun setOnClickListener(dapp: TempDapp, listener: (TempDapp) -> Unit): DappViewHolder {
+        itemView.setOnClickListener { listener(dapp) }
+        return this
     }
 }

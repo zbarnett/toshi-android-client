@@ -25,6 +25,7 @@ import android.support.annotation.StringRes
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.content.res.AppCompatResources
+import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
 
@@ -60,3 +61,9 @@ fun AppCompatActivity.getDrawableById(@DrawableRes id: Int) = AppCompatResources
 fun AppCompatActivity.hideStatusBar() = window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
 
 fun AppCompatActivity.getPxSize(@DimenRes id: Int) = resources.getDimensionPixelSize(id)
+
+fun getAbsoluteY(view: View): Int {
+    val coords = IntArray(2)
+    view.getLocationInWindow(coords)
+    return coords[1]
+}
