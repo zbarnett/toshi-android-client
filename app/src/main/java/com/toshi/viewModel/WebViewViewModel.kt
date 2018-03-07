@@ -17,15 +17,21 @@
 
 package com.toshi.viewModel
 
+import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import com.toshi.R
 import com.toshi.util.SingleLiveEvent
 import com.toshi.view.BaseApplication
 import java.net.URI
 
-class WebViewViewModel(val url: String) : ViewModel() {
+class WebViewViewModel(startUrl: String) : ViewModel() {
 
     val toolbarUpdate by lazy { SingleLiveEvent<Unit>() }
+    val url by lazy { MutableLiveData<String>() }
+
+    init {
+        url.value = startUrl
+    }
 
     fun tryGetAddress(): String {
         return try {
@@ -37,7 +43,7 @@ class WebViewViewModel(val url: String) : ViewModel() {
 
     @Throws(IllegalArgumentException::class)
     private fun getAddress(): String {
-        val uri = URI.create(url)
+        val uri = URI.create(url.value)
         return if (uri.scheme == null) "http://" + uri.toASCIIString()
         else uri.toASCIIString()
     }

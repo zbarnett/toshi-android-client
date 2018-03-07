@@ -38,7 +38,8 @@ import javax.net.ssl.SSLPeerUnverifiedException
 
 class ToshiWebClient(
         private val context: Context,
-        private val updateListener: () -> Unit
+        private val updateListener: () -> Unit,
+        private val updateUrl: (String) -> Unit
 ) : WebViewClient() {
 
     private val toshiManager by lazy { BaseApplication.get().toshiManager }
@@ -60,7 +61,11 @@ class ToshiWebClient(
                 return true
             }
         }
-        // TODO: handle API < 24 where isMainFrame is not available
+
+        /*
+         * API < 24: See handleRedirectOnOldApiVersions in interceptRequest().
+         * */
+
         return super.shouldOverrideUrlLoading(view, request)
     }
 
@@ -81,12 +86,22 @@ class ToshiWebClient(
         val request = buildRequest(webRequest)
         return try {
             val response = httpClient.newCall(request).execute()
-            if (response.priorResponse()?.isRedirect == true) null
-            else buildWebResponse(response)
+            return if (response.priorResponse()?.isRedirect == true) {
+                handleRedirectOnOldApiVersions(response)
+                null
+            } else {
+                buildWebResponse(response)
+            }
         } catch (e: SSLPeerUnverifiedException) {
             null
         } catch (e: UnknownHostException) {
             null
+        }
+    }
+
+    private fun handleRedirectOnOldApiVersions(response: Response) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+            updateUrl(response.networkResponse()?.request()?.url().toString())
         }
     }
 
@@ -103,7 +118,7 @@ class ToshiWebClient(
 
     private fun buildWebResponse(response: Response): WebResourceResponse? {
         val body = response.body()?.string() ?: ""
-        val script = loadSofaScript()
+        val script = loadInjections()
         val injectedBody = injectScripts(body, script)
         val byteStream = ByteArrayInputStream(injectedBody.toByteArray())
         val headerParser = HeaderParser()
@@ -111,6 +126,14 @@ class ToshiWebClient(
         val charset = headerParser.getCharset(contentType)
         val mimeType = headerParser.getMimeType(contentType)
         return WebResourceResponse(mimeType, charset, byteStream)
+    }
+
+    private fun loadInjections(): String {
+        return if (Build.VERSION.SDK_INT >= 24) {
+            loadSofaScript()
+        } else {
+            loadWebViewSupportInjection() + loadSofaScript()
+        }
     }
 
     private fun loadSofaScript(): String {
@@ -121,6 +144,15 @@ class ToshiWebClient(
                 "};"
         sb.append(rcpUrl)
         val stream = context.resources.openRawResource(R.raw.sofa)
+        val reader = BufferedReader(InputStreamReader(stream))
+        val text: List<String> = reader.readLines()
+        for (line in text) sb.append(line).append("\n")
+        return "<script type=\"text/javascript\">$sb</script>"
+    }
+
+    private fun loadWebViewSupportInjection(): String {
+        val sb = StringBuilder()
+        val stream = context.resources.openRawResource(R.raw.webviewsupport)
         val reader = BufferedReader(InputStreamReader(stream))
         val text: List<String> = reader.readLines()
         for (line in text) sb.append(line).append("\n")

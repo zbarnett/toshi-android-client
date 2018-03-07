@@ -19,6 +19,7 @@ package com.toshi.presenter.webview;
 
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.toshi.R;
 import com.toshi.crypto.HDWallet;
@@ -49,6 +50,7 @@ import rx.subscriptions.CompositeSubscription;
     private final HDWallet wallet;
 
     private String sofaScript;
+    private String webViewSupportScript;
 
     /**
      * Injects SOFA script into valid pages
@@ -73,7 +75,7 @@ import rx.subscriptions.CompositeSubscription;
 
     private void asyncLoadSofaScript() {
         final Subscription sub =
-                loadSofaScript()
+                loadInjections()
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
                                 this.listener::onReady,
@@ -105,33 +107,52 @@ import rx.subscriptions.CompositeSubscription;
                 .build();
     }
 
+    private Completable loadInjections() {
+        return Completable.merge(
+                loadSofaScript(),
+                loadWebViewSupportInjection()
+        );
+    }
+
     private Completable loadSofaScript() {
         final StringBuilder sb = new StringBuilder();
-        final InputStream stream = BaseApplication.get().getResources().openRawResource(R.raw.sofa);
-        final BufferedReader in = new BufferedReader(new InputStreamReader(stream));
-
         sb.append(getRcpUrlInjection());
-
         try {
+            final String script = appendFromBuffer(sb, R.raw.sofa);
+            this.sofaScript = "<script type=\"text/javascript\">" + script + "</script>\n";
+        } catch (final IOException ex) {
+            return Completable.error(ex);
+        }
+        return Completable.complete();
+    }
+
+    private Completable loadWebViewSupportInjection() {
+        final StringBuilder sb = new StringBuilder();
+        try {
+            final String script = appendFromBuffer(sb, R.raw.webviewsupport);
+            this.webViewSupportScript = "<script type=\"text/javascript\">" + script + "</script>\n";
+        } catch (final IOException ex) {
+            return Completable.error(ex);
+        }
+        return Completable.complete();
+    }
+
+    @NonNull
+    private BufferedReader getBufferedReaderForResource(int resourceId) {
+        final InputStream stream = BaseApplication.get().getResources().openRawResource(resourceId);
+        return new BufferedReader(new InputStreamReader(stream));
+    }
+
+    @NonNull
+    private String appendFromBuffer(StringBuilder sb, int resourceId) throws IOException {
+        try (BufferedReader in = getBufferedReaderForResource(resourceId)) {
             String str;
             while ((str = in.readLine()) != null) {
                 sb.append(str);
                 sb.append("\n");
             }
-        } catch (final IOException ex) {
-            return Completable.error(ex);
-        } finally {
-            try {
-                in.close();
-            } catch (final IOException ex) {
-                // Return in a finally statement. We failed anyway.
-                return Completable.error(ex);
-            }
         }
-
-        this.sofaScript = "<script type=\"text/javascript\">" + sb.toString() + "</script>\n";
-
-        return Completable.complete();
+        return sb.toString();
     }
 
     private String getRcpUrlInjection() {
@@ -145,7 +166,8 @@ import rx.subscriptions.CompositeSubscription;
         if (position == -1) return body;
         final String beforeTag = body.substring(0, position);
         final String afterTab = body.substring(position);
-        return beforeTag + this.sofaScript + afterTab;
+        String supportLib = this.webViewSupportScript != null ? this.webViewSupportScript : "";
+        return beforeTag + supportLib + this.sofaScript + afterTab;
     }
 
     private int getInjectionPosition(final String body) {

@@ -158,6 +158,9 @@ public class LicenseListPresenter implements Presenter<LicenseListActivity> {
         final Library roundedImageView = new Library()
                 .setName("RoundedImageView")
                 .setLicence(this.activity.getString(R.string.apache_v2_license));
+        final Library babel = new Library()
+                .setName("Babel")
+                .setLicence(this.activity.getString(R.string.mit_license));
 
         final List<Library> libraries = new ArrayList<>();
         libraries.add(retrofit);
@@ -191,6 +194,7 @@ public class LicenseListPresenter implements Presenter<LicenseListActivity> {
         libraries.add(flexboxLayout);
         libraries.add(emojiJava);
         libraries.add(roundedImageView);
+        libraries.add(babel);
 
         final LibraryAdapter adapter = (LibraryAdapter) this.activity.getBinding().libraryList.getAdapter();
         adapter.setLibraries(libraries);

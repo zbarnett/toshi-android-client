@@ -109,7 +109,11 @@ class LollipopWebViewActivity : AppCompatActivity() {
         val address = viewModel.tryGetAddress()
         sofaHostWrapper = SofaHostWrapper(this, webview, address)
         webview.addJavascriptInterface(sofaHostWrapper.sofaHost, "SOFAHost")
-        webview.webViewClient = ToshiWebClient(this, { viewModel.updateToolbar() })
+        webview.webViewClient = ToshiWebClient(
+                this,
+                { viewModel.updateToolbar() },
+                { url -> viewModel.url.postValue(url) }
+        )
         val chromeWebClient = ToshiChromeWebViewClient { valueCallback, _ -> handleFileChooserCallback(valueCallback) }
         chromeWebClient.progressListener = { progressBar.setProgress(it) }
         webview.webChromeClient = chromeWebClient
@@ -117,6 +121,7 @@ class LollipopWebViewActivity : AppCompatActivity() {
 
     private fun initObservers() {
         viewModel.toolbarUpdate.observe(this, Observer { updateToolbar() })
+        viewModel.url.observe(this, Observer { load() })
     }
 
     private fun updateToolbar() {
