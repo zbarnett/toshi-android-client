@@ -24,6 +24,7 @@ import android.support.v4.widget.NestedScrollView
 import android.support.v7.app.AppCompatActivity
 import com.toshi.R
 import com.toshi.extensions.getAbsoluteY
+import com.toshi.extensions.openWebView
 import com.toshi.extensions.toast
 import com.toshi.model.network.dapp.DappResult
 import com.toshi.util.ImageUtil
@@ -34,6 +35,7 @@ import kotlinx.android.synthetic.main.activity_view_dapp.dappAvatar
 import kotlinx.android.synthetic.main.activity_view_dapp.description
 import kotlinx.android.synthetic.main.activity_view_dapp.header
 import kotlinx.android.synthetic.main.activity_view_dapp.name
+import kotlinx.android.synthetic.main.activity_view_dapp.openBtn
 import kotlinx.android.synthetic.main.activity_view_dapp.scrollView
 import kotlinx.android.synthetic.main.activity_view_dapp.url
 import kotlinx.android.synthetic.main.view_dapp_header.toolbarTitle
@@ -70,11 +72,18 @@ class ViewDappActivity : AppCompatActivity() {
     }
 
     private fun initListeners() {
+        openBtn.setOnClickListener { openWebViewActivity() }
         header.closeButton.setOnClickListener { finish() }
         scrollView.setOnScrollChangeListener { _: NestedScrollView?, _: Int, _: Int, _: Int, _: Int ->
             setToolbarTitleAlpha()
             setYOfToolbarTitle()
         }
+    }
+
+    private fun openWebViewActivity() {
+        val address = viewModel.dapp.value?.dapp?.url
+        if (address != null) openWebView(address)
+        else toast(R.string.unable_to_open_dapp)
     }
 
     private fun setToolbarTitleAlpha() {

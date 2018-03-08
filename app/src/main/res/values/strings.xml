@@ -373,4 +373,5 @@
     <string name="other">Other</string>
     <string name="all_dapps">All Ðapps</string>
     <string name="error_fetching_dapp">Error fetching dapp</string>
+    <string name="unable_to_open_dapp">Unable to open dapp</string>
 </resources>
