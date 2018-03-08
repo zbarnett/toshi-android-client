@@ -53,3 +53,7 @@ fun View.getPxSize(@DimenRes id: Int) = resources.getDimensionPixelSize(id)
 fun View.getColorById(@ColorRes id: Int) = ContextCompat.getColor(context, id)
 
 fun View.getString(@StringRes id: Int): String = context.getString(id)
+
+fun View.addPadding(left: Int = 0, top: Int = 0, right: Int, bottom: Int = 0) {
+    setPadding(left, top, right, bottom)
+}

@@ -25,9 +25,17 @@ import android.support.v4.graphics.ColorUtils
 import android.util.AttributeSet
 import android.widget.LinearLayout
 import com.toshi.R
+import com.toshi.extensions.addPadding
 import com.toshi.extensions.getColorById
 import com.toshi.extensions.getPxSize
-import kotlinx.android.synthetic.main.view_collapsing_toshi.view.*
+import com.toshi.extensions.isVisible
+import com.toshi.view.adapter.listeners.TextChangedListener
+import kotlinx.android.synthetic.main.view_collapsing_toshi.view.closeButton
+import kotlinx.android.synthetic.main.view_collapsing_toshi.view.input
+import kotlinx.android.synthetic.main.view_collapsing_toshi.view.inputWrapper
+import kotlinx.android.synthetic.main.view_collapsing_toshi.view.toshiIcon
+import kotlinx.android.synthetic.main.view_collapsing_toshi.view.toshiText
+import kotlinx.android.synthetic.main.view_collapsing_toshi.view.wrapper
 
 class CollapsingToshiView : AppBarLayout {
 
@@ -36,6 +44,10 @@ class CollapsingToshiView : AppBarLayout {
     private val inputZ by lazy { getPxSize(R.dimen.dappsInputZ) }
     private val inputMargin by lazy { getPxSize(R.dimen.dappsInputMargin) }
     private var prevOffset = -1
+
+    var onTextChangedListener: ((String) -> Unit)? = null
+    var onHeaderCollapsed: (() -> Unit)? = null
+    var onHeaderExpanded: (() -> Unit)? = null
 
     constructor(context: Context): super(context) {
         init()
@@ -51,10 +63,36 @@ class CollapsingToshiView : AppBarLayout {
     }
 
     private fun initListeners() {
-        input.setOnClickListener { setExpanded(false, true) }
+        closeButton.setOnClickListener { expandClearInputAndHideCloseButton() }
+        input.setOnFocusChangeListener { _, hasFocus -> if (hasFocus) collapse() }
+        input.setOnClickListener { if (it.hasFocus()) collapse() }
         addOnOffsetChangedListener { appBarLayout, verticalOffset ->
             updateView(verticalOffset, appBarLayout)
         }
+        input.addTextChangedListener(object : TextChangedListener() {
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                onTextChangedListener?.invoke(s.toString())
+            }
+        })
+    }
+
+    private fun expandClearInputAndHideCloseButton() {
+        setExpanded(true, true)
+        input.setText("")
+        closeButton.isVisible(false)
+        input.addPadding(left = input.paddingRight, right = input.paddingRight)
+        onHeaderExpanded?.invoke()
+    }
+
+    private fun collapse() {
+        collapseAndShowCloseButton()
+        onHeaderCollapsed?.invoke()
+    }
+
+    private fun collapseAndShowCloseButton() {
+        setExpanded(false, true)
+        closeButton.isVisible(true)
+        input.addPadding(left = 0, right = input.paddingRight)
     }
 
     private fun updateView(verticalOffset: Int, appBarLayout: AppBarLayout) {
@@ -67,29 +105,29 @@ class CollapsingToshiView : AppBarLayout {
             return
         }
         val percentage = absVerticalOffset / scrollRange
-        updateAlphaValues(percentage)
-        updateInputMargins(percentage)
-        updateAlphaBackgroundColor(percentage)
+        updateOpacity(percentage)
+        updateInpuWrappertMargins(percentage)
+        updateBackgroundColorOpacity(percentage)
         updateElevation(percentage)
     }
 
-    private fun updateAlphaValues(percentage: Float) {
+    private fun updateOpacity(percentage: Float) {
         val scale = 2.3f
         val newAlpha = 1 - (percentage * scale)
         toshiIcon.alpha = newAlpha
         toshiText.alpha = newAlpha
     }
 
-    private fun updateInputMargins(percentage: Float) {
-        val lp = input.layoutParams as LinearLayout.LayoutParams
+    private fun updateInpuWrappertMargins(percentage: Float) {
+        val lp = inputWrapper.layoutParams as LinearLayout.LayoutParams
         val newMargin = (inputMargin * (1 - percentage)).toInt()
         lp.leftMargin = newMargin
         lp.rightMargin = newMargin
         lp.bottomMargin = newMargin
-        input.layoutParams = lp
+        inputWrapper.layoutParams = lp
     }
 
-    private fun updateAlphaBackgroundColor(percentage: Float) {
+    private fun updateBackgroundColorOpacity(percentage: Float) {
         val alpha = ((1 - percentage) * 255).toInt()
         val safeAlpha = if (alpha > 255) 255 else if (alpha < 0) 0 else alpha
         val color = ColorUtils.setAlphaComponent(backgroundColor, safeAlpha)
@@ -100,7 +138,7 @@ class CollapsingToshiView : AppBarLayout {
     private fun updateElevation(percentage: Float) {
         val newElevation = (inputElevation * (1 - percentage))
         val newZ = (inputZ * (1 - percentage))
-        input.elevation = newElevation
-        input.translationZ = newZ
+        inputWrapper.elevation = newElevation
+        inputWrapper.translationZ = newZ
     }
 }

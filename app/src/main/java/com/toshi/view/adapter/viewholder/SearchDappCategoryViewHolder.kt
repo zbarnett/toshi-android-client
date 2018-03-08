@@ -15,8 +15,16 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.toshi.model.local.dapp
+package com.toshi.view.adapter.viewholder
 
-open class DappCategory(
-        open val category: String
-) : DappListItem()
+import android.support.v7.widget.RecyclerView
+import android.view.View
+import android.widget.TextView
+import com.toshi.model.local.dapp.DappCategory
+
+class SearchDappCategoryViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
+    fun setCategory(category: DappCategory) {
+        val view = itemView as TextView
+        view.text = category.category
+    }
+}

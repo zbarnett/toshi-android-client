@@ -17,6 +17,9 @@
 
 package com.toshi.model.local.dapp
 
-open class DappCategory(
-        open val category: String
-) : DappListItem()
+import com.toshi.R
+import com.toshi.view.BaseApplication
+
+data class DappUrlSearchCategory(
+        override val category: String = BaseApplication.get().getString(R.string.go_to)
+) : DappCategory(category)

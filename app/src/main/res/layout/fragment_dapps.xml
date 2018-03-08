@@ -23,7 +23,7 @@
     android:layout_height="match_parent">
 
     <com.toshi.view.custom.CollapsingToshiView
-        android:id="@+id/toshiView"
+        android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/windowBackground"/>
@@ -32,6 +32,14 @@
         android:id="@+id/dapps"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:visibility="gone"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/searchDapps"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
 </android.support.design.widget.CoordinatorLayout>

@@ -17,6 +17,6 @@
 
 package com.toshi.model.local.dapp
 
-open class DappCategory(
-        open val category: String
+data class DappUrl(
+        val url: String
 ) : DappListItem()

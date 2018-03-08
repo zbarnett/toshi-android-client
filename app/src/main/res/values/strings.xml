@@ -362,9 +362,12 @@
     <string name="wallet_address_dialog_message">Share your public wallet address to receive Ether and tokens.</string>
     <string name="share">Share</string>
     <string name="transaction_submitted">Transaction submitted</string>
-    <string name="error_fetching_dapps">Unable to launch web app</string>
+    <string name="error_fetching_dapps">Unable to fetch dapps</string>
     <string name="see_more">See more</string>
     <string name="dapp_search_hint">Search or enter Ðapps URL</string>
     <string name="dapp_title">Explore the decentralized web.</string>
     <string name="see_all_dapps">See all Ðapps</string>
+    <string name="dapps" translatable="false">Ðapps</string>
+    <string name="search_with_google">Search with google</string>
+    <string name="go_to">Go to</string>
 </resources>

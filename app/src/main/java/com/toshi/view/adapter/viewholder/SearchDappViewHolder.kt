@@ -15,8 +15,18 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.toshi.model.local.dapp
+package com.toshi.view.adapter.viewholder
 
-open class DappCategory(
-        open val category: String
-) : DappListItem()
+import android.support.v7.widget.RecyclerView
+import android.view.View
+import com.toshi.R
+import com.toshi.model.network.TempDapp
+import kotlinx.android.synthetic.main.list_item__dapp_search.view.*
+
+class SearchDappViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
+    fun setDapp(dapp: TempDapp) {
+        itemView.name.text = dapp.name
+        itemView.url.text = dapp.description
+        itemView.image.setImageResource(R.drawable.placeholder)
+    }
+}

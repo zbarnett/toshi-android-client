@@ -31,6 +31,8 @@
         android:orientation="vertical"
         android:background="@color/colorPrimary"
         android:minHeight="56dp"
+        android:descendantFocusability="beforeDescendants"
+        android:focusableInTouchMode="true"
         app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
         <ImageView
@@ -52,18 +54,37 @@
             android:textColor="@color/contrastBackgroundColor"
             android:text="@string/dapp_title"/>
 
-        <EditText
-            android:id="@+id/input"
+        <LinearLayout
+            android:id="@+id/inputWrapper"
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:layout_marginLeft="@dimen/dappsInputMargin"
             android:layout_marginRight="@dimen/dappsInputMargin"
             android:layout_marginBottom="@dimen/dappsInputMargin"
             android:background="@drawable/background_with_small_radius"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
             android:translationZ="@dimen/dappsInputZ"
-            android:elevation="@dimen/dappsInputElevation"
-            android:hint="@string/dapp_search_hint" />
+            android:elevation="@dimen/dappsInputElevation">
+
+            <ImageButton
+                android:id="@+id/closeButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scaleType="fitCenter"
+                android:tint="@color/textColorSecondary"
+                app:srcCompat="@drawable/ic_arrow_back"
+                style="@style/closeButtonStyle"
+                android:visibility="gone"/>
+
+            <EditText
+                android:id="@+id/input"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:background="@null"
+                android:singleLine="true"
+                android:hint="@string/dapp_search_hint" />
+
+        </LinearLayout>
     </LinearLayout>
 </merge>

@@ -38,7 +38,7 @@ class ViewDappActivity : AppCompatActivity() {
     }
 
     private fun init() {
-        scrollView.setOnScrollChangeListener { v: NestedScrollView?, scrollX: Int, scrollY: Int, oldScrollX: Int, oldScrollY: Int ->
+        scrollView.setOnScrollChangeListener { _: NestedScrollView?, _: Int, _: Int, _: Int, _: Int ->
             setToolbarTitleAlpha()
             setYOfToolbarTitle()
         }

@@ -25,16 +25,22 @@ import com.toshi.util.SingleLiveEvent
 import rx.Single
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
+import rx.subjects.PublishSubject
 import rx.subscriptions.CompositeSubscription
+import java.util.concurrent.TimeUnit
 
 class DappViewModel : ViewModel() {
 
     private val subscriptions by lazy { CompositeSubscription() }
+    private val searchSubject by lazy { PublishSubject.create<String>() }
+
     val dapps by lazy { MutableLiveData<List<TempDapp>>() }
+    val searchResult by lazy { MutableLiveData<List<TempDapp>>() }
     val dappsError by lazy { SingleLiveEvent<Int>() }
 
     init {
         getDapps()
+        initSearchListener()
     }
 
     private fun getDapps() {
@@ -63,6 +69,34 @@ class DappViewModel : ViewModel() {
                 )
 
         subscriptions.add(sub)
+    }
+
+    fun search(input: String) = searchSubject.onNext(input)
+
+    private fun initSearchListener() {
+        val sub = searchSubject
+                .debounce(500, TimeUnit.MILLISECONDS)
+                .flatMap { searchForDapps(it).toObservable() }
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        { searchResult.value = it },
+                        { dappsError.value = R.string.error_fetching_dapps }
+                )
+
+        subscriptions.add(sub)
+    }
+
+    private fun searchForDapps(input: String): Single<List<TempDapp>> {
+        return Single.just(listOf(
+                TempDapp("Games", "CryptCS", "Counter Strike"),
+                TempDapp("Exchanges", "CryptoRobinHood", "RobinHood"),
+                TempDapp("Entertainment", "CryptoTheatre", "Theatre"),
+                TempDapp("Other", "CryptoDrinking", "Drinking"),
+                TempDapp("Games", "CryptoDigimon", "Digimon"),
+                TempDapp("Exchanges", "CryptoMoney", "Money")
+        ))
+        .map { it.sortedBy { it.name } }
     }
 
     override fun onCleared() {

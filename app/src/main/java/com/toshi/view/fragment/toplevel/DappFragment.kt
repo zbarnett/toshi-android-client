@@ -26,14 +26,23 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.toshi.R
+import com.toshi.extensions.isVisible
+import com.toshi.extensions.isWebUrl
+import com.toshi.extensions.openWebView
 import com.toshi.extensions.startActivity
 import com.toshi.extensions.toast
+import com.toshi.model.local.dapp.DappCategory
 import com.toshi.model.network.TempDapp
 import com.toshi.view.activity.ViewAllDappsActivity
 import com.toshi.view.activity.ViewDappActivity
 import com.toshi.view.adapter.DappAdapter
+import com.toshi.view.adapter.SearchDappAdapter
 import com.toshi.viewModel.DappViewModel
-import kotlinx.android.synthetic.main.fragment_dapps.*
+import kotlinx.android.synthetic.main.fragment_dapps.dapps
+import kotlinx.android.synthetic.main.fragment_dapps.header
+import kotlinx.android.synthetic.main.fragment_dapps.searchDapps
+import kotlinx.android.synthetic.main.view_collapsing_toshi.input
+import kotlinx.android.synthetic.main.view_collapsing_toshi.view.input
 
 class DappFragment : Fragment(), TopLevelFragment {
 
@@ -41,8 +50,9 @@ class DappFragment : Fragment(), TopLevelFragment {
         private const val TAG = "DappFragment"
     }
 
-    private lateinit var dappAdapter: DappAdapter
     private lateinit var viewModel: DappViewModel
+    private lateinit var dappAdapter: DappAdapter
+    private lateinit var searchDappAdapter: SearchDappAdapter
 
     override fun getFragmentTag() = TAG
 
@@ -54,7 +64,9 @@ class DappFragment : Fragment(), TopLevelFragment {
 
     private fun init() {
         initViewModel()
-        initAdapter()
+        initAdapters()
+        setRecyclerViewVisibility()
+        initListeners()
         initObservers()
     }
 
@@ -62,15 +74,73 @@ class DappFragment : Fragment(), TopLevelFragment {
         viewModel = ViewModelProviders.of(this.activity).get(DappViewModel::class.java)
     }
 
-    private fun initAdapter() {
+    private fun initAdapters() {
+        initBrowseAdapter()
+        initSearchAdapter()
+    }
+
+    private fun initBrowseAdapter() {
         dappAdapter = DappAdapter().apply {
-            onFooterClickedListener = { startActivity<ViewAllDappsActivity>() }
             onDappClickedListener = { startActivity<ViewDappActivity>() }
+            onFooterClickedListener = { startActivity<ViewAllDappsActivity>() }
         }
         dapps.apply {
             adapter = dappAdapter
             layoutManager = LinearLayoutManager(context)
         }
+    }
+
+    private fun initSearchAdapter() {
+        searchDappAdapter = SearchDappAdapter().apply {
+            onSearchClickListener = { openBrowserAndSearchGoogle(it) }
+            onGoToClickListener = { openWebView(it) }
+        }
+        searchDapps.apply {
+            adapter = searchDappAdapter
+            layoutManager = LinearLayoutManager(context)
+            itemAnimator = null
+        }
+    }
+
+    private fun openBrowserAndSearchGoogle(searchValue: String) {
+        val address = "https://www.google.com/search?q=$searchValue"
+        openWebView(address)
+    }
+
+    private fun setRecyclerViewVisibility() {
+        if (header.input.text.isEmpty()) showBrowseUI()
+        else showSearchUI(header.input.text.toString())
+    }
+
+    private fun initListeners() {
+        header.onTextChangedListener = { showSearchUI(it) }
+        header.onHeaderCollapsed = { showSearchUI(input.text.toString()) }
+        header.onHeaderExpanded = { showBrowseUI() }
+    }
+
+    private fun showBrowseUI() {
+        dapps.isVisible(true)
+        searchDapps.isVisible(false)
+    }
+
+    private fun showSearchUI(input: String) {
+        searchDapps.isVisible(true)
+        dapps.isVisible(false)
+        if (input.isEmpty()) setSearchEmptyState()
+        else search(input)
+    }
+
+    private fun setSearchEmptyState() {
+        val dapps = viewModel.dapps.value
+        val category = DappCategory(getString(R.string.dapps))
+        if (dapps != null) searchDappAdapter.setEmptyState(dapps, category)
+    }
+
+    private fun search(input: String) {
+        viewModel.search(input)
+        searchDappAdapter.addGoogleSearchItems(input)
+        if (isWebUrl(input)) searchDappAdapter.addWebUrlItems(input)
+        else searchDappAdapter.removeWebUrl()
     }
 
     private fun initObservers() {
@@ -80,7 +150,15 @@ class DappFragment : Fragment(), TopLevelFragment {
         viewModel.dappsError.observe(this, Observer {
             if (it != null) toast(it)
         })
+        viewModel.searchResult.observe(this, Observer {
+            if (it != null && input.text.isNotEmpty()) setSearchResult(it)
+        })
     }
 
     private fun setDapps(dapps: List<TempDapp>) = dappAdapter.setDapps(dapps)
+
+    private fun setSearchResult(dapps: List<TempDapp>) {
+        val dappsCategory = DappCategory(getString(R.string.dapps))
+        searchDappAdapter.setDapps(dapps, dappsCategory)
+    }
 }
