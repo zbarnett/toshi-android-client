@@ -46,7 +46,33 @@ import com.toshi.util.LogUtil
 import com.toshi.util.PaymentType
 import com.toshi.view.fragment.DialogFragment.PaymentConfirmationType
 import com.toshi.viewModel.PaymentConfirmationViewModel
-import kotlinx.android.synthetic.main.fragment_payment_confirmation.*
+import kotlinx.android.synthetic.main.fragment_payment_confirmation.ERC20Amount
+import kotlinx.android.synthetic.main.fragment_payment_confirmation.ERC20GasPrice
+import kotlinx.android.synthetic.main.fragment_payment_confirmation.ERC20GasPriceFiat
+import kotlinx.android.synthetic.main.fragment_payment_confirmation.ERC20PaymentInfoWrapper
+import kotlinx.android.synthetic.main.fragment_payment_confirmation.amount
+import kotlinx.android.synthetic.main.fragment_payment_confirmation.avatar
+import kotlinx.android.synthetic.main.fragment_payment_confirmation.closeButton
+import kotlinx.android.synthetic.main.fragment_payment_confirmation.convertedAmount
+import kotlinx.android.synthetic.main.fragment_payment_confirmation.convertedGasPrice
+import kotlinx.android.synthetic.main.fragment_payment_confirmation.convertedTotal
+import kotlinx.android.synthetic.main.fragment_payment_confirmation.dappFavicon
+import kotlinx.android.synthetic.main.fragment_payment_confirmation.dappHeader
+import kotlinx.android.synthetic.main.fragment_payment_confirmation.dappUrl
+import kotlinx.android.synthetic.main.fragment_payment_confirmation.dappWrapper
+import kotlinx.android.synthetic.main.fragment_payment_confirmation.displayName
+import kotlinx.android.synthetic.main.fragment_payment_confirmation.ethPaymentInfoWrapper
+import kotlinx.android.synthetic.main.fragment_payment_confirmation.externalAddress
+import kotlinx.android.synthetic.main.fragment_payment_confirmation.externalWrapper
+import kotlinx.android.synthetic.main.fragment_payment_confirmation.gasPrice
+import kotlinx.android.synthetic.main.fragment_payment_confirmation.loadingOverlay
+import kotlinx.android.synthetic.main.fragment_payment_confirmation.loadingSpinner
+import kotlinx.android.synthetic.main.fragment_payment_confirmation.pay
+import kotlinx.android.synthetic.main.fragment_payment_confirmation.recipientWrapper
+import kotlinx.android.synthetic.main.fragment_payment_confirmation.statusMessage
+import kotlinx.android.synthetic.main.fragment_payment_confirmation.successfulState
+import kotlinx.android.synthetic.main.fragment_payment_confirmation.toolbarTitle
+import kotlinx.android.synthetic.main.fragment_payment_confirmation.total
 
 class PaymentConfirmationFragment : BottomSheetDialogFragment() {
 
@@ -66,13 +92,10 @@ class PaymentConfirmationFragment : BottomSheetDialogFragment() {
     }
 
     private fun setHeight() {
-        val confirmationType = arguments.getInt(CONFIRMATION_TYPE)
-        val isW3Payment = confirmationType == PaymentConfirmationType.WEB
-        if (isW3Payment) return // Only set max height if the payment isn't a w3 payment
-
         dialog?.let {
             val bottomSheet = dialog.findViewById<View>(R.id.design_bottom_sheet)
-            bottomSheet.layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
+            bottomSheet.layoutParams.height = if (isW3Payment()) ViewGroup.LayoutParams.WRAP_CONTENT
+            else ViewGroup.LayoutParams.MATCH_PARENT
         }
 
         view?.post {
@@ -170,6 +193,7 @@ class PaymentConfirmationFragment : BottomSheetDialogFragment() {
         renderRecipientInfo(paymentTask)
         renderPaymentInfo(paymentTask)
         compareTotalAmountAndBalance()
+        if (isW3Payment()) setHeight() //Update the top position of dialog
     }
 
     private fun renderRecipientInfo(paymentTask: PaymentTask) {
@@ -439,6 +463,11 @@ class PaymentConfirmationFragment : BottomSheetDialogFragment() {
             fragment.arguments = bundle
             return fragment
         }
+    }
+
+    private fun isW3Payment(): Boolean {
+        val confirmationType = arguments.getInt(CONFIRMATION_TYPE)
+        return confirmationType == PaymentConfirmationType.WEB
     }
 
     override fun onDismiss(dialog: DialogInterface?) {
