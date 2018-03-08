@@ -19,19 +19,28 @@ package com.toshi.view.adapter.viewholder
 
 import android.support.v7.widget.RecyclerView
 import android.view.View
+import android.widget.ImageView
 import com.toshi.R
-import com.toshi.model.network.TempDapp
-import kotlinx.android.synthetic.main.list_item__dapp.view.*
+import com.toshi.model.network.dapp.Dapp
+import com.toshi.util.ImageUtil
+import kotlinx.android.synthetic.main.list_item__dapp.view.description
+import kotlinx.android.synthetic.main.list_item__dapp.view.image
+import kotlinx.android.synthetic.main.list_item__dapp.view.name
 
 class DappViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    fun setDapp(dapp: TempDapp): DappViewHolder {
+    fun setDapp(dapp: Dapp): DappViewHolder {
         itemView.name.text = dapp.name
         itemView.description.text = dapp.description
-        itemView.image.setImageResource(R.drawable.placeholder)
+        loadImage(itemView.image, dapp.icon)
         return this
     }
 
-    fun setOnClickListener(dapp: TempDapp, listener: (TempDapp) -> Unit): DappViewHolder {
+    private fun loadImage(imageView: ImageView, icon: String?) {
+        if (icon != null) ImageUtil.load(icon, imageView)
+        else imageView.setImageResource(R.drawable.placeholder)
+    }
+
+    fun setOnClickListener(dapp: Dapp, listener: (Dapp) -> Unit): DappViewHolder {
         itemView.setOnClickListener { listener(dapp) }
         return this
     }

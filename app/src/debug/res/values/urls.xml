@@ -17,7 +17,7 @@
 
 <resources>
     <string name="chat_url">https://chat.internal.service.toshi.org</string>
-    <string name="directory_url">https://identity.internal.service.toshi.org</string>
+    <string name="directory_url">https://directory.internal.service.toshi.org</string>
     <string name="id_url">https://identity.internal.service.toshi.org</string>
     <string name="rep_url">https://reputation.internal.service.toshi.org</string>
     <string name="currency_url">https://exchange.internal.service.toshi.org</string>

@@ -27,7 +27,7 @@ import com.toshi.model.local.dapp.DappGoogleSearchCategory
 import com.toshi.model.local.dapp.DappListItem
 import com.toshi.model.local.dapp.DappUrl
 import com.toshi.model.local.dapp.DappUrlSearchCategory
-import com.toshi.model.network.TempDapp
+import com.toshi.model.network.dapp.Dapp
 import com.toshi.util.LogUtil
 import com.toshi.view.adapter.viewholder.DappUrlViewHolder
 import com.toshi.view.adapter.viewholder.SearchDappCategoryViewHolder
@@ -52,14 +52,14 @@ class SearchDappAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var onSearchClickListener: ((String) -> Unit)? = null
     var onGoToClickListener: ((String) -> Unit)? = null
 
-    fun setEmptyState(dapps: List<TempDapp>, dappsCategory: DappCategory) {
+    fun setEmptyState(dapps: List<Dapp>, dappsCategory: DappCategory) {
         this.dapps.clear()
         this.dapps.add(dappsCategory)
         this.dapps.addAll(dapps)
         notifyDataSetChanged()
     }
 
-    fun setDapps(dapps: List<TempDapp>, dappsCategory: DappCategory) {
+    fun setDapps(dapps: List<Dapp>, dappsCategory: DappCategory) {
         this.dapps.removeAll { removeItem(it) }
         this.dapps.add(dappsCategory)
         this.dapps.addAll(dapps)
@@ -185,7 +185,7 @@ class SearchDappAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder?, position: Int) {
         val dapp = dapps[position]
         when {
-            holder is SearchDappViewHolder && dapp is TempDapp -> holder.setDapp(dapp)
+            holder is SearchDappViewHolder && dapp is Dapp -> holder.setDapp(dapp)
             holder is SearchDappCategoryViewHolder && dapp is DappCategory -> holder.setCategory(dapp)
             holder is DappUrlViewHolder && dapp is DappGoogleSearch -> {
                 holder.setGoogleSearchItem(dapp)

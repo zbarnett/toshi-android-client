@@ -15,18 +15,9 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.toshi.view.adapter.viewholder
+package com.toshi.model.network.dapp
 
-import android.support.v7.widget.RecyclerView
-import android.view.View
-import com.toshi.R
-import com.toshi.model.network.dapp.Dapp
-import kotlinx.android.synthetic.main.list_item__dapp_search.view.*
-
-class SearchDappViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
-    fun setDapp(dapp: Dapp) {
-        itemView.name.text = dapp.name
-        itemView.url.text = dapp.description
-        itemView.image.setImageResource(R.drawable.placeholder)
-    }
-}
+data class DappSections(
+        val sections: List<DappSection> = emptyList(),
+        val categories: Map<Int, String> = emptyMap()
+)

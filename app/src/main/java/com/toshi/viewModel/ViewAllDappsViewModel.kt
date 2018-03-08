@@ -20,7 +20,7 @@ package com.toshi.viewModel
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import com.toshi.R
-import com.toshi.model.network.TempDapp
+import com.toshi.model.network.dapp.Dapp
 import com.toshi.util.SingleLiveEvent
 import rx.Single
 import rx.android.schedulers.AndroidSchedulers
@@ -30,7 +30,7 @@ import rx.subscriptions.CompositeSubscription
 class ViewAllDappsViewModel : ViewModel() {
 
     private val subscriptions by lazy { CompositeSubscription() }
-    val dapps by lazy { MutableLiveData<List<TempDapp>>() }
+    val dapps by lazy { MutableLiveData<List<Dapp>>() }
     val dappsError by lazy { SingleLiveEvent<Int>() }
 
     init {
@@ -38,13 +38,7 @@ class ViewAllDappsViewModel : ViewModel() {
     }
 
     private fun getDapps() {
-        val sub = Single.just(listOf(
-                TempDapp("Games", "CryptoTanks", "Tanks"),
-                TempDapp("Games", "CryptoPokemon", "Pokemon"),
-                TempDapp("Games", "CryptCS", "Counter Strike"),
-                TempDapp("Games", "CryptoDigimon", "Digimon")
-        ))
-                .map { it.sortedBy { it.category } }
+        val sub = Single.just(emptyList<Dapp>())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

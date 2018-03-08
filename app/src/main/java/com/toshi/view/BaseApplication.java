@@ -26,6 +26,7 @@ import android.content.IntentFilter;
 import android.support.multidex.MultiDexApplication;
 
 import com.toshi.manager.BalanceManager;
+import com.toshi.manager.DappManager;
 import com.toshi.manager.RecipientManager;
 import com.toshi.manager.ReputationManager;
 import com.toshi.manager.SofaMessageManager;
@@ -136,5 +137,9 @@ public final class BaseApplication extends MultiDexApplication implements Lifecy
 
     public final ReputationManager getReputationManager() {
         return this.toshiManager.getReputationManager();
+    }
+
+    public final DappManager getDappManager() {
+        return this.toshiManager.getDappManager();
     }
 }

@@ -370,4 +370,5 @@
     <string name="dapps" translatable="false">Ðapps</string>
     <string name="search_with_google">Search with google</string>
     <string name="go_to">Go to</string>
+    <string name="other">Other</string>
 </resources>

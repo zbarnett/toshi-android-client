@@ -53,6 +53,7 @@ public class ToshiManager {
     private UserManager userManager;
     private RecipientManager recipientManager;
     private ReputationManager reputationManager;
+    private DappManager dappManager;
     private ExecutorService singleExecutor;
     private boolean areManagersInitialised = false;
     private RealmConfiguration realmConfig;
@@ -65,6 +66,7 @@ public class ToshiManager {
         this.sofaMessageManager = new SofaMessageManager();
         this.transactionManager = new TransactionManager();
         this.recipientManager = new RecipientManager();
+        this.dappManager = new DappManager();
         this.walletSubject.onNext(null);
 
         tryInit()
@@ -190,6 +192,10 @@ public class ToshiManager {
 
     public final ReputationManager getReputationManager() {
         return this.reputationManager;
+    }
+
+    public final DappManager getDappManager() {
+        return this.dappManager;
     }
 
     public Single<HDWallet> getWallet() {

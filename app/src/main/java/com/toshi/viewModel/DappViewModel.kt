@@ -20,8 +20,10 @@ package com.toshi.viewModel
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import com.toshi.R
-import com.toshi.model.network.TempDapp
+import com.toshi.model.network.dapp.Dapp
+import com.toshi.model.network.dapp.DappSections
 import com.toshi.util.SingleLiveEvent
+import com.toshi.view.BaseApplication
 import rx.Single
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
@@ -31,12 +33,13 @@ import java.util.concurrent.TimeUnit
 
 class DappViewModel : ViewModel() {
 
+    private val dappManager by lazy { BaseApplication.get().dappManager }
     private val subscriptions by lazy { CompositeSubscription() }
     private val searchSubject by lazy { PublishSubject.create<String>() }
 
-    val dapps by lazy { MutableLiveData<List<TempDapp>>() }
-    val searchResult by lazy { MutableLiveData<List<TempDapp>>() }
+    val searchResult by lazy { MutableLiveData<List<Dapp>>() }
     val dappsError by lazy { SingleLiveEvent<Int>() }
+    val dappSections by lazy { MutableLiveData<DappSections>() }
 
     init {
         getDapps()
@@ -44,28 +47,12 @@ class DappViewModel : ViewModel() {
     }
 
     private fun getDapps() {
-        val sub = Single.just(listOf(
-                TempDapp("Entertainment", "CryptoAwesome", "Awesome"),
-                TempDapp("Games", "CryptoTanks", "Tanks"),
-                TempDapp("Exchanges", "CryptoBørs", "Børs"),
-                TempDapp("Entertainment", "CryptoFun", "Fun"),
-                TempDapp("Other", "CryptoOther", "Other"),
-                TempDapp("Games", "CryptoPokemon", "Pokemon"),
-                TempDapp("Exchanges", "CryptoTrader", "Trader"),
-                TempDapp("Entertainment", "CryptoMovie", "Movie"),
-                TempDapp("Games", "CryptCS", "Counter Strike"),
-                TempDapp("Exchanges", "CryptoRobinHood", "RobinHood"),
-                TempDapp("Entertainment", "CryptoTheatre", "Theatre"),
-                TempDapp("Other", "CryptoDrinking", "Drinking"),
-                TempDapp("Games", "CryptoDigimon", "Digimon"),
-                TempDapp("Exchanges", "CryptoMoney", "Money")
-        ))
-                .map { it.sortedBy { it.category } }
-                .subscribeOn(Schedulers.io())
+        val sub = dappManager
+                .getFrontPageDapps()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        { dapps.value = it },
-                        { dappsError.value = R.string.error_fetching_dapps }
+                        { dappSections.value = it },
+                        { R.string.error_fetching_dapps }
                 )
 
         subscriptions.add(sub)
@@ -87,16 +74,9 @@ class DappViewModel : ViewModel() {
         subscriptions.add(sub)
     }
 
-    private fun searchForDapps(input: String): Single<List<TempDapp>> {
-        return Single.just(listOf(
-                TempDapp("Games", "CryptCS", "Counter Strike"),
-                TempDapp("Exchanges", "CryptoRobinHood", "RobinHood"),
-                TempDapp("Entertainment", "CryptoTheatre", "Theatre"),
-                TempDapp("Other", "CryptoDrinking", "Drinking"),
-                TempDapp("Games", "CryptoDigimon", "Digimon"),
-                TempDapp("Exchanges", "CryptoMoney", "Money")
-        ))
-        .map { it.sortedBy { it.name } }
+    private fun searchForDapps(input: String): Single<List<Dapp>> {
+        return Single.just(emptyList<Dapp>())
+                .map { it.sortedBy { it.name } }
     }
 
     override fun onCleared() {

@@ -24,8 +24,10 @@ import com.toshi.R
 import com.toshi.model.local.dapp.DappCategory
 import com.toshi.model.local.dapp.DappFooter
 import com.toshi.model.local.dapp.DappListItem
-import com.toshi.model.network.TempDapp
+import com.toshi.model.network.dapp.Dapp
+import com.toshi.model.network.dapp.DappSections
 import com.toshi.util.LogUtil
+import com.toshi.view.BaseApplication
 import com.toshi.view.adapter.viewholder.DappCategoryViewHolder
 import com.toshi.view.adapter.viewholder.DappFooterViewHolder
 import com.toshi.view.adapter.viewholder.DappViewHolder
@@ -40,32 +42,27 @@ class DappAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val dappsList = mutableListOf<DappListItem>()
     var onFooterClickedListener: (() -> Unit)? = null
-    var onDappClickedListener: ((TempDapp) -> Unit)? = null
+    var onDappClickedListener: ((Dapp) -> Unit)? = null
 
-    fun setDapps(dapps: List<TempDapp>) {
-        if (dapps.isEmpty()) return
-        val dappsWithCategories = addCategoryItems(dapps)
+    fun setDapps(dappSections: DappSections) {
+        this.dappsList.clear()
+        val dappsWithCategories = addCategoryItems(dappSections)
         this.dappsList.addAll(dappsWithCategories)
         this.dappsList.add(DappFooter())
         notifyDataSetChanged()
     }
 
-    private fun addCategoryItems(dapps: List<TempDapp>): List<DappListItem> {
+    private fun addCategoryItems(dappSections: DappSections): List<DappListItem> {
         val dappsListWithCategories = mutableListOf<DappListItem>()
-        for ((i) in dapps.withIndex()) {
-            when {
-                i == 0 -> addNewCategory(dappsListWithCategories, dapps[i])
-                dapps[i].category != dapps[i - 1].category -> addNewCategory(dappsListWithCategories, dapps[i])
-                else -> dappsListWithCategories.add(dapps[i])
-            }
+        for (section in dappSections.sections) {
+            val categoryName = dappSections.categories[section.categoryId]
+            dappsListWithCategories.add(DappCategory(categoryName ?: getFallbackCategoryName()))
+            dappsListWithCategories.addAll(section.dapps)
         }
         return dappsListWithCategories
     }
 
-    private fun addNewCategory(dappsListWithCategories: MutableList<DappListItem>, currentDapp: TempDapp) {
-        dappsListWithCategories.add(DappCategory(currentDapp.category))
-        dappsListWithCategories.add(currentDapp)
-    }
+    private fun getFallbackCategoryName() = BaseApplication.get().getString(R.string.other)
 
     override fun getItemViewType(position: Int): Int {
         val item = dappsList[position]
@@ -101,7 +98,7 @@ class DappAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             holder is DappFooterViewHolder && dapp is DappFooter -> {
                 holder.setOnClickListener { onFooterClickedListener?.invoke() }
             }
-            holder is DappViewHolder && dapp is TempDapp -> {
+            holder is DappViewHolder && dapp is Dapp -> {
                 holder.setDapp(dapp)
                         .setOnClickListener(dapp) { onDappClickedListener?.invoke(it) }
             }

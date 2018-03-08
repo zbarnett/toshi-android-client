@@ -21,14 +21,14 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.toshi.R
-import com.toshi.model.network.TempDapp
+import com.toshi.model.network.dapp.Dapp
 import com.toshi.view.adapter.viewholder.DappViewHolder
 
 class AllDappsAdapter : RecyclerView.Adapter<DappViewHolder>() {
 
-    private val dapps by lazy { mutableListOf<TempDapp>() }
+    private val dapps by lazy { mutableListOf<Dapp>() }
 
-    fun setDapps(dapps: List<TempDapp>) {
+    fun setDapps(dapps: List<Dapp>) {
         if (dapps.isEmpty()) return
         this.dapps.clear()
         this.dapps.addAll(dapps)

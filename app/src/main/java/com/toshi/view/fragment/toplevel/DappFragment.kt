@@ -32,7 +32,8 @@ import com.toshi.extensions.openWebView
 import com.toshi.extensions.startActivity
 import com.toshi.extensions.toast
 import com.toshi.model.local.dapp.DappCategory
-import com.toshi.model.network.TempDapp
+import com.toshi.model.network.dapp.Dapp
+import com.toshi.model.network.dapp.DappSections
 import com.toshi.view.activity.ViewAllDappsActivity
 import com.toshi.view.activity.ViewDappActivity
 import com.toshi.view.adapter.DappAdapter
@@ -131,9 +132,9 @@ class DappFragment : Fragment(), TopLevelFragment {
     }
 
     private fun setSearchEmptyState() {
-        val dapps = viewModel.dapps.value
+        val dapps = viewModel.dappSections.value
         val category = DappCategory(getString(R.string.dapps))
-        if (dapps != null) searchDappAdapter.setEmptyState(dapps, category)
+        //if (dapps != null) searchDappAdapter.setEmptyState(dapps, category)
     }
 
     private fun search(input: String) {
@@ -144,7 +145,7 @@ class DappFragment : Fragment(), TopLevelFragment {
     }
 
     private fun initObservers() {
-        viewModel.dapps.observe(this, Observer {
+        viewModel.dappSections.observe(this, Observer {
             if (it != null) setDapps(it)
         })
         viewModel.dappsError.observe(this, Observer {
@@ -155,9 +156,12 @@ class DappFragment : Fragment(), TopLevelFragment {
         })
     }
 
-    private fun setDapps(dapps: List<TempDapp>) = dappAdapter.setDapps(dapps)
+    private fun setDapps(dappSections: DappSections) {
+        if (dappSections.categories.isEmpty() || dappSections.sections.isEmpty()) return
+        dappAdapter.setDapps(dappSections)
+    }
 
-    private fun setSearchResult(dapps: List<TempDapp>) {
+    private fun setSearchResult(dapps: List<Dapp>) {
         val dappsCategory = DappCategory(getString(R.string.dapps))
         searchDappAdapter.setDapps(dapps, dappsCategory)
     }

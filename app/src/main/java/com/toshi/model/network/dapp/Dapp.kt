@@ -15,12 +15,18 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.toshi.model.network
+package com.toshi.model.network.dapp
 
+import com.squareup.moshi.Json
 import com.toshi.model.local.dapp.DappListItem
 
-data class TempDapp(
-        val category: String,
-        val name: String,
-        val description: String
+data class Dapp(
+        @Json(name = "dapp_id")
+        val dappId: Long?,
+        val name: String?,
+        val url: String?,
+        val description: String?,
+        val icon: String?,
+        val cover: String?,
+        val categories: List<Int> = emptyList()
 ) : DappListItem()
