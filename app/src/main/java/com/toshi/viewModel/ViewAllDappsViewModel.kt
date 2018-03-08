@@ -19,28 +19,60 @@ package com.toshi.viewModel
 
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
+import android.content.Intent
 import com.toshi.R
 import com.toshi.model.network.dapp.Dapp
 import com.toshi.util.SingleLiveEvent
-import rx.Single
+import com.toshi.view.BaseApplication
+import com.toshi.view.activity.ViewAllDappsActivity.Companion.ALL
+import com.toshi.view.activity.ViewAllDappsActivity.Companion.CATEGORY
+import com.toshi.view.activity.ViewAllDappsActivity.Companion.CATEGORY_ID
+import com.toshi.view.activity.ViewAllDappsActivity.Companion.CATEGORY_NAME
+import com.toshi.view.activity.ViewAllDappsActivity.Companion.VIEW_TYPE
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import rx.subscriptions.CompositeSubscription
 
-class ViewAllDappsViewModel : ViewModel() {
+class ViewAllDappsViewModel(private val intent: Intent) : ViewModel() {
 
+    private val dappsManager by lazy { BaseApplication.get().dappManager }
     private val subscriptions by lazy { CompositeSubscription() }
+
     val dapps by lazy { MutableLiveData<List<Dapp>>() }
     val dappsError by lazy { SingleLiveEvent<Int>() }
 
     init {
-        getDapps()
+        if (getViewType() == CATEGORY) getAllDappsInCategory(getCategoryId())
+        else getAllDapps()
     }
 
-    private fun getDapps() {
-        val sub = Single.just(emptyList<Dapp>())
+    private fun getViewType() = intent.getIntExtra(VIEW_TYPE, ALL)
+    private fun getCategoryId() = intent.getIntExtra(CATEGORY_ID, -1)
+
+    fun getCategoryName(): String {
+        return intent.getStringExtra(CATEGORY_NAME) ?: BaseApplication.get().getString(R.string.other)
+    }
+
+    private fun getAllDapps() {
+        val sub = dappsManager
+                .getAllDapps()
+                .map { it.dapps }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        { dapps.value = it },
+                        { dappsError.value = R.string.error_fetching_dapps }
+                )
+
+        subscriptions.add(sub)
+    }
+
+    private fun getAllDappsInCategory(categoryId: Int) {
+        val sub = dappsManager
+                .getAllDappsInCategory(categoryId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .map { it.dapps }
                 .subscribe(
                         { dapps.value = it },
                         { dappsError.value = R.string.error_fetching_dapps }

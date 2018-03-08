@@ -32,4 +32,7 @@ interface DirectoryInterface {
 
     @GET("v1/dapps/?limit=500")
     fun getAllDapps(): Single<DappSearchResult>
+
+    @GET("v1/dapps/")
+    fun getAllDappsInCategory(@Query("category") categoryId: Int): Single<DappSearchResult>
 }

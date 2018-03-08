@@ -43,6 +43,7 @@ class DappAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val dappsList = mutableListOf<DappListItem>()
     var onFooterClickedListener: (() -> Unit)? = null
     var onDappClickedListener: ((Dapp) -> Unit)? = null
+    var onCategoryClickedListener: ((DappCategory) -> Unit)? = null
 
     fun setDapps(dappSections: DappSections) {
         this.dappsList.clear()
@@ -56,7 +57,11 @@ class DappAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         val dappsListWithCategories = mutableListOf<DappListItem>()
         for (section in dappSections.sections) {
             val categoryName = dappSections.categories[section.categoryId]
-            dappsListWithCategories.add(DappCategory(categoryName ?: getFallbackCategoryName()))
+            val dappCategory = DappCategory(
+                    category = categoryName ?: getFallbackCategoryName(),
+                    categoryId = section.categoryId
+            )
+            dappsListWithCategories.add(dappCategory)
             dappsListWithCategories.addAll(section.dapps)
         }
         return dappsListWithCategories
@@ -94,7 +99,10 @@ class DappAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder?, position: Int) {
         val dapp = dappsList[position]
         when {
-            holder is DappCategoryViewHolder && dapp is DappCategory -> holder.setCategory(dapp)
+            holder is DappCategoryViewHolder && dapp is DappCategory -> {
+                holder.setCategory(dapp)
+                        .setOnItemClickListener(dapp) { onCategoryClickedListener?.invoke(it) }
+            }
             holder is DappFooterViewHolder && dapp is DappFooter -> {
                 holder.setOnClickListener { onFooterClickedListener?.invoke() }
             }

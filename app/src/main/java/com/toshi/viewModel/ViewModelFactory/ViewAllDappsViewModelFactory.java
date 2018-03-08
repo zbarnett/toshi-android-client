@@ -15,12 +15,24 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.toshi.model.local.dapp
+package com.toshi.viewModel.ViewModelFactory;
 
-import com.toshi.R
-import com.toshi.view.BaseApplication
+import android.arch.lifecycle.ViewModelProvider;
+import android.content.Intent;
+import android.support.annotation.NonNull;
 
-class DappGoogleSearchCategory(
-        override val category: String = BaseApplication.get().getString(R.string.search_with_google),
-        override val categoryId: Int = -1
-) : DappCategory(category, categoryId)
+import com.toshi.viewModel.ViewAllDappsViewModel;
+
+public class ViewAllDappsViewModelFactory implements ViewModelProvider.Factory {
+    private Intent intent;
+
+    public ViewAllDappsViewModelFactory(final Intent intent) {
+        this.intent = intent;
+    }
+
+    @NonNull
+    @Override
+    public ViewAllDappsViewModel create(@NonNull Class modelClass) {
+        return new ViewAllDappsViewModel(this.intent);
+    }
+}

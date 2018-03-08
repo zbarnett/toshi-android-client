@@ -35,6 +35,11 @@ import com.toshi.model.local.dapp.DappCategory
 import com.toshi.model.network.dapp.Dapp
 import com.toshi.model.network.dapp.DappSections
 import com.toshi.view.activity.ViewAllDappsActivity
+import com.toshi.view.activity.ViewAllDappsActivity.Companion.ALL
+import com.toshi.view.activity.ViewAllDappsActivity.Companion.CATEGORY
+import com.toshi.view.activity.ViewAllDappsActivity.Companion.CATEGORY_ID
+import com.toshi.view.activity.ViewAllDappsActivity.Companion.CATEGORY_NAME
+import com.toshi.view.activity.ViewAllDappsActivity.Companion.VIEW_TYPE
 import com.toshi.view.activity.ViewDappActivity
 import com.toshi.view.adapter.DappAdapter
 import com.toshi.view.adapter.SearchDappAdapter
@@ -83,7 +88,15 @@ class DappFragment : Fragment(), TopLevelFragment {
     private fun initBrowseAdapter() {
         dappAdapter = DappAdapter().apply {
             onDappClickedListener = { startActivity<ViewDappActivity>() }
-            onFooterClickedListener = { startActivity<ViewAllDappsActivity>() }
+            onFooterClickedListener = { startActivity<ViewAllDappsActivity> {
+                putExtra(CATEGORY_NAME, getString(R.string.all_dapps))
+                putExtra(VIEW_TYPE, ALL)
+            } }
+            onCategoryClickedListener = { startActivity<ViewAllDappsActivity> {
+                putExtra(CATEGORY_NAME, it.category)
+                putExtra(CATEGORY_ID, it.categoryId)
+                putExtra(VIEW_TYPE, CATEGORY)
+            } }
         }
         dapps.apply {
             adapter = dappAdapter
@@ -134,7 +147,7 @@ class DappFragment : Fragment(), TopLevelFragment {
     private fun setSearchEmptyState() {
         viewModel.getAllDapps()
         val dapps = viewModel.allDapps.value ?: emptyList()
-        val category = DappCategory(getString(R.string.dapps))
+        val category = DappCategory(getString(R.string.dapps), -1)
         searchDappAdapter.setEmptyState(dapps, category)
     }
 
@@ -166,7 +179,7 @@ class DappFragment : Fragment(), TopLevelFragment {
     }
 
     private fun setSearchResult(dapps: List<Dapp>) {
-        val dappsCategory = DappCategory(getString(R.string.dapps))
+        val dappsCategory = DappCategory(getString(R.string.dapps), -1)
         searchDappAdapter.setDapps(dapps, dappsCategory)
     }
 }

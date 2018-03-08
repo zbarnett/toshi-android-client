@@ -28,9 +28,21 @@ import com.toshi.extensions.getPxSize
 import com.toshi.extensions.toast
 import com.toshi.view.adapter.AllDappsAdapter
 import com.toshi.viewModel.ViewAllDappsViewModel
-import kotlinx.android.synthetic.main.activity_view_dapps.*
+import com.toshi.viewModel.ViewModelFactory.ViewAllDappsViewModelFactory
+import kotlinx.android.synthetic.main.activity_view_dapps.closeButton
+import kotlinx.android.synthetic.main.activity_view_dapps.dapps
+import kotlinx.android.synthetic.main.activity_view_dapps.toolbarTitle
 
 class ViewAllDappsActivity : AppCompatActivity() {
+
+    companion object {
+        const val CATEGORY = 1
+        const val ALL = 2
+
+        const val VIEW_TYPE = "viewType"
+        const val CATEGORY_ID = "categoryId"
+        const val CATEGORY_NAME = "categoryName"
+    }
 
     private lateinit var viewModel: ViewAllDappsViewModel
     private lateinit var allDappsAdapter: AllDappsAdapter
@@ -43,13 +55,21 @@ class ViewAllDappsActivity : AppCompatActivity() {
 
     private fun init() {
         initViewModel()
+        setToolbarTitle()
         initClickListeners()
         initAdapter()
         initObservers()
     }
 
+    private fun setToolbarTitle() {
+        toolbarTitle.text = viewModel.getCategoryName()
+    }
+
     private fun initViewModel() {
-        viewModel = ViewModelProviders.of(this).get(ViewAllDappsViewModel::class.java)
+        viewModel = ViewModelProviders.of(
+                this,
+                ViewAllDappsViewModelFactory(intent)
+        ).get(ViewAllDappsViewModel::class.java)
     }
 
     private fun initClickListeners() {

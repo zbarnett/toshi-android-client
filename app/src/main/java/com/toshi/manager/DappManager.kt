@@ -47,4 +47,12 @@ class DappManager {
                 .map { it.results }
                 .subscribeOn(Schedulers.io())
     }
+
+    fun getAllDappsInCategory(categoryId: Int): Single<Dapps> {
+        return DirectoryService
+                .get()
+                .getAllDappsInCategory(categoryId)
+                .map { it.results }
+                .subscribeOn(Schedulers.io())
+    }
 }

@@ -20,10 +20,16 @@ package com.toshi.view.adapter.viewholder
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import com.toshi.model.local.dapp.DappCategory
-import kotlinx.android.synthetic.main.list_item__dapp_category.view.*
+import kotlinx.android.synthetic.main.list_item__dapp_category.view.category
 
 class DappCategoryViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
-    fun setCategory(category: DappCategory) {
+    fun setCategory(category: DappCategory): DappCategoryViewHolder {
         itemView.category.text = category.category
+        return this
+    }
+
+    fun setOnItemClickListener(category: DappCategory, listener: (DappCategory) -> Unit): DappCategoryViewHolder {
+        itemView.setOnClickListener { listener(category) }
+        return this
     }
 }
