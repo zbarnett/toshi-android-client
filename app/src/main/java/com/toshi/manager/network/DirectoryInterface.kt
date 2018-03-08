@@ -17,11 +17,19 @@
 
 package com.toshi.manager.network
 
+import com.toshi.model.network.dapp.DappSearchResult
 import com.toshi.model.network.dapp.DappSections
 import retrofit2.http.GET
+import retrofit2.http.Query
 import rx.Single
 
 interface DirectoryInterface {
     @GET("v1/dapps/frontpage")
     fun getFrontpageDapps(): Single<DappSections>
+
+    @GET("v1/dapps/")
+    fun search(@Query("query") query: String): Single<DappSearchResult>
+
+    @GET("v1/dapps/?limit=500")
+    fun getAllDapps(): Single<DappSearchResult>
 }

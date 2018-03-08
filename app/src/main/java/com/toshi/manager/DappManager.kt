@@ -19,6 +19,7 @@ package com.toshi.manager
 
 import com.toshi.manager.network.DirectoryService
 import com.toshi.model.network.dapp.DappSections
+import com.toshi.model.network.dapp.Dapps
 import rx.Single
 import rx.schedulers.Schedulers
 
@@ -28,6 +29,22 @@ class DappManager {
         return DirectoryService
                 .get()
                 .getFrontpageDapps()
+                .subscribeOn(Schedulers.io())
+    }
+
+    fun search(input: String): Single<Dapps> {
+        return DirectoryService
+                .get()
+                .search(input)
+                .map { it.results }
+                .subscribeOn(Schedulers.io())
+    }
+
+    fun getAllDapps(): Single<Dapps> {
+        return DirectoryService
+                .get()
+                .getAllDapps()
+                .map { it.results }
                 .subscribeOn(Schedulers.io())
     }
 }

@@ -233,6 +233,10 @@ public class ImageUtil {
                 () -> Glide.get(BaseApplication.get()).clearMemory(),
                 t -> LogUtil.e(ImageUtil.class, t.toString())
         );
+    }
 
+    public static void loadImageOrPlaceholder(final ImageView imageView, final String url) {
+        if (url != null) ImageUtil.load(url, imageView);
+        else imageView.setImageResource(R.drawable.placeholder);
     }
 }

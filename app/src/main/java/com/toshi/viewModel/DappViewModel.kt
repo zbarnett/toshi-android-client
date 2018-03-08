@@ -40,13 +40,14 @@ class DappViewModel : ViewModel() {
     val searchResult by lazy { MutableLiveData<List<Dapp>>() }
     val dappsError by lazy { SingleLiveEvent<Int>() }
     val dappSections by lazy { MutableLiveData<DappSections>() }
+    val allDapps by lazy { MutableLiveData<List<Dapp>>() }
 
     init {
-        getDapps()
+        getFeaturedDapps()
         initSearchListener()
     }
 
-    private fun getDapps() {
+    private fun getFeaturedDapps() {
         val sub = dappManager
                 .getFrontPageDapps()
                 .observeOn(AndroidSchedulers.mainThread())
@@ -75,8 +76,23 @@ class DappViewModel : ViewModel() {
     }
 
     private fun searchForDapps(input: String): Single<List<Dapp>> {
-        return Single.just(emptyList<Dapp>())
-                .map { it.sortedBy { it.name } }
+        return dappManager
+                .search(input)
+                .map { it.dapps }
+    }
+
+    fun getAllDapps() {
+        if (allDapps.value != null) return
+        val sub = dappManager
+                .getAllDapps()
+                .map { it.dapps }
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        { allDapps.value = it },
+                        { dappsError.value = R.string.error_fetching_dapps }
+                )
+
+        subscriptions.add(sub)
     }
 
     override fun onCleared() {

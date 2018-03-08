@@ -44,6 +44,7 @@ class CollapsingToshiView : AppBarLayout {
     private val inputZ by lazy { getPxSize(R.dimen.dappsInputZ) }
     private val inputMargin by lazy { getPxSize(R.dimen.dappsInputMargin) }
     private var prevOffset = -1
+    private var skipFirst = true
 
     var onTextChangedListener: ((String) -> Unit)? = null
     var onHeaderCollapsed: (() -> Unit)? = null
@@ -71,7 +72,9 @@ class CollapsingToshiView : AppBarLayout {
         }
         input.addTextChangedListener(object : TextChangedListener() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                onTextChangedListener?.invoke(s.toString())
+                val skip = skipFirst && s?.isEmpty() == true
+                if (!skip) onTextChangedListener?.invoke(s.toString())
+                skipFirst = false
             }
         })
     }

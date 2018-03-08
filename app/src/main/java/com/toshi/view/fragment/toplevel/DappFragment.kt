@@ -132,9 +132,10 @@ class DappFragment : Fragment(), TopLevelFragment {
     }
 
     private fun setSearchEmptyState() {
-        val dapps = viewModel.dappSections.value
+        viewModel.getAllDapps()
+        val dapps = viewModel.allDapps.value ?: emptyList()
         val category = DappCategory(getString(R.string.dapps))
-        //if (dapps != null) searchDappAdapter.setEmptyState(dapps, category)
+        searchDappAdapter.setEmptyState(dapps, category)
     }
 
     private fun search(input: String) {
@@ -153,6 +154,9 @@ class DappFragment : Fragment(), TopLevelFragment {
         })
         viewModel.searchResult.observe(this, Observer {
             if (it != null && input.text.isNotEmpty()) setSearchResult(it)
+        })
+        viewModel.allDapps.observe(this, Observer {
+            if (it != null) setSearchResult(it)
         })
     }
 
