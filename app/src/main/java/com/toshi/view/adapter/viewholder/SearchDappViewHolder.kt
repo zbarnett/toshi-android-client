@@ -26,9 +26,15 @@ import kotlinx.android.synthetic.main.list_item__dapp_search.view.name
 import kotlinx.android.synthetic.main.list_item__dapp_search.view.url
 
 class SearchDappViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
-    fun setDapp(dapp: Dapp) {
+    fun setDapp(dapp: Dapp): SearchDappViewHolder {
         itemView.name.text = dapp.name.orEmpty()
         itemView.url.text = dapp.url.orEmpty()
         ImageUtil.loadImageOrPlaceholder(itemView.image, dapp.icon)
+        return this
+    }
+
+    fun setOnItemClickedListener(dapp: Dapp, listener: (Dapp) -> Unit): SearchDappViewHolder {
+        itemView.setOnClickListener { listener(dapp) }
+        return this
     }
 }

@@ -372,4 +372,5 @@
     <string name="go_to">Go to</string>
     <string name="other">Other</string>
     <string name="all_dapps">All Ðapps</string>
+    <string name="error_fetching_dapp">Error fetching dapp</string>
 </resources>

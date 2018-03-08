@@ -18,6 +18,7 @@
 package com.toshi.manager
 
 import com.toshi.manager.network.DirectoryService
+import com.toshi.model.network.dapp.DappResult
 import com.toshi.model.network.dapp.DappSections
 import com.toshi.model.network.dapp.Dapps
 import rx.Single
@@ -53,6 +54,13 @@ class DappManager {
                 .get()
                 .getAllDappsInCategory(categoryId)
                 .map { it.results }
+                .subscribeOn(Schedulers.io())
+    }
+
+    fun getDapp(dappId: Long): Single<DappResult> {
+        return DirectoryService
+                .get()
+                .getDapp(dappId)
                 .subscribeOn(Schedulers.io())
     }
 }

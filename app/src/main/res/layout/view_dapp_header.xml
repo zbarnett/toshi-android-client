@@ -27,14 +27,23 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:minHeight="56dp"
-        app:layout_scrollFlags="scroll|exitUntilCollapsed">
+        app:layout_scrollFlags="scroll|exitUntilCollapsed"
+        android:background="@color/colorPrimary">
 
-        <ImageView
-            android:id="@+id/headerImage"
+        <FrameLayout
+            android:id="@+id/headerImageWrapper"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            app:srcCompat="@drawable/dapp_header"
-            app:layout_collapseMode="none"/>
+            android:background="@drawable/dapp_header">
+
+            <ImageView
+                android:id="@+id/headerImage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                app:layout_collapseMode="none"/>
+
+        </FrameLayout>
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"

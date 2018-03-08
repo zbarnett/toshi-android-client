@@ -235,7 +235,7 @@ public class ImageUtil {
         );
     }
 
-    public static void loadImageOrPlaceholder(final ImageView imageView, final String url) {
+    public static void loadImageOrPlaceholder(final @NonNull ImageView imageView, @Nullable final String url) {
         if (url != null) ImageUtil.load(url, imageView);
         else imageView.setImageResource(R.drawable.placeholder);
     }

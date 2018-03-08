@@ -17,19 +17,38 @@
 
 package com.toshi.view.activity
 
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v4.widget.NestedScrollView
 import android.support.v7.app.AppCompatActivity
 import com.toshi.R
 import com.toshi.extensions.getAbsoluteY
+import com.toshi.extensions.toast
+import com.toshi.model.network.dapp.DappResult
+import com.toshi.util.ImageUtil
+import com.toshi.viewModel.ViewDappViewModel
+import com.toshi.viewModel.ViewModelFactory.ViewDappViewModelFactory
+import kotlinx.android.synthetic.main.activity_view_dapp.categories
+import kotlinx.android.synthetic.main.activity_view_dapp.dappAvatar
+import kotlinx.android.synthetic.main.activity_view_dapp.description
 import kotlinx.android.synthetic.main.activity_view_dapp.header
 import kotlinx.android.synthetic.main.activity_view_dapp.name
 import kotlinx.android.synthetic.main.activity_view_dapp.scrollView
+import kotlinx.android.synthetic.main.activity_view_dapp.url
 import kotlinx.android.synthetic.main.view_dapp_header.toolbarTitle
+import kotlinx.android.synthetic.main.view_dapp_header.view.closeButton
+import kotlinx.android.synthetic.main.view_dapp_header.view.headerImage
 import kotlinx.android.synthetic.main.view_dapp_header.view.toolbar
 import kotlinx.android.synthetic.main.view_dapp_header.view.toolbarTitle
 
 class ViewDappActivity : AppCompatActivity() {
+
+    companion object {
+        const val DAPP_ID = "dappId"
+    }
+
+    private lateinit var viewModel: ViewDappViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,6 +57,20 @@ class ViewDappActivity : AppCompatActivity() {
     }
 
     private fun init() {
+        initViewModel()
+        initListeners()
+        initObservers()
+    }
+
+    private fun initViewModel() {
+        viewModel = ViewModelProviders.of(
+                this,
+                ViewDappViewModelFactory(intent)
+        ).get(ViewDappViewModel::class.java)
+    }
+
+    private fun initListeners() {
+        header.closeButton.setOnClickListener { finish() }
         scrollView.setOnScrollChangeListener { _: NestedScrollView?, _: Int, _: Int, _: Int, _: Int ->
             setToolbarTitleAlpha()
             setYOfToolbarTitle()
@@ -62,4 +95,23 @@ class ViewDappActivity : AppCompatActivity() {
     }
 
     private fun getStartY() = getAbsoluteY(header.toolbar)
+
+    private fun initObservers() {
+        viewModel.dapp.observe(this, Observer {
+            if (it != null) renderDappInfo(it)
+        })
+        viewModel.error.observe(this, Observer {
+            if (it != null) toast(it)
+        })
+    }
+
+    private fun renderDappInfo(dappResult: DappResult) {
+        val dapp = dappResult.dapp
+        name.text = dapp?.name.orEmpty()
+        description.text = dapp?.description.orEmpty()
+        url.text = dapp?.url.orEmpty()
+        categories.text = dappResult.categories.values.joinToString(separator = ", ")
+        ImageUtil.loadImageOrPlaceholder(header.headerImage, dapp?.cover)
+        ImageUtil.loadImageOrPlaceholder(dappAvatar, dapp?.icon)
+    }
 }

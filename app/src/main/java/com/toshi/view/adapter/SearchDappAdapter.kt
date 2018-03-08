@@ -51,6 +51,7 @@ class SearchDappAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     var onSearchClickListener: ((String) -> Unit)? = null
     var onGoToClickListener: ((String) -> Unit)? = null
+    var onItemClickedListener: ((Dapp) -> Unit)? = null
 
     fun setEmptyState(dapps: List<Dapp>, dappsCategory: DappCategory) {
         this.dapps.clear()
@@ -185,7 +186,10 @@ class SearchDappAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder?, position: Int) {
         val dapp = dapps[position]
         when {
-            holder is SearchDappViewHolder && dapp is Dapp -> holder.setDapp(dapp)
+            holder is SearchDappViewHolder && dapp is Dapp -> {
+                holder.setDapp(dapp)
+                        .setOnItemClickedListener(dapp) { onItemClickedListener?.invoke(it) }
+            }
             holder is SearchDappCategoryViewHolder && dapp is DappCategory -> holder.setCategory(dapp)
             holder is DappUrlViewHolder && dapp is DappGoogleSearch -> {
                 holder.setGoogleSearchItem(dapp)

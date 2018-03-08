@@ -41,6 +41,7 @@ import com.toshi.view.activity.ViewAllDappsActivity.Companion.CATEGORY_ID
 import com.toshi.view.activity.ViewAllDappsActivity.Companion.CATEGORY_NAME
 import com.toshi.view.activity.ViewAllDappsActivity.Companion.VIEW_TYPE
 import com.toshi.view.activity.ViewDappActivity
+import com.toshi.view.activity.ViewDappActivity.Companion.DAPP_ID
 import com.toshi.view.adapter.DappAdapter
 import com.toshi.view.adapter.SearchDappAdapter
 import com.toshi.viewModel.DappViewModel
@@ -87,7 +88,9 @@ class DappFragment : Fragment(), TopLevelFragment {
 
     private fun initBrowseAdapter() {
         dappAdapter = DappAdapter().apply {
-            onDappClickedListener = { startActivity<ViewDappActivity>() }
+            onDappClickedListener = { startActivity<ViewDappActivity> {
+                putExtra(DAPP_ID, it.dappId)
+            } }
             onFooterClickedListener = { startActivity<ViewAllDappsActivity> {
                 putExtra(CATEGORY_NAME, getString(R.string.all_dapps))
                 putExtra(VIEW_TYPE, ALL)
@@ -108,6 +111,9 @@ class DappFragment : Fragment(), TopLevelFragment {
         searchDappAdapter = SearchDappAdapter().apply {
             onSearchClickListener = { openBrowserAndSearchGoogle(it) }
             onGoToClickListener = { openWebView(it) }
+            onItemClickedListener = { startActivity<ViewDappActivity> {
+                putExtra(DAPP_ID, it.dappId)
+            } }
         }
         searchDapps.apply {
             adapter = searchDappAdapter

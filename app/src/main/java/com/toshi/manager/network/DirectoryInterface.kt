@@ -17,9 +17,11 @@
 
 package com.toshi.manager.network
 
+import com.toshi.model.network.dapp.DappResult
 import com.toshi.model.network.dapp.DappSearchResult
 import com.toshi.model.network.dapp.DappSections
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 import rx.Single
 
@@ -35,4 +37,7 @@ interface DirectoryInterface {
 
     @GET("v1/dapps/")
     fun getAllDappsInCategory(@Query("category") categoryId: Int): Single<DappSearchResult>
+
+    @GET("v1/dapp/{dapp_id}")
+    fun getDapp(@Path("dapp_id") dappId: Long): Single<DappResult>
 }

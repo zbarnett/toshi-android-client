@@ -22,6 +22,7 @@ import android.support.design.widget.AppBarLayout
 import android.util.AttributeSet
 import com.toshi.R
 import kotlinx.android.synthetic.main.view_dapp_header.view.headerImage
+import kotlinx.android.synthetic.main.view_dapp_header.view.headerImageWrapper
 
 class DappHeaderView : AppBarLayout {
 
@@ -56,6 +57,7 @@ class DappHeaderView : AppBarLayout {
     }
 
     private fun setHeaderImageAlpha(percentage: Float) {
+        headerImageWrapper.alpha = 1f - percentage
         headerImage.alpha = 1f - percentage
     }
 }
