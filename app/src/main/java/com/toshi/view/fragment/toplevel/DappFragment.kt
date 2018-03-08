@@ -34,6 +34,7 @@ import com.toshi.extensions.toast
 import com.toshi.model.local.dapp.DappCategory
 import com.toshi.model.network.dapp.Dapp
 import com.toshi.model.network.dapp.DappSections
+import com.toshi.util.KeyboardUtil
 import com.toshi.view.activity.ViewAllDappsActivity
 import com.toshi.view.activity.ViewAllDappsActivity.Companion.ALL
 import com.toshi.view.activity.ViewAllDappsActivity.Companion.CATEGORY
@@ -135,12 +136,17 @@ class DappFragment : Fragment(), TopLevelFragment {
     private fun initListeners() {
         header.onTextChangedListener = { showSearchUI(it) }
         header.onHeaderCollapsed = { showSearchUI(input.text.toString()) }
-        header.onHeaderExpanded = { showBrowseUI() }
+        header.onHeaderExpanded = { showBrowseUI(); hideKeyboardAndUnfocus() }
     }
 
     private fun showBrowseUI() {
         dapps.isVisible(true)
         searchDapps.isVisible(false)
+    }
+
+    private fun hideKeyboardAndUnfocus() {
+        KeyboardUtil.hideKeyboard(header.input)
+        header.input.clearFocus()
     }
 
     private fun showSearchUI(input: String) {
