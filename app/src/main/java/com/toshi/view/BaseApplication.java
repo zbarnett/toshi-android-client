@@ -25,7 +25,6 @@ import android.arch.lifecycle.ProcessLifecycleOwner;
 import android.content.IntentFilter;
 import android.support.multidex.MultiDexApplication;
 
-import com.toshi.manager.AppsManager;
 import com.toshi.manager.BalanceManager;
 import com.toshi.manager.RecipientManager;
 import com.toshi.manager.ReputationManager;
@@ -133,10 +132,6 @@ public final class BaseApplication extends MultiDexApplication implements Lifecy
 
     public final BalanceManager getBalanceManager() {
         return this.toshiManager.getBalanceManager();
-    }
-
-    public final AppsManager getAppsManager() {
-        return this.toshiManager.getAppsManager();
     }
 
     public final ReputationManager getReputationManager() {

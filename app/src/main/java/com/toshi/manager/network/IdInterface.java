@@ -20,8 +20,6 @@ package com.toshi.manager.network;
 
 import com.toshi.model.local.Report;
 import com.toshi.model.local.User;
-import com.toshi.model.network.AppSearchResult;
-import com.toshi.model.network.Dapp;
 import com.toshi.model.network.SearchResult;
 import com.toshi.model.network.ServerTime;
 import com.toshi.model.network.UserDetails;
@@ -98,13 +96,5 @@ public interface IdInterface {
                                        @Query("top") boolean isTopRated,
                                        @Query("recent") boolean isRecent,
                                        @Query("limit") int limit);
-
-    @GET("v1/search/apps")
-    Single<AppSearchResult> getApps(@Query("top") boolean isTopRated,
-                                    @Query("recent") boolean isRecent,
-                                    @Query("limit") int limit);
-
-    @GET("v1/dapps")
-    Single<SearchResult<Dapp>> getDapps(@Query("limit") int limit);
 }
 

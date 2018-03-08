@@ -20,12 +20,11 @@ package com.toshi.model.local;
 
 import com.squareup.moshi.Json;
 import com.toshi.manager.ToshiManager;
-import com.toshi.view.adapter.ToshiEntityAdapter;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
-public class User extends RealmObject implements ToshiEntity {
+public class User extends RealmObject {
 
     @PrimaryKey
     @Json(name = "toshi_id")
@@ -60,7 +59,6 @@ public class User extends RealmObject implements ToshiEntity {
     }
 
     // Defaults to the username if no name is set.
-    @Override
     public String getDisplayName() {
         if (this.name != null && this.name.length() > 0) {
             return this.name;
@@ -68,7 +66,6 @@ public class User extends RealmObject implements ToshiEntity {
         return username;
     }
 
-    @Override
     public String getToshiId() {
         return owner_address;
     }
@@ -77,12 +74,10 @@ public class User extends RealmObject implements ToshiEntity {
         return payment_address;
     }
 
-    @Override
     public String getAbout() {
         return this.about;
     }
 
-    @Override
     public String getAvatar() {
         return this.avatar;
     }
@@ -101,19 +96,16 @@ public class User extends RealmObject implements ToshiEntity {
         return System.currentTimeMillis() - cacheTimestamp > ToshiManager.CACHE_TIMEOUT;
     }
 
-    @Override
     public Double getReputationScore() {
         if (this.reputation_score == null) return 0.0;
         return this.reputation_score;
     }
 
-    @Override
     public Double getAverageRating() {
         if (this.average_rating == null) return 0.0;
         return this.average_rating;
     }
 
-    @Override
     public int getReviewCount() {
         return review_count;
     }
@@ -138,9 +130,5 @@ public class User extends RealmObject implements ToshiEntity {
     @Override
     public int hashCode() {
         return getToshiId().hashCode();
-    }
-
-    public @ToshiEntityAdapter.ViewType int getViewType() {
-        return ToshiEntityAdapter.ITEM;
     }
 }

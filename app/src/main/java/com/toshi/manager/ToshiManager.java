@@ -46,7 +46,6 @@ public class ToshiManager {
 
     private final BehaviorSubject<HDWallet> walletSubject = BehaviorSubject.create();
 
-    private AppsManager appsManager;
     private BalanceManager balanceManager;
     private HDWallet wallet;
     private SofaMessageManager sofaMessageManager;
@@ -60,7 +59,6 @@ public class ToshiManager {
 
     public ToshiManager() {
         this.singleExecutor = Executors.newSingleThreadExecutor();
-        this.appsManager = new AppsManager();
         this.balanceManager = new BalanceManager();
         this.userManager = new UserManager();
         this.reputationManager = new ReputationManager();
@@ -188,10 +186,6 @@ public class ToshiManager {
 
     public final BalanceManager getBalanceManager() {
         return this.balanceManager;
-    }
-
-    public final AppsManager getAppsManager() {
-        return this.appsManager;
     }
 
     public final ReputationManager getReputationManager() {
