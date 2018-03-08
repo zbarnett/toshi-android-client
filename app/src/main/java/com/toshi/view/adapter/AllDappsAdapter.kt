@@ -27,6 +27,7 @@ import com.toshi.view.adapter.viewholder.DappViewHolder
 class AllDappsAdapter : RecyclerView.Adapter<DappViewHolder>() {
 
     private val dapps by lazy { mutableListOf<Dapp>() }
+    var onItemClickedListener: ((Dapp) -> Unit)? = null
 
     fun setDapps(dapps: List<Dapp>) {
         if (dapps.isEmpty()) return
@@ -43,6 +44,7 @@ class AllDappsAdapter : RecyclerView.Adapter<DappViewHolder>() {
     override fun onBindViewHolder(holder: DappViewHolder?, position: Int) {
         val dapp = dapps[position]
         holder?.setDapp(dapp)
+                ?.setOnClickListener(dapp) { onItemClickedListener?.invoke(it) }
     }
 
     override fun getItemCount() = dapps.size

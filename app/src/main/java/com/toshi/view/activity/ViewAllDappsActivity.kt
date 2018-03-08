@@ -25,7 +25,9 @@ import android.support.v7.widget.LinearLayoutManager
 import com.toshi.R
 import com.toshi.extensions.addHorizontalLineDivider
 import com.toshi.extensions.getPxSize
+import com.toshi.extensions.startActivity
 import com.toshi.extensions.toast
+import com.toshi.view.activity.ViewDappActivity.Companion.DAPP_ID
 import com.toshi.view.adapter.AllDappsAdapter
 import com.toshi.viewModel.ViewAllDappsViewModel
 import com.toshi.viewModel.ViewModelFactory.ViewAllDappsViewModelFactory
@@ -77,7 +79,11 @@ class ViewAllDappsActivity : AppCompatActivity() {
     }
 
     private fun initAdapter() {
-        allDappsAdapter = AllDappsAdapter()
+        allDappsAdapter = AllDappsAdapter().apply {
+            onItemClickedListener = {
+                startActivity<ViewDappActivity> { putExtra(DAPP_ID, it.dappId) }
+            }
+        }
         dapps.apply {
             adapter = allDappsAdapter
             layoutManager = LinearLayoutManager(context)
