@@ -21,13 +21,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="match_parent"
-    android:layout_width="match_parent">
+    android:layout_width="match_parent"
+    android:fitsSystemWindows="true">
 
     <com.toshi.view.custom.DappHeaderView
         android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:elevation="0dp"/>
+        android:fitsSystemWindows="true"
+        app:elevation="0dp" />
 
     <android.support.v4.widget.NestedScrollView
         android:id="@+id/scrollView"

@@ -27,6 +27,7 @@ import kotlinx.android.synthetic.main.view_dapp_header.view.headerImageWrapper
 class DappHeaderView : AppBarLayout {
 
     private var prevOffset = -1
+    var offsetChangedListener: ((Float) -> Unit)? = null
 
     constructor(context: Context): super(context) {
         init()
@@ -43,21 +44,22 @@ class DappHeaderView : AppBarLayout {
 
     private fun initListeners() {
         addOnOffsetChangedListener { appBarLayout, verticalOffset ->
-            updateView(verticalOffset, appBarLayout)
+            handleOffsetChanged(appBarLayout, verticalOffset)
         }
     }
 
-    private fun updateView(verticalOffset: Int, appBarLayout: AppBarLayout) {
+    private fun handleOffsetChanged(appBarLayout: AppBarLayout, verticalOffset: Int) {
         if (prevOffset == verticalOffset) return
         prevOffset = verticalOffset
         val absVerticalOffset = Math.abs(verticalOffset).toFloat()
         val scrollRange = appBarLayout.totalScrollRange.toFloat()
-        val percentage = absVerticalOffset / scrollRange
+        val percentage = 1f - (absVerticalOffset / scrollRange)
         setHeaderImageAlpha(percentage)
+        offsetChangedListener?.invoke(percentage)
     }
 
     private fun setHeaderImageAlpha(percentage: Float) {
-        headerImageWrapper.alpha = 1f - percentage
-        headerImage.alpha = 1f - percentage
+        headerImageWrapper.alpha = percentage
+        headerImage.alpha = percentage
     }
 }

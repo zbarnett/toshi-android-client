@@ -17,9 +17,12 @@
 
 package com.toshi.view.activity
 
+import android.annotation.TargetApi
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.graphics.Color
 import android.os.Bundle
+import android.support.v4.graphics.ColorUtils
 import android.support.v4.widget.NestedScrollView
 import android.support.v7.app.AppCompatActivity
 import com.toshi.R
@@ -59,9 +62,15 @@ class ViewDappActivity : AppCompatActivity() {
     }
 
     private fun init() {
+        setStatusBarColor()
         initViewModel()
         initListeners()
         initObservers()
+    }
+
+    @TargetApi(21)
+    private fun setStatusBarColor() {
+        window.statusBarColor = Color.TRANSPARENT
     }
 
     private fun initViewModel() {
@@ -74,10 +83,20 @@ class ViewDappActivity : AppCompatActivity() {
     private fun initListeners() {
         openBtn.setOnClickListener { openWebViewActivity() }
         header.closeButton.setOnClickListener { finish() }
+        header.offsetChangedListener = { setStatusBarAlpha(it) }
         scrollView.setOnScrollChangeListener { _: NestedScrollView?, _: Int, _: Int, _: Int, _: Int ->
             setToolbarTitleAlpha()
             setYOfToolbarTitle()
         }
+    }
+
+    @TargetApi(21)
+    private fun setStatusBarAlpha(percentage: Float) {
+        val maxAlpha = 26 // 15%
+        val alpha = maxAlpha * (1 - percentage)
+        val safeAlpha = if (alpha < 0) 0 else if (alpha > 255) 255 else alpha.toInt()
+        val alphaColor = ColorUtils.setAlphaComponent(Color.BLACK, safeAlpha)
+        window.statusBarColor = alphaColor
     }
 
     private fun openWebViewActivity() {
@@ -117,6 +136,7 @@ class ViewDappActivity : AppCompatActivity() {
     private fun renderDappInfo(dappResult: DappResult) {
         val dapp = dappResult.dapp
         name.text = dapp?.name.orEmpty()
+        toolbarTitle.text = dapp?.name.orEmpty()
         description.text = dapp?.description.orEmpty()
         url.text = dapp?.url.orEmpty()
         categories.text = dappResult.categories.values.joinToString(separator = ", ")
