@@ -44,6 +44,17 @@
         <item name="colorPrimaryDark">@color/colorSecondaryDark</item>
     </style>
 
+    <style name="WhiteTheme" parent="AppTheme">
+        <item name="colorPrimaryDark">@color/systemBarBackground</item>
+    </style>
+
+    <style name="WhiteToolbar" parent="@style/ThemeOverlay.AppCompat.ActionBar">
+        <item name="android:background">@color/windowBackground</item>
+        <item name="selectableItemBackground">?android:selectableItemBackground</item>
+        <item name="selectableItemBackgroundBorderless">?android:selectableItemBackground</item>
+        <item name="android:actionOverflowButtonStyle">@style/RegularOverflowDark</item>
+    </style>
+
     <style name="Toolbar" parent="@style/ThemeOverlay.AppCompat.ActionBar">
         <item name="android:background">@color/colorPrimary</item>
         <item name="selectableItemBackground">?android:selectableItemBackground</item>

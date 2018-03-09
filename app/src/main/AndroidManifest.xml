@@ -113,6 +113,7 @@
         <activity android:name=".view.activity.AddGroupParticipantsActivity" />
         <activity android:name=".view.activity.EditGroupActivity" />
         <activity android:name=".view.activity.webView.LollipopWebViewActivity"
+            android:theme="@style/WhiteTheme"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize"/>
         <activity android:name=".view.activity.ViewTokenActivity" />
         <activity android:name=".view.activity.SendERC20TokenActivity" />

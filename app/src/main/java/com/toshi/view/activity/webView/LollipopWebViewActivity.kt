@@ -42,6 +42,7 @@ import com.toshi.view.fragment.DialogFragment.ChooserDialog
 import com.toshi.viewModel.ViewModelFactory.WebViewViewModelFactory
 import com.toshi.viewModel.WebViewViewModel
 import kotlinx.android.synthetic.main.activity_lollipop_view_view.*
+import kotlinx.android.synthetic.main.view_address_bar_input.*
 import java.io.File
 
 class LollipopWebViewActivity : AppCompatActivity() {
@@ -51,6 +52,8 @@ class LollipopWebViewActivity : AppCompatActivity() {
         private const val PICK_IMAGE = 1
         private const val CAPTURE_IMAGE = 2
         private const val IMAGE_TYPE = "image/*"
+        private const val ALPHA_DISABLED = 0.4f
+        private const val ALPHA_ENABLED = 1f
     }
 
     private var filePathCallback: ValueCallback<Array<Uri>>? = null
@@ -82,12 +85,18 @@ class LollipopWebViewActivity : AppCompatActivity() {
     }
 
     private fun initClickListeners() {
-        closeButton.setOnClickListener { handleBackButtonClicked() }
+        input.backClickedListener = { handleBackButtonClicked() }
+        input.forwardClickedListener = { handleForwardButtonClicked() }
+        input.goClickedListener = { viewModel.url.postValue(it) }
+        input.exitClickedListener = { onBackPressed() }
     }
 
     private fun handleBackButtonClicked() {
         if (webview.canGoBack()) webview.goBack()
-        else onBackPressed()
+    }
+
+    private fun handleForwardButtonClicked() {
+        if (webview.canGoForward()) webview.goForward()
     }
 
     private fun initWebSettings() {
@@ -112,7 +121,8 @@ class LollipopWebViewActivity : AppCompatActivity() {
         webview.webViewClient = ToshiWebClient(
                 this,
                 { viewModel.updateToolbar() },
-                { url -> viewModel.url.postValue(url) }
+                { viewModel.url.postValue(it) },
+                { input.text = it; updateToolbarNavigation() }
         )
         val chromeWebClient = ToshiChromeWebViewClient { valueCallback, _ -> handleFileChooserCallback(valueCallback) }
         chromeWebClient.progressListener = { progressBar.setProgress(it) }
@@ -125,8 +135,14 @@ class LollipopWebViewActivity : AppCompatActivity() {
     }
 
     private fun updateToolbar() {
-        address.text = webview.url
-        toolbarTitle.text = webview.title
+        input.text = webview.url
+        title = webview.title
+        updateToolbarNavigation()
+    }
+
+    private fun updateToolbarNavigation() {
+        backButton.alpha = if (webview.canGoBack()) ALPHA_ENABLED else ALPHA_DISABLED
+        forwardButton.alpha = if (webview.canGoForward()) ALPHA_ENABLED else ALPHA_DISABLED
     }
 
     private fun load() = webview.loadUrl(viewModel.tryGetAddress())

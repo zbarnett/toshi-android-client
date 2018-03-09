@@ -39,7 +39,8 @@ import javax.net.ssl.SSLPeerUnverifiedException
 class ToshiWebClient(
         private val context: Context,
         private val updateListener: () -> Unit,
-        private val updateUrl: (String) -> Unit
+        private val updateUrl: (String) -> Unit,
+        private val pageCommitVisibleListener: (String) -> Unit
 ) : WebViewClient() {
 
     private val toshiManager by lazy { BaseApplication.get().toshiManager }
@@ -76,8 +77,8 @@ class ToshiWebClient(
     @TargetApi(21)
     override fun shouldInterceptRequest(view: WebView?, webRequest: WebResourceRequest?): WebResourceResponse? {
         if (webRequest?.method != "GET") return null
-        updateListener()
         if (!webRequest.isForMainFrame) return null
+        updateListener()
         return interceptRequest(webRequest)
     }
 
@@ -174,5 +175,10 @@ class ToshiWebClient(
         val ieDetectTagIndex = body.indexOf("<!--[if", 0, true)
         val scriptTagIndex = body.indexOf("<script", 0, true)
         return if (ieDetectTagIndex < 0) scriptTagIndex else minOf(scriptTagIndex, ieDetectTagIndex)
+    }
+
+    override fun onPageCommitVisible(view: WebView?, url: String?) {
+        super.onPageCommitVisible(view, url)
+        if (url != null) pageCommitVisibleListener(url)
     }
 }
