@@ -17,7 +17,6 @@
 
 package com.toshi.view.custom
 
-import android.annotation.TargetApi
 import android.content.Context
 import android.os.Build
 import android.support.design.widget.AppBarLayout
@@ -109,7 +108,7 @@ class CollapsingToshiView : AppBarLayout {
         }
         val percentage = absVerticalOffset / scrollRange
         updateOpacity(percentage)
-        updateInpuWrappertMargins(percentage)
+        updateInputWrappertMargins(percentage)
         updateBackgroundColorOpacity(percentage)
         updateElevation(percentage)
     }
@@ -121,7 +120,7 @@ class CollapsingToshiView : AppBarLayout {
         toshiText.alpha = newAlpha
     }
 
-    private fun updateInpuWrappertMargins(percentage: Float) {
+    private fun updateInputWrappertMargins(percentage: Float) {
         val lp = inputWrapper.layoutParams as LinearLayout.LayoutParams
         val newMargin = (inputMargin * (1 - percentage)).toInt()
         lp.leftMargin = newMargin
@@ -137,8 +136,8 @@ class CollapsingToshiView : AppBarLayout {
         wrapper.setBackgroundColor(color)
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private fun updateElevation(percentage: Float) {
+        if (Build.VERSION.SDK_INT < 21) return
         val newElevation = (inputElevation * (1 - percentage))
         val newZ = (inputZ * (1 - percentage))
         inputWrapper.elevation = newElevation

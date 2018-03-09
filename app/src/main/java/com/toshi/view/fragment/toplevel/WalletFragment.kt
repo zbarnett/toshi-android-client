@@ -17,12 +17,12 @@
 
 package com.toshi.view.fragment.toplevel
 
-import android.annotation.TargetApi
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
@@ -67,8 +67,8 @@ class WalletFragment : Fragment(), TopLevelFragment {
         initObservers()
     }
 
-    @TargetApi(21)
     private fun setStatusBarColor() {
+        if (Build.VERSION.SDK_INT < 21) return
         activity.window.statusBarColor = getColorById(R.color.colorPrimaryDark)
     }
 
