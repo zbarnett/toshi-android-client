@@ -17,6 +17,7 @@
 
 package com.toshi.view.fragment.toplevel
 
+import android.annotation.TargetApi
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
@@ -28,6 +29,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.toshi.R
 import com.toshi.extensions.addHorizontalLineDivider
+import com.toshi.extensions.getColorById
 import com.toshi.extensions.getPxSize
 import com.toshi.extensions.startActivity
 import com.toshi.extensions.startActivityAndFinish
@@ -47,7 +49,19 @@ import com.toshi.view.activity.ViewProfileActivity
 import com.toshi.view.adapter.MeAdapter
 import com.toshi.view.adapter.listeners.OnItemClickListener
 import com.toshi.viewModel.MeViewModel
-import kotlinx.android.synthetic.main.fragment_me.*
+import kotlinx.android.synthetic.main.fragment_me.avatar
+import kotlinx.android.synthetic.main.fragment_me.backupPhrase
+import kotlinx.android.synthetic.main.fragment_me.balanceContainer
+import kotlinx.android.synthetic.main.fragment_me.checkboxBackupPhrase
+import kotlinx.android.synthetic.main.fragment_me.ethBalance
+import kotlinx.android.synthetic.main.fragment_me.localCurrencyBalance
+import kotlinx.android.synthetic.main.fragment_me.myProfileCard
+import kotlinx.android.synthetic.main.fragment_me.myQrCode
+import kotlinx.android.synthetic.main.fragment_me.name
+import kotlinx.android.synthetic.main.fragment_me.securityStatus
+import kotlinx.android.synthetic.main.fragment_me.settings
+import kotlinx.android.synthetic.main.fragment_me.trustedFriends
+import kotlinx.android.synthetic.main.fragment_me.username
 import java.math.BigInteger
 
 class MeFragment : Fragment(), TopLevelFragment {
@@ -68,11 +82,17 @@ class MeFragment : Fragment(), TopLevelFragment {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) = init()
 
     private fun init() {
+        setStatusBarColor()
         initViewModel()
         setSecurityState()
         initClickListeners()
         initRecyclerView()
         initObservers()
+    }
+
+    @TargetApi(21)
+    private fun setStatusBarColor() {
+        activity.window.statusBarColor = getColorById(R.color.colorPrimaryDark)
     }
 
     private fun initViewModel() {

@@ -17,6 +17,7 @@
 
 package com.toshi.view.fragment.toplevel
 
+import android.annotation.TargetApi
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.ClipData
@@ -28,12 +29,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.toshi.R
+import com.toshi.extensions.getColorById
 import com.toshi.extensions.toast
 import com.toshi.view.adapter.WalletPagerAdapter
 import com.toshi.view.fragment.DialogFragment.ShareWalletAddressDialog
 import com.toshi.view.fragment.RefreshFragment
 import com.toshi.viewModel.WalletViewModel
-import kotlinx.android.synthetic.main.fragment_wallet.*
+import kotlinx.android.synthetic.main.fragment_wallet.copy
+import kotlinx.android.synthetic.main.fragment_wallet.refreshLayout
+import kotlinx.android.synthetic.main.fragment_wallet.tabLayout
+import kotlinx.android.synthetic.main.fragment_wallet.viewPager
+import kotlinx.android.synthetic.main.fragment_wallet.walletAddress
+import kotlinx.android.synthetic.main.fragment_wallet.walletWrapper
 
 class WalletFragment : Fragment(), TopLevelFragment {
     companion object {
@@ -52,11 +59,17 @@ class WalletFragment : Fragment(), TopLevelFragment {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) = init()
 
     private fun init() {
+        setStatusBarColor()
         initViewModel()
         initClickListeners()
         initAdapter()
         initRefreshListener()
         initObservers()
+    }
+
+    @TargetApi(21)
+    private fun setStatusBarColor() {
+        activity.window.statusBarColor = getColorById(R.color.colorPrimaryDark)
     }
 
     private fun initViewModel() {

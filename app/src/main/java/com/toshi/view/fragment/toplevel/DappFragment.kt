@@ -17,6 +17,7 @@
 
 package com.toshi.view.fragment.toplevel
 
+import android.annotation.TargetApi
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
@@ -26,6 +27,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.toshi.R
+import com.toshi.extensions.getColorById
 import com.toshi.extensions.isVisible
 import com.toshi.extensions.isWebUrl
 import com.toshi.extensions.openWebView
@@ -71,11 +73,17 @@ class DappFragment : Fragment(), TopLevelFragment {
     override fun onViewCreated(view: View?, inState: Bundle?) = init()
 
     private fun init() {
+        setStatusBarColor()
         initViewModel()
         initAdapters()
         setRecyclerViewVisibility()
         initListeners()
         initObservers()
+    }
+
+    @TargetApi(21)
+    private fun setStatusBarColor() {
+        activity.window.statusBarColor = getColorById(R.color.colorPrimaryDarkTransparent)
     }
 
     private fun initViewModel() {

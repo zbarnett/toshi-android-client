@@ -17,6 +17,7 @@
 
 package com.toshi.view.fragment.toplevel
 
+import android.annotation.TargetApi
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
@@ -32,6 +33,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.toshi.R
 import com.toshi.extensions.addHorizontalLineDivider
+import com.toshi.extensions.getColorById
 import com.toshi.extensions.isVisible
 import com.toshi.extensions.startActivity
 import com.toshi.extensions.startExternalActivity
@@ -43,7 +45,11 @@ import com.toshi.view.activity.ViewUserActivity
 import com.toshi.view.adapter.UserAdapter
 import com.toshi.view.adapter.listeners.OnItemClickListener
 import com.toshi.viewModel.FavoritesViewModel
-import kotlinx.android.synthetic.main.fragment_favorites.*
+import kotlinx.android.synthetic.main.fragment_favorites.emptyState
+import kotlinx.android.synthetic.main.fragment_favorites.favorites
+import kotlinx.android.synthetic.main.fragment_favorites.inviteFriends
+import kotlinx.android.synthetic.main.fragment_favorites.toolbar
+import kotlinx.android.synthetic.main.fragment_favorites.userSearch
 
 class FavoritesFragment : Fragment(), TopLevelFragment {
 
@@ -63,11 +69,17 @@ class FavoritesFragment : Fragment(), TopLevelFragment {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) = init()
 
     private fun init() {
+        setStatusBarColor()
         initViewModel()
         initMenu()
         initClickListeners()
         initRecyclerView()
         initObservers()
+    }
+
+    @TargetApi(21)
+    private fun setStatusBarColor() {
+        activity.window.statusBarColor = getColorById(R.color.colorPrimaryDark)
     }
 
     private fun initViewModel() {

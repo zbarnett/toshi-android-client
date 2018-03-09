@@ -17,6 +17,7 @@
 
 package com.toshi.view.fragment.toplevel
 
+import android.annotation.TargetApi
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
@@ -29,6 +30,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.toshi.R
+import com.toshi.extensions.getColorById
 import com.toshi.extensions.isVisible
 import com.toshi.extensions.startActivity
 import com.toshi.model.local.Conversation
@@ -42,7 +44,10 @@ import com.toshi.view.adapter.listeners.OnUpdateListener
 import com.toshi.view.adapter.viewholder.ThreadViewHolder
 import com.toshi.view.fragment.DialogFragment.ConversationOptionsDialogFragment
 import com.toshi.viewModel.RecentViewModel
-import kotlinx.android.synthetic.main.fragment_recent.*
+import kotlinx.android.synthetic.main.fragment_recent.add
+import kotlinx.android.synthetic.main.fragment_recent.emptyState
+import kotlinx.android.synthetic.main.fragment_recent.recents
+import kotlinx.android.synthetic.main.fragment_recent.startChat
 
 class RecentFragment : Fragment(), TopLevelFragment {
 
@@ -66,11 +71,17 @@ class RecentFragment : Fragment(), TopLevelFragment {
     override fun onViewCreated(view: View?, inState: Bundle?) = init(inState)
 
     private fun init(inState: Bundle?) {
+        setStatusBarColor()
         initViewModel()
         initClickListeners()
         restoreScrollPosition(inState)
         initRecentAdapter()
         initObservers()
+    }
+
+    @TargetApi(21)
+    private fun setStatusBarColor() {
+        activity.window.statusBarColor = getColorById(R.color.colorPrimaryDark)
     }
 
     private fun initViewModel() {
