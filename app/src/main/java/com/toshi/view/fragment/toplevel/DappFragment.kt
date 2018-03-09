@@ -48,9 +48,11 @@ import com.toshi.view.activity.ViewDappActivity.Companion.DAPP_ID
 import com.toshi.view.adapter.DappAdapter
 import com.toshi.view.adapter.SearchDappAdapter
 import com.toshi.viewModel.DappViewModel
+import kotlinx.android.synthetic.main.fragment_dapps.container
 import kotlinx.android.synthetic.main.fragment_dapps.dapps
 import kotlinx.android.synthetic.main.fragment_dapps.header
 import kotlinx.android.synthetic.main.fragment_dapps.searchDapps
+import kotlinx.android.synthetic.main.fragment_dapps.view.header
 import kotlinx.android.synthetic.main.view_collapsing_toshi.input
 import kotlinx.android.synthetic.main.view_collapsing_toshi.view.input
 
@@ -142,9 +144,18 @@ class DappFragment : Fragment(), TopLevelFragment {
     }
 
     private fun initListeners() {
+        setOnApplyWindowInsetsListener()
         header.onTextChangedListener = { showSearchUI(it) }
         header.onHeaderCollapsed = { showSearchUI(input.text.toString()) }
         header.onHeaderExpanded = { showBrowseUI(); hideKeyboardAndUnfocus() }
+    }
+
+    private fun setOnApplyWindowInsetsListener() {
+        if (Build.VERSION.SDK_INT < 21) return
+        container.setOnApplyWindowInsetsListener { v, insets ->
+            v.header.onApplyWindowInsets(insets)
+            insets.consumeSystemWindowInsets()
+        }
     }
 
     private fun showBrowseUI() {
