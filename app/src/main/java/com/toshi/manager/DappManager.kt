@@ -19,6 +19,7 @@ package com.toshi.manager
 
 import com.toshi.manager.network.DirectoryService
 import com.toshi.model.network.dapp.DappResult
+import com.toshi.model.network.dapp.DappSearchResult
 import com.toshi.model.network.dapp.DappSections
 import com.toshi.model.network.dapp.Dapps
 import rx.Single
@@ -33,11 +34,10 @@ class DappManager {
                 .subscribeOn(Schedulers.io())
     }
 
-    fun search(input: String): Single<Dapps> {
+    fun search(input: String): Single<DappSearchResult> {
         return DirectoryService
                 .get()
                 .search(input)
-                .map { it.results }
                 .subscribeOn(Schedulers.io())
     }
 

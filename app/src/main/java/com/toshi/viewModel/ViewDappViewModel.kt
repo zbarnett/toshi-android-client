@@ -21,37 +21,49 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import android.content.Intent
 import com.toshi.R
+import com.toshi.extensions.toMap
+import com.toshi.model.network.dapp.Dapp
 import com.toshi.model.network.dapp.DappResult
 import com.toshi.util.SingleLiveEvent
-import com.toshi.view.BaseApplication
-import com.toshi.view.activity.ViewDappActivity.Companion.DAPP_ID
-import rx.android.schedulers.AndroidSchedulers
+import com.toshi.view.activity.ViewDappActivity
 import rx.subscriptions.CompositeSubscription
 
 class ViewDappViewModel(private val intent: Intent) : ViewModel() {
 
-    private val dappManager by lazy { BaseApplication.get().dappManager }
     private val subscriptions by lazy { CompositeSubscription() }
 
     val dapp by lazy { MutableLiveData<DappResult>() }
     val error by lazy { SingleLiveEvent<Int>() }
 
     init {
-        getDapp(getDappId())
+        getDappFromIntent()
     }
 
-    private fun getDappId() = intent.getLongExtra(DAPP_ID, -1)
+    private fun getDappFromIntent() {
+        val dapp = Dapp.getDappFromIntent(intent)
+        if (dapp == null) {
+            error.value = R.string.unable_to_open_dapp
+            return
+        }
 
-    private fun getDapp(dappId: Long) {
-        val sub = dappManager
-                .getDapp(dappId)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        { dapp.value = it },
-                        { error.value = R.string.error_fetching_dapp }
-                )
+        val categoriesFromIntent = getCategoriesFromIntent()
+        val dappCategories = getDappCategories(dapp, categoriesFromIntent)
+        this.dapp.value = DappResult(dapp, dappCategories)
+    }
 
-        subscriptions.add(sub)
+    private fun getDappCategories(dapp: Dapp, categories: Map<Int, String>): Map<Int, String> {
+        val dappCategories = mutableMapOf<Int, String>()
+        dapp.categories.forEach { dappCategories[it] = categories[it] ?: "" }
+        return dappCategories
+    }
+
+    private fun getCategoriesFromIntent(): Map<Int, String> {
+        return try {
+            val categories = intent.getSerializableExtra(ViewDappActivity.DAPP_CATEGORIES) as ArrayList<Pair<Int, String>>
+            categories.toMap()
+        } catch (e: ClassCastException) {
+            emptyMap()
+        }
     }
 
     override fun onCleared() {

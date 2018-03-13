@@ -32,6 +32,7 @@ import com.toshi.extensions.isVisible
 import com.toshi.extensions.isWebUrl
 import com.toshi.extensions.openWebView
 import com.toshi.extensions.startActivity
+import com.toshi.extensions.toArrayList
 import com.toshi.extensions.toast
 import com.toshi.model.local.dapp.DappCategory
 import com.toshi.model.network.dapp.Dapp
@@ -41,10 +42,8 @@ import com.toshi.view.activity.ViewAllDappsActivity
 import com.toshi.view.activity.ViewAllDappsActivity.Companion.ALL
 import com.toshi.view.activity.ViewAllDappsActivity.Companion.CATEGORY
 import com.toshi.view.activity.ViewAllDappsActivity.Companion.CATEGORY_ID
-import com.toshi.view.activity.ViewAllDappsActivity.Companion.CATEGORY_NAME
 import com.toshi.view.activity.ViewAllDappsActivity.Companion.VIEW_TYPE
 import com.toshi.view.activity.ViewDappActivity
-import com.toshi.view.activity.ViewDappActivity.Companion.DAPP_ID
 import com.toshi.view.adapter.DappAdapter
 import com.toshi.view.adapter.SearchDappAdapter
 import com.toshi.viewModel.DappViewModel
@@ -99,15 +98,16 @@ class DappFragment : Fragment(), TopLevelFragment {
 
     private fun initBrowseAdapter() {
         dappAdapter = DappAdapter().apply {
-            onDappClickedListener = { startActivity<ViewDappActivity> {
-                putExtra(DAPP_ID, it.dappId)
-            } }
+            onDappClickedListener = {
+                startViewDappActivity(
+                        dapp = it,
+                        categories = viewModel.dappSections.value?.categories ?: emptyMap()
+                )
+            }
             onFooterClickedListener = { startActivity<ViewAllDappsActivity> {
-                putExtra(CATEGORY_NAME, getString(R.string.all_dapps))
                 putExtra(VIEW_TYPE, ALL)
             } }
             onCategoryClickedListener = { startActivity<ViewAllDappsActivity> {
-                putExtra(CATEGORY_NAME, it.category)
                 putExtra(CATEGORY_ID, it.categoryId)
                 putExtra(VIEW_TYPE, CATEGORY)
             } }
@@ -122,14 +122,24 @@ class DappFragment : Fragment(), TopLevelFragment {
         searchDappAdapter = SearchDappAdapter().apply {
             onSearchClickListener = { openBrowserAndSearchGoogle(it) }
             onGoToClickListener = { openWebView(it) }
-            onItemClickedListener = { startActivity<ViewDappActivity> {
-                putExtra(DAPP_ID, it.dappId)
-            } }
+            onItemClickedListener = {
+                startViewDappActivity(
+                    dapp = it,
+                    categories = viewModel.searchResult.value?.categories ?: emptyMap()
+                )
+            }
         }
         searchDapps.apply {
             adapter = searchDappAdapter
             layoutManager = LinearLayoutManager(context)
             itemAnimator = null
+        }
+    }
+
+    private fun startViewDappActivity(dapp: Dapp, categories: Map<Int, String>) {
+        startActivity<ViewDappActivity> {
+            putExtra(ViewDappActivity.DAPP_CATEGORIES, categories.toArrayList())
+            Dapp.buildIntent(this, dapp)
         }
     }
 
@@ -197,7 +207,7 @@ class DappFragment : Fragment(), TopLevelFragment {
             if (it != null) toast(it)
         })
         viewModel.searchResult.observe(this, Observer {
-            if (it != null && input.text.isNotEmpty()) setSearchResult(it)
+            if (it != null && input.text.isNotEmpty()) setSearchResult(it.results.dapps)
         })
         viewModel.allDapps.observe(this, Observer {
             if (it != null) setSearchResult(it)

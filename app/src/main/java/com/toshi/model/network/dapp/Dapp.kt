@@ -17,6 +17,7 @@
 
 package com.toshi.model.network.dapp
 
+import android.content.Intent
 import com.squareup.moshi.Json
 import com.toshi.model.local.dapp.DappListItem
 
@@ -29,4 +30,48 @@ data class Dapp(
         val icon: String?,
         val cover: String?,
         val categories: List<Int> = emptyList()
-) : DappListItem()
+) : DappListItem() {
+
+    companion object {
+        const val DAPP_ID = "dappId"
+        const val NAME = "name"
+        const val URL = "url"
+        const val DESCRIPTION = "description"
+        const val ICON = "icon"
+        const val COVER = "cover"
+        const val CATEGORIES = "categories"
+
+        fun buildIntent(intent: Intent, dapp: Dapp): Intent {
+            return intent.apply {
+                putExtra(DAPP_ID, dapp.dappId)
+                putExtra(NAME, dapp.name)
+                putExtra(URL, dapp.url)
+                putExtra(DESCRIPTION, dapp.description)
+                putExtra(ICON, dapp.icon)
+                putExtra(COVER, dapp.cover)
+                putIntegerArrayListExtra(CATEGORIES, dapp.categories as ArrayList<Int>)
+            }
+        }
+
+        fun getDappFromIntent(intent: Intent): Dapp? {
+            if (!hasAllExtras(intent)) return null
+            return Dapp(
+                    intent.getLongExtra(DAPP_ID, -1),
+                    intent.getStringExtra(NAME),
+                    intent.getStringExtra(URL),
+                    intent.getStringExtra(DESCRIPTION),
+                    intent.getStringExtra(ICON),
+                    intent.getStringExtra(COVER),
+                    intent.getIntegerArrayListExtra(CATEGORIES)
+            )
+        }
+
+        fun hasAllExtras(intent: Intent): Boolean {
+            return intent.getLongExtra(DAPP_ID, -1) != -1L &&
+                    intent.getStringExtra(NAME) != null &&
+                    intent.getStringExtra(URL) != null &&
+                    intent.getStringExtra(DESCRIPTION) != null &&
+                    intent.getIntegerArrayListExtra(CATEGORIES).size > 0
+        }
+    }
+}

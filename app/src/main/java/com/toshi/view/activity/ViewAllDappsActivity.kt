@@ -26,8 +26,9 @@ import com.toshi.R
 import com.toshi.extensions.addHorizontalLineDivider
 import com.toshi.extensions.getPxSize
 import com.toshi.extensions.startActivity
+import com.toshi.extensions.toArrayList
 import com.toshi.extensions.toast
-import com.toshi.view.activity.ViewDappActivity.Companion.DAPP_ID
+import com.toshi.model.network.dapp.Dapp
 import com.toshi.view.adapter.AllDappsAdapter
 import com.toshi.viewModel.ViewAllDappsViewModel
 import com.toshi.viewModel.ViewModelFactory.ViewAllDappsViewModelFactory
@@ -43,7 +44,6 @@ class ViewAllDappsActivity : AppCompatActivity() {
 
         const val VIEW_TYPE = "viewType"
         const val CATEGORY_ID = "categoryId"
-        const val CATEGORY_NAME = "categoryName"
     }
 
     private lateinit var viewModel: ViewAllDappsViewModel
@@ -57,14 +57,9 @@ class ViewAllDappsActivity : AppCompatActivity() {
 
     private fun init() {
         initViewModel()
-        setToolbarTitle()
         initClickListeners()
         initAdapter()
         initObservers()
-    }
-
-    private fun setToolbarTitle() {
-        toolbarTitle.text = viewModel.getCategoryName()
     }
 
     private fun initViewModel() {
@@ -80,9 +75,7 @@ class ViewAllDappsActivity : AppCompatActivity() {
 
     private fun initAdapter() {
         allDappsAdapter = AllDappsAdapter().apply {
-            onItemClickedListener = {
-                startActivity<ViewDappActivity> { putExtra(DAPP_ID, it.dappId) }
-            }
+            onItemClickedListener = { startViewDappActivity(it) }
         }
         dapps.apply {
             adapter = allDappsAdapter
@@ -93,12 +86,23 @@ class ViewAllDappsActivity : AppCompatActivity() {
         }
     }
 
+    private fun startViewDappActivity(dapp: Dapp) {
+        val categories = viewModel.dapps.value?.categories ?: emptyMap()
+        startActivity<ViewDappActivity> {
+            putExtra(ViewDappActivity.DAPP_CATEGORIES, categories.toArrayList())
+            Dapp.buildIntent(this, dapp)
+        }
+    }
+
     private fun initObservers() {
         viewModel.dapps.observe(this, Observer {
-            if (it != null) allDappsAdapter.setDapps(it)
+            if (it != null) allDappsAdapter.setDapps(it.dapps)
         })
         viewModel.dappsError.observe(this, Observer {
             if (it != null) toast(it)
+        })
+        viewModel.categoryName.observe(this, Observer {
+            if (it != null) toolbarTitle.text = it
         })
     }
 }

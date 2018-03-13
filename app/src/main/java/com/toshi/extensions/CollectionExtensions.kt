@@ -1,3 +1,5 @@
+package com.toshi.extensions
+
 /*
  * 	Copyright (c) 2017. Toshi Inc
  *
@@ -15,9 +17,14 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.toshi.model.network.dapp
+fun <K, V> Map<K, V>.toArrayList(): ArrayList<Pair<K, V>> {
+    val list = ArrayList<Pair<K, V>>()
+    forEach { list.add(Pair(it.key, it.value)) }
+    return list
+}
 
-data class DappSearchResult(
-        val results: Dapps = Dapps(),
-        val categories: Map<Int, String> = emptyMap()
-)
+fun <K, V> ArrayList<Pair<K, V>>.toMap(): Map<K, V> {
+    val map = mutableMapOf<K, V>()
+    forEach { map[it.first] = it.second }
+    return map
+}

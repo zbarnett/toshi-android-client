@@ -21,13 +21,12 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import android.content.Intent
 import com.toshi.R
-import com.toshi.model.network.dapp.Dapp
+import com.toshi.model.network.dapp.Dapps
 import com.toshi.util.SingleLiveEvent
 import com.toshi.view.BaseApplication
 import com.toshi.view.activity.ViewAllDappsActivity.Companion.ALL
 import com.toshi.view.activity.ViewAllDappsActivity.Companion.CATEGORY
 import com.toshi.view.activity.ViewAllDappsActivity.Companion.CATEGORY_ID
-import com.toshi.view.activity.ViewAllDappsActivity.Companion.CATEGORY_NAME
 import com.toshi.view.activity.ViewAllDappsActivity.Companion.VIEW_TYPE
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
@@ -38,7 +37,8 @@ class ViewAllDappsViewModel(private val intent: Intent) : ViewModel() {
     private val dappsManager by lazy { BaseApplication.get().dappManager }
     private val subscriptions by lazy { CompositeSubscription() }
 
-    val dapps by lazy { MutableLiveData<List<Dapp>>() }
+    val dapps by lazy { MutableLiveData<Dapps>() }
+    val categoryName by lazy { MutableLiveData<String>() }
     val dappsError by lazy { SingleLiveEvent<Int>() }
 
     init {
@@ -49,16 +49,12 @@ class ViewAllDappsViewModel(private val intent: Intent) : ViewModel() {
     private fun getViewType() = intent.getIntExtra(VIEW_TYPE, ALL)
     private fun getCategoryId() = intent.getIntExtra(CATEGORY_ID, -1)
 
-    fun getCategoryName(): String {
-        return intent.getStringExtra(CATEGORY_NAME) ?: BaseApplication.get().getString(R.string.other)
-    }
-
     private fun getAllDapps() {
         val sub = dappsManager
                 .getAllDapps()
-                .map { it.dapps }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .doOnSuccess { setCategoryName(it, getCategoryId()) }
                 .subscribe(
                         { dapps.value = it },
                         { dappsError.value = R.string.error_fetching_dapps }
@@ -72,13 +68,22 @@ class ViewAllDappsViewModel(private val intent: Intent) : ViewModel() {
                 .getAllDappsInCategory(categoryId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .map { it.dapps }
+                .doOnSuccess { setCategoryName(it, getCategoryId()) }
                 .subscribe(
                         { dapps.value = it },
                         { dappsError.value = R.string.error_fetching_dapps }
                 )
 
         subscriptions.add(sub)
+    }
+
+    private fun setCategoryName(dapps: Dapps, categoryId: Int) {
+        val categoryName = when {
+            getViewType() == ALL -> BaseApplication.get().getString(R.string.all_dapps)
+            categoryId == -1 -> BaseApplication.get().getString(R.string.other)
+            else -> dapps.categories[categoryId] ?: BaseApplication.get().getString(R.string.other)
+        }
+        this.categoryName.value = categoryName
     }
 
     override fun onCleared() {

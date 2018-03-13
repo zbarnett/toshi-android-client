@@ -28,6 +28,7 @@ import android.support.v7.app.AppCompatActivity
 import com.toshi.R
 import com.toshi.extensions.getAbsoluteY
 import com.toshi.extensions.openWebView
+import com.toshi.extensions.startActivity
 import com.toshi.extensions.toast
 import com.toshi.model.network.dapp.DappResult
 import com.toshi.util.ImageUtil
@@ -50,7 +51,7 @@ import kotlinx.android.synthetic.main.view_dapp_header.view.toolbarTitle
 class ViewDappActivity : AppCompatActivity() {
 
     companion object {
-        const val DAPP_ID = "dappId"
+        const val DAPP_CATEGORIES = "dappCategories"
     }
 
     private lateinit var viewModel: ViewDappViewModel
@@ -81,12 +82,20 @@ class ViewDappActivity : AppCompatActivity() {
     }
 
     private fun initListeners() {
+        categories.itemClickedListener = { categoryId, categoryName -> startDappCategoryActivity(categoryId, categoryName) }
         openBtn.setOnClickListener { openWebViewActivity() }
         header.closeButton.setOnClickListener { finish() }
         header.offsetChangedListener = { setStatusBarAlpha(it) }
         scrollView.setOnScrollChangeListener { _: NestedScrollView?, _: Int, _: Int, _: Int, _: Int ->
             setToolbarTitleAlpha()
             setYOfToolbarTitle()
+        }
+    }
+
+    private fun startDappCategoryActivity(categoryId: Int, categoryName: String) {
+        startActivity<ViewAllDappsActivity> {
+            putExtra(ViewAllDappsActivity.CATEGORY_ID, categoryId)
+            putExtra(ViewAllDappsActivity.VIEW_TYPE, ViewAllDappsActivity.CATEGORY)
         }
     }
 
@@ -139,7 +148,7 @@ class ViewDappActivity : AppCompatActivity() {
         toolbarTitle.text = dapp?.name.orEmpty()
         description.text = dapp?.description.orEmpty()
         url.text = dapp?.url.orEmpty()
-        categories.text = dappResult.categories.values.joinToString(separator = ", ")
+        categories.addCategories(dappResult.categories)
         ImageUtil.loadImageOrPlaceholder(header.headerImage, dapp?.cover)
         ImageUtil.loadImageOrPlaceholder(dappAvatar, dapp?.icon)
     }

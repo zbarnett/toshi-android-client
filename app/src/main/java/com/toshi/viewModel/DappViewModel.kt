@@ -21,6 +21,7 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import com.toshi.R
 import com.toshi.model.network.dapp.Dapp
+import com.toshi.model.network.dapp.DappSearchResult
 import com.toshi.model.network.dapp.DappSections
 import com.toshi.util.SingleLiveEvent
 import com.toshi.view.BaseApplication
@@ -37,7 +38,7 @@ class DappViewModel : ViewModel() {
     private val subscriptions by lazy { CompositeSubscription() }
     private val searchSubject by lazy { PublishSubject.create<String>() }
 
-    val searchResult by lazy { MutableLiveData<List<Dapp>>() }
+    val searchResult by lazy { MutableLiveData<DappSearchResult>() }
     val dappsError by lazy { SingleLiveEvent<Int>() }
     val dappSections by lazy { MutableLiveData<DappSections>() }
     val allDapps by lazy { MutableLiveData<List<Dapp>>() }
@@ -75,10 +76,8 @@ class DappViewModel : ViewModel() {
         subscriptions.add(sub)
     }
 
-    private fun searchForDapps(input: String): Single<List<Dapp>> {
-        return dappManager
-                .search(input)
-                .map { it.dapps }
+    private fun searchForDapps(input: String): Single<DappSearchResult> {
+        return dappManager.search(input)
     }
 
     fun getAllDapps() {
