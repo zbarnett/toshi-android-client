@@ -174,6 +174,7 @@ class DappFragment : BackableTopLevelFragment() {
     }
 
     private fun showSearchUI(input: String) {
+        searchDapps.isNestedScrollingEnabled = false
         searchDapps.isVisible(true)
         dapps.isVisible(false)
         if (input.isEmpty()) setSearchEmptyState()
