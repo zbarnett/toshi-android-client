@@ -83,6 +83,7 @@
                 android:paddingRight="20dp"
                 android:background="@null"
                 android:singleLine="true"
+                android:imeOptions="actionGo"
                 android:hint="@string/dapp_search_hint" />
 
         </LinearLayout>

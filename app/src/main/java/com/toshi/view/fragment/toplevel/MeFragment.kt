@@ -21,7 +21,6 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Build
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
@@ -64,7 +63,7 @@ import kotlinx.android.synthetic.main.fragment_me.trustedFriends
 import kotlinx.android.synthetic.main.fragment_me.username
 import java.math.BigInteger
 
-class MeFragment : Fragment(), TopLevelFragment {
+class MeFragment : TopLevelFragment() {
 
     companion object {
         private const val TAG = "MeFragment"

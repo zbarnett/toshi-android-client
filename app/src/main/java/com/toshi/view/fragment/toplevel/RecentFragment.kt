@@ -21,7 +21,6 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Build
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -49,7 +48,7 @@ import kotlinx.android.synthetic.main.fragment_recent.emptyState
 import kotlinx.android.synthetic.main.fragment_recent.recents
 import kotlinx.android.synthetic.main.fragment_recent.startChat
 
-class RecentFragment : Fragment(), TopLevelFragment {
+class RecentFragment : TopLevelFragment() {
 
     companion object {
         private const val TAG = "RecentFragment"

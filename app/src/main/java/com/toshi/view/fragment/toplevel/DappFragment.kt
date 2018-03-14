@@ -21,7 +21,6 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Build
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
@@ -55,10 +54,10 @@ import kotlinx.android.synthetic.main.fragment_dapps.view.header
 import kotlinx.android.synthetic.main.view_collapsing_toshi.input
 import kotlinx.android.synthetic.main.view_collapsing_toshi.view.input
 
-class DappFragment : Fragment(), TopLevelFragment {
+class DappFragment : BackableTopLevelFragment() {
 
     companion object {
-        private const val TAG = "DappFragment"
+        const val TAG = "DappFragment"
     }
 
     private lateinit var viewModel: DappViewModel
@@ -98,12 +97,7 @@ class DappFragment : Fragment(), TopLevelFragment {
 
     private fun initBrowseAdapter() {
         dappAdapter = DappAdapter().apply {
-            onDappClickedListener = {
-                startViewDappActivity(
-                        dapp = it,
-                        categories = viewModel.dappSections.value?.categories ?: emptyMap()
-                )
-            }
+            onDappClickedListener = { startViewDappActivity(it) }
             onFooterClickedListener = { startActivity<ViewAllDappsActivity> {
                 putExtra(VIEW_TYPE, ALL)
             } }
@@ -121,13 +115,8 @@ class DappFragment : Fragment(), TopLevelFragment {
     private fun initSearchAdapter() {
         searchDappAdapter = SearchDappAdapter().apply {
             onSearchClickListener = { openBrowserAndSearchGoogle(it) }
-            onGoToClickListener = { openWebView(it) }
-            onItemClickedListener = {
-                startViewDappActivity(
-                    dapp = it,
-                    categories = viewModel.getCategories()
-                )
-            }
+            onGoToClickListener = { openBrowser(it) }
+            onItemClickedListener = { openBrowser(it.url) }
         }
         searchDapps.apply {
             adapter = searchDappAdapter
@@ -136,7 +125,8 @@ class DappFragment : Fragment(), TopLevelFragment {
         }
     }
 
-    private fun startViewDappActivity(dapp: Dapp, categories: Map<Int, String>) {
+    private fun startViewDappActivity(dapp: Dapp) {
+        val categories = viewModel.dappSections.value?.categories ?: emptyMap()
         startActivity<ViewDappActivity> {
             putExtra(ViewDappActivity.DAPP_CATEGORIES, categories.toArrayList())
             Dapp.buildIntent(this, dapp)
@@ -146,6 +136,10 @@ class DappFragment : Fragment(), TopLevelFragment {
     private fun openBrowserAndSearchGoogle(searchValue: String) {
         val address = "https://www.google.com/search?q=$searchValue"
         openWebView(address)
+    }
+
+    private fun openBrowser(url: String?) {
+        if (url != null) openWebView(url) else toast(R.string.invalid_url)
     }
 
     private fun setRecyclerViewVisibility() {
@@ -158,6 +152,7 @@ class DappFragment : Fragment(), TopLevelFragment {
         header.onTextChangedListener = { showSearchUI(it) }
         header.onHeaderCollapsed = { showSearchUI(input.text.toString()) }
         header.onHeaderExpanded = { showBrowseUI(); hideKeyboardAndUnfocus() }
+        header.onEnterClicked = { if (isWebUrl(it)) openWebView(it) }
     }
 
     private fun setOnApplyWindowInsetsListener() {
@@ -222,5 +217,13 @@ class DappFragment : Fragment(), TopLevelFragment {
     private fun setSearchResult(dapps: List<Dapp>) {
         val dappsCategory = DappCategory(getString(R.string.dapps), -1)
         searchDappAdapter.setDapps(dapps, dappsCategory)
+    }
+
+    override fun onBackPressed(): Boolean {
+        if (!header.isFullyExpanded) {
+            header.expandAndHideCloseButton()
+            return true
+        }
+        return false
     }
 }

@@ -21,6 +21,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.toshi.R
+import com.toshi.extensions.sameContentAs
 import com.toshi.model.local.dapp.DappCategory
 import com.toshi.model.local.dapp.DappGoogleSearch
 import com.toshi.model.local.dapp.DappGoogleSearchCategory
@@ -54,6 +55,8 @@ class SearchDappAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var onItemClickedListener: ((Dapp) -> Unit)? = null
 
     fun setEmptyState(dapps: List<Dapp>, dappsCategory: DappCategory) {
+        val dappsWithoutHeader = this.dapps.dropWhile { it !is Dapp }
+        if (dappsWithoutHeader.sameContentAs(dapps)) return
         this.dapps.clear()
         this.dapps.add(dappsCategory)
         this.dapps.addAll(dapps)
@@ -61,6 +64,8 @@ class SearchDappAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     fun setDapps(dapps: List<Dapp>, dappsCategory: DappCategory) {
+        val dappsWithoutHeader = this.dapps.dropWhile { it !is Dapp }
+        if (dappsWithoutHeader.sameContentAs(dapps)) return
         this.dapps.removeAll { removeItem(it) }
         this.dapps.add(dappsCategory)
         this.dapps.addAll(dapps)

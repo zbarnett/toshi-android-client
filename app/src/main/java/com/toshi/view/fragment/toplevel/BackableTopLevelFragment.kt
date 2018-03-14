@@ -17,8 +17,6 @@
 
 package com.toshi.view.fragment.toplevel
 
-import android.support.v4.app.Fragment
-
-abstract class TopLevelFragment : Fragment() {
-    abstract fun getFragmentTag(): String
+abstract class BackableTopLevelFragment : TopLevelFragment() {
+    abstract fun onBackPressed(): Boolean
 }

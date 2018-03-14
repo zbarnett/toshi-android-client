@@ -22,12 +22,14 @@ import android.os.Build
 import android.support.design.widget.AppBarLayout
 import android.support.v4.graphics.ColorUtils
 import android.util.AttributeSet
+import android.view.KeyEvent
 import android.widget.LinearLayout
 import com.toshi.R
 import com.toshi.extensions.addPadding
 import com.toshi.extensions.getColorById
 import com.toshi.extensions.getPxSize
 import com.toshi.extensions.isVisible
+import com.toshi.util.KeyboardUtil
 import com.toshi.view.adapter.listeners.TextChangedListener
 import kotlinx.android.synthetic.main.view_collapsing_toshi.view.closeButton
 import kotlinx.android.synthetic.main.view_collapsing_toshi.view.input
@@ -44,10 +46,12 @@ class CollapsingToshiView : AppBarLayout {
     private val inputMargin by lazy { getPxSize(R.dimen.dappsInputMargin) }
     private var prevOffset = -1
     private var skipFirst = true
+    var isFullyExpanded = false
 
     var onTextChangedListener: ((String) -> Unit)? = null
     var onHeaderCollapsed: (() -> Unit)? = null
     var onHeaderExpanded: (() -> Unit)? = null
+    var onEnterClicked: ((String) -> Unit)? = null
 
     constructor(context: Context): super(context) {
         init()
@@ -59,15 +63,26 @@ class CollapsingToshiView : AppBarLayout {
 
     private fun init() {
         inflate(context, R.layout.view_collapsing_toshi, this)
+        initKeyboardListener()
         initListeners()
     }
 
+    private fun initKeyboardListener() {
+        input.setOnKeyListener { _, _, event ->
+            if (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_UP) {
+                onEnterClicked?.invoke(input.text.toString())
+                return@setOnKeyListener true
+            }
+            return@setOnKeyListener false
+        }
+    }
+
     private fun initListeners() {
-        closeButton.setOnClickListener { expandClearInputAndHideCloseButton() }
-        input.setOnFocusChangeListener { _, hasFocus -> if (hasFocus) collapse() }
+        closeButton.setOnClickListener { expandAndHideCloseButton() }
+        input.setOnFocusChangeListener { _, hasFocus -> handleFocusChanged(hasFocus) }
         input.setOnClickListener { if (it.hasFocus()) collapse() }
         addOnOffsetChangedListener { appBarLayout, verticalOffset ->
-            updateView(verticalOffset, appBarLayout)
+            handleOffsetChanged(verticalOffset, appBarLayout)
         }
         input.addTextChangedListener(object : TextChangedListener() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -78,7 +93,13 @@ class CollapsingToshiView : AppBarLayout {
         })
     }
 
-    private fun expandClearInputAndHideCloseButton() {
+    private fun handleFocusChanged(hasFocus: Boolean) {
+        if (!hasFocus) return
+        collapse()
+        KeyboardUtil.showKeyboard(input)
+    }
+
+    fun expandAndHideCloseButton() {
         setExpanded(true, true)
         input.setText("")
         closeButton.isVisible(false)
@@ -95,6 +116,11 @@ class CollapsingToshiView : AppBarLayout {
         setExpanded(false, true)
         closeButton.isVisible(true)
         input.addPadding(left = 0, right = input.paddingRight)
+    }
+
+    private fun handleOffsetChanged(verticalOffset: Int, appBarLayout: AppBarLayout) {
+        isFullyExpanded = verticalOffset == 0
+        updateView(verticalOffset, appBarLayout)
     }
 
     private fun updateView(verticalOffset: Int, appBarLayout: AppBarLayout) {

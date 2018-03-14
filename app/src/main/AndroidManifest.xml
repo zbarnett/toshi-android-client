@@ -61,7 +61,7 @@
         </activity>
 
         <activity android:name="com.toshi.view.activity.MainActivity"
-                  android:windowSoftInputMode="adjustPan|stateHidden" />
+                  android:windowSoftInputMode="stateUnchanged" />
 
         <activity android:name="com.toshi.view.activity.ChatActivity"
                   android:parentActivityName="com.toshi.view.activity.MainActivity"

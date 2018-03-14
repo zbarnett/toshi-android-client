@@ -13,9 +13,12 @@ import com.toshi.extensions.getColorById
 import com.toshi.util.SharedPrefsUtil
 import com.toshi.util.SoundManager
 import com.toshi.view.adapter.NavigationAdapter
+import com.toshi.view.fragment.toplevel.BackableTopLevelFragment
+import com.toshi.view.fragment.toplevel.DappFragment
 import com.toshi.view.fragment.toplevel.TopLevelFragment
 import com.toshi.viewModel.MainViewModel
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_main.fragmentContainer
+import kotlinx.android.synthetic.main.activity_main.navBar
 
 class MainActivity : AppCompatActivity() {
 
@@ -148,5 +151,13 @@ class MainActivity : AppCompatActivity() {
     override fun onSaveInstanceState(outState: Bundle?) {
         outState?.putInt(CURRENT_ITEM, navBar.currentItem)
         super.onSaveInstanceState(outState)
+    }
+
+    override fun onBackPressed() {
+        val dappFragment = supportFragmentManager.findFragmentByTag(DappFragment.TAG)
+        if (dappFragment != null && dappFragment.isVisible && dappFragment is BackableTopLevelFragment) {
+            val isHandled = dappFragment.onBackPressed()
+            if (!isHandled) super.onBackPressed()
+        } else super.onBackPressed()
     }
 }

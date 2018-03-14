@@ -1,5 +1,3 @@
-package com.toshi.extensions
-
 /*
  * 	Copyright (c) 2017. Toshi Inc
  *
@@ -17,6 +15,8 @@ package com.toshi.extensions
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+package com.toshi.extensions
+
 fun <K, V> Map<K, V>.toArrayList(): ArrayList<Pair<K, V>> {
     val list = ArrayList<Pair<K, V>>()
     forEach { list.add(Pair(it.key, it.value)) }
@@ -28,3 +28,5 @@ fun <K, V> ArrayList<Pair<K, V>>.toMap(): Map<K, V> {
     forEach { map[it.first] = it.second }
     return map
 }
+
+fun <T> List<T>.sameContentAs(list: List<T>): Boolean = size == list.size && containsAll(list)

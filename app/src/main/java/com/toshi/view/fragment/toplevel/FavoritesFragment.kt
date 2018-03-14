@@ -22,7 +22,6 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
@@ -51,7 +50,7 @@ import kotlinx.android.synthetic.main.fragment_favorites.inviteFriends
 import kotlinx.android.synthetic.main.fragment_favorites.toolbar
 import kotlinx.android.synthetic.main.fragment_favorites.userSearch
 
-class FavoritesFragment : Fragment(), TopLevelFragment {
+class FavoritesFragment : TopLevelFragment() {
 
     companion object {
         private const val TAG = "FavoritesFragment"
