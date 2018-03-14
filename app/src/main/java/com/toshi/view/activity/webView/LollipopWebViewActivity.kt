@@ -34,6 +34,7 @@ import android.webkit.WebSettings
 import android.webkit.WebView
 import com.toshi.BuildConfig
 import com.toshi.R
+import com.toshi.extensions.setActivityResultAndFinish
 import com.toshi.presenter.webview.SofaHostWrapper
 import com.toshi.presenter.webview.ToshiChromeWebViewClient
 import com.toshi.util.FileUtil
@@ -41,14 +42,20 @@ import com.toshi.util.PermissionUtil
 import com.toshi.view.fragment.DialogFragment.ChooserDialog
 import com.toshi.viewModel.ViewModelFactory.WebViewViewModelFactory
 import com.toshi.viewModel.WebViewViewModel
-import kotlinx.android.synthetic.main.activity_lollipop_view_view.*
-import kotlinx.android.synthetic.main.view_address_bar_input.*
+import kotlinx.android.synthetic.main.activity_lollipop_view_view.input
+import kotlinx.android.synthetic.main.activity_lollipop_view_view.progressBar
+import kotlinx.android.synthetic.main.activity_lollipop_view_view.webview
+import kotlinx.android.synthetic.main.view_address_bar_input.backButton
+import kotlinx.android.synthetic.main.view_address_bar_input.forwardButton
 import java.io.File
 
 class LollipopWebViewActivity : AppCompatActivity() {
 
     companion object {
         const val EXTRA__ADDRESS = "address"
+        const val EXIT_ACTION = "exitAction"
+        const val RESULT_CODE = 101
+
         private const val PICK_IMAGE = 1
         private const val CAPTURE_IMAGE = 2
         private const val IMAGE_TYPE = "image/*"
@@ -88,7 +95,7 @@ class LollipopWebViewActivity : AppCompatActivity() {
         input.onBackClickedListener = { handleBackButtonClicked() }
         input.onForwardClickedListener = { handleForwardButtonClicked() }
         input.onGoClickedListener = { viewModel.url.postValue(it) }
-        input.onExitClickedListener = { finish() }
+        input.onExitClickedListener = { handleExitClicked() }
     }
 
     private fun handleBackButtonClicked() {
@@ -102,6 +109,12 @@ class LollipopWebViewActivity : AppCompatActivity() {
     override fun onBackPressed() {
         if (webview.canGoBack()) webview.goBack()
         else super.onBackPressed()
+    }
+
+    private fun handleExitClicked() {
+        val isListeningForExitAction = intent.getBooleanExtra(EXIT_ACTION, false)
+        if (isListeningForExitAction) setActivityResultAndFinish(RESULT_CODE)
+        else finish()
     }
 
     private fun initWebSettings() {

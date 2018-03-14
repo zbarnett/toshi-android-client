@@ -31,6 +31,11 @@ import com.toshi.view.activity.webView.LollipopWebViewActivity
 
 inline fun <reified T> Fragment.startActivity(func: Intent.() -> Intent) = startActivity(Intent(activity, T::class.java).func())
 
+inline fun <reified T> Fragment.startActivityForResult(requestCode: Int, func: Intent.() -> Intent) {
+    val intent = Intent(activity, T::class.java).func()
+    startActivityForResult(intent, requestCode)
+}
+
 inline fun <reified T> Fragment.startActivity() = startActivity(Intent(activity, T::class.java))
 
 fun Fragment.getPxSize(@DimenRes id: Int) = resources.getDimensionPixelSize(id)
@@ -54,6 +59,19 @@ fun Fragment.openWebView(address: String) {
     if (Build.VERSION.SDK_INT >= 21) {
         startActivity<LollipopWebViewActivity> {
             putExtra(LollipopWebViewActivity.EXTRA__ADDRESS, address)
+        }
+    } else {
+        startActivity<JellyBeanWebViewActivity> {
+            putExtra(JellyBeanWebViewActivity.EXTRA__ADDRESS, address)
+        }
+    }
+}
+
+fun Fragment.openWebViewForResult(requestCode: Int, address: String) {
+    if (Build.VERSION.SDK_INT >= 21) {
+        startActivityForResult<LollipopWebViewActivity>(requestCode) {
+            putExtra(LollipopWebViewActivity.EXTRA__ADDRESS, address)
+            putExtra(LollipopWebViewActivity.EXIT_ACTION, true)
         }
     } else {
         startActivity<JellyBeanWebViewActivity> {

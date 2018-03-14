@@ -59,6 +59,11 @@ inline fun AppCompatActivity.setActivityResultAndFinish(resultCode: Int, func: I
     finish()
 }
 
+inline fun AppCompatActivity.setActivityResultAndFinish(resultCode: Int) {
+    setResult(resultCode, intent)
+    finish()
+}
+
 fun AppCompatActivity.getDrawableById(@DrawableRes id: Int) = AppCompatResources.getDrawable(this, id)
 
 fun AppCompatActivity.hideStatusBar() = window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)

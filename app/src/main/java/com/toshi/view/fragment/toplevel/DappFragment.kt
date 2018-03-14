@@ -19,6 +19,7 @@ package com.toshi.view.fragment.toplevel
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
@@ -29,7 +30,7 @@ import com.toshi.R
 import com.toshi.extensions.getColorById
 import com.toshi.extensions.isVisible
 import com.toshi.extensions.isWebUrl
-import com.toshi.extensions.openWebView
+import com.toshi.extensions.openWebViewForResult
 import com.toshi.extensions.startActivity
 import com.toshi.extensions.toArrayList
 import com.toshi.extensions.toast
@@ -43,6 +44,7 @@ import com.toshi.view.activity.ViewAllDappsActivity.Companion.CATEGORY
 import com.toshi.view.activity.ViewAllDappsActivity.Companion.CATEGORY_ID
 import com.toshi.view.activity.ViewAllDappsActivity.Companion.VIEW_TYPE
 import com.toshi.view.activity.ViewDappActivity
+import com.toshi.view.activity.webView.LollipopWebViewActivity.Companion.RESULT_CODE
 import com.toshi.view.adapter.DappAdapter
 import com.toshi.view.adapter.SearchDappAdapter
 import com.toshi.viewModel.DappViewModel
@@ -58,6 +60,7 @@ class DappFragment : BackableTopLevelFragment() {
 
     companion object {
         const val TAG = "DappFragment"
+        const val BROWSER_REQUEST_CODE = 100
     }
 
     private lateinit var viewModel: DappViewModel
@@ -135,11 +138,11 @@ class DappFragment : BackableTopLevelFragment() {
 
     private fun openBrowserAndSearchGoogle(searchValue: String) {
         val address = "https://www.google.com/search?q=$searchValue"
-        openWebView(address)
+        openWebViewForResult(BROWSER_REQUEST_CODE, address)
     }
 
     private fun openBrowser(url: String?) {
-        if (url != null) openWebView(url) else toast(R.string.invalid_url)
+        if (url != null) openWebViewForResult(BROWSER_REQUEST_CODE, url) else toast(R.string.invalid_url)
     }
 
     private fun setRecyclerViewVisibility() {
@@ -152,7 +155,7 @@ class DappFragment : BackableTopLevelFragment() {
         header.onTextChangedListener = { showSearchUI(it) }
         header.onHeaderCollapsed = { showSearchUI(input.text.toString()) }
         header.onHeaderExpanded = { showBrowseUI(); hideKeyboardAndUnfocus() }
-        header.onEnterClicked = { if (isWebUrl(it)) openWebView(it) }
+        header.onEnterClicked = { if (isWebUrl(it)) openWebViewForResult(BROWSER_REQUEST_CODE, it) }
     }
 
     private fun setOnApplyWindowInsetsListener() {
@@ -218,6 +221,13 @@ class DappFragment : BackableTopLevelFragment() {
     private fun setSearchResult(dapps: List<Dapp>) {
         val dappsCategory = DappCategory(getString(R.string.dapps), -1)
         searchDappAdapter.setDapps(dapps, dappsCategory)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == BROWSER_REQUEST_CODE && resultCode == RESULT_CODE) {
+            header?.expandAndHideCloseButton()
+        }
     }
 
     override fun onBackPressed(): Boolean {
