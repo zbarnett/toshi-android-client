@@ -18,21 +18,25 @@
 package com.toshi.view.custom
 
 import android.content.Context
+import android.text.method.KeyListener
 import android.util.AttributeSet
 import android.view.KeyEvent
-import android.view.inputmethod.EditorInfo
 import android.widget.LinearLayout
-import android.widget.TextView
 import com.toshi.R
 import com.toshi.util.KeyboardUtil
-import kotlinx.android.synthetic.main.view_address_bar_input.view.*
+import kotlinx.android.synthetic.main.view_address_bar_input.view.userInput
+import kotlinx.android.synthetic.main.view_address_bar_input.view.backButton
+import kotlinx.android.synthetic.main.view_address_bar_input.view.forwardButton
+import kotlinx.android.synthetic.main.view_address_bar_input.view.closeButton
 
 class AddressBarInputView : LinearLayout {
 
-    var backClickedListener: (() -> Unit)? = null
-    var forwardClickedListener: (() -> Unit)? = null
-    var goClickedListener: ((String) -> Unit)? = null
-    var exitClickedListener: (() -> Unit)? = null
+    var onBackClickedListener: (() -> Unit)? = null
+    var onForwardClickedListener: (() -> Unit)? = null
+    var onGoClickedListener: ((String) -> Unit)? = null
+    var onExitClickedListener: (() -> Unit)? = null
+
+    private var keyListener: KeyListener? = null
 
     var text: String
         get() {
@@ -61,33 +65,33 @@ class AddressBarInputView : LinearLayout {
     }
 
     private fun initClickListener() {
-        backButton.setOnClickListener { backClickedListener?.invoke() }
-        forwardButton.setOnClickListener { forwardClickedListener?.invoke() }
-        closeButton.setOnClickListener { exitClickedListener?.invoke() }
+        backButton.setOnClickListener { onBackClickedListener?.invoke() }
+        forwardButton.setOnClickListener { onForwardClickedListener?.invoke() }
+        closeButton.setOnClickListener { onExitClickedListener?.invoke() }
     }
 
     private fun initListeners() {
-        userInput.setOnEditorActionListener { view, actionId, event ->
-            onEditorAction(event, actionId, view)
+        // Store keyListener to toggle editable state which makes ellipsize work
+        keyListener = userInput.keyListener
+        userInput.setOnFocusChangeListener { _, hasFocus ->
+            userInput.keyListener = if (hasFocus) keyListener else null
         }
-    }
-
-    private fun onEditorAction(event: KeyEvent?, actionId: Int, view: TextView): Boolean {
-        return when {
-            event != null && event.action != KeyEvent.ACTION_DOWN -> false
-            actionId == EditorInfo.IME_ACTION_GO -> {
-                view.clearFocus()
-                KeyboardUtil.hideKeyboard(view)
+        userInput.setOnKeyListener { _, _, event ->
+            val isEnter = event.keyCode == KeyEvent.KEYCODE_ENTER
+            val isActionUp = event.action == KeyEvent.ACTION_UP
+            if (event != null && isEnter && isActionUp) {
+                userInput.clearFocus()
+                KeyboardUtil.hideKeyboard(userInput)
                 handleGoClicked()
-                true
+                return@setOnKeyListener true
             }
-            else -> false
+            return@setOnKeyListener false
         }
     }
 
     private fun handleGoClicked() {
-        val userInput = userInput.text.toString()
-        if (userInput.trim().isEmpty()) return
-        goClickedListener?.invoke(userInput)
+        val url = userInput.text.toString()
+        if (url.trim().isEmpty()) return
+        onGoClickedListener?.invoke(url)
     }
 }

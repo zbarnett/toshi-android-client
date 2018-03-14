@@ -33,6 +33,7 @@ import okhttp3.Response
 import java.io.BufferedReader
 import java.io.ByteArrayInputStream
 import java.io.InputStreamReader
+import java.net.ConnectException
 import java.net.UnknownHostException
 import javax.net.ssl.SSLPeerUnverifiedException
 
@@ -40,7 +41,7 @@ class ToshiWebClient(
         private val context: Context,
         private val updateListener: () -> Unit,
         private val updateUrl: (String) -> Unit,
-        private val pageCommitVisibleListener: (String) -> Unit
+        private val pageCommitVisibleListener: (String?) -> Unit
 ) : WebViewClient() {
 
     private val toshiManager by lazy { BaseApplication.get().toshiManager }
@@ -96,6 +97,8 @@ class ToshiWebClient(
         } catch (e: SSLPeerUnverifiedException) {
             null
         } catch (e: UnknownHostException) {
+            null
+        } catch (e: ConnectException) {
             null
         }
     }
@@ -179,6 +182,6 @@ class ToshiWebClient(
 
     override fun onPageCommitVisible(view: WebView?, url: String?) {
         super.onPageCommitVisible(view, url)
-        if (url != null) pageCommitVisibleListener(url)
+        pageCommitVisibleListener(url)
     }
 }

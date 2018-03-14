@@ -85,10 +85,10 @@ class LollipopWebViewActivity : AppCompatActivity() {
     }
 
     private fun initClickListeners() {
-        input.backClickedListener = { handleBackButtonClicked() }
-        input.forwardClickedListener = { handleForwardButtonClicked() }
-        input.goClickedListener = { viewModel.url.postValue(it) }
-        input.exitClickedListener = { onBackPressed() }
+        input.onBackClickedListener = { handleBackButtonClicked() }
+        input.onForwardClickedListener = { handleForwardButtonClicked() }
+        input.onGoClickedListener = { viewModel.url.postValue(it) }
+        input.onExitClickedListener = { onBackPressed() }
     }
 
     private fun handleBackButtonClicked() {
@@ -127,11 +127,16 @@ class LollipopWebViewActivity : AppCompatActivity() {
                 this,
                 { viewModel.updateToolbar() },
                 { viewModel.url.postValue(it) },
-                { input.text = it; updateToolbarNavigation() }
+                { onPageCommitVisible(it) }
         )
         val chromeWebClient = ToshiChromeWebViewClient { valueCallback, _ -> handleFileChooserCallback(valueCallback) }
         chromeWebClient.progressListener = { progressBar.setProgress(it) }
         webview.webChromeClient = chromeWebClient
+    }
+
+    private fun onPageCommitVisible(url: String?) {
+        if (url != null) input.text = url
+        updateToolbarNavigation()
     }
 
     private fun initObservers() {
