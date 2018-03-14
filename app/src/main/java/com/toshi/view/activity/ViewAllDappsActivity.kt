@@ -22,6 +22,7 @@ import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import com.toshi.R
 import com.toshi.extensions.addHorizontalLineDivider
 import com.toshi.extensions.getPxSize
@@ -30,6 +31,8 @@ import com.toshi.extensions.toArrayList
 import com.toshi.extensions.toast
 import com.toshi.model.network.dapp.Dapp
 import com.toshi.view.adapter.AllDappsAdapter
+import com.toshi.viewModel.LoadingState
+import com.toshi.viewModel.PagingState
 import com.toshi.viewModel.ViewAllDappsViewModel
 import com.toshi.viewModel.ViewModelFactory.ViewAllDappsViewModelFactory
 import kotlinx.android.synthetic.main.activity_view_dapps.closeButton
@@ -44,10 +47,13 @@ class ViewAllDappsActivity : AppCompatActivity() {
 
         const val VIEW_TYPE = "viewType"
         const val CATEGORY_ID = "categoryId"
+
+        private const val PREFETCH_NUMBER = 5
     }
 
     private lateinit var viewModel: ViewAllDappsViewModel
     private lateinit var allDappsAdapter: AllDappsAdapter
+    private lateinit var dappsLayoutManager: LinearLayoutManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,6 +65,7 @@ class ViewAllDappsActivity : AppCompatActivity() {
         initViewModel()
         initClickListeners()
         initAdapter()
+        initScrollListener()
         initObservers()
     }
 
@@ -77,9 +84,10 @@ class ViewAllDappsActivity : AppCompatActivity() {
         allDappsAdapter = AllDappsAdapter().apply {
             onItemClickedListener = { startViewDappActivity(it) }
         }
+        dappsLayoutManager = LinearLayoutManager(this)
         dapps.apply {
             adapter = allDappsAdapter
-            layoutManager = LinearLayoutManager(context)
+            layoutManager = dappsLayoutManager
             addHorizontalLineDivider(leftPadding = getPxSize(R.dimen.avatar_size_medium)
                     + getPxSize(R.dimen.activity_horizontal_margin)
                     + getPxSize(R.dimen.activity_horizontal_margin))
@@ -87,16 +95,38 @@ class ViewAllDappsActivity : AppCompatActivity() {
     }
 
     private fun startViewDappActivity(dapp: Dapp) {
-        val categories = viewModel.dapps.value?.categories ?: emptyMap()
+        val categories = viewModel.dappCategories
         startActivity<ViewDappActivity> {
             putExtra(ViewDappActivity.DAPP_CATEGORIES, categories.toArrayList())
             Dapp.buildIntent(this, dapp)
         }
     }
 
+    private fun initScrollListener() {
+        dapps.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                handleScroll()
+            }
+        })
+    }
+
+    private fun handleScroll() {
+        val isLoading = viewModel.loadingState == LoadingState.LOADING
+        val hasReachedEnd = viewModel.pagingState == PagingState.REACHED_END
+        if (isLoading || hasReachedEnd) return
+        val shouldFetch = (getVisibleItemCount() + PREFETCH_NUMBER + getFirstVisibleItemPosition()) >= getTotalItemCount()
+                && getFirstVisibleItemPosition() > 0
+        if (shouldFetch) viewModel.gethMoreDapps()
+    }
+
+    private fun getVisibleItemCount() = dappsLayoutManager.childCount
+    private fun getTotalItemCount() = dappsLayoutManager.itemCount
+    private fun getFirstVisibleItemPosition() = dappsLayoutManager.findFirstVisibleItemPosition()
+
     private fun initObservers() {
         viewModel.dapps.observe(this, Observer {
-            if (it != null) allDappsAdapter.setDapps(it.dapps)
+            if (it != null) allDappsAdapter.setDapps(it)
         })
         viewModel.dappsError.observe(this, Observer {
             if (it != null) toast(it)

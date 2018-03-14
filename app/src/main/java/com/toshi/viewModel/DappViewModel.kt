@@ -84,7 +84,7 @@ class DappViewModel : ViewModel() {
         if (allDapps.value != null) return
         val sub = dappManager
                 .getAllDapps()
-                .map { it.dapps }
+                .map { it.results.dapps }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { allDapps.value = it },
@@ -93,6 +93,8 @@ class DappViewModel : ViewModel() {
 
         subscriptions.add(sub)
     }
+
+    fun getCategories() = searchResult.value?.results?.categories ?: emptyMap()
 
     override fun onCleared() {
         super.onCleared()

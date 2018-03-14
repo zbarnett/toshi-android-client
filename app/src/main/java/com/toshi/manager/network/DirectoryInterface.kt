@@ -36,7 +36,17 @@ interface DirectoryInterface {
     fun getAllDapps(): Single<DappSearchResult>
 
     @GET("v1/dapps/")
-    fun getAllDappsInCategory(@Query("category") categoryId: Int): Single<DappSearchResult>
+    fun getAllDappsWithOffset(
+            @Query("offset") offset: Int,
+            @Query("limit") limit: Int = 20
+    ): Single<DappSearchResult>
+
+    @GET("v1/dapps/")
+    fun getAllDappsInCategory(
+            @Query("category") categoryId: Int,
+            @Query("offset") offset: Int,
+            @Query("limit") limit: Int
+    ): Single<DappSearchResult>
 
     @GET("v1/dapp/{dapp_id}")
     fun getDapp(@Path("dapp_id") dappId: Long): Single<DappResult>

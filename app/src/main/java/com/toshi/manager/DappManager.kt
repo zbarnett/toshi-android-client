@@ -21,7 +21,6 @@ import com.toshi.manager.network.DirectoryService
 import com.toshi.model.network.dapp.DappResult
 import com.toshi.model.network.dapp.DappSearchResult
 import com.toshi.model.network.dapp.DappSections
-import com.toshi.model.network.dapp.Dapps
 import rx.Single
 import rx.schedulers.Schedulers
 
@@ -41,19 +40,24 @@ class DappManager {
                 .subscribeOn(Schedulers.io())
     }
 
-    fun getAllDapps(): Single<Dapps> {
+    fun getAllDapps(): Single<DappSearchResult> {
         return DirectoryService
                 .get()
                 .getAllDapps()
-                .map { it.results }
                 .subscribeOn(Schedulers.io())
     }
 
-    fun getAllDappsInCategory(categoryId: Int): Single<Dapps> {
+    fun getAllDappsWithOffset(offset: Int): Single<DappSearchResult> {
         return DirectoryService
                 .get()
-                .getAllDappsInCategory(categoryId)
-                .map { it.results }
+                .getAllDappsWithOffset(offset, 20)
+                .subscribeOn(Schedulers.io())
+    }
+
+    fun getAllDappsInCategoryWithOffset(categoryId: Int, offset: Int): Single<DappSearchResult> {
+        return DirectoryService
+                .get()
+                .getAllDappsInCategory(categoryId, offset, 20)
                 .subscribeOn(Schedulers.io())
     }
 

@@ -125,7 +125,7 @@ class DappFragment : Fragment(), TopLevelFragment {
             onItemClickedListener = {
                 startViewDappActivity(
                     dapp = it,
-                    categories = viewModel.searchResult.value?.categories ?: emptyMap()
+                    categories = viewModel.getCategories()
                 )
             }
         }

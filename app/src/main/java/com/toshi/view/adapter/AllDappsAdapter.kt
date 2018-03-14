@@ -17,10 +17,13 @@
 
 package com.toshi.view.adapter
 
+import android.support.v7.util.DiffUtil
+import android.support.v7.util.ListUpdateCallback
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.toshi.R
+import com.toshi.model.local.dapp.DappDiffUtil
 import com.toshi.model.network.dapp.Dapp
 import com.toshi.view.adapter.viewholder.DappViewHolder
 
@@ -29,11 +32,30 @@ class AllDappsAdapter : RecyclerView.Adapter<DappViewHolder>() {
     private val dapps by lazy { mutableListOf<Dapp>() }
     var onItemClickedListener: ((Dapp) -> Unit)? = null
 
-    fun setDapps(dapps: List<Dapp>) {
-        if (dapps.isEmpty()) return
-        this.dapps.clear()
-        this.dapps.addAll(dapps)
-        notifyDataSetChanged()
+    fun setDapps(newDapps: List<Dapp>) {
+        if (newDapps.isEmpty()) return
+        val diffResult = DiffUtil.calculateDiff(DappDiffUtil(newDapps, dapps))
+        dapps.clear()
+        dapps.addAll(newDapps)
+        diffResult.dispatchUpdatesTo(listUpdateCallback)
+    }
+
+    private val listUpdateCallback = object : ListUpdateCallback {
+        override fun onChanged(position: Int, count: Int, payload: Any?) {
+            notifyItemRangeChanged(position, count, payload)
+        }
+
+        override fun onMoved(fromPosition: Int, toPosition: Int) {
+            notifyItemMoved(fromPosition, toPosition)
+        }
+
+        override fun onRemoved(position: Int, count: Int) {
+            notifyItemRangeRemoved(position, count)
+        }
+
+        override fun onInserted(position: Int, count: Int) {
+            notifyItemRangeInserted(position, count)
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): DappViewHolder {

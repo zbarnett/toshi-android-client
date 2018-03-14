@@ -15,11 +15,25 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.toshi.model.network.dapp
+package com.toshi.model.local.dapp
 
-data class DappSearchResult(
-        val results: Dapps = Dapps(),
-        val offset: Int = 0,
-        val limit: Int = 0,
-        val total: Int = 0
-)
+import android.support.v7.util.DiffUtil
+import com.toshi.model.network.dapp.Dapp
+
+class DappDiffUtil(
+        private val newDapps: List<Dapp>,
+        private val oldDapps: List<Dapp>
+) : DiffUtil.Callback() {
+
+    override fun getOldListSize() = oldDapps.size
+
+    override fun getNewListSize() = newDapps.size
+
+    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        return oldDapps[oldItemPosition].dappId === newDapps[newItemPosition].dappId
+    }
+
+    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        return oldDapps[oldItemPosition].dappId === newDapps[newItemPosition].dappId
+    }
+}
