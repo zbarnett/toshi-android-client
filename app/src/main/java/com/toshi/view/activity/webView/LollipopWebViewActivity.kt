@@ -99,6 +99,11 @@ class LollipopWebViewActivity : AppCompatActivity() {
         if (webview.canGoForward()) webview.goForward()
     }
 
+    override fun onBackPressed() {
+        if (webview.canGoBack()) webview.goBack()
+        else super.onBackPressed()
+    }
+
     private fun initWebSettings() {
         val webSettings = webview.settings
         webSettings.javaScriptEnabled = true
