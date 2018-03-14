@@ -16,10 +16,31 @@
   ~     along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="@dimen/activity_horizontal_margin"
-    android:textSize="16sp"
-    android:textColor="@color/textColorPrimary"
-    android:background="?selectableItemBackground"/>
+    android:orientation="horizontal"
+    android:background="?selectableItemBackground">
+
+    <TextView
+        android:id="@+id/query"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textColor="@color/textColorPrimary"
+        style="@style/NormalEllipsizeEndStyle"
+        tools:text="wwww.google.com "/>
+
+    <TextView
+        android:id="@+id/postfix"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textColor="@color/textColorSecondary"
+        style="@style/NormalEllipsizeEndStyle"
+        android:text="@string/search_with_google"
+        android:visibility="gone"/>
+
+</LinearLayout>

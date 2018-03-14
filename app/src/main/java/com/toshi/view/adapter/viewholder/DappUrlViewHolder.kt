@@ -19,14 +19,20 @@ package com.toshi.view.adapter.viewholder
 
 import android.support.v7.widget.RecyclerView
 import android.view.View
-import android.widget.TextView
+import com.toshi.R
+import com.toshi.extensions.getColorById
+import com.toshi.extensions.getString
+import com.toshi.extensions.isVisible
 import com.toshi.model.local.dapp.DappGoogleSearch
 import com.toshi.model.local.dapp.DappUrl
+import kotlinx.android.synthetic.main.list_item__dapp_url.view.postfix
+import kotlinx.android.synthetic.main.list_item__dapp_url.view.query
 
 class DappUrlViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
     fun setGoogleSearchItem(searchItem: DappGoogleSearch): DappUrlViewHolder {
-        val view = itemView as TextView
-        view.text = searchItem.searchValue
+        itemView.query.setTextColor(itemView.getColorById(R.color.textColorPrimary))
+        itemView.query.text = itemView.getString(R.string.value_with_space_at_end, searchItem.searchValue)
+        itemView.postfix.isVisible(true)
         return this
     }
 
@@ -36,8 +42,9 @@ class DappUrlViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
     }
 
     fun setDappUrlItem(dappUrl: DappUrl): DappUrlViewHolder {
-        val view = itemView as TextView
-        view.text = dappUrl.url
+        itemView.query.setTextColor(itemView.getColorById(R.color.colorPrimary))
+        itemView.query.text = itemView.getString(R.string.value_with_space_at_end, dappUrl.url)
+        itemView.postfix.isVisible(false)
         return this
     }
 

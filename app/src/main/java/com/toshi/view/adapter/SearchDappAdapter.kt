@@ -24,10 +24,8 @@ import com.toshi.R
 import com.toshi.extensions.sameContentAs
 import com.toshi.model.local.dapp.DappCategory
 import com.toshi.model.local.dapp.DappGoogleSearch
-import com.toshi.model.local.dapp.DappGoogleSearchCategory
 import com.toshi.model.local.dapp.DappListItem
 import com.toshi.model.local.dapp.DappUrl
-import com.toshi.model.local.dapp.DappUrlSearchCategory
 import com.toshi.model.network.dapp.Dapp
 import com.toshi.util.LogUtil
 import com.toshi.view.adapter.viewholder.DappUrlViewHolder
@@ -42,10 +40,8 @@ class SearchDappAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         private const val GOOGLE_SEARCH = 3
         private const val URL = 4
 
-        private const val FIRST_HEADER_CATEGORY_POSITION = 0
-        private const val FIRST_HEADER_ITEM_POSITION = 1
-        private const val SECOND_HEADER_CATEGORY_POSITION = 2
-        private const val SECOND_HEADER_ITEM_POSITION = 3
+        private const val FIRST_HEADER_ITEM_POSITION = 0
+        private const val SECOND_HEADER_ITEM_POSITION = 1
     }
 
     private val dapps by lazy { mutableListOf<DappListItem>() }
@@ -72,19 +68,16 @@ class SearchDappAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         notifyDataSetChanged()
     }
 
-    //Remove everything except DappGoogleSearch, DappGoogleSearchCategory, DappUrl and DappUrlSearchCategory
+    //Remove everything except DappGoogleSearch and DappUrl
     private fun removeItem(listItem: DappListItem): Boolean {
-        return listItem !is DappGoogleSearch && listItem !is DappGoogleSearchCategory
-                && listItem !is DappUrl && listItem !is DappUrlSearchCategory
+        return listItem !is DappGoogleSearch && listItem !is DappUrl
     }
 
     fun addGoogleSearchItems(input: String) {
-        val availablePositions = getAvailableGoogleSearchPositions()
-        val categoryPosition = availablePositions.first
-        val itemPosition = availablePositions.second
+        val availablePosition = getAvailableGoogleSearchPosition()
         if (input.isNotEmpty()) {
-            if (isGoogleSearchItemsAdded()) updateGoogleSearchItem(itemPosition, input)
-            else addGoogleSearchItems(itemPosition, categoryPosition, input)
+            if (isGoogleSearchItemsAdded()) updateGoogleSearchItem(availablePosition, input)
+            else addGoogleSearchItems(availablePosition, input)
         } else if (isGoogleSearchItemsAdded()) removeGoogleSearchItems()
     }
 
@@ -93,39 +86,29 @@ class SearchDappAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         notifyItemChanged(itemPosition)
     }
 
-    private fun addGoogleSearchItems(itemPosition: Int, categoryPosition: Int, input: String) {
-        val category = DappGoogleSearchCategory()
+    private fun addGoogleSearchItems(itemPosition: Int, input: String) {
         val googleSearchItem = DappGoogleSearch(input)
-        dapps.add(categoryPosition, category)
         dapps.add(itemPosition, googleSearchItem)
         notifyItemChanged(itemPosition)
     }
 
     private fun removeGoogleSearchItems() {
-        dapps.removeAll { it is DappGoogleSearchCategory || it is DappGoogleSearch }
+        dapps.removeAll { it is DappGoogleSearch }
         notifyDataSetChanged()
     }
 
-    private fun getAvailableGoogleSearchPositions(): Pair<Int, Int> {
-        return if (isUrlItemsAdded()) SECOND_HEADER_CATEGORY_POSITION to SECOND_HEADER_ITEM_POSITION
-        else FIRST_HEADER_CATEGORY_POSITION to FIRST_HEADER_ITEM_POSITION
-    }
+    private fun getAvailableGoogleSearchPosition() = FIRST_HEADER_ITEM_POSITION
 
     private fun isGoogleSearchItemsAdded(): Boolean {
-        val availablePositions = getAvailableGoogleSearchPositions()
-        val categoryPosition = availablePositions.first
-        val itemPosition = availablePositions.second
-        return dapps.size > itemPosition + 1
-                && dapps[categoryPosition] is DappGoogleSearchCategory
-                && dapps[itemPosition] is DappGoogleSearch
+        val availablePosition = getAvailableGoogleSearchPosition()
+        return dapps.size > availablePosition + 1
+                && dapps[availablePosition] is DappGoogleSearch
     }
 
     fun addWebUrlItems(url: String) {
-        val availablePositions = getAvailableUrlPositions()
-        val categoryPosition = availablePositions.first
-        val itemPosition = availablePositions.second
-        if (isUrlItemsAdded()) updateWebUrlItem(itemPosition, url)
-        else addWebUrlItems(itemPosition, categoryPosition, url)
+        val availablePosition = getAvailableUrlPosition()
+        if (isUrlItemsAdded()) updateWebUrlItem(availablePosition, url)
+        else addWebUrlItems(availablePosition, url)
     }
 
     private fun updateWebUrlItem(itemPosition: Int, url: String) {
@@ -133,31 +116,27 @@ class SearchDappAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         notifyItemChanged(itemPosition)
     }
 
-    private fun addWebUrlItems(itemPosition: Int, categoryPosition: Int, url: String) {
-        val category = DappUrlSearchCategory()
+    private fun addWebUrlItems(itemPosition: Int, url: String) {
         val dappUrl = DappUrl(url)
-        dapps.add(categoryPosition, category)
         dapps.add(itemPosition, dappUrl)
         notifyDataSetChanged()
     }
 
     fun removeWebUrl() {
         if (!isUrlItemsAdded()) return
-        dapps.removeAll { it is DappUrlSearchCategory || it is DappUrl }
-        notifyItemRangeRemoved(FIRST_HEADER_CATEGORY_POSITION, 2)
+        dapps.removeAll { it is DappUrl }
+        notifyItemRangeRemoved(FIRST_HEADER_ITEM_POSITION, 2)
     }
 
     private fun isUrlItemsAdded(): Boolean {
-        val availablePositions = getAvailableUrlPositions()
-        val categoryPosition = availablePositions.first
-        val itemPosition = availablePositions.second
-        return dapps.size > itemPosition + 1
-                && dapps[categoryPosition] is DappUrlSearchCategory
-                && dapps[itemPosition] is DappUrl
+        val availablePosition = getAvailableUrlPosition()
+        return dapps.size > availablePosition + 1
+                && dapps[availablePosition] is DappUrl
     }
 
-    private fun getAvailableUrlPositions(): Pair<Int, Int> {
-        return FIRST_HEADER_CATEGORY_POSITION to FIRST_HEADER_ITEM_POSITION
+    private fun getAvailableUrlPosition(): Int {
+        return if (isGoogleSearchItemsAdded()) SECOND_HEADER_ITEM_POSITION
+        else FIRST_HEADER_ITEM_POSITION
     }
 
     override fun getItemViewType(position: Int): Int {

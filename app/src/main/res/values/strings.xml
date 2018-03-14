@@ -368,11 +368,12 @@
     <string name="dapp_title">Explore the decentralized web.</string>
     <string name="see_all_dapps">See all Ðapps</string>
     <string name="dapps" translatable="false">Ðapps</string>
-    <string name="search_with_google">Search with google</string>
+    <string name="search_with_google">- Search with Google</string>
     <string name="go_to">Go to</string>
     <string name="other">Other</string>
     <string name="all_dapps">All Ðapps</string>
     <string name="error_fetching_dapp">Error fetching dapp</string>
     <string name="unable_to_open_dapp">Unable to open dapp</string>
     <string name="invalid_url">Invalid url</string>
+    <string name="value_with_space_at_end">%s\u0020</string>
 </resources>
