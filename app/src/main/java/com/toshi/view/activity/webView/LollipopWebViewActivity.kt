@@ -88,7 +88,7 @@ class LollipopWebViewActivity : AppCompatActivity() {
         input.onBackClickedListener = { handleBackButtonClicked() }
         input.onForwardClickedListener = { handleForwardButtonClicked() }
         input.onGoClickedListener = { viewModel.url.postValue(it) }
-        input.onExitClickedListener = { onBackPressed() }
+        input.onExitClickedListener = { finish() }
     }
 
     private fun handleBackButtonClicked() {

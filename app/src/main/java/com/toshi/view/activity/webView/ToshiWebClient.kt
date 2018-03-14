@@ -79,7 +79,6 @@ class ToshiWebClient(
     override fun shouldInterceptRequest(view: WebView?, webRequest: WebResourceRequest?): WebResourceResponse? {
         if (webRequest?.method != "GET") return null
         if (!webRequest.isForMainFrame) return null
-        updateListener()
         return interceptRequest(webRequest)
     }
 
@@ -183,5 +182,10 @@ class ToshiWebClient(
     override fun onPageCommitVisible(view: WebView?, url: String?) {
         super.onPageCommitVisible(view, url)
         pageCommitVisibleListener(url)
+    }
+
+    override fun doUpdateVisitedHistory(view: WebView?, url: String?, isReload: Boolean) {
+        super.doUpdateVisitedHistory(view, url, isReload)
+        updateListener()
     }
 }
