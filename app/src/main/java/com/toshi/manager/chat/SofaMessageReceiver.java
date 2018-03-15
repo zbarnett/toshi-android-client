@@ -136,7 +136,7 @@ public class SofaMessageReceiver {
         } catch (final TimeoutException ex) {
             throw new TimeoutException(ex.getMessage());
         } catch (final IllegalStateException | InvalidKeyException | InvalidKeyIdException | DuplicateMessageException | InvalidVersionException | LegacyMessageException | InvalidMessageException | NoSessionException | org.whispersystems.libsignal.UntrustedIdentityException | IOException e) {
-            LogUtil.e(getClass(), "Error while fetching latest message");
+            LogUtil.exception(getClass(), "Error while fetching latest message " + e);
         }
         return null;
     }

@@ -100,7 +100,7 @@ public class ConversationStore {
             final Group group = new Group(signalGroup);
             return copyOrUpdateGroup(group)
                     .doOnSuccess(this::broadcastConversationChanged)
-                    .doOnError(this::handleError);
+                    .doOnError(throwable -> LogUtil.exception(getClass(), "Error while saving group " + throwable));
     }
 
     public Single<Conversation> createNewConversationFromGroup(@NonNull final Group group) {
@@ -108,7 +108,7 @@ public class ConversationStore {
                 .flatMap(this::addGroupCreatedStatusMessage)
                 .observeOn(Schedulers.immediate())
                 .doOnSuccess(this::broadcastConversationChanged)
-                .doOnError(this::handleError);
+                .doOnError(throwable -> handleError(throwable, "Error while creating new conversation from group"));
     }
 
     public Single<Conversation> createEmptyConversation(final Recipient recipient) {
@@ -122,7 +122,8 @@ public class ConversationStore {
             realm.close();
             return conversation;
         })
-        .subscribeOn(Schedulers.from(dbThread));
+        .subscribeOn(Schedulers.from(dbThread))
+        .doOnError(throwable -> handleError(throwable, "Error while creating empty conversation"));
     }
 
     private Single<Conversation> copyOrUpdateGroup(@NonNull final Group group) {
@@ -137,7 +138,8 @@ public class ConversationStore {
             realm.close();
             return conversationForBroadcast;
         })
-        .subscribeOn(Schedulers.from(dbThread));
+        .subscribeOn(Schedulers.from(dbThread))
+        .doOnError(throwable -> handleError(throwable, "Error while updating group"));
     }
 
     @NonNull
@@ -163,7 +165,7 @@ public class ConversationStore {
         return saveMessage(receiver, message)
                 .observeOn(Schedulers.immediate())
                 .doOnSuccess(this::broadcastConversationChanged)
-                .doOnError(throwable -> LogUtil.e(getClass(), "Error while saving message " + throwable));
+                .doOnError(throwable -> handleError(throwable,"Error while saving message"));
     }
 
     public void saveNewMessage(
@@ -173,7 +175,7 @@ public class ConversationStore {
         .observeOn(Schedulers.immediate())
         .subscribe(
                 this::broadcastConversationChanged,
-                this::handleError
+                throwable -> handleError(throwable, "Error while saving new message")
         );
     }
 
@@ -208,7 +210,8 @@ public class ConversationStore {
 
             return conversationForBroadcast;
         })
-        .subscribeOn(Schedulers.from(dbThread));
+        .subscribeOn(Schedulers.from(dbThread))
+        .doOnError(throwable -> handleError(throwable, "Error while saving new message"));
     }
 
     public void updateMessage(final Recipient receiver, final SofaMessage message) {
@@ -223,7 +226,7 @@ public class ConversationStore {
         .subscribeOn(Schedulers.from(dbThread))
         .subscribe(
                 () -> broadcastUpdatedChatMessage(receiver.getThreadId(), message),
-                this::handleError
+                throwable -> handleError(throwable, "Error while updating message")
         );
     }
 
@@ -246,7 +249,8 @@ public class ConversationStore {
             }
             realm.close();
         })
-        .subscribeOn(Schedulers.from(dbThread));
+        .subscribeOn(Schedulers.from(dbThread))
+        .doOnError(throwable -> handleError(throwable, "Error while updating latest message"));
     }
 
     //##############################################################################################
@@ -311,21 +315,24 @@ public class ConversationStore {
         return loadByThreadId(groupId)
             .map(conversation -> conversation.getRecipient().getGroup())
             .map(group -> group.setAvatar(avatar))
-            .flatMapCompletable(this::saveGroup);
+            .flatMapCompletable(this::saveGroup)
+            .doOnError(throwable -> handleError(throwable, "Error while saving group avatar"));
     }
 
     public Completable saveGroupTitle(@NotNull final String groupId, @NotNull final String title) {
         return loadByThreadId(groupId)
             .map(conversation -> conversation.getRecipient().getGroup())
             .map(group -> group.setTitle(title))
-            .flatMapCompletable(this::saveGroup);
+            .flatMapCompletable(this::saveGroup)
+            .doOnError(throwable -> handleError(throwable, "Error while saving group title"));
     }
 
     public Completable addNewMembersToGroup(@NotNull final String groupId, @NotNull List<User> newMembers) {
         return loadByThreadId(groupId)
             .map(conversation -> conversation.getRecipient().getGroup())
             .map(group -> group.addMembers(newMembers))
-            .flatMapCompletable(this::saveGroup);
+            .flatMapCompletable(this::saveGroup)
+            .doOnError(throwable -> handleError(throwable, "Error while adding new members to group"));
     }
 
     public Completable removeUserFromGroup(@NotNull String groupId, @NotNull User user) {
@@ -333,14 +340,15 @@ public class ConversationStore {
             .flatMap(conversation -> addUserLeftStatusMessage(conversation, user))
             .map(conversation -> conversation.getRecipient().getGroup())
             .map(group -> group.removeMember(user))
-            .flatMapCompletable(this::saveGroup);
+            .flatMapCompletable(this::saveGroup)
+            .doOnError(throwable -> handleError(throwable, "Error while removing user from group"));
     }
 
     private Completable saveGroup(@NonNull final Group group) {
         return copyOrUpdateGroup(group)
             .observeOn(Schedulers.immediate())
             .doOnSuccess(this::broadcastConversation)
-            .doOnError(this::handleError)
+            .doOnError(throwable -> handleError(throwable, "Error while saving group"))
             .toCompletable();
     }
 
@@ -368,12 +376,14 @@ public class ConversationStore {
             realm.close();
             return allConversations;
         })
-        .subscribeOn(Schedulers.from(dbThread));
+        .subscribeOn(Schedulers.from(dbThread))
+        .doOnError(throwable -> handleError(throwable, "Error while loading all conversations"));
     }
 
     public Single<Conversation> loadByThreadId(final String threadId) {
         return Single.fromCallable(() -> loadWhere(THREAD_ID_FIELD, threadId))
-                .subscribeOn(Schedulers.from(dbThread));
+                .subscribeOn(Schedulers.from(dbThread))
+                .doOnError(throwable -> handleError(throwable, "Error while loading thread by id"));
     }
 
     private Conversation loadWhere(final String fieldName, final String value) {
@@ -410,7 +420,8 @@ public class ConversationStore {
             realm.close();
             return sofaMessage;
         })
-        .subscribeOn(Schedulers.from(dbThread));
+        .subscribeOn(Schedulers.from(dbThread))
+        .doOnError(throwable -> handleError(throwable, "Error while getting message by id"));
     }
 
 
@@ -430,7 +441,8 @@ public class ConversationStore {
             realm.commitTransaction();
             realm.close();
         })
-        .subscribeOn(Schedulers.from(dbThread));
+        .subscribeOn(Schedulers.from(dbThread))
+        .doOnError(throwable -> handleError(throwable, "Error while deleting thread by id"));
     }
 
     public Completable deleteMessageById(final Recipient receiver, final SofaMessage message) {
@@ -449,7 +461,7 @@ public class ConversationStore {
         .subscribeOn(Schedulers.from(dbThread))
         .andThen(updateLatestMessage(receiver.getThreadId()))
         .doOnCompleted(() -> broadcastDeletedChatMessage(receiver.getThreadId(), message))
-        .doOnError(this::handleError);
+        .doOnError(throwable -> handleError(throwable, "Error while deleting message by id"));
     }
 
     //##############################################################################################
@@ -466,7 +478,8 @@ public class ConversationStore {
             realm.close();
             return conversation;
         })
-        .subscribeOn(Schedulers.from(dbThread));
+        .subscribeOn(Schedulers.from(dbThread))
+        .doOnError(throwable -> handleError(throwable, "Error while muting conversation"));
     }
 
     public Single<Conversation> acceptConversation(final Conversation conversation) {
@@ -479,7 +492,8 @@ public class ConversationStore {
             realm.close();
             return conversation;
         })
-        .subscribeOn(Schedulers.from(dbThread));
+        .subscribeOn(Schedulers.from(dbThread))
+        .doOnError(throwable -> handleError(throwable, "Error while accepting conversation"));
     }
 
     public void resetUnreadMessageCounter(final String threadId) {
@@ -501,7 +515,7 @@ public class ConversationStore {
         .subscribeOn(Schedulers.from(dbThread))
         .subscribe(
                 this::broadcastConversationChanged,
-                this::handleError
+                throwable -> handleError(throwable, "Error while resetting unread message counter")
             );
     }
 
@@ -546,7 +560,7 @@ public class ConversationStore {
         CONVERSATION_UPDATED_SUBJECT.onNext(conversation);
     }
 
-    private void handleError(final Throwable throwable) {
-        LogUtil.exception(getClass(), throwable);
+    private void handleError(final Throwable throwable, final String message) {
+        LogUtil.exception(getClass(), message, throwable);
     }
 }

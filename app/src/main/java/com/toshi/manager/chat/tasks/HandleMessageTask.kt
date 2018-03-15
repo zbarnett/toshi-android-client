@@ -73,7 +73,7 @@ class HandleMessageTask(
             return saveIncomingMessageToDatabase(user, signalMessage)
         } catch (ex: Exception) {
             when (ex) {
-                is IllegalStateException, is TimeoutException -> LogUtil.e(javaClass, "Error saving message to database. $ex")
+                is IllegalStateException, is TimeoutException -> LogUtil.exception(javaClass, "Error saving message to database $ex")
                 else -> throw ex
             }
         }
@@ -123,7 +123,7 @@ class HandleMessageTask(
             val recipient = Recipient(sender)
             sofaMessageManager.sendMessage(recipient, newSofaMessage)
         } catch (e: IOException) {
-            LogUtil.e(javaClass, "Failed to respond to incoming init request. $e")
+            LogUtil.exception(javaClass, "Failed to respond to incoming init request. $e")
         }
         return null
     }
@@ -173,7 +173,7 @@ class HandleMessageTask(
                 .subscribeOn(Schedulers.io())
                 .subscribe(
                         {},
-                        { LogUtil.e(javaClass, "Error requesting group info") }
+                        { LogUtil.exception(javaClass, "Error requesting group info") }
                 )
     }
 
@@ -189,7 +189,7 @@ class HandleMessageTask(
                     .generateLocalPrice()
                     .map { updatedPaymentRequest -> SofaAdapters.get().toJson(updatedPaymentRequest) }
         } catch (ex: IOException) {
-            LogUtil.e(javaClass, "Unable to embed local price. $ex")
+            LogUtil.exception(javaClass, "Unable to embed local price. $ex")
         }
 
         return Single.just(remoteMessage.payloadWithHeaders)

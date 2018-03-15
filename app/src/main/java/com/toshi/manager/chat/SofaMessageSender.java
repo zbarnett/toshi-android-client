@@ -112,7 +112,7 @@ public class SofaMessageSender {
                 .subscribeOn(Schedulers.io())
                 .subscribe(
                         this::processTask,
-                        this::handleMessageError
+                        throwable -> handleMessageError(throwable, "Message sending/receiving now broken due to this error")
                 );
         this.subscriptions.add(sub);
     }
@@ -137,10 +137,6 @@ public class SofaMessageSender {
         }
     }
 
-    private void handleMessageError(final Throwable throwable) {
-        LogUtil.exception(getClass(), "Message sending/receiving now broken due to this error", throwable);
-    }
-
     public void addNewTask(final SofaMessageTask messageTask) {
         this.messageQueue.onNext(messageTask);
     }
@@ -149,6 +145,7 @@ public class SofaMessageSender {
         Single.fromCallable(() -> this.pendingMessageStore.fetchPendingMessage(sofaMessage))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .doOnError(throwable -> handleMessageError(throwable, "Error while sending pending message"))
                 .subscribe(this::handlePendingMessage);
     }
 
@@ -188,5 +185,9 @@ public class SofaMessageSender {
 
     public void clear() {
         this.subscriptions.clear();
+    }
+
+    private void handleMessageError(final Throwable throwable, final String message) {
+        LogUtil.exception(getClass(), message, throwable);
     }
 }

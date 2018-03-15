@@ -60,7 +60,19 @@ import com.toshi.view.BaseApplication
 import com.toshi.view.adapter.MessageAdapter
 import com.toshi.view.custom.SpeedyLinearLayoutManager
 import com.toshi.view.notification.ChatNotificationManager
-import kotlinx.android.synthetic.main.activity_chat.*
+import kotlinx.android.synthetic.main.activity_chat.avatar
+import kotlinx.android.synthetic.main.activity_chat.balanceBar
+import kotlinx.android.synthetic.main.activity_chat.chatInput
+import kotlinx.android.synthetic.main.activity_chat.closeButton
+import kotlinx.android.synthetic.main.activity_chat.controlView
+import kotlinx.android.synthetic.main.activity_chat.conversationRequestView
+import kotlinx.android.synthetic.main.activity_chat.emptyState
+import kotlinx.android.synthetic.main.activity_chat.emptyStateSwitcher
+import kotlinx.android.synthetic.main.activity_chat.loadingView
+import kotlinx.android.synthetic.main.activity_chat.loadingViewContainer
+import kotlinx.android.synthetic.main.activity_chat.messagesList
+import kotlinx.android.synthetic.main.activity_chat.networkView
+import kotlinx.android.synthetic.main.activity_chat.toolbarTitle
 import java.io.File
 import java.io.IOException
 
@@ -465,7 +477,7 @@ class ChatActivity : AppCompatActivity() {
             val message = SofaAdapters.get().messageFrom(sofaMessage.payload)
             if (message.shouldHideKeyboard()) hideKeyboard()
         } catch (e: IOException) {
-            LogUtil.exception(javaClass, "Error during handling visibility of keyboard", e)
+            LogUtil.e(javaClass, "Error during handling visibility of keyboard $e")
         }
     }
 

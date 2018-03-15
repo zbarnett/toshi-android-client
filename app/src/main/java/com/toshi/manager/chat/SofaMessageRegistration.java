@@ -111,7 +111,7 @@ public class SofaMessageRegistration {
         .subscribeOn(Schedulers.io());
     }
 
-    public void clear() {
+    public void clearGcmPrefs() {
         GcmPrefsUtil.clear();
     }
 }

@@ -210,6 +210,7 @@ public class ToshiManager {
 
     public void signOut() {
         clearWalletAndSignal();
+        clearMessageSession();
         clearUserSession();
         setSignedOutAndClearUserPrefs();
     }
@@ -217,6 +218,10 @@ public class ToshiManager {
     private void clearWalletAndSignal() {
         this.wallet.clear();
         SignalPreferences.clear();
+    }
+
+    private void clearMessageSession() {
+        this.sofaMessageManager.deleteSession();
     }
 
     private void clearUserSession() {

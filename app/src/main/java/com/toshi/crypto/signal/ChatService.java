@@ -131,7 +131,7 @@ public final class ChatService extends SignalServiceAccountManager {
                     protocolStore.getPreKeys()
             );
         } catch (final IOException | InvalidKeyIdException | InvalidKeyException ex) {
-            LogUtil.e(getClass(), "ERROR!" + ex.toString());
+            LogUtil.exception(getClass(), "Error while registering keys" + ex.toString());
             return Completable.error(ex);
         }
     }
@@ -158,7 +158,8 @@ public final class ChatService extends SignalServiceAccountManager {
                                 registrationId,
                                 signalingKey,
                                 signedPreKey,
-                                preKeys)
+                                preKeys
+                        )
                 );
     }
 

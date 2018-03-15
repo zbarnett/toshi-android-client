@@ -62,11 +62,11 @@ class SendMessageToRecipientTask(
             }
         } catch (e: EncapsulatedExceptions) {
             for (uie in e.untrustedIdentityExceptions) {
-                LogUtil.error(javaClass, "Keys have changed.")
+                LogUtil.exception(javaClass, "Keys have changed.", e)
                 protocolStore.saveIdentity(SignalProtocolAddress(uie.e164Number, SignalServiceAddress.DEFAULT_DEVICE_ID), uie.identityKey)
             }
         } catch (ex: IOException) {
-            LogUtil.error(javaClass, ex.toString())
+            LogUtil.exception(javaClass, "Error while sending message to group", ex)
             val errorMessage = getErrorMessageFromException(ex)
             if (saveMessageToDatabase) saveAndUpdateExistingMessageWithErrorMessage(messageTask, errorMessage)
         }
@@ -83,10 +83,10 @@ class SendMessageToRecipientTask(
                 updateExistingMessage(messageTask)
             }
         } catch (ue: UntrustedIdentityException) {
-            LogUtil.error(javaClass, "Keys have changed. " + ue)
+            LogUtil.exception(javaClass, "Keys have changed", ue)
             protocolStore.saveIdentity(SignalProtocolAddress(ue.e164Number, SignalServiceAddress.DEFAULT_DEVICE_ID), ue.identityKey)
         } catch (ex: IOException) {
-            LogUtil.error(javaClass, ex.toString())
+            LogUtil.exception(javaClass, "Error while sending message", ex)
             val errorMessage = getErrorMessageFromException(ex)
             if (saveMessageToDatabase) saveAndUpdateExistingMessageWithErrorMessage(messageTask, errorMessage)
         }
@@ -106,7 +106,7 @@ class SendMessageToRecipientTask(
             updateExistingMessage(messageTask)
             savePendingMessage(messageTask)
         } catch (ex: IOException) {
-            LogUtil.error(javaClass, ex.toString())
+            LogUtil.exception(javaClass, "Error while saving and updating existing message", ex)
         }
     }
 

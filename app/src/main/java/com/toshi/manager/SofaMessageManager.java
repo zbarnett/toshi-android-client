@@ -65,8 +65,8 @@ public final class SofaMessageManager {
 
     private ChatService chatService;
     private ProtocolStore protocolStore;
+    private SofaMessageRegistration messageRegister;
     private SofaMessageReceiver messageReceiver;
-    private SofaMessageRegistration sofaGcmRegister;
     private SofaMessageSender messageSender;
     private HDWallet wallet;
     private Subscription connectivitySub;
@@ -355,7 +355,8 @@ public final class SofaMessageManager {
                 this.protocolStore,
                 this.conversationStore,
                 this.signalServiceUrls,
-                messageSender);
+                messageSender
+        );
     }
 
     private void initMessageSender() {
@@ -369,20 +370,20 @@ public final class SofaMessageManager {
     }
 
     private Completable initRegistrationTask() {
-        if (this.sofaGcmRegister != null) return Completable.complete();
+        if (this.messageRegister != null) return Completable.complete();
 
-        this.sofaGcmRegister = new SofaMessageRegistration(this.chatService, this.protocolStore);
-        return this.sofaGcmRegister
+        this.messageRegister = new SofaMessageRegistration(this.chatService, this.protocolStore);
+        return this.messageRegister
                 .registerIfNeeded()
                 .doOnCompleted(this::handleRegistrationCompleted);
     }
 
     private Completable redoRegistrationTask() {
-        if (this.sofaGcmRegister == null) {
-            this.sofaGcmRegister = new SofaMessageRegistration(this.chatService, this.protocolStore);
+        if (this.messageRegister == null) {
+            this.messageRegister = new SofaMessageRegistration(this.chatService, this.protocolStore);
         }
 
-        return this.sofaGcmRegister
+        return this.messageRegister
                 .registerIfNeededWithOnboarding()
                 .doOnCompleted(this::handleRegistrationCompleted);
     }
@@ -393,17 +394,17 @@ public final class SofaMessageManager {
     }
 
     public Completable tryUnregisterGcm() {
-        if (this.sofaGcmRegister == null) {
+        if (this.messageRegister == null) {
             return Completable.error(new NullPointerException("Unable to register as class hasn't been initialised yet."));
         }
-        return this.sofaGcmRegister.tryUnregisterGcm();
+        return this.messageRegister.tryUnregisterGcm();
     }
 
     public Completable forceRegisterChatGcm() {
-        if (this.sofaGcmRegister == null) {
+        if (this.messageRegister == null) {
             return Completable.error(new NullPointerException("Unable to register as class hasn't been initialised yet."));
         }
-        return this.sofaGcmRegister.forceRegisterChatGcm();
+        return this.messageRegister.forceRegisterChatGcm();
     }
 
     public void resendPendingMessage(final SofaMessage sofaMessage) {
@@ -418,9 +419,8 @@ public final class SofaMessageManager {
     public void clear() {
         clearMessageReceiver();
         clearMessageSender();
-        clearGcmRegistration();
+        clearMessageRegistration();
         clearConnectivitySubscription();
-        this.protocolStore.deleteAllSessions();
     }
 
     private void clearMessageReceiver() {
@@ -437,15 +437,19 @@ public final class SofaMessageManager {
         }
     }
 
-    private void clearGcmRegistration() {
-        if (this.sofaGcmRegister != null) {
-            this.sofaGcmRegister.clear();
-            this.sofaGcmRegister = null;
+    private void clearMessageRegistration() {
+        if (this.messageRegister != null) {
+            this.messageRegister.clearGcmPrefs();
+            this.messageRegister = null;
         }
     }
 
     private void clearConnectivitySubscription() {
         if (this.connectivitySub == null) return;
         this.connectivitySub.unsubscribe();
+    }
+
+    public void deleteSession() {
+        if (protocolStore != null) this.protocolStore.deleteAllSessions();
     }
 }
