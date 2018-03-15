@@ -28,7 +28,8 @@
         android:id="@+id/snackbarContainer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:fitsSystemWindows="true">
 
         <android.support.design.widget.AppBarLayout
             android:id="@+id/fragmentContainer"
@@ -36,6 +37,7 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:background="@color/windowBackground"
+            android:fitsSystemWindows="true"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
     </android.support.design.widget.CoordinatorLayout>
 
