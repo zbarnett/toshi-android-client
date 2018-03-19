@@ -34,7 +34,7 @@ import com.toshi.model.sofa.PaymentRequest;
 import com.toshi.model.sofa.SofaAdapters;
 import com.toshi.model.sofa.SofaMessage;
 import com.toshi.model.sofa.SofaType;
-import com.toshi.util.LogUtil;
+import com.toshi.util.logging.LogUtil;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.adapter.listeners.OnItemClickListener;
 import com.toshi.view.adapter.viewholder.FileViewHolder;
@@ -239,7 +239,7 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
         try {
             renderChatMessageIntoViewHolder(holder, sofaMessage, payload, position);
         } catch (final IOException ex) {
-            LogUtil.error(getClass(), "Unable to render view holder: " + ex);
+            LogUtil.w("Unable to render view holder: " + ex);
         }
     }
 
@@ -319,7 +319,7 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
                 final PaymentRequest request = SofaAdapters.get().txRequestFrom(payload);
                 if (this.recipient != null && this.recipient.isGroup()) {
                     // Todo - support group payment requests
-                    LogUtil.i(getClass(), "Payment requests to groups currently not supported.");
+                    LogUtil.i("Payment requests to groups currently not supported.");
                     return;
                 }
 

@@ -54,7 +54,7 @@ package com.toshi.crypto.signal.util;
 import android.content.Context;
 
 import com.toshi.crypto.signal.store.SignalPreKeyStore;
-import com.toshi.util.LogUtil;
+import com.toshi.util.logging.LogUtil;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.whispersystems.libsignal.IdentityKeyPair;
@@ -81,8 +81,6 @@ import java.util.List;
 
 
 public class PreKeyUtil {
-
-    private static final String TAG = PreKeyUtil.class.getName();
 
     private static final int BATCH_SIZE = 100;
 
@@ -122,6 +120,7 @@ public class PreKeyUtil {
 
             return record;
         } catch (InvalidKeyException e) {
+            LogUtil.exception("Error while generating signed pre key", e);
             throw new AssertionError(e);
         }
     }
@@ -133,7 +132,7 @@ public class PreKeyUtil {
             try {
                 return preKeyStore.loadPreKey(Medium.MAX_VALUE);
             } catch (InvalidKeyIdException e) {
-                LogUtil.w("PreKeyUtil", e.toString());
+                LogUtil.exception("Error while generating last resort key", e);
                 preKeyStore.removePreKey(Medium.MAX_VALUE);
             }
         }
@@ -153,7 +152,7 @@ public class PreKeyUtil {
             fout.write(JsonUtils.toJson(new PreKeyIndex(id)).getBytes());
             fout.close();
         } catch (IOException e) {
-            LogUtil.w("PreKeyUtil", e.toString());
+            LogUtil.exception("Error while setting next pre key id", e);
         }
     }
 
@@ -164,7 +163,7 @@ public class PreKeyUtil {
 
             setSignedPreKeyIndex(context, index);
         } catch (IOException e) {
-            LogUtil.w(TAG, e.toString());
+            LogUtil.exception("Error while setting next signed pre key id", e);
         }
     }
 
@@ -175,7 +174,7 @@ public class PreKeyUtil {
 
             setSignedPreKeyIndex(context, index);
         } catch (IOException e) {
-            LogUtil.w(TAG, e.toString());
+            LogUtil.exception("Error while setting active signed pre key id", e);
         }
     }
 
@@ -199,7 +198,7 @@ public class PreKeyUtil {
                 return index.nextPreKeyId;
             }
         } catch (IOException e) {
-            LogUtil.w("PreKeyUtil", e.toString());
+            LogUtil.exception("Error while getting next pre key id", e);
             return getSecureRandom().nextInt(Medium.MAX_VALUE);
         }
     }
@@ -217,7 +216,7 @@ public class PreKeyUtil {
                 return index.nextSignedPreKeyId;
             }
         } catch (IOException e) {
-            LogUtil.w("PreKeyUtil", e.toString());
+            LogUtil.exception("Error while getting next signed pre key id", e);
             return getSecureRandom().nextInt(Medium.MAX_VALUE);
         }
     }
@@ -236,7 +235,7 @@ public class PreKeyUtil {
 
             return Optional.of(index);
         } catch (IOException e) {
-            LogUtil.w(TAG, e.toString());
+            LogUtil.exception("Error while getting signed pre key index", e);
             return Optional.absent();
         }
     }

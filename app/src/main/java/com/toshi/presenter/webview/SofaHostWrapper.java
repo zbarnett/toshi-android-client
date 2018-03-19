@@ -41,7 +41,7 @@ import com.toshi.presenter.webview.model.RejectTransactionCallback;
 import com.toshi.presenter.webview.model.SignTransactionCallback;
 import com.toshi.util.DialogUtil;
 import com.toshi.util.EthereumSignedMessage;
-import com.toshi.util.LogUtil;
+import com.toshi.util.logging.LogUtil;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.fragment.PaymentConfirmationFragment;
 
@@ -109,7 +109,7 @@ public class SofaHostWrapper implements SofaHostListener {
         try {
             transaction = SofaAdapters.get().unsignedW3TransactionFrom(unsignedTransaction);
         } catch (final IOException e) {
-            LogUtil.exception(getClass(), "Unable to parse unsigned transaction. ", e);
+            LogUtil.exception("Unable to parse unsigned transaction. ", e);
             return false;
         }
 
@@ -122,7 +122,7 @@ public class SofaHostWrapper implements SofaHostListener {
                 getWebViewInfo(this.webView)
                 .subscribe(
                         pair -> signTransaction(id, unsignedTransaction, url, pair.first, pair.second),
-                        throwable -> LogUtil.e(getClass(), "Error while retrieving web view info " + throwable)
+                        throwable -> LogUtil.w("Error while retrieving web view info " + throwable)
                 );
 
         this.subscriptions.add(sub);
@@ -147,7 +147,7 @@ public class SofaHostWrapper implements SofaHostListener {
         try {
             transaction = SofaAdapters.get().unsignedW3TransactionFrom(unsignedTransaction);
         } catch (final IOException e) {
-            LogUtil.exception(getClass(), "Unable to parse unsigned transaction. ", e);
+            LogUtil.exception("Unable to parse unsigned transaction. ", e);
             return;
         }
         if (this.activity == null) return;
@@ -179,12 +179,12 @@ public class SofaHostWrapper implements SofaHostListener {
                     );
 
             this.subscriptions.add(sub);
-        } else LogUtil.e(getClass(), "Invalid payment task in this context");
+        } else LogUtil.w("Invalid payment task in this context");
         return null;
     }
 
     private void handleTransactionError(final Throwable throwable, final String callbackId) {
-        LogUtil.exception(getClass(), "Error while signing W3 transaction " + throwable);
+        LogUtil.exception("Error while signing W3 transaction " + throwable);
         final String errorMessage = createErrorMessage("Not able to sign transaction");
         postCallbackTask(callbackId, errorMessage);
     }
@@ -204,7 +204,7 @@ public class SofaHostWrapper implements SofaHostListener {
         try {
             postCallbackTask(callbackId, callback.toJsonEncodedString());
         } catch (Exception e) {
-            LogUtil.exception(getClass(), e);
+            LogUtil.exception(e);
             final String errorMessage = createErrorMessage(e.getMessage());
             postCallbackTask(callbackId, errorMessage);
         }
@@ -237,7 +237,7 @@ public class SofaHostWrapper implements SofaHostListener {
     }
 
     private void handlePublishTransactionError(final Throwable throwable, final String callbackId) {
-        LogUtil.exception(getClass(), "Error while publishing transaction " + throwable);
+        LogUtil.exception("Error while publishing transaction " + throwable);
         final String errorMessage = createErrorMessage("Not able to publish transaction");
         postCallbackTask(callbackId, errorMessage);
     }
@@ -255,7 +255,7 @@ public class SofaHostWrapper implements SofaHostListener {
             final PersonalMessage personalMessage = PersonalMessage.build(msgParams);
             showPersonalSignDialog(id, personalMessage);
         } catch (IOException e) {
-            LogUtil.e(getClass(), "Error while parsing PersonalMessageSign" + e);
+            LogUtil.w("Error while parsing PersonalMessageSign" + e);
             final String errorMessage = createErrorMessage("Unable to parse personal message");
             postCallbackTask(id, errorMessage);
         }
@@ -280,11 +280,11 @@ public class SofaHostWrapper implements SofaHostListener {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
                             this::executeJavascriptMethod,
-                            throwable -> LogUtil.e(getClass(), "Error " + throwable)
+                            throwable -> LogUtil.w("Error " + throwable)
                     );
             this.subscriptions.add(sub);
         } catch (UnsupportedEncodingException e) {
-            LogUtil.e(getClass(), "Error " + e);
+            LogUtil.w("Error " + e);
         }
     }
 
@@ -322,7 +322,7 @@ public class SofaHostWrapper implements SofaHostListener {
                 doCallback(id, encodedCallback)
                 .subscribe(
                         () -> {},
-                        throwable -> LogUtil.e(getClass(), "Error while executing javascript method " + throwable)
+                        throwable -> LogUtil.w("Error while executing javascript method " + throwable)
                 );
 
         subscriptions.add(sub);
@@ -357,11 +357,11 @@ public class SofaHostWrapper implements SofaHostListener {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
                             this::executeJavascriptMethod,
-                            throwable -> LogUtil.e(getClass(), "Error " + throwable)
+                            throwable -> LogUtil.w("Error " + throwable)
                     );
             this.subscriptions.add(sub);
         } catch (UnsupportedEncodingException e) {
-            LogUtil.e(getClass(), "Error " + e);
+            LogUtil.w("Error " + e);
         }
     }
 

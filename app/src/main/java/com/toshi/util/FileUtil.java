@@ -30,6 +30,7 @@ import android.webkit.MimeTypeMap;
 import com.toshi.BuildConfig;
 import com.toshi.model.local.Attachment;
 import com.toshi.model.sofa.OutgoingAttachment;
+import com.toshi.util.logging.LogUtil;
 import com.toshi.view.BaseApplication;
 
 import org.whispersystems.libsignal.InvalidMessageException;
@@ -117,7 +118,7 @@ public class FileUtil {
             final File destFile = constructAttachmentFile(attachment.getContentType(), fileId);
             return writeToFileFromInputStream(destFile, inputStream);
         } catch (IOException | InvalidMessageException e) {
-            LogUtil.exception(FileUtil.class, "Error during writing attachment to file", e);
+            LogUtil.exception("Error during writing attachment to file", e);
             return null;
         } finally {
             if (file != null) {

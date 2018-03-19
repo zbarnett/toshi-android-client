@@ -25,7 +25,7 @@ import com.toshi.R;
 import com.toshi.model.network.Currencies;
 import com.toshi.model.network.Currency;
 import com.toshi.util.CurrencyComparator;
-import com.toshi.util.LogUtil;
+import com.toshi.util.logging.LogUtil;
 import com.toshi.util.SharedPrefsUtil;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.activity.CurrencyActivity;
@@ -146,7 +146,7 @@ public class CurrencyPresenter implements Presenter<CurrencyActivity> {
     }
 
     private void handleError(final Throwable throwable) {
-        LogUtil.exception(getClass(), throwable);
+        LogUtil.exception(throwable);
     }
 
     @Override

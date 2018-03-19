@@ -41,7 +41,7 @@ import com.toshi.model.sofa.payment.Payment;
 import com.toshi.model.sofa.SofaAdapters;
 import com.toshi.model.sofa.SofaMessage;
 import com.toshi.model.sofa.SofaType;
-import com.toshi.util.LogUtil;
+import com.toshi.util.logging.LogUtil;
 import com.toshi.util.SharedPrefsUtil;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.notification.ChatNotificationManager;
@@ -64,7 +64,7 @@ public class GcmMessageReceiver extends FirebaseMessagingService {
         tryInitApp()
         .subscribe(
                 () -> handleIncomingMessage(message.getData()),
-                throwable -> LogUtil.exception(getClass(), "Error during incoming message", throwable)
+                throwable -> LogUtil.exception("Error during incoming message", throwable)
         );
     }
 
@@ -78,7 +78,7 @@ public class GcmMessageReceiver extends FirebaseMessagingService {
     private void handleIncomingMessage(final Map data) {
         try {
             final String messageBody = (String) data.get("message");
-            LogUtil.i(getClass(), "Incoming PN: " + messageBody);
+            LogUtil.i("Incoming PN: " + messageBody);
 
             if (messageBody == null) {
                 tryShowIncomingMessage();
@@ -98,7 +98,7 @@ public class GcmMessageReceiver extends FirebaseMessagingService {
             }
 
         } catch (final Exception ex) {
-            LogUtil.exception(getClass(), "Error while parsing incoming message: " + ex);
+            LogUtil.exception("Error while parsing incoming message: " + ex);
         }
     }
 
@@ -151,7 +151,7 @@ public class GcmMessageReceiver extends FirebaseMessagingService {
     }
 
     private void handleInvalidPayment(final Throwable throwable) {
-        LogUtil.exception(getClass(), "Invalid payment", throwable);
+        LogUtil.exception("Invalid payment", throwable);
     }
 
     private void tryShowIncomingMessage() {
@@ -159,7 +159,7 @@ public class GcmMessageReceiver extends FirebaseMessagingService {
         try {
             incomingMessage = getIncomingMessage();
         } catch (InterruptedException | TimeoutException e) {
-            LogUtil.i(getClass(), "Fetched all new messages");
+            LogUtil.i("Fetched all new messages");
             return;
         }
 

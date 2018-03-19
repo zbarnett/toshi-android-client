@@ -27,7 +27,7 @@ import com.toshi.crypto.util.TypeConverter;
 import com.toshi.exception.InvalidMasterSeedException;
 import com.toshi.exception.KeyStoreException;
 import com.toshi.util.FileNames;
-import com.toshi.util.LogUtil;
+import com.toshi.util.logging.LogUtil;
 import com.toshi.view.BaseApplication;
 
 import org.bitcoinj.core.NetworkParameters;
@@ -68,9 +68,9 @@ public class HDWallet {
             if (this.masterSeed == null) throw new InvalidMasterSeedException(new Throwable("Master seed is null"));
             final Wallet wallet = initFromMasterSeed(this.masterSeed);
             deriveKeysFromWallet(wallet);
-
             return this;
-        });
+        })
+        .doOnError(throwable -> LogUtil.exception("Error while getting existing wallet"));
     }
 
     // WARNING: This will delete any wallet stored on disk
@@ -78,9 +78,9 @@ public class HDWallet {
         return Single.fromCallable(() -> {
             final Wallet wallet = generateNewWallet();
             deriveKeysFromWallet(wallet);
-
             return this;
-        });
+        })
+        .doOnError(throwable -> LogUtil.exception("Error while creating new wallet"));
     }
 
     private Wallet generateNewWallet() {
@@ -98,6 +98,7 @@ public class HDWallet {
             seed.check();
             return constructFromSeed(seed);
         } catch (final UnreadableWalletException | MnemonicException e) {
+            LogUtil.exception("Error while initiating from from master seed", e);
             throw new RuntimeException("Unable to create wallet. Seed is invalid");
         }
     }
@@ -112,6 +113,7 @@ public class HDWallet {
                 saveMasterSeedToStorage(masterSeed);
                 return this;
             } catch (final UnreadableWalletException | MnemonicException e) {
+                LogUtil.exception("Error while creating wallet from master seed", e);
                 throw new InvalidMasterSeedException(e);
             }
         });
@@ -135,6 +137,7 @@ public class HDWallet {
             deriveIdentityKey(wallet);
             derivePaymentKey(wallet);
         } catch (final UnreadableWalletException | IOException ex) {
+            LogUtil.exception("Error while deriving keys from wallet", ex);
             throw new RuntimeException("Error deriving keys: " + ex);
         }
     }
@@ -169,7 +172,7 @@ public class HDWallet {
             final byte[] transactionBytes = TypeConverter.StringHexToByteArray(data);
             return sign(transactionBytes, this.paymentKey);
         } catch (final Exception e) {
-            LogUtil.print(getClass(), "Unable to sign transaction. " + e);
+            LogUtil.exception("Unable to sign transaction. " + e);
             return null;
         }
     }
@@ -179,7 +182,7 @@ public class HDWallet {
             final byte[] transactionBytes = TypeConverter.StringHexToByteArray(data);
             return signWithoutMinus27(transactionBytes, this.paymentKey);
         } catch (final Exception e) {
-            LogUtil.print(getClass(), "Unable to sign transaction. " + e);
+            LogUtil.exception("Unable to sign transaction. " + e);
             return null;
         }
     }
@@ -189,7 +192,7 @@ public class HDWallet {
             final byte[] transactionBytes = TypeConverter.StringHexToByteArray(data);
             return hashAndSignWithoutMinus27(transactionBytes, this.paymentKey);
         } catch (final Exception e) {
-            LogUtil.print(getClass(), "Unable to sign transaction. " + e);
+            LogUtil.exception("Unable to sign transaction. " + e);
             return null;
         }
     }
@@ -258,6 +261,7 @@ public class HDWallet {
             saveMasterSeed(encryptedMasterSeed);
             this.masterSeed = masterSeed;
         } catch (KeyStoreException e) {
+            LogUtil.exception("Error while saving master seed from storage", e);
             throw new IllegalStateException(e);
         }
     }
@@ -275,6 +279,7 @@ public class HDWallet {
             if (encryptedMasterSeed == null) return null;
             return keyStoreHandler.decrypt(encryptedMasterSeed, this::saveMasterSeed);
         } catch (KeyStoreException e) {
+            LogUtil.exception("Error while reading master seed from storage", e);
             throw new IllegalStateException(e);
         }
     }

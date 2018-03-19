@@ -26,7 +26,7 @@ import com.journeyapps.barcodescanner.CaptureManager;
 import com.toshi.R;
 import com.toshi.model.local.PermissionResultHolder;
 import com.toshi.model.local.ScanResult;
-import com.toshi.util.LogUtil;
+import com.toshi.util.logging.LogUtil;
 import com.toshi.util.QrCodeHandler;
 import com.toshi.util.ScannerResultType;
 import com.toshi.view.activity.ScannerActivity;
@@ -138,7 +138,7 @@ public final class ScannerPresenter implements Presenter<ScannerActivity> {
                 this.capture.onPause();
             }
         } catch (final IllegalArgumentException ex) {
-            LogUtil.exception(getClass(), ex);
+            LogUtil.exception(ex);
         }
 
         this.qrCodeHandler.clear();
@@ -153,7 +153,7 @@ public final class ScannerPresenter implements Presenter<ScannerActivity> {
                 this.capture.onDestroy();
             }
         } catch (final IllegalArgumentException ex) {
-            LogUtil.exception(getClass(), ex);
+            LogUtil.exception(ex);
         }
         
         this.qrCodeHandler = null;

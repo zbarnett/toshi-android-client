@@ -23,7 +23,7 @@ import com.toshi.model.sofa.SofaMessage;
 import com.toshi.model.local.User;
 import com.toshi.model.sofa.payment.Payment;
 import com.toshi.model.sofa.SofaAdapters;
-import com.toshi.util.LogUtil;
+import com.toshi.util.logging.LogUtil;
 import com.toshi.view.BaseApplication;
 
 import java.io.IOException;
@@ -61,7 +61,7 @@ Observable<PendingTransaction> observable = pto.init(user); // Only PendingTrans
                 .getTransactionManager()
                 .getPendingTransactionObservable()
                 .filter(this::shouldBeBroadcast)
-                .doOnError(t -> LogUtil.exception(getClass(), "subscribeToPendingTransactionChanges", t))
+                .doOnError(t -> LogUtil.exception("subscribeToPendingTransactionChanges", t))
                 .onErrorReturn(t -> null);
     }
 

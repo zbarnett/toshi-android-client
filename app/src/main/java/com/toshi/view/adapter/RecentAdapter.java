@@ -40,7 +40,7 @@ import com.toshi.model.sofa.PaymentRequest;
 import com.toshi.model.sofa.SofaAdapters;
 import com.toshi.model.sofa.SofaMessage;
 import com.toshi.model.sofa.SofaType;
-import com.toshi.util.LogUtil;
+import com.toshi.util.logging.LogUtil;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.adapter.listeners.OnItemClickListener;
 import com.toshi.view.adapter.listeners.OnUpdateListener;
@@ -269,7 +269,7 @@ public class RecentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                     return "";
             }
         } catch (final IOException ex) {
-            LogUtil.error(getClass(), "Error parsing SofaMessage. " + ex);
+            LogUtil.w("Error parsing SofaMessage. " + ex);
         }
 
         return "";
@@ -293,7 +293,7 @@ public class RecentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                     .deleteConversation(conversationToDelete)
                     .subscribe(
                             () -> {},
-                            t -> LogUtil.e(getClass(), "Unable to delete conversation")
+                            t -> LogUtil.w("Unable to delete conversation")
                     );
         }
     }

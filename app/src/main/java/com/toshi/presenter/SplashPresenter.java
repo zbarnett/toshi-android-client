@@ -21,7 +21,7 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.net.Uri;
 
-import com.toshi.util.LogUtil;
+import com.toshi.util.logging.LogUtil;
 import com.toshi.util.SharedPrefsUtil;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.activity.LandingActivity;
@@ -90,7 +90,7 @@ public class SplashPresenter implements Presenter<SplashActivity> {
             try {
                 nextIntent.send();
             } catch (final PendingIntent.CanceledException ex) {
-                LogUtil.exception(getClass(), ex);
+                LogUtil.exception(ex);
             }
             this.activity.finish();
         } else {

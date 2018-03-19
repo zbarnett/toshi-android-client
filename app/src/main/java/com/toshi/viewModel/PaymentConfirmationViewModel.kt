@@ -34,8 +34,8 @@ import com.toshi.model.local.UnsignedW3Transaction
 import com.toshi.model.network.Balance
 import com.toshi.model.sofa.SofaAdapters
 import com.toshi.util.EthUtil
-import com.toshi.util.LogUtil
 import com.toshi.util.SingleLiveEvent
+import com.toshi.util.logging.LogUtil
 import com.toshi.view.BaseApplication
 import com.toshi.view.fragment.PaymentConfirmationFragment.Companion.CALLBACK_ID
 import com.toshi.view.fragment.PaymentConfirmationFragment.Companion.CURRENCY_MODE
@@ -111,7 +111,7 @@ class PaymentConfirmationViewModel : ViewModel() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { balance.value = it },
-                        { LogUtil.e(javaClass, "Error while fetching balance $it") }
+                        { LogUtil.w("Error while fetching balance $it") }
                 )
 
         subscriptions.add(sub)
@@ -141,7 +141,7 @@ class PaymentConfirmationViewModel : ViewModel() {
             isToshiPayment -> getPaymentTaskWithToshiId(toshiId, encodedEthAmount)
             isERC20Payment -> getPaymentTaskWithTokenAddress(tokenAddress, tokenSymbol, tokenDecimals, paymentAddress, encodedEthAmount)
             isExternalPayment -> getPaymentTaskWithPaymentAddress(paymentAddress, encodedEthAmount)
-            else -> LogUtil.exception(javaClass, "Unhandled payment unsignedW3Transaction, toshiId and paymentAddress is null")
+            else -> LogUtil.exception("Unhandled payment unsignedW3Transaction, toshiId and paymentAddress is null")
         }
     }
 
@@ -308,7 +308,7 @@ class PaymentConfirmationViewModel : ViewModel() {
                 transactionManager.sendERC20TokenPayment(paymentTask)
                 isLoading. value = true
             }
-            else -> LogUtil.e(javaClass, "Invalid payment task in this context")
+            else -> LogUtil.w( "Invalid payment task in this context")
         }
     }
 
@@ -319,7 +319,7 @@ class PaymentConfirmationViewModel : ViewModel() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { finish.value = Unit },
-                        { LogUtil.e(javaClass, "Error while finishing activity with delay $it") }
+                        { LogUtil.w("Error while finishing activity with delay $it") }
                 )
 
         subscriptions.add(sub)

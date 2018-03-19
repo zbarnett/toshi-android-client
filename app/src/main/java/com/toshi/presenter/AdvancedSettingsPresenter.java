@@ -29,7 +29,7 @@ import com.toshi.model.local.Network;
 import com.toshi.model.local.Networks;
 import com.toshi.util.BuildTypes;
 import com.toshi.util.DialogUtil;
-import com.toshi.util.LogUtil;
+import com.toshi.util.logging.LogUtil;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.activity.AdvancedSettingsActivity;
 import com.toshi.view.activity.LicenseListActivity;
@@ -147,7 +147,7 @@ public class AdvancedSettingsPresenter implements Presenter<AdvancedSettingsActi
 
     private void handleNetworkChangeError(final Throwable throwable) {
         showToast(R.string.network_change_error);
-        LogUtil.exception(getClass(), throwable);
+        LogUtil.exception(throwable);
         stopLoadingTask();
     }
 

@@ -24,7 +24,7 @@ import com.toshi.extensions.createSafeBigDecimal
 import com.toshi.extensions.isValidDecimal
 import com.toshi.model.network.token.ERCToken
 import com.toshi.util.EthUtil
-import com.toshi.util.LogUtil
+import com.toshi.util.logging.LogUtil
 import com.toshi.view.BaseApplication
 import rx.Single
 import rx.android.schedulers.AndroidSchedulers
@@ -54,7 +54,7 @@ class SendERC20TokenViewModel(val token: ERCToken) : ViewModel() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { ERCToken.value = it },
-                        { LogUtil.exception(javaClass, "Error while listening to token updates $it") }
+                        { LogUtil.exception("Error while listening to token updates $it") }
                 )
 
         subscriptions.add(sub)

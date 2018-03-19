@@ -22,7 +22,7 @@ import android.support.v4.app.ActivityCompat;
 import android.view.View;
 
 import com.toshi.crypto.HDWallet;
-import com.toshi.util.LogUtil;
+import com.toshi.util.logging.LogUtil;
 import com.toshi.util.SharedPrefsUtil;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.activity.BackupPhraseVerifyActivity;
@@ -79,7 +79,7 @@ public class BackupPhraseVerifyPresenter implements Presenter<BackupPhraseVerify
     }
 
     private void handleBackupPhraseError(final Throwable throwable) {
-        LogUtil.exception(getClass(), "Error while getting wallet", throwable);
+        LogUtil.exception("Error while getting wallet", throwable);
     }
 
     private void initListeners() {

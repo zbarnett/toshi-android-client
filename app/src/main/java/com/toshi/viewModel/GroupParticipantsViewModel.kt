@@ -20,8 +20,8 @@ package com.toshi.viewModel
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import com.toshi.model.local.User
-import com.toshi.util.LogUtil
 import com.toshi.util.SingleLiveEvent
+import com.toshi.util.logging.LogUtil
 import com.toshi.view.BaseApplication
 import rx.android.schedulers.AndroidSchedulers
 import rx.subjects.PublishSubject
@@ -50,14 +50,14 @@ class GroupParticipantsViewModel : ViewModel() {
                 .filter { query -> query.length >= 3 }
                 .subscribe(
                         { runSearchQuery(it) },
-                        { LogUtil.e(javaClass, "Error while listening for query changes $it") }
+                        { LogUtil.w("Error while listening for query changes $it") }
                 )
 
         val clearSub = querySubject.filter { query -> query.length < 3 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { showDefaultResults() },
-                        { LogUtil.e(javaClass, "Error while listening for query changes $it") }
+                        { LogUtil.w("Error while listening for query changes $it") }
                 )
 
         val defaultSub = recipientManager
@@ -65,7 +65,7 @@ class GroupParticipantsViewModel : ViewModel() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { cacheDefaultResults(it) },
-                        { LogUtil.e(javaClass, "Error while fetching contacts $it") }
+                        { LogUtil.w("Error while fetching contacts $it") }
                 )
         this.subscriptions.addAll(startSearchSub, clearSub, defaultSub)
     }
@@ -88,7 +88,7 @@ class GroupParticipantsViewModel : ViewModel() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { searchResults.value = it },
-                        { LogUtil.e(javaClass, "Error while search for user $it") }
+                        { LogUtil.w("Error while search for user $it") }
                 )
 
         this.subscriptions.add(searchSub)

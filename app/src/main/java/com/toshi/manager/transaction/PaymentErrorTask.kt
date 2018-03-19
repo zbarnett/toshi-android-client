@@ -25,7 +25,7 @@ import com.toshi.model.network.SofaError
 import com.toshi.model.sofa.SofaAdapters
 import com.toshi.model.sofa.SofaMessage
 import com.toshi.util.LocaleUtil
-import com.toshi.util.LogUtil
+import com.toshi.util.logging.LogUtil
 import com.toshi.view.BaseApplication
 import com.toshi.view.notification.ChatNotificationManager
 import com.toshi.view.notification.ExternalPaymentNotificationManager
@@ -35,7 +35,7 @@ import java.io.IOException
 class PaymentErrorTask {
 
     fun handleOutgoingExternalPaymentError(error: Throwable, paymentTask: PaymentTask) {
-        LogUtil.exception(javaClass, "Error sending payment.", error)
+        LogUtil.exception("Error sending payment.", error)
         val payment = paymentTask.payment
         val paymentAddress = payment.toAddress
                 ?.let { it }
@@ -46,7 +46,7 @@ class PaymentErrorTask {
     fun handleOutgoingPaymentError(error: Throwable, receiver: User, storedSofaMessage: SofaMessage) {
         val errorMessage = parseErrorResponse(error)
         storedSofaMessage.errorMessage = errorMessage
-        LogUtil.exception(javaClass, "Error creating transaction $error")
+        LogUtil.exception("Error creating transaction $error")
         showOutgoingPaymentFailedNotification(receiver)
     }
 
@@ -60,7 +60,7 @@ class PaymentErrorTask {
             val body = error.response().errorBody()?.string() ?: ""
             SofaAdapters.get().sofaErrorsFrom(body)
         } catch (e: IOException) {
-            LogUtil.e(javaClass, "Error while parsing payment error response $e")
+            LogUtil.w("Error while parsing payment error response $e")
             null
         }
     }

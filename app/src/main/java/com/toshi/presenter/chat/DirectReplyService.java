@@ -12,7 +12,7 @@ import com.toshi.model.sofa.Message;
 import com.toshi.model.sofa.SofaAdapters;
 import com.toshi.model.sofa.SofaMessage;
 import com.toshi.manager.messageQueue.SyncOutgoingMessageQueue;
-import com.toshi.util.LogUtil;
+import com.toshi.util.logging.LogUtil;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.notification.ChatNotificationManager;
 
@@ -53,7 +53,7 @@ public class DirectReplyService extends IntentService {
             final User localUser = getLocalUser();
             sendMessage(recipient, localUser, userInput);
         } catch (Exception e) {
-            LogUtil.e(getClass(), "Error trying to initiate app " + e);
+            LogUtil.w("Error trying to initiate app " + e);
         }
     }
 

@@ -32,6 +32,7 @@ import com.toshi.model.network.UnsignedTransaction
 import com.toshi.model.sofa.payment.ERC20TokenPayment
 import com.toshi.model.sofa.payment.Payment
 import com.toshi.util.EthUtil
+import com.toshi.util.logging.LogUtil
 import com.toshi.view.BaseApplication
 import rx.Single
 import java.math.BigDecimal
@@ -55,6 +56,7 @@ class PaymentTaskBuilder {
                 .flatMap { createUnsignedTransaction(payment, sendMaxAmount) }
                 .flatMap { getPaymentInfoAndUser(it, toPaymentAddress) }
                 .map { buildPaymentTask(it.first, it.second, payment) }
+                .doOnError { LogUtil.exception("Error while building payment task", it) }
     }
 
     fun buildERC20PaymentTask(fromPaymentAddress: String,
@@ -75,6 +77,7 @@ class PaymentTaskBuilder {
         return createUnsignedTransaction(erc20TokenPayment)
                 .flatMap { calculateERC20PaymentInfo(it) }
                 .map { buildPaymentTask(it, erc20TokenPayment, tokenSymbol, decimalEncodedValue) }
+                .doOnError { LogUtil.exception("Error while building token payment task", it) }
     }
 
     private fun createUnsignedTransaction(payment: Payment, sendMaxAmount: Boolean): Single<UnsignedTransaction> {
@@ -83,6 +86,7 @@ class PaymentTaskBuilder {
         return EthereumService
                 .getApi()
                 .createTransaction(transactionRequest)
+                .doOnError { LogUtil.exception("Error while creating unsigned transaction", it) }
     }
 
     private fun createUnsignedTransaction(payment: ERC20TokenPayment): Single<UnsignedTransaction> {
@@ -90,6 +94,7 @@ class PaymentTaskBuilder {
         return EthereumService
                 .getApi()
                 .createTransaction(transactionRequest)
+                .doOnError { LogUtil.exception("Error while creating unsigned transaction", it) }
     }
 
     private fun getPaymentInfoAndUser(unsignedTransaction: UnsignedTransaction,
@@ -147,6 +152,7 @@ class PaymentTaskBuilder {
         return createUnsignedW3Transaction(unsignedW3Transaction)
                 .flatMap { calculatePaymentInfo(it) }
                 .map { buildW3PaymentTask(it, payment, callbackId) }
+                .doOnError { LogUtil.exception("Error while building W3 payment task", it) }
     }
 
     private fun createUnsignedW3Transaction(unsignedW3Transaction: UnsignedW3Transaction): Single<UnsignedTransaction> {
@@ -154,6 +160,7 @@ class PaymentTaskBuilder {
         return EthereumService
                 .getApi()
                 .createTransaction(transactionRequest)
+                .doOnError { LogUtil.exception("Error while creating unsigned W3 transaction", it) }
     }
 
     private fun calculateERC20PaymentInfo(unsignedTransaction: UnsignedTransaction): Single<PaymentTaskInfo> {
@@ -161,6 +168,7 @@ class PaymentTaskBuilder {
         val gasEthAmount = getGasEthAmount(unsignedTransaction)
         return balanceManager.getLocalCurrencyExchangeRate()
                 .map { mapPaymentValuesToFiat(it, sendTokenAmount, gasEthAmount, gasEthAmount, unsignedTransaction) }
+                .doOnError { LogUtil.exception("Error while calculating token payment info", it) }
     }
 
     private fun calculatePaymentInfo(unsignedTransaction: UnsignedTransaction): Single<PaymentTaskInfo> {
@@ -170,6 +178,7 @@ class PaymentTaskBuilder {
 
         return balanceManager.getLocalCurrencyExchangeRate()
                 .map { mapPaymentValuesToFiat(it, sendEthAmount, gasEthAmount, totalEthAmount, unsignedTransaction) }
+                .doOnError { LogUtil.exception("Error while calculating payment info", it) }
     }
 
     private fun getGasEthAmount(unsignedTransaction: UnsignedTransaction): BigDecimal {

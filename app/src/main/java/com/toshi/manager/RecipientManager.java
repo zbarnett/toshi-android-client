@@ -33,7 +33,7 @@ import com.toshi.model.local.User;
 import com.toshi.model.network.SearchResult;
 import com.toshi.model.network.ServerTime;
 import com.toshi.model.network.UserSearchResults;
-import com.toshi.util.LogUtil;
+import com.toshi.util.logging.LogUtil;
 import com.toshi.view.BaseApplication;
 
 import java.io.IOException;
@@ -69,7 +69,7 @@ public class RecipientManager {
         return this.groupStore.loadForId(id)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
-                .doOnError(t -> LogUtil.exception(getClass(), "getGroupFromId", t));
+                .doOnError(t -> LogUtil.exception("getGroupFromId", t));
     }
 
     public Single<User> getUserFromUsername(final String username) {
@@ -80,7 +80,7 @@ public class RecipientManager {
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .first(this::isUserFresh)
-                .doOnError(t -> LogUtil.exception(getClass(), "getUserFromUsername", t))
+                .doOnError(t -> LogUtil.exception("getUserFromUsername", t))
                 .toSingle();
     }
 
@@ -92,7 +92,7 @@ public class RecipientManager {
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .first(this::isUserFresh)
-                .doOnError(t -> LogUtil.exception(getClass(), "getUserFromToshiId", t))
+                .doOnError(t -> LogUtil.exception("getUserFromToshiId", t))
                 .toSingle();
     }
 
@@ -111,7 +111,7 @@ public class RecipientManager {
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .first(this::isUserFresh)
-                .doOnError(t -> LogUtil.exception(getClass(), "getUserFromPaymentAddress", t))
+                .doOnError(t -> LogUtil.exception("getUserFromPaymentAddress", t))
                 .toSingle();
     }
 
@@ -147,14 +147,14 @@ public class RecipientManager {
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .doOnNext(this::cacheUser)
-                .doOnError(t -> LogUtil.exception(getClass(), "fetchAndCacheFromNetworkByPaymentAddress", t));
+                .doOnError(t -> LogUtil.exception("fetchAndCacheFromNetworkByPaymentAddress", t));
     }
 
     /* package */ void cacheUser(final User user) {
         this.userStore.save(user)
                 .subscribe(
                         () -> {},
-                        throwable -> LogUtil.e(getClass(), "Error while saving user to db " + throwable)
+                        throwable -> LogUtil.w("Error while saving user to db " + throwable)
                 );
     }
 
@@ -279,7 +279,7 @@ public class RecipientManager {
                     .get()
                     .clearCache();
         } catch (IOException e) {
-            LogUtil.exception(getClass(), "Error while clearing network cache", e);
+            LogUtil.exception("Error while clearing network cache", e);
         }
     }
 }

@@ -35,7 +35,7 @@ import com.toshi.model.local.Network;
 import com.toshi.model.local.Networks;
 import com.toshi.util.BuildTypes;
 import com.toshi.util.DialogUtil;
-import com.toshi.util.LogUtil;
+import com.toshi.util.logging.LogUtil;
 import com.toshi.util.QrCode;
 import com.toshi.util.SharedPrefsUtil;
 import com.toshi.view.BaseApplication;
@@ -146,7 +146,7 @@ public class DepositPresenter implements Presenter<DepositActivity> {
     }
 
     private void handleWalletError(final Throwable throwable) {
-        LogUtil.exception(getClass(), "Error while fetching wallet", throwable);
+        LogUtil.exception("Error while fetching wallet", throwable);
         showToast(R.string.qr_code_error);
     }
 
@@ -176,7 +176,7 @@ public class DepositPresenter implements Presenter<DepositActivity> {
     }
 
     private void handleQrCodeError(final Throwable throwable) {
-        LogUtil.exception(getClass(), "Error while generating qr code", throwable);
+        LogUtil.exception("Error while generating qr code", throwable);
         showToast(R.string.qr_code_error);
     }
 

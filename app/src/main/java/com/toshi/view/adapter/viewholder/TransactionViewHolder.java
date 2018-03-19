@@ -27,7 +27,7 @@ import com.toshi.R;
 import com.toshi.model.sofa.payment.Payment;
 import com.toshi.model.sofa.SofaType;
 import com.toshi.util.EthUtil;
-import com.toshi.util.LogUtil;
+import com.toshi.util.logging.LogUtil;
 import com.toshi.view.BaseApplication;
 
 import rx.android.schedulers.AndroidSchedulers;
@@ -91,6 +91,6 @@ public class TransactionViewHolder extends RecyclerView.ViewHolder {
     }
 
     private void handlePaymentDirectionError(final Throwable throwable) {
-        LogUtil.exception(getClass(), "Error while getting payment direction", throwable);
+        LogUtil.exception("Error while getting payment direction", throwable);
     }
 }

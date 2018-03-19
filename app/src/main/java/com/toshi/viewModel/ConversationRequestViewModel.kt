@@ -20,8 +20,8 @@ package com.toshi.viewModel
 import android.arch.lifecycle.ViewModel
 import com.toshi.model.local.Conversation
 import com.toshi.model.local.User
-import com.toshi.util.LogUtil
 import com.toshi.util.SingleLiveEvent
+import com.toshi.util.logging.LogUtil
 import com.toshi.view.BaseApplication
 import rx.Single
 import rx.android.schedulers.AndroidSchedulers
@@ -48,7 +48,7 @@ class ConversationRequestViewModel : ViewModel() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { updatedConversation.value = it },
-                        { LogUtil.e(javaClass, "Error fetching conversations $it") }
+                        { LogUtil.w("Error fetching conversations $it") }
                 )
 
         subscriptions.add(sub)
@@ -65,7 +65,7 @@ class ConversationRequestViewModel : ViewModel() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { conversationsAndLocalUser.value = it },
-                        { LogUtil.e(javaClass, "Error fetching conversations $it") }
+                        { LogUtil.w("Error fetching conversations $it") }
                 )
 
         subscriptions.add(sub)
@@ -77,7 +77,7 @@ class ConversationRequestViewModel : ViewModel() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { acceptConversation.value = it },
-                        { LogUtil.e(javaClass, "Error while accepting conversation $it") }
+                        { LogUtil.w("Error while accepting conversation $it") }
                 )
 
         subscriptions.add(sub)
@@ -89,7 +89,7 @@ class ConversationRequestViewModel : ViewModel() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { rejectConversation.value = it },
-                        { LogUtil.e(javaClass, "Error while accepting conversation $it") }
+                        { LogUtil.w("Error while accepting conversation $it") }
                 )
 
         subscriptions.add(sub)

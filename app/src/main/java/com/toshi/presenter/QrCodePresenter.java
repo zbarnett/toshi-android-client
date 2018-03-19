@@ -23,7 +23,7 @@ import android.widget.Toast;
 
 import com.toshi.R;
 import com.toshi.model.local.User;
-import com.toshi.util.LogUtil;
+import com.toshi.util.logging.LogUtil;
 import com.toshi.util.QrCode;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.activity.QrCodeActivity;
@@ -88,7 +88,7 @@ public class QrCodePresenter implements Presenter<QrCodeActivity> {
     }
 
     private void handleUserError(final Throwable throwable) {
-        LogUtil.exception(getClass(), "Error while fetching user", throwable);
+        LogUtil.exception("Error while fetching user", throwable);
         showToast(R.string.qr_code_error);
     }
 
@@ -113,7 +113,7 @@ public class QrCodePresenter implements Presenter<QrCodeActivity> {
     }
 
     private void handleQrCodeError(final Throwable throwable) {
-        LogUtil.exception(getClass(), "Error while generating qr code", throwable);
+        LogUtil.exception("Error while generating qr code", throwable);
         showToast(R.string.qr_code_error);
     }
 

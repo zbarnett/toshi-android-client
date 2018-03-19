@@ -8,7 +8,7 @@ import com.toshi.R;
 import com.toshi.model.local.Recipient;
 import com.toshi.model.sofa.PaymentRequest;
 import com.toshi.model.sofa.SofaMessage;
-import com.toshi.util.LogUtil;
+import com.toshi.util.logging.LogUtil;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.notification.ChatNotificationManager;
 
@@ -32,7 +32,7 @@ public class RejectPaymentRequestService extends IntentService {
             final String messageId = intent.getStringExtra(MESSAGE_ID);
             rejectPaymentRequest(messageId);
         } catch (Exception e) {
-            LogUtil.e(getClass(), "PaymentRequestService " + e);
+            LogUtil.w("PaymentRequestService " + e);
         }
     }
 
@@ -55,7 +55,7 @@ public class RejectPaymentRequestService extends IntentService {
             updatePaymentRequestState(messageId, recipient, PaymentRequest.REJECTED);
             ChatNotificationManager.showChatNotification(recipient, content);
         } catch (Exception e) {
-            LogUtil.e(getClass(), "Error while rejecting payment request " + e);
+            LogUtil.w("Error while rejecting payment request " + e);
         }
     }
 

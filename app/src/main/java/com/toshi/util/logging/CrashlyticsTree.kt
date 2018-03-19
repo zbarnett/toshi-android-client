@@ -15,16 +15,25 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.toshi.manager.network.interceptor;
+package com.toshi.util.logging
 
-import com.toshi.util.logging.LogUtil;
+import android.util.Log
+import com.crashlytics.android.Crashlytics
+import timber.log.Timber
 
-import okhttp3.logging.HttpLoggingInterceptor;
+class CrashlyticsTree : Timber.Tree() {
+    companion object {
+        private const val PRIORITY = "priority"
+        private const val TAG = "tag"
+        private const val MESSAGE = "message"
+    }
 
-
-public class LoggingInterceptor implements HttpLoggingInterceptor.Logger {
-    @Override
-    public void log(final String message) {
-        LogUtil.print(message);
+    override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
+        if (priority != Log.ERROR) return
+        Crashlytics.setInt(PRIORITY, priority)
+        Crashlytics.setString(TAG, tag)
+        Crashlytics.setString(MESSAGE, message)
+        if (t == null) Crashlytics.logException(Exception(message))
+        else Crashlytics.logException(t)
     }
 }

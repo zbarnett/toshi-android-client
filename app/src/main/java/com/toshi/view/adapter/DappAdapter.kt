@@ -26,7 +26,7 @@ import com.toshi.model.local.dapp.DappFooter
 import com.toshi.model.local.dapp.DappListItem
 import com.toshi.model.network.dapp.Dapp
 import com.toshi.model.network.dapp.DappSections
-import com.toshi.util.LogUtil
+import com.toshi.util.logging.LogUtil
 import com.toshi.view.BaseApplication
 import com.toshi.view.adapter.viewholder.DappCategoryViewHolder
 import com.toshi.view.adapter.viewholder.DappFooterViewHolder
@@ -110,7 +110,7 @@ class DappAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 holder.setDapp(dapp)
                         .setOnClickListener(dapp) { onDappClickedListener?.invoke(it) }
             }
-            else -> LogUtil.exception(javaClass, "Invalid dapp item in this context")
+            else -> LogUtil.exception("Invalid dapp item in this context")
         }
     }
 

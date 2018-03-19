@@ -28,7 +28,7 @@ import com.toshi.model.sofa.SofaAdapters
 import com.toshi.model.sofa.SofaMessage
 import com.toshi.model.sofa.payment.ERC20TokenPayment
 import com.toshi.model.sofa.payment.Payment
-import com.toshi.util.LogUtil
+import com.toshi.util.logging.LogUtil
 import com.toshi.view.BaseApplication
 import rx.Single
 import rx.Subscription
@@ -53,7 +53,7 @@ class IncomingTransactionManager(private val pendingTransactionStore: PendingTra
                 .subscribeOn(Schedulers.io())
                 .subscribe(
                         { processNewIncomingPayment(it) },
-                        { LogUtil.e(javaClass, "Error while handling incoming payment $it") }
+                        { LogUtil.exception("Error while handling incoming payment $it") }
                 )
 
         subscriptions.add(incomingPaymentSub)
@@ -70,7 +70,7 @@ class IncomingTransactionManager(private val pendingTransactionStore: PendingTra
         getUpdatedPayment(ethPaymentTask)
                 .subscribe(
                         { handleIncomingPayment(it) },
-                        { LogUtil.e(javaClass, "Error while getting updated payment $it") }
+                        { LogUtil.exception("Error while getting updated payment $it") }
                 )
     }
 
@@ -124,7 +124,7 @@ class IncomingTransactionManager(private val pendingTransactionStore: PendingTra
         recipientManager.getUserFromPaymentAddress(payment.fromAddress)
                 .subscribe(
                         { addIncomingPaymentTask(it, payment) },
-                        { LogUtil.e(javaClass, "Error while getting user from payment address $it") }
+                        { LogUtil.exception("Error while getting user from payment address $it") }
                 )
     }
 

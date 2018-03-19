@@ -50,12 +50,12 @@ import com.toshi.util.ChatNavigation
 import com.toshi.util.ChatPaymentHandler
 import com.toshi.util.FileUtil
 import com.toshi.util.KeyboardUtil
-import com.toshi.util.LogUtil
 import com.toshi.util.OnSingleClickListener
 import com.toshi.util.PaymentType
 import com.toshi.util.PermissionUtil
 import com.toshi.util.SoundManager
 import com.toshi.util.keyboard.KeyboardListener
+import com.toshi.util.logging.LogUtil
 import com.toshi.view.BaseApplication
 import com.toshi.view.adapter.MessageAdapter
 import com.toshi.view.custom.SpeedyLinearLayoutManager
@@ -330,7 +330,7 @@ class ChatActivity : AppCompatActivity() {
                 viewModel.resendPayment(sofaMessage, it)
             }
         } catch (e: IOException) {
-            LogUtil.e(javaClass, "Error while resending payment $e")
+            LogUtil.w("Error while resending payment $e")
         }
     }
 
@@ -342,7 +342,7 @@ class ChatActivity : AppCompatActivity() {
                 viewModel.sendPayment(paymentTask)
             }
         } catch (e: IOException) {
-            LogUtil.exception(javaClass, "Error while showing payment request confirmation dialog $e")
+            LogUtil.exception("Error while showing payment request confirmation dialog $e")
         }
     }
 
@@ -440,7 +440,7 @@ class ChatActivity : AppCompatActivity() {
             if (notNullAndNotZero && isConversationAccepted) controlView.showControls(message.controls)
             else removePadding()
         } catch (e: IOException) {
-            LogUtil.e(javaClass, "Error while updating control view $e")
+            LogUtil.w("Error while updating control view $e")
         }
     }
 
@@ -477,7 +477,7 @@ class ChatActivity : AppCompatActivity() {
             val message = SofaAdapters.get().messageFrom(sofaMessage.payload)
             if (message.shouldHideKeyboard()) hideKeyboard()
         } catch (e: IOException) {
-            LogUtil.e(javaClass, "Error during handling visibility of keyboard $e")
+            LogUtil.w("Error during handling visibility of keyboard $e")
         }
     }
 

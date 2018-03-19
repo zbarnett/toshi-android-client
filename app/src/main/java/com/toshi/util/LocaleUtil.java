@@ -21,6 +21,7 @@ package com.toshi.util;
 import android.annotation.TargetApi;
 import android.os.Build;
 
+import com.toshi.util.logging.LogUtil;
 import com.toshi.view.BaseApplication;
 
 import java.text.DecimalFormatSymbols;
@@ -37,7 +38,7 @@ public class LocaleUtil {
                 return BaseApplication.get().getResources().getConfiguration().locale;
             }
         } catch (final NullPointerException ex) {
-            LogUtil.exception(LocaleUtil.class, "NPE when getting locale", ex);
+            LogUtil.exception("NPE when getting locale", ex);
             // Default to something!
             return Locale.ENGLISH;
         }

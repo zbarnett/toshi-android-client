@@ -6,7 +6,7 @@ import com.toshi.model.local.Recipient;
 import com.toshi.model.local.User;
 import com.toshi.model.network.UserSearchResults;
 import com.toshi.util.BuildTypes;
-import com.toshi.util.LogUtil;
+import com.toshi.util.logging.LogUtil;
 import com.toshi.util.SharedPrefsUtil;
 import com.toshi.view.BaseApplication;
 
@@ -31,7 +31,7 @@ public class OnboardingManager {
                 .filter(user -> user.getUsernameForEditing().equals(getOnboardingBotName()))
                 .toSingle()
                 .doOnSuccess(this::sendOnboardingMessageToOnboardingBot)
-                .doOnError(throwable -> LogUtil.exception(getClass(), "Error during sending onboarding message to bot", throwable))
+                .doOnError(throwable -> LogUtil.exception("Error during sending onboarding message to bot", throwable))
                 .toCompletable()
                 .onErrorComplete();
     }
@@ -49,7 +49,7 @@ public class OnboardingManager {
                 .doOnSuccess(__ -> SharedPrefsUtil.setHasOnboarded(true))
                 .subscribe(
                         currentUser -> sendInitMessage(currentUser, onboardingBot),
-                        throwable -> LogUtil.exception(getClass(), "Error during sending onboarding message to bot", throwable)
+                        throwable -> LogUtil.exception("Error during sending onboarding message to bot", throwable)
                 );
     }
 

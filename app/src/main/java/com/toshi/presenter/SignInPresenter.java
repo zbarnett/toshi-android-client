@@ -27,7 +27,7 @@ import android.widget.Toast;
 import com.google.common.base.Joiner;
 import com.toshi.R;
 import com.toshi.crypto.HDWallet;
-import com.toshi.util.LogUtil;
+import com.toshi.util.logging.LogUtil;
 import com.toshi.util.SharedPrefsUtil;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.activity.MainActivity;
@@ -82,7 +82,7 @@ public class SignInPresenter implements Presenter<SignInActivity> {
             final List<String> wordList = new MnemonicCode().getWordList();
             addWordListToViewPasshraseView(wordList);
         } catch (IOException e) {
-            LogUtil.e(getClass(), e.toString());
+            LogUtil.w(e.toString());
         }
     }
 
@@ -190,7 +190,7 @@ public class SignInPresenter implements Presenter<SignInActivity> {
     }
 
     private void handleWalletError(final Throwable throwable) {
-        LogUtil.e(getClass(), "Unable to restore wallet " + throwable.toString());
+        LogUtil.w("Unable to restore wallet " + throwable.toString());
         showToast(R.string.unable_to_restore_wallet);
         stopLoadingTask();
     }

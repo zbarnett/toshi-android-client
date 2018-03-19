@@ -26,7 +26,7 @@ import com.toshi.model.local.User
 import com.toshi.model.sofa.SofaAdapters
 import com.toshi.model.sofa.SofaMessage
 import com.toshi.model.sofa.SofaType
-import com.toshi.util.LogUtil
+import com.toshi.util.logging.LogUtil
 import com.toshi.view.adapter.viewholder.ConversationRequestViewHolder
 import java.io.IOException
 
@@ -83,7 +83,7 @@ class ConversationRequestAdapter(
         return try {
             getMessage(sofaMessage)
         } catch (ex: IOException) {
-            LogUtil.error(javaClass, "Error parsing SofaMessage. " + ex)
+            LogUtil.w("Error parsing SofaMessage. $ex")
             ""
         }
     }

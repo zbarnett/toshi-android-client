@@ -25,6 +25,7 @@ import com.toshi.model.network.SentTransaction
 import com.toshi.model.network.ServerTime
 import com.toshi.model.network.SignedTransaction
 import com.toshi.model.network.UnsignedTransaction
+import com.toshi.util.logging.LogUtil
 import rx.Single
 
 class TransactionSigner {
@@ -55,6 +56,7 @@ class TransactionSigner {
     fun sendSignedTransaction(signedTransaction: SignedTransaction): Single<SentTransaction> {
         return getServerTime()
                 .flatMap { serverTime -> sendSignedTransaction(signedTransaction, serverTime) }
+                .doOnError { LogUtil.exception("Error while sending signed transaction", it) }
     }
 
     private fun sendSignedTransaction(signedTransaction: SignedTransaction, serverTime: ServerTime): Single<SentTransaction> {

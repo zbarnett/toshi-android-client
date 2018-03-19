@@ -5,9 +5,9 @@ import android.arch.lifecycle.ViewModel
 import com.toshi.R
 import com.toshi.manager.OnboardingManager
 import com.toshi.model.local.Conversation
-import com.toshi.util.LogUtil
 import com.toshi.util.SharedPrefsUtil
 import com.toshi.util.SingleLiveEvent
+import com.toshi.util.logging.LogUtil
 import com.toshi.view.BaseApplication
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
@@ -44,7 +44,7 @@ class LandingViewModel : ViewModel() {
     private fun handleWalletError(throwable: Throwable) {
         isLoading.value = false
         walletError.value = R.string.unable_to_create_wallet
-        LogUtil.exception(javaClass, "Error while creating new wallet $throwable")
+        LogUtil.exception("Error while creating new wallet $throwable")
     }
 
     private fun startListeningToBotConversation() {
@@ -76,7 +76,7 @@ class LandingViewModel : ViewModel() {
         onboardingError.value = Unit
         isLoading.value = false
         SharedPrefsUtil.setSignedIn()
-        LogUtil.exception(javaClass, "Error while waiting for onboarding bot response $throwable")
+        LogUtil.exception("Error while waiting for onboarding bot response $throwable")
     }
 
     private fun isOnboardingBot(conversation: Conversation): Boolean {

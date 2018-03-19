@@ -17,30 +17,16 @@
 
 package com.toshi.view.activity;
 
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 
-import com.crashlytics.android.Crashlytics;
-import com.toshi.BuildConfig;
 import com.toshi.presenter.LoaderIds;
 import com.toshi.presenter.SplashPresenter;
 import com.toshi.presenter.factory.PresenterFactory;
 import com.toshi.presenter.factory.SplashPresenterFactory;
 
-import io.fabric.sdk.android.Fabric;
-
 public class SplashActivity extends BasePresenterActivity<SplashPresenter, SplashActivity> {
 
     public static final String EXTRA__NEXT_INTENT = "next_intent";
-
-    @Override
-    protected void onCreate(final Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        if (!BuildConfig.DEBUG) {
-            Fabric.with(this, new Crashlytics());
-        }
-    }
 
     @NonNull
     @Override

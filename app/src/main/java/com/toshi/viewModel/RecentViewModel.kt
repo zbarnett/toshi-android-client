@@ -20,8 +20,8 @@ package com.toshi.viewModel
 import android.arch.lifecycle.ViewModel
 import com.toshi.model.local.Conversation
 import com.toshi.model.local.ConversationInfo
-import com.toshi.util.LogUtil
 import com.toshi.util.SingleLiveEvent
+import com.toshi.util.logging.LogUtil
 import com.toshi.view.BaseApplication
 import com.toshi.view.fragment.DialogFragment.Option
 import rx.Single
@@ -50,7 +50,7 @@ class RecentViewModel : ViewModel() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { handleUpdatedConversation(it) },
-                        { LogUtil.e(javaClass, "Error fetching acceptedConversations $it") }
+                        { LogUtil.w("Error fetching acceptedConversations $it") }
                 )
 
         this.subscriptions.add(sub)
@@ -70,7 +70,7 @@ class RecentViewModel : ViewModel() {
         .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { acceptedAndUnacceptedConversations.value = it },
-                        { LogUtil.e(javaClass, "Error fetching conversations $it") }
+                        { LogUtil.w("Error fetching conversations $it") }
                 )
 
         this.subscriptions.add(sub)
@@ -87,7 +87,7 @@ class RecentViewModel : ViewModel() {
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
                 { conversationInfo.value = it },
-                { LogUtil.e(javaClass, "Error: $it") }
+                { LogUtil.w("Error: $it") }
         )
 
         this.subscriptions.add(sub)
@@ -118,7 +118,7 @@ class RecentViewModel : ViewModel() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { },
-                        { LogUtil.e(javaClass, "Error while unmuting conversation $it") }
+                        { LogUtil.w("Error while unmuting conversation $it") }
                 )
 
         this.subscriptions.add(sub)
@@ -133,7 +133,7 @@ class RecentViewModel : ViewModel() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { },
-                        { LogUtil.e(javaClass, "Error while blocking user $it") }
+                        { LogUtil.w("Error while blocking user $it") }
                 )
 
         this.subscriptions.add(sub)

@@ -22,7 +22,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.toshi.crypto.util.ByteUtil;
-import com.toshi.util.LogUtil;
+import com.toshi.util.logging.LogUtil;
 import com.toshi.view.BaseApplication;
 
 import org.whispersystems.libsignal.SignalProtocolAddress;
@@ -87,7 +87,7 @@ public class SignalSessionStore implements SessionStore {
                     throw new AssertionError("Unknown version: " + versionMarker);
                 }
             } catch (final IOException e) {
-                LogUtil.w(getClass(), "No existing session information found.");
+                LogUtil.exception("No existing session information found.", e);
                 return new SessionRecord();
             }
         }
@@ -107,6 +107,7 @@ public class SignalSessionStore implements SessionStore {
 
                 sessionFile.close();
             } catch (IOException e) {
+                LogUtil.exception("Error while storing session", e);
                 throw new AssertionError(e);
             }
         }
@@ -210,7 +211,7 @@ public class SignalSessionStore implements SessionStore {
 
         if (!directory.exists()) {
             if (!directory.mkdirs()) {
-                LogUtil.w(getClass(), "Session directory creation failed!");
+                LogUtil.w("Session directory creation failed!");
             }
         }
 

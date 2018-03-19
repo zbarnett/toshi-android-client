@@ -29,7 +29,7 @@ import com.toshi.model.local.Group;
 import com.toshi.model.local.Recipient;
 import com.toshi.model.local.User;
 import com.toshi.model.sofa.SofaMessage;
-import com.toshi.util.LogUtil;
+import com.toshi.util.logging.LogUtil;
 import com.toshi.util.statusMessage.StatusMessageBuilder;
 import com.toshi.view.BaseApplication;
 
@@ -100,7 +100,7 @@ public class ConversationStore {
             final Group group = new Group(signalGroup);
             return copyOrUpdateGroup(group)
                     .doOnSuccess(this::broadcastConversationChanged)
-                    .doOnError(throwable -> LogUtil.exception(getClass(), "Error while saving group " + throwable));
+                    .doOnError(throwable -> LogUtil.exception("Error while saving group " + throwable));
     }
 
     public Single<Conversation> createNewConversationFromGroup(@NonNull final Group group) {
@@ -561,6 +561,6 @@ public class ConversationStore {
     }
 
     private void handleError(final Throwable throwable, final String message) {
-        LogUtil.exception(getClass(), message, throwable);
+        LogUtil.exception(message, throwable);
     }
 }

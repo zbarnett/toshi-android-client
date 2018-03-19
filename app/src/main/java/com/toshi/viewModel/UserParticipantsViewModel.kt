@@ -19,8 +19,8 @@ package com.toshi.viewModel
 
 import android.arch.lifecycle.ViewModel
 import com.toshi.model.local.User
-import com.toshi.util.LogUtil
 import com.toshi.util.SingleLiveEvent
+import com.toshi.util.logging.LogUtil
 import com.toshi.view.BaseApplication
 import rx.Single
 import rx.android.schedulers.AndroidSchedulers
@@ -44,7 +44,7 @@ class UserParticipantsViewModel : ViewModel() {
                 .filter { query -> query.length > 1 }
                 .subscribe(
                         { runSearchQuery(it) },
-                        { LogUtil.e(javaClass, "Error while listening for query changes $it") }
+                        { LogUtil.w("Error while listening for query changes $it") }
                 )
         this.subscriptions.add(sub)
     }
@@ -56,7 +56,7 @@ class UserParticipantsViewModel : ViewModel() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { searchResults.value = it },
-                        { LogUtil.e(javaClass, "Error while search for user $it") }
+                        { LogUtil.w("Error while search for user $it") }
                 )
 
         this.subscriptions.add(searchSub)

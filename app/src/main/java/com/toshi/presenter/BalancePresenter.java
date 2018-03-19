@@ -22,7 +22,7 @@ import android.content.Intent;
 
 import com.toshi.model.local.ActivityResultHolder;
 import com.toshi.model.network.Balance;
-import com.toshi.util.LogUtil;
+import com.toshi.util.logging.LogUtil;
 import com.toshi.util.PaymentType;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.activity.AmountActivity;
@@ -133,7 +133,7 @@ public class BalancePresenter implements Presenter<BalanceActivity> {
                 .flatMap(balance -> balance.getFormattedLocalBalance().toObservable())
                 .subscribe(
                         this::renderFormattedBalance,
-                        ex -> LogUtil.exception(getClass(), "Error during fetching balance", ex)
+                        ex -> LogUtil.exception("Error during fetching balance", ex)
                 );
 
         this.subscriptions.add(sub);

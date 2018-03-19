@@ -20,7 +20,7 @@ package com.toshi.manager.chat.tasks
 import com.toshi.extensions.NETWORK_TIMEOUT_SECONDS
 import com.toshi.manager.store.ConversationStore
 import com.toshi.model.local.User
-import com.toshi.util.LogUtil
+import com.toshi.util.logging.LogUtil
 import com.toshi.view.BaseApplication
 import org.spongycastle.util.encoders.Hex
 import org.whispersystems.signalservice.api.messages.SignalServiceGroup
@@ -36,7 +36,7 @@ class LeftGroupTask(private val conversationStore: ConversationStore) {
         val groupId = Hex.toHexString(signalGroup.groupId)
         user?.let {
             conversationStore.removeUserFromGroup(groupId, user).await()
-        } ?: LogUtil.e(javaClass, "User is null when handling leave message")
+        } ?: LogUtil.w("User is null when handling leave message")
     }
 
     private fun getUserFromToshiId(id: String): User? {
@@ -47,7 +47,7 @@ class LeftGroupTask(private val conversationStore: ConversationStore) {
                     .toBlocking()
                     .value()
         } catch (e: TimeoutException) {
-            LogUtil.e(javaClass, "Error when trying to fetch user $e")
+            LogUtil.w("Error when trying to fetch user $e")
             null
         }
     }

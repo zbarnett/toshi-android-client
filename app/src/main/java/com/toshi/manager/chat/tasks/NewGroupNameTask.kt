@@ -23,7 +23,7 @@ import com.toshi.manager.store.ConversationStore
 import com.toshi.model.local.Group
 import com.toshi.model.local.Recipient
 import com.toshi.model.local.User
-import com.toshi.util.LogUtil
+import com.toshi.util.logging.LogUtil
 import com.toshi.view.BaseApplication
 import rx.Completable
 import rx.Single
@@ -43,7 +43,7 @@ class NewGroupNameTask(
                 { group, sender -> Pair(group, sender) }
         )
         .flatMapCompletable { addStatusMessageAndUpdateGroup(it.first, it.second, newGroupName) }
-        .doOnError { LogUtil.e(javaClass, "Error while adding group info updated status message $it") }
+        .doOnError { LogUtil.w("Error while adding group info updated status message $it") }
     }
 
     private fun getGroupFromId(groupId: String) = recipientManager

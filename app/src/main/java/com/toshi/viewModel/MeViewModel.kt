@@ -21,8 +21,8 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import com.toshi.model.local.User
 import com.toshi.model.network.Balance
-import com.toshi.util.LogUtil
 import com.toshi.util.SingleLiveEvent
+import com.toshi.util.logging.LogUtil
 import com.toshi.view.BaseApplication
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
@@ -49,7 +49,7 @@ class MeViewModel : ViewModel() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { user.value = it },
-                        { LogUtil.exception(javaClass, "Error during fetching user $it") }
+                        { LogUtil.exception("Error during fetching user $it") }
                 )
 
         subscriptions.add(sub)
@@ -65,7 +65,7 @@ class MeViewModel : ViewModel() {
                 .doOnNext { getFormattedBalance(it) }
                 .subscribe(
                         { balance.value = it },
-                        { LogUtil.exception(javaClass, "Error during fetching balance $it") }
+                        { LogUtil.exception("Error during fetching balance $it") }
                 )
 
         this.subscriptions.add(sub)
@@ -77,7 +77,7 @@ class MeViewModel : ViewModel() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { formattedBalance.value = it },
-                        { LogUtil.exception(javaClass, "Error fetching formated balance $it") }
+                        { LogUtil.exception("Error fetching formated balance $it") }
                 )
 
         this.subscriptions.add(sub)
@@ -92,7 +92,7 @@ class MeViewModel : ViewModel() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { singelBalance.value = it },
-                        { LogUtil.exception(javaClass, "Error showing dialog $it") }
+                        { LogUtil.exception("Error showing dialog $it") }
                 )
 
         this.subscriptions.add(sub)

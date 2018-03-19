@@ -162,6 +162,7 @@ dependencies {
             "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version",
             //Architecture components
             "android.arch.lifecycle:extensions:$archVersion",
+            'com.jakewharton.timber:timber:4.6.1',
     )
 
     kapt 'com.android.databinding:compiler:2.3.1'
@@ -216,6 +217,7 @@ dependencyVerification {
             'com.vdurmont:emoji-java:71b1a7cb312533ddc132583c8f84e9bde9ebfb13282cd4462978334fa1c04e9a',
             'org.jetbrains.kotlin:kotlin-stdlib-jre7:b304ffb280c463fcc75bece73bcad2295ba2330ed9ae6c8fa859d5bcf3a6f53b',
             'android.arch.lifecycle:extensions:851f718fd2afda1e7aa93537dae1a5c1fe47710db62dcd7cd24c4b3b14ef0d90',
+            'com.jakewharton.timber:timber:1dee9c9d7a1357f163b61a9fda40b423b08a9e7c048f8c6938f57c23d44deb90',
             'com.crashlytics.sdk.android:crashlytics:8fd52c8fd857e67fb015de4f7eaa2510223a19bb308c59d8264f08f7dd641372',
             'com.google.firebase:firebase-core:ad7954769f68912b17b2794c3346376d378f851a4a77345682d5b50be8e95588',
             'android.arch.core:runtime:9e08fc5c4d6e48f58c6865b55ba0e72a88f907009407767274187a873e524734',

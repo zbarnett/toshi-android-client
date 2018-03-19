@@ -18,6 +18,7 @@
 package com.toshi.util;
 
 import com.toshi.exception.CurrencyException;
+import com.toshi.util.logging.LogUtil;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -63,7 +64,7 @@ public class CurrencyUtil {
         try {
             return Currency.getInstance(currency).getCurrencyCode();
         } catch (NullPointerException | IllegalArgumentException e) {
-            LogUtil.exception(CurrencyUtil.class, "Error during getting code from currency", e);
+            LogUtil.exception("Error during getting code from currency", e);
             return currency;
         }
     }
@@ -74,7 +75,7 @@ public class CurrencyUtil {
             if (currency.getSymbol().length() > 1) return "";
             return currency.getSymbol();
         } catch (NullPointerException | IllegalArgumentException e) {
-            LogUtil.exception(CurrencyUtil.class, "Error during getting symbol from currency", e);
+            LogUtil.exception("Error during getting symbol from currency", e);
             return "";
         }
     }

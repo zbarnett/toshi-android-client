@@ -31,6 +31,7 @@ import com.toshi.exception.InvalidQrCodePayment;
 import com.toshi.model.local.CurrencyMode;
 import com.toshi.model.local.QrCodePayment;
 import com.toshi.model.local.User;
+import com.toshi.util.logging.LogUtil;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.activity.ViewUserActivity;
 import com.toshi.view.fragment.PaymentConfirmationFragment;
@@ -276,7 +277,7 @@ public class QrCodeHandler {
     }
 
     private void handleLoginFailure(final Throwable throwable) {
-        LogUtil.exception(getClass(), "Login failure", throwable);
+        LogUtil.exception("Login failure", throwable);
         showToast(BaseApplication.get().getString(R.string.error__web_signin));
     }
 

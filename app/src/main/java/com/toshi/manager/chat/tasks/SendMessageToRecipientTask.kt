@@ -25,7 +25,7 @@ import com.toshi.model.local.SendState
 import com.toshi.model.network.SofaError
 import com.toshi.model.sofa.OutgoingAttachment
 import com.toshi.util.FileUtil.buildSignalServiceAttachment
-import com.toshi.util.LogUtil
+import com.toshi.util.logging.LogUtil
 import com.toshi.view.BaseApplication
 import org.whispersystems.libsignal.SignalProtocolAddress
 import org.whispersystems.libsignal.util.Hex
@@ -62,11 +62,11 @@ class SendMessageToRecipientTask(
             }
         } catch (e: EncapsulatedExceptions) {
             for (uie in e.untrustedIdentityExceptions) {
-                LogUtil.exception(javaClass, "Keys have changed.", e)
+                LogUtil.exception("Keys have changed.", e)
                 protocolStore.saveIdentity(SignalProtocolAddress(uie.e164Number, SignalServiceAddress.DEFAULT_DEVICE_ID), uie.identityKey)
             }
         } catch (ex: IOException) {
-            LogUtil.exception(javaClass, "Error while sending message to group", ex)
+            LogUtil.exception("Error while sending message to group", ex)
             val errorMessage = getErrorMessageFromException(ex)
             if (saveMessageToDatabase) saveAndUpdateExistingMessageWithErrorMessage(messageTask, errorMessage)
         }
@@ -83,10 +83,10 @@ class SendMessageToRecipientTask(
                 updateExistingMessage(messageTask)
             }
         } catch (ue: UntrustedIdentityException) {
-            LogUtil.exception(javaClass, "Keys have changed", ue)
+            LogUtil.exception("Keys have changed", ue)
             protocolStore.saveIdentity(SignalProtocolAddress(ue.e164Number, SignalServiceAddress.DEFAULT_DEVICE_ID), ue.identityKey)
         } catch (ex: IOException) {
-            LogUtil.exception(javaClass, "Error while sending message", ex)
+            LogUtil.exception("Error while sending message", ex)
             val errorMessage = getErrorMessageFromException(ex)
             if (saveMessageToDatabase) saveAndUpdateExistingMessageWithErrorMessage(messageTask, errorMessage)
         }
@@ -106,7 +106,7 @@ class SendMessageToRecipientTask(
             updateExistingMessage(messageTask)
             savePendingMessage(messageTask)
         } catch (ex: IOException) {
-            LogUtil.exception(javaClass, "Error while saving and updating existing message", ex)
+            LogUtil.exception("Error while saving and updating existing message", ex)
         }
     }
 
@@ -149,7 +149,7 @@ class SendMessageToRecipientTask(
             val signalGroup = SignalServiceGroup(Hex.fromStringCondensed(messageTask.receiver.group.id))
             messageBuilder.asGroupMessage(signalGroup)
         } catch (ex: Exception) {
-            LogUtil.i(javaClass, "Tried and failed to attach group. $ex")
+            LogUtil.i("Tried and failed to attach group. $ex")
         }
     }
 
@@ -162,7 +162,7 @@ class SendMessageToRecipientTask(
             }
         } catch (ex: Exception) {
             when (ex) {
-                is FileNotFoundException, is IllegalStateException -> LogUtil.i(javaClass, "Tried and failed to attach attachment. $ex")
+                is FileNotFoundException, is IllegalStateException -> LogUtil.i("Tried and failed to attach attachment. $ex")
                 else -> throw ex
             }
         }

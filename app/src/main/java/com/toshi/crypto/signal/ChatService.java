@@ -26,7 +26,7 @@ import com.toshi.crypto.signal.store.ProtocolStore;
 import com.toshi.manager.network.interceptor.LoggingInterceptor;
 import com.toshi.manager.network.interceptor.SigningInterceptor;
 import com.toshi.manager.network.interceptor.AppInfoUserAgentInterceptor;
-import com.toshi.util.LogUtil;
+import com.toshi.util.logging.LogUtil;
 
 import org.whispersystems.libsignal.IdentityKey;
 import org.whispersystems.libsignal.InvalidKeyException;
@@ -131,7 +131,7 @@ public final class ChatService extends SignalServiceAccountManager {
                     protocolStore.getPreKeys()
             );
         } catch (final IOException | InvalidKeyIdException | InvalidKeyException ex) {
-            LogUtil.exception(getClass(), "Error while registering keys" + ex.toString());
+            LogUtil.exception("Error while registering keys" + ex.toString());
             return Completable.error(ex);
         }
     }

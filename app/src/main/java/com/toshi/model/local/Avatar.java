@@ -24,7 +24,7 @@ import android.support.annotation.Nullable;
 
 import com.toshi.util.FileUtil;
 import com.toshi.util.ImageUtil;
-import com.toshi.util.LogUtil;
+import com.toshi.util.logging.LogUtil;
 
 import org.spongycastle.util.encoders.Hex;
 import org.whispersystems.signalservice.api.SignalServiceMessageReceiver;
@@ -52,7 +52,7 @@ public class Avatar extends RealmObject {
         try {
             init(avatar);
         } catch (final NullPointerException | FileNotFoundException | IllegalStateException ex) {
-            LogUtil.e(getClass(), "Avatar not initialised. " + ex);
+            LogUtil.w("Avatar not initialised. " + ex);
         }
     }
 

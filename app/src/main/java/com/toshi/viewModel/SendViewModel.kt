@@ -20,8 +20,8 @@ package com.toshi.viewModel
 import android.arch.lifecycle.ViewModel
 import com.toshi.crypto.util.TypeConverter
 import com.toshi.util.EthUtil
-import com.toshi.util.LogUtil
 import com.toshi.util.SingleLiveEvent
+import com.toshi.util.logging.LogUtil
 import com.toshi.view.BaseApplication
 import rx.subscriptions.CompositeSubscription
 
@@ -40,7 +40,7 @@ class SendViewModel : ViewModel() {
                 .convertEthToLocalCurrencyString(ethAmount)
                 .subscribe(
                         { localAmount.value = it },
-                        { LogUtil.exception(javaClass, it) }
+                        { LogUtil.exception(it) }
                 )
 
         subscriptions.add(sub)

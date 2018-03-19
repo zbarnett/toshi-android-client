@@ -30,7 +30,7 @@ import com.toshi.R;
 import com.toshi.model.local.Contact;
 import com.toshi.model.local.User;
 import com.toshi.util.KeyboardUtil;
-import com.toshi.util.LogUtil;
+import com.toshi.util.logging.LogUtil;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.activity.ContactSearchActivity;
 import com.toshi.view.activity.ViewUserActivity;
@@ -118,7 +118,7 @@ public class ContactSearchPresenter implements Presenter<ContactSearchActivity> 
                 .filter(query -> query.length() > 0)
                 .subscribe(
                         this::runSearchQuery,
-                        throwable ->  LogUtil.exception(getClass(), "Error while searching for user", throwable)
+                        throwable ->  LogUtil.exception("Error while searching for user", throwable)
                 );
 
         final Subscription uiSub =
@@ -126,7 +126,7 @@ public class ContactSearchPresenter implements Presenter<ContactSearchActivity> 
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         this::updateSearchUi,
-                        throwable ->  LogUtil.exception(getClass(), "Error while updating user search ui", throwable)
+                        throwable ->  LogUtil.exception("Error while updating user search ui", throwable)
                 );
 
         final Subscription sourceSub = sourceObservable.connect();
@@ -139,7 +139,7 @@ public class ContactSearchPresenter implements Presenter<ContactSearchActivity> 
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         this::addUsersToList,
-                        throwable ->  LogUtil.exception(getClass(), "Error while searching for user", throwable)
+                        throwable ->  LogUtil.exception("Error while searching for user", throwable)
                 );
 
         this.subscriptions.add(searchSub);

@@ -34,7 +34,7 @@ import android.widget.Toast;
 import com.beloo.widget.chipslayoutmanager.ChipsLayoutManager;
 import com.toshi.R;
 import com.toshi.crypto.HDWallet;
-import com.toshi.util.LogUtil;
+import com.toshi.util.logging.LogUtil;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.activity.BackupPhraseActivity;
 import com.toshi.view.activity.BackupPhraseVerifyActivity;
@@ -115,7 +115,7 @@ public class BackupPhrasePresenter implements Presenter<BackupPhraseActivity> {
     }
 
     private void handleBackupPhraseError(final Throwable throwable) {
-        LogUtil.exception(getClass(), "Error while getting wallet", throwable);
+        LogUtil.exception("Error while getting wallet", throwable);
     }
 
     private void initClickListeners() {

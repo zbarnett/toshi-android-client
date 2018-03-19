@@ -41,7 +41,7 @@ import com.toshi.util.CurrencyUtil;
 import com.toshi.util.FileNames;
 import com.toshi.util.GcmPrefsUtil;
 import com.toshi.util.GcmUtil;
-import com.toshi.util.LogUtil;
+import com.toshi.util.logging.LogUtil;
 import com.toshi.util.SharedPrefsUtil;
 import com.toshi.view.BaseApplication;
 
@@ -107,7 +107,7 @@ public class BalanceManager {
                 .filter(isConnected -> isConnected)
                 .subscribe(
                         __ -> handleConnectivity(),
-                        throwable -> LogUtil.exception(getClass(), "Error checking connection state", throwable)
+                        throwable -> LogUtil.exception("Error checking connection state", throwable)
                 );
     }
 
@@ -117,7 +117,7 @@ public class BalanceManager {
                 .subscribeOn(Schedulers.io())
                 .subscribe(
                         () -> {},
-                        throwable -> LogUtil.e(getClass(), "Error while registering eth gcm " + throwable)
+                        throwable -> LogUtil.w("Error while registering eth gcm " + throwable)
                 );
     }
 
@@ -186,7 +186,7 @@ public class BalanceManager {
     }
 
     private void handleBalanceError(final Throwable throwable) {
-        LogUtil.exception(getClass(), "Error while fetching balance", throwable);
+        LogUtil.exception("Error while fetching balance", throwable);
     }
 
     public Single<ExchangeRate> getLocalCurrencyExchangeRate() {
@@ -375,7 +375,7 @@ public class BalanceManager {
     }
 
     private void handleGcmRegisterError(final Throwable throwable) {
-        LogUtil.exception(getClass(), "Error during registering of GCM " + throwable.getMessage());
+        LogUtil.exception("Error during registering of GCM " + throwable.getMessage());
         final String currentNetworkId = this.networks.getCurrentNetwork().getId();
         GcmPrefsUtil.setEthGcmTokenSentToServer(currentNetworkId, false);
     }

@@ -25,8 +25,8 @@ import com.toshi.model.network.ServerTime
 import com.toshi.model.network.UserDetails
 import com.toshi.util.FileNames
 import com.toshi.util.FileUtil
-import com.toshi.util.LogUtil
 import com.toshi.util.SharedPrefsUtil
+import com.toshi.util.logging.LogUtil
 import com.toshi.view.BaseApplication
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -74,7 +74,7 @@ class UserManager {
                 .skip(1) // Skip the cached value in the subject.
                 .subscribe(
                         { handleConnectivity(it) },
-                        { LogUtil.exception(javaClass, "Error while initiating user $it") }
+                        { LogUtil.exception("Error while initiating user $it") }
                 )
     }
 
@@ -112,7 +112,7 @@ class UserManager {
                 .flatMap { registerNewUserWithTimestamp(it) }
                 .onErrorResumeNext { handleUserRegistrationFailed(it) } // If the user is already registered, the server will give a 400 response.
                 .doOnSuccess { updateCurrentUser(it) }
-                .doOnError { LogUtil.exception(javaClass, "Error while registering user with timestamp") }
+                .doOnError { LogUtil.exception("Error while registering user with timestamp") }
                 .toCompletable()
     }
 
@@ -139,7 +139,7 @@ class UserManager {
                         .getApi()
                         .forceGetUser(it.ownerAddress) }
                 .doOnSuccess { updateCurrentUser(it) }
-                .doOnError { LogUtil.exception(javaClass, "Error while fetching user from network $it") }
+                .doOnError { LogUtil.exception("Error while fetching user from network $it") }
     }
 
     private fun forceFetchUserFromNetwork() {
@@ -149,7 +149,7 @@ class UserManager {
                         .forceGetUser(it.ownerAddress) }
                 .subscribe(
                         { updateCurrentUser(it) },
-                        { LogUtil.exception(javaClass, "Error while fetching user from network $it") }
+                        { LogUtil.exception("Error while fetching user from network $it") }
                 )
 
         subscriptions.add(sub)
@@ -159,7 +159,7 @@ class UserManager {
         return getWallet()
                 .flatMap { recipientManager.getUserFromPaymentAddress(it.paymentAddress) }
                 .doOnSuccess { updateCurrentUser(it) }
-                .doOnError { LogUtil.exception(javaClass, "Error while fetching user from network $it") }
+                .doOnError { LogUtil.exception("Error while fetching user from network $it") }
                 .toCompletable()
                 .onErrorComplete()
     }
@@ -181,7 +181,7 @@ class UserManager {
         val ud = UserDetails().setPaymentAddress(wallet.paymentAddress)
         return updateUser(ud)
                 .doOnSuccess { SharedPrefsUtil.setForceUserUpdate(false) }
-                .doOnError { LogUtil.exception(javaClass, "Error while updating user while initiating $it") }
+                .doOnError { LogUtil.exception("Error while updating user while initiating $it") }
                 .toCompletable()
                 .onErrorComplete()
     }
@@ -237,7 +237,7 @@ class UserManager {
         return userSubject
                 .first()
                 .toSingle()
-                .doOnError { LogUtil.exception(javaClass, "getCurrentUser $it") }
+                .doOnError { LogUtil.exception("getCurrentUser $it") }
                 .onErrorReturn(null)
     }
 

@@ -28,8 +28,8 @@ import com.toshi.model.network.Balance
 import com.toshi.model.network.ExchangeRate
 import com.toshi.util.CurrencyUtil
 import com.toshi.util.EthUtil
-import com.toshi.util.LogUtil
 import com.toshi.util.SharedPrefsUtil
+import com.toshi.util.logging.LogUtil
 import com.toshi.view.BaseApplication
 import rx.android.schedulers.AndroidSchedulers
 import rx.subscriptions.CompositeSubscription
@@ -59,7 +59,7 @@ class SendEtherViewModel : ViewModel() {
                 .flatMap { balance -> balance.getBalanceWithLocalBalance().toObservable() }
                 .subscribe(
                         { ethBalance.value = it },
-                        { LogUtil.e(javaClass, "Error while getting ethBalance $it") }
+                        { LogUtil.w("Error while getting ethBalance $it") }
                 )
 
         subscriptions.add(sub)
@@ -71,7 +71,7 @@ class SendEtherViewModel : ViewModel() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { exchangeRate = it },
-                        { LogUtil.e(javaClass, "Error while getting exchange rate $it") }
+                        { LogUtil.w("Error while getting exchange rate $it") }
                 )
 
         subscriptions.add(sub)

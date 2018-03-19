@@ -25,6 +25,8 @@ import android.arch.lifecycle.ProcessLifecycleOwner;
 import android.content.IntentFilter;
 import android.support.multidex.MultiDexApplication;
 
+import com.crashlytics.android.Crashlytics;
+import com.toshi.BuildConfig;
 import com.toshi.manager.BalanceManager;
 import com.toshi.manager.DappManager;
 import com.toshi.manager.RecipientManager;
@@ -34,10 +36,13 @@ import com.toshi.manager.ToshiManager;
 import com.toshi.manager.TransactionManager;
 import com.toshi.manager.UserManager;
 import com.toshi.service.NetworkChangeReceiver;
-import com.toshi.util.LogUtil;
+import com.toshi.util.logging.CrashlyticsTree;
+import com.toshi.util.logging.LogUtil;
 
+import io.fabric.sdk.android.Fabric;
 import io.realm.Realm;
 import rx.subjects.BehaviorSubject;
+import timber.log.Timber;
 
 public final class BaseApplication extends MultiDexApplication implements LifecycleObserver {
 
@@ -50,7 +55,7 @@ public final class BaseApplication extends MultiDexApplication implements Lifecy
 
     public final Realm getRealm() {
         if (Thread.currentThread().getId() == 1) {
-            LogUtil.e(getClass(), "DB call done on Main Thread. Move this to a background thread.");
+            LogUtil.w("DB call done on Main Thread. Move this to a background thread.");
         }
         return this.toshiManager.getRealm().toBlocking().value();
     }
@@ -63,9 +68,16 @@ public final class BaseApplication extends MultiDexApplication implements Lifecy
     }
 
     private void init() {
+        initCrashlyticsAndTimber();
         initLifecycleObserver();
         initToshiManager();
         initConnectivityMonitor();
+    }
+
+    private void initCrashlyticsAndTimber() {
+        Fabric.with(this, new Crashlytics());
+        if (BuildConfig.DEBUG) Timber.plant(new Timber.DebugTree());
+        else Timber.plant(new CrashlyticsTree());
     }
 
     private void initLifecycleObserver() {

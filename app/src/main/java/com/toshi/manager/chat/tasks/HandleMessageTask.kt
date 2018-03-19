@@ -32,7 +32,7 @@ import com.toshi.model.sofa.Init
 import com.toshi.model.sofa.SofaAdapters
 import com.toshi.model.sofa.SofaMessage
 import com.toshi.model.sofa.SofaType
-import com.toshi.util.LogUtil
+import com.toshi.util.logging.LogUtil
 import com.toshi.view.BaseApplication
 import org.whispersystems.signalservice.api.SignalServiceMessageReceiver
 import org.whispersystems.signalservice.api.messages.SignalServiceDataMessage
@@ -62,7 +62,7 @@ class HandleMessageTask(
 
     private fun saveIncomingMessageToDatabase(signalMessage: DecryptedSignalMessage?): IncomingMessage? {
         if (signalMessage?.isValid != true) {
-            LogUtil.w(javaClass, "Attempt to save invalid DecryptedSignalMessage to database.")
+            LogUtil.w("Attempt to save invalid DecryptedSignalMessage to database.")
             return null
         }
 
@@ -73,7 +73,7 @@ class HandleMessageTask(
             return saveIncomingMessageToDatabase(user, signalMessage)
         } catch (ex: Exception) {
             when (ex) {
-                is IllegalStateException, is TimeoutException -> LogUtil.exception(javaClass, "Error saving message to database $ex")
+                is IllegalStateException, is TimeoutException -> LogUtil.exception("Error saving message to database $ex")
                 else -> throw ex
             }
         }
@@ -123,7 +123,7 @@ class HandleMessageTask(
             val recipient = Recipient(sender)
             sofaMessageManager.sendMessage(recipient, newSofaMessage)
         } catch (e: IOException) {
-            LogUtil.exception(javaClass, "Failed to respond to incoming init request. $e")
+            LogUtil.exception("Failed to respond to incoming init request. $e")
         }
         return null
     }
@@ -173,7 +173,7 @@ class HandleMessageTask(
                 .subscribeOn(Schedulers.io())
                 .subscribe(
                         {},
-                        { LogUtil.exception(javaClass, "Error requesting group info") }
+                        { LogUtil.exception("Error requesting group info") }
                 )
     }
 
@@ -189,7 +189,7 @@ class HandleMessageTask(
                     .generateLocalPrice()
                     .map { updatedPaymentRequest -> SofaAdapters.get().toJson(updatedPaymentRequest) }
         } catch (ex: IOException) {
-            LogUtil.exception(javaClass, "Unable to embed local price. $ex")
+            LogUtil.exception("Unable to embed local price. $ex")
         }
 
         return Single.just(remoteMessage.payloadWithHeaders)

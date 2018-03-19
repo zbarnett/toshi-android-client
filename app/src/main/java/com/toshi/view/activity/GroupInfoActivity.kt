@@ -35,12 +35,21 @@ import com.toshi.model.local.Group
 import com.toshi.model.local.User
 import com.toshi.util.DialogUtil
 import com.toshi.util.ImageUtil
-import com.toshi.util.LogUtil
+import com.toshi.util.logging.LogUtil
 import com.toshi.view.adapter.GroupParticipantAdapter
 import com.toshi.view.adapter.viewholder.GroupParticipantViewHolder.Companion.MENU_MESSAGE
 import com.toshi.view.adapter.viewholder.GroupParticipantViewHolder.Companion.MENU_VIEW_PROFILE
 import com.toshi.viewModel.GroupInfoViewModel
-import kotlinx.android.synthetic.main.activity_group_info.*
+import kotlinx.android.synthetic.main.activity_group_info.addParticipants
+import kotlinx.android.synthetic.main.activity_group_info.avatar
+import kotlinx.android.synthetic.main.activity_group_info.closeButton
+import kotlinx.android.synthetic.main.activity_group_info.edit
+import kotlinx.android.synthetic.main.activity_group_info.groupName
+import kotlinx.android.synthetic.main.activity_group_info.leaveGroup
+import kotlinx.android.synthetic.main.activity_group_info.notificationSwitch
+import kotlinx.android.synthetic.main.activity_group_info.notificationsWrapper
+import kotlinx.android.synthetic.main.activity_group_info.numberOfParticipants
+import kotlinx.android.synthetic.main.activity_group_info.participants
 
 class GroupInfoActivity : AppCompatActivity() {
     companion object {
@@ -105,7 +114,7 @@ class GroupInfoActivity : AppCompatActivity() {
             it?.let { updateView(it) }
         })
         viewModel.fetchGroupError.observe(this, Observer {
-            LogUtil.exception(this::class.java, it)
+            LogUtil.exception(it)
             toast(R.string.error_unknown_group, Toast.LENGTH_LONG)
             finish()
         })
@@ -113,7 +122,7 @@ class GroupInfoActivity : AppCompatActivity() {
             if (it == true) returnToMainActivity()
         })
         viewModel.leaveGroupError.observe(this, Observer {
-            LogUtil.exception(this::class.java, it)
+            LogUtil.exception(it)
             toast(R.string.error_leave_group, Toast.LENGTH_LONG)
         })
         viewModel.isMuted.observe(this, Observer {

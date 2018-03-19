@@ -33,8 +33,8 @@ import com.toshi.model.sofa.Control
 import com.toshi.model.sofa.PaymentRequest
 import com.toshi.model.sofa.SofaMessage
 import com.toshi.util.FileUtil
-import com.toshi.util.LogUtil
 import com.toshi.util.SingleLiveEvent
+import com.toshi.util.logging.LogUtil
 import com.toshi.view.BaseApplication
 import com.toshi.view.notification.ChatNotificationManager
 import rx.Single
@@ -137,7 +137,7 @@ class ChatViewModel(private val threadId: String) : ViewModel() {
                 .map { it.sofaMessage }
                 .subscribe(
                         { updateMessage.value = it },
-                        { LogUtil.exception(javaClass, it) }
+                        { LogUtil.exception(it) }
                 )
 
         subscriptions.add(subscription)
@@ -153,7 +153,7 @@ class ChatViewModel(private val threadId: String) : ViewModel() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { newMessage.value = it },
-                        { LogUtil.exception(javaClass, it) }
+                        { LogUtil.exception(it) }
                 )
 
         val updateSub = conversationObservables
@@ -162,7 +162,7 @@ class ChatViewModel(private val threadId: String) : ViewModel() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { updateMessage.value = it },
-                        { LogUtil.exception(javaClass, it) }
+                        { LogUtil.exception(it) }
                 )
 
         val updateConversationSub = conversationObservables
@@ -173,7 +173,7 @@ class ChatViewModel(private val threadId: String) : ViewModel() {
                 .doOnNext { this.recipient.value = it.recipient }
                 .subscribe(
                         { updateConversation.value = it },
-                        { LogUtil.exception(javaClass, it) }
+                        { LogUtil.exception(it) }
                 )
 
         val deleteSub = sofaMessageManager
@@ -182,7 +182,7 @@ class ChatViewModel(private val threadId: String) : ViewModel() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { deleteMessage.value = it },
-                        { LogUtil.exception(javaClass, it) }
+                        { LogUtil.exception(it) }
                 )
 
         subscriptions.addAll(
@@ -199,7 +199,7 @@ class ChatViewModel(private val threadId: String) : ViewModel() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { handleConversation(it) },
-                        { LogUtil.exception(javaClass, it) }
+                        { LogUtil.exception(it) }
                 )
 
         subscriptions.add(sub)
@@ -224,7 +224,7 @@ class ChatViewModel(private val threadId: String) : ViewModel() {
                 .map { ConfirmPaymentInfo(it.user, value) }
                 .subscribe(
                         { confirmPayment.value = it },
-                        { LogUtil.exception(javaClass, it) }
+                        { LogUtil.exception(it) }
                 )
 
         subscriptions.add(sub)
@@ -237,7 +237,7 @@ class ChatViewModel(private val threadId: String) : ViewModel() {
                 .subscribeOn(Schedulers.io())
                 .subscribe(
                         { sendPaymentRequest(it) },
-                        { LogUtil.exception(javaClass, it) }
+                        { LogUtil.exception(it) }
                 )
 
         subscriptions.add(sub)
@@ -254,7 +254,7 @@ class ChatViewModel(private val threadId: String) : ViewModel() {
             chatMessageQueue.addPaymentRequestToQueue(paymentRequest, it)
         } ?: run {
             error.value = R.string.sending_payment_request_error
-            LogUtil.error(javaClass, "User is null when sending payment request")
+            LogUtil.w("User is null when sending payment request")
         }
     }
 
@@ -264,7 +264,7 @@ class ChatViewModel(private val threadId: String) : ViewModel() {
             chatMessageQueue.addMessageToQueue(userInput, it)
         } ?: run {
             error.value = R.string.sending_message_error
-            LogUtil.error(javaClass, "User is null when sending message")
+            LogUtil.w("User is null when sending message")
         }
     }
 
@@ -274,7 +274,7 @@ class ChatViewModel(private val threadId: String) : ViewModel() {
             chatMessageQueue.addCommandMessageToQueue(control, it)
         } ?: run {
             error.value = R.string.sending_message_error
-            LogUtil.error(javaClass, "User is null when sending command message")
+            LogUtil.w("User is null when sending command message")
         }
     }
 
@@ -282,7 +282,7 @@ class ChatViewModel(private val threadId: String) : ViewModel() {
         val sub = FileUtil.compressImage(FileUtil.MAX_SIZE.toLong(), file)
                 .subscribe(
                         { compressedFile -> sendMediaMessage(compressedFile.absolutePath) },
-                        { LogUtil.exception(javaClass, "Unable to compress image $it") }
+                        { LogUtil.exception("Unable to compress image $it") }
                 )
 
         subscriptions.add(sub)
@@ -294,7 +294,7 @@ class ChatViewModel(private val threadId: String) : ViewModel() {
             chatMessageQueue.addMediaMessageToQueue(filePath, it)
         } ?: run {
             error.value = R.string.sending_message_error
-            LogUtil.error(javaClass, "User is null when sending media message")
+            LogUtil.w("User is null when sending media message")
         }
     }
 
@@ -304,7 +304,7 @@ class ChatViewModel(private val threadId: String) : ViewModel() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { updatePaymentRequestState(existingMessage, it, paymentState) },
-                        { LogUtil.exception(javaClass, it) }
+                        { LogUtil.exception(it) }
                 )
 
         subscriptions.add(sub)
@@ -319,12 +319,12 @@ class ChatViewModel(private val threadId: String) : ViewModel() {
 
     fun sendPayment(paymentTask: PaymentTask) {
         if (paymentTask is ToshiPaymentTask) transactionManager.sendPayment(paymentTask)
-        else LogUtil.e(javaClass, "Invalid payment task in this context")
+        else LogUtil.w("Invalid payment task in this context")
     }
 
     fun resendPayment(sofaMessage: SofaMessage, paymentTask: PaymentTask) {
         if (paymentTask is ToshiPaymentTask) transactionManager.resendPayment(ResendToshiPaymentTask(paymentTask, sofaMessage))
-        else LogUtil.e(javaClass, "Invalid payment task in this context")
+        else LogUtil.w("Invalid payment task in this context")
     }
 
     fun resendMessage(sofaMessage: SofaMessage) = sofaMessageManager.resendPendingMessage(sofaMessage)
@@ -348,7 +348,7 @@ class ChatViewModel(private val threadId: String) : ViewModel() {
                 .map { ResendPaymentInfo(it.user, sofaMessage) }
                 .subscribe(
                         { resendPayment.value = it },
-                        { LogUtil.exception(javaClass, it) }
+                        { LogUtil.exception(it) }
                 )
 
         subscriptions.add(sub)
@@ -373,7 +373,7 @@ class ChatViewModel(private val threadId: String) : ViewModel() {
                 .toCompletable()
                 .subscribe(
                         { acceptConversation.value = Unit },
-                        { LogUtil.e(javaClass, "Error while accepting conversation $it") }
+                        { LogUtil.w("Error while accepting conversation $it") }
                 )
 
         subscriptions.add(sub)
@@ -386,7 +386,7 @@ class ChatViewModel(private val threadId: String) : ViewModel() {
                 .toCompletable()
                 .subscribe(
                         { declineConversation.value = Unit },
-                        { LogUtil.e(javaClass, "Error while accepting conversation $it") }
+                        { LogUtil.w("Error while accepting conversation $it") }
                 )
 
         subscriptions.add(sub)

@@ -3,7 +3,7 @@ package com.toshi.viewModel
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import com.toshi.extensions.isLocalStatusMessage
-import com.toshi.util.LogUtil
+import com.toshi.util.logging.LogUtil
 import com.toshi.view.BaseApplication
 import rx.android.schedulers.AndroidSchedulers
 import rx.subscriptions.CompositeSubscription
@@ -25,7 +25,7 @@ class MainViewModel : ViewModel() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { unreadMessages.value = it },
-                        { LogUtil.exception(javaClass, "Error while fetching unread messages $it") }
+                        { LogUtil.exception("Error while fetching unread messages $it") }
                 )
 
         val firstTimeSubscription = getSofaMessageManager()
@@ -34,7 +34,7 @@ class MainViewModel : ViewModel() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { unreadMessages.value = it },
-                        { LogUtil.exception(javaClass, "Error while fetching unread messages $it") }
+                        { LogUtil.exception("Error while fetching unread messages $it") }
                 )
 
         this.subscriptions.addAll(allChangesSubscription, firstTimeSubscription)

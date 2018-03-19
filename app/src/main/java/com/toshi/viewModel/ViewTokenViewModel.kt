@@ -21,7 +21,7 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import com.toshi.model.network.token.ERCToken
 import com.toshi.model.network.token.Token
-import com.toshi.util.LogUtil
+import com.toshi.util.logging.LogUtil
 import com.toshi.view.BaseApplication
 import rx.Single
 import rx.android.schedulers.AndroidSchedulers
@@ -49,7 +49,7 @@ class ViewTokenViewModel(token: Token) : ViewModel() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { this.token.value = it },
-                        { LogUtil.exception(javaClass, "Error while listening to token updates $it") }
+                        { LogUtil.exception("Error while listening to token updates $it") }
                 )
 
         subscriptions.add(sub)

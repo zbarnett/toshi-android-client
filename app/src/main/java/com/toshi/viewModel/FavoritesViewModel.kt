@@ -19,8 +19,8 @@ package com.toshi.viewModel
 
 import android.arch.lifecycle.ViewModel
 import com.toshi.model.local.User
-import com.toshi.util.LogUtil
 import com.toshi.util.SingleLiveEvent
+import com.toshi.util.logging.LogUtil
 import com.toshi.view.BaseApplication
 import rx.android.schedulers.AndroidSchedulers
 import rx.subscriptions.CompositeSubscription
@@ -37,7 +37,7 @@ class FavoritesViewModel : ViewModel() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { contacts.value = it },
-                        { LogUtil.exception(javaClass, "Error while fetching contacts $it") }
+                        { LogUtil.exception("Error while fetching contacts $it") }
                 )
 
         subscriptions.add(sub)

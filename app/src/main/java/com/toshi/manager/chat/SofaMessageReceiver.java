@@ -28,7 +28,7 @@ import com.toshi.manager.chat.tasks.GroupUpdateTask;
 import com.toshi.manager.chat.tasks.HandleMessageTask;
 import com.toshi.manager.store.ConversationStore;
 import com.toshi.model.local.IncomingMessage;
-import com.toshi.util.LogUtil;
+import com.toshi.util.logging.LogUtil;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.notification.ChatNotificationManager;
 
@@ -110,7 +110,7 @@ public class SofaMessageReceiver {
                 .repeatWhen(completed -> completed)
                 .subscribe(
                         ChatNotificationManager::showNotification,
-                        throwable -> LogUtil.e(getClass(), "Error while receiving messages " + throwable)
+                        throwable -> LogUtil.exception("Error while receiving messages " + throwable)
                 );
     }
 
@@ -136,7 +136,7 @@ public class SofaMessageReceiver {
         } catch (final TimeoutException ex) {
             throw new TimeoutException(ex.getMessage());
         } catch (final IllegalStateException | InvalidKeyException | InvalidKeyIdException | DuplicateMessageException | InvalidVersionException | LegacyMessageException | InvalidMessageException | NoSessionException | org.whispersystems.libsignal.UntrustedIdentityException | IOException e) {
-            LogUtil.exception(getClass(), "Error while fetching latest message " + e);
+            LogUtil.exception("Error while fetching latest message " + e);
         }
         return null;
     }
@@ -158,7 +158,7 @@ public class SofaMessageReceiver {
         final String messageSource = envelope.getSource();
 
         if (isUserBlocked(messageSource)) {
-            LogUtil.i(getClass(), "A blocked user is trying to send a message");
+            LogUtil.i("A blocked user is trying to send a message");
             return null;
         }
 

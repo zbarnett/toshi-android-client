@@ -24,7 +24,7 @@ import com.toshi.crypto.signal.store.ProtocolStore;
 import com.toshi.manager.OnboardingManager;
 import com.toshi.util.GcmPrefsUtil;
 import com.toshi.util.GcmUtil;
-import com.toshi.util.LogUtil;
+import com.toshi.util.logging.LogUtil;
 
 import org.whispersystems.libsignal.util.guava.Optional;
 
@@ -53,7 +53,8 @@ public class SofaMessageRegistration {
                     .registerKeys(this.protocolStore)
                     .andThen(setRegisteredWithServer())
                     .andThen(registerChatGcm())
-                    .andThen(new OnboardingManager().tryTriggerOnboarding());
+                    .andThen(new OnboardingManager().tryTriggerOnboarding())
+                    .doOnError(throwable -> LogUtil.exception("Error while registering keys", throwable));
         } else {
             return registerChatGcm();
         }
@@ -65,7 +66,8 @@ public class SofaMessageRegistration {
                 .registerKeys(this.protocolStore)
                 .andThen(setRegisteredWithServer())
                 .andThen(registerChatGcm())
-                .andThen(new OnboardingManager().tryTriggerOnboarding());
+                .andThen(new OnboardingManager().tryTriggerOnboarding())
+                .doOnError(throwable -> LogUtil.exception("Error while registering keys", throwable));
     }
 
     private Completable setRegisteredWithServer() {
@@ -90,7 +92,7 @@ public class SofaMessageRegistration {
                 this.chatService.setGcmId(optional);
                 GcmPrefsUtil.setChatGcmTokenSentToServer(true);
             } catch (IOException e) {
-                LogUtil.exception(getClass(), "Error during registering of GCM " + e.getMessage());
+                LogUtil.exception("Error during registering of GCM " + e.getMessage());
                 GcmPrefsUtil.setChatGcmTokenSentToServer(false);
                 Completable.error(e);
             }
@@ -104,7 +106,7 @@ public class SofaMessageRegistration {
                 this.chatService.setGcmId(Optional.absent());
                 GcmPrefsUtil.setChatGcmTokenSentToServer(false);
             } catch (IOException e) {
-                LogUtil.d(getClass(), "Error during unregistering of GCM " + e.getMessage());
+                LogUtil.exception("Error during unregistering of GCM " + e.getMessage());
                 Completable.error(e);
             }
         })

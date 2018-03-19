@@ -44,6 +44,7 @@ import com.toshi.manager.network.image.CachedGlideUrl;
 import com.toshi.manager.network.image.ForceLoadGlideUrl;
 import com.toshi.model.local.Avatar;
 import com.toshi.model.local.Recipient;
+import com.toshi.util.logging.LogUtil;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.custom.CropCircleTransformation;
 
@@ -74,7 +75,7 @@ public class ImageUtil {
             .doOnSubscribe(() -> renderFromCache(url, imageView))
             .subscribe(
                     __ -> {},
-                    throwable -> LogUtil.exception(ImageUtil.class, throwable)
+                    throwable -> LogUtil.exception(throwable)
             );
     }
 
@@ -89,7 +90,7 @@ public class ImageUtil {
                     .skipMemoryCache(true)
                     .into(imageView);
         } catch (final IllegalArgumentException ex) {
-            LogUtil.i(ImageUtil.class, "Tried to render into a now destroyed view.");
+            LogUtil.i("Tried to render into a now destroyed view.");
             return null;
         }
     }
@@ -104,7 +105,7 @@ public class ImageUtil {
                 .skipMemoryCache(true)
                 .into(imageView);
         } catch (final IllegalArgumentException ex) {
-            LogUtil.i(ImageUtil.class, "Tried to render into a now destroyed view.");
+            LogUtil.i("Tried to render into a now destroyed view.");
         }
     }
 
@@ -118,7 +119,7 @@ public class ImageUtil {
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .into(imageView);
         } catch (final IllegalArgumentException ex) {
-            LogUtil.i(ImageUtil.class, "Tried to render into a now destroyed view.");
+            LogUtil.i("Tried to render into a now destroyed view.");
         }
     }
 
@@ -131,7 +132,7 @@ public class ImageUtil {
                     .load(uri)
                     .into(imageView);
         } catch (final IllegalArgumentException ex) {
-            LogUtil.i(ImageUtil.class, "Tried to render into a now destroyed view.");
+            LogUtil.i("Tried to render into a now destroyed view.");
         }
     }
 
@@ -144,7 +145,7 @@ public class ImageUtil {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         imageView::setImageBitmap,
-                        throwable -> LogUtil.exception(ImageUtil.class, throwable)
+                        throwable -> LogUtil.exception(throwable)
                 );
     }
 
@@ -160,7 +161,7 @@ public class ImageUtil {
                         .into(300, 300)
                         .get();
             } catch (final InterruptedException | ExecutionException ex) {
-                LogUtil.i(ImageUtil.class, "Error fetching bitmap. " + ex);
+                LogUtil.i("Error fetching bitmap. " + ex);
             }
             return null;
         })
@@ -231,7 +232,7 @@ public class ImageUtil {
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
                 () -> Glide.get(BaseApplication.get()).clearMemory(),
-                t -> LogUtil.e(ImageUtil.class, t.toString())
+                t -> LogUtil.w(t.toString())
         );
     }
 

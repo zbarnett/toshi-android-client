@@ -27,7 +27,7 @@ import com.toshi.R;
 import com.toshi.model.local.PendingTransaction;
 import com.toshi.model.sofa.payment.Payment;
 import com.toshi.model.sofa.SofaAdapters;
-import com.toshi.util.LogUtil;
+import com.toshi.util.logging.LogUtil;
 import com.toshi.view.adapter.viewholder.TransactionViewHolder;
 
 import java.io.IOException;
@@ -62,7 +62,7 @@ public class TransactionsAdapter extends RecyclerView.Adapter<TransactionViewHol
             final Payment payment = SofaAdapters.get().paymentFrom(sofaMessage);
             holder.setPayment(payment);
         } catch (final IOException ex) {
-            LogUtil.exception(getClass(), "Error while getting payment from sofa message", ex);
+            LogUtil.exception("Error while getting payment from sofa message", ex);
         }
     }
 

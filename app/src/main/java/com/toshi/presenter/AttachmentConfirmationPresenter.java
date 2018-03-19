@@ -29,7 +29,7 @@ import com.toshi.R;
 import com.toshi.model.local.Attachment;
 import com.toshi.util.FileUtil;
 import com.toshi.util.ImageUtil;
-import com.toshi.util.LogUtil;
+import com.toshi.util.logging.LogUtil;
 import com.toshi.view.activity.AttachmentConfirmationActivity;
 
 import rx.Subscription;
@@ -194,7 +194,7 @@ public class AttachmentConfirmationPresenter implements Presenter<AttachmentConf
     }
 
     private void handleFileError(final Throwable throwable) {
-        LogUtil.exception(getClass(), "Error during saving file to local storage", throwable);
+        LogUtil.exception("Error during saving file to local storage", throwable);
     }
 
     @Override

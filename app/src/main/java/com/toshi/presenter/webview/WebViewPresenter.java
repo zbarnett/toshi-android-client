@@ -39,7 +39,7 @@ import com.toshi.model.local.ActivityResultHolder;
 import com.toshi.model.local.PermissionResultHolder;
 import com.toshi.presenter.Presenter;
 import com.toshi.util.FileUtil;
-import com.toshi.util.LogUtil;
+import com.toshi.util.logging.LogUtil;
 import com.toshi.util.PermissionUtil;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.activity.webView.JellyBeanWebViewActivity;
@@ -121,7 +121,7 @@ public class WebViewPresenter implements Presenter<JellyBeanWebViewActivity> {
             .subscribeOn(Schedulers.io())
             .subscribe(
                 wallet -> this.sofaInjector = new SofaInjector(this.loadedListener, wallet),
-                ex -> LogUtil.exception(getClass(), ex)
+                ex -> LogUtil.exception(ex)
             );
         subscriptions.add(sub);
     }
@@ -238,7 +238,7 @@ public class WebViewPresenter implements Presenter<JellyBeanWebViewActivity> {
 
         @Override
         public void onError(final Throwable t) {
-            LogUtil.exception(getClass(), "Unable to load Dapp", t);
+            LogUtil.exception("Unable to load Dapp", t);
             if (activity == null) return;
             showToast(R.string.error__dapp_loading);
         }

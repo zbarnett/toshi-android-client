@@ -26,7 +26,7 @@ import android.widget.TextView;
 
 import com.toshi.presenter.Presenter;
 import com.toshi.R;
-import com.toshi.util.LogUtil;
+import com.toshi.util.logging.LogUtil;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.custom.OfflineViewRenderer;
 
@@ -55,7 +55,7 @@ public abstract class OfflineViewBasePresenterActivity<P extends Presenter<V>, V
                 .isConnectedSubject()
                 .subscribe(
                         this::handleConnectionChange,
-                        throwable -> LogUtil.exception(getClass(), throwable)
+                        throwable -> LogUtil.exception(throwable)
                 );
     }
 
@@ -84,7 +84,7 @@ public abstract class OfflineViewBasePresenterActivity<P extends Presenter<V>, V
             final TextView tv = (TextView) view.findViewById(android.support.design.R.id.snackbar_text);
             tv.setTextColor(Color.WHITE);
         } catch (final NullPointerException ex) {
-            LogUtil.i(getClass(), "Attempt to render offline snackbar into null view.");
+            LogUtil.i("Attempt to render offline snackbar into null view.");
         }
     }
 

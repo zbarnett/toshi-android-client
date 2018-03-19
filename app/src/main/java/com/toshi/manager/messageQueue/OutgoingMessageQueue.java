@@ -20,7 +20,7 @@ package com.toshi.manager.messageQueue;
 
 import com.toshi.model.local.Recipient;
 import com.toshi.model.sofa.SofaMessage;
-import com.toshi.util.LogUtil;
+import com.toshi.util.logging.LogUtil;
 import com.toshi.view.BaseApplication;
 
 import java.util.ArrayList;
@@ -119,12 +119,12 @@ queue.clear(); // Cleans up all state, and unsubscribes everything.
      */
     public void init(final Recipient recipient) {
         if (recipient == this.recipient) {
-            LogUtil.print(getClass(), "Suppressing a double subscription");
+            LogUtil.print("Suppressing a double subscription");
             return;
         }
 
         if (this.recipient != null) {
-            LogUtil.print(getClass(), "Subscribing to a different recipient, so clearing previous subscriptions. Was this intentional?");
+            LogUtil.print( "Subscribing to a different recipient, so clearing previous subscriptions. Was this intentional?");
             this.clear();
         }
 
@@ -159,7 +159,7 @@ queue.clear(); // Cleans up all state, and unsubscribes everything.
     }
 
     private void handleSendingMessageError(final Throwable throwable) {
-        LogUtil.exception(getClass(), "Error during sending message", throwable);
+        LogUtil.exception("Error during sending message", throwable);
     }
 
     private void processPreInitMessagesQueue() {
@@ -178,7 +178,7 @@ queue.clear(); // Cleans up all state, and unsubscribes everything.
     }
 
     private void handleMessageQueueError(final Throwable throwable) {
-        LogUtil.exception(getClass(), "Error during processing message queue", throwable);
+        LogUtil.exception("Error during processing message queue", throwable);
     }
 
     /* package */ abstract Scheduler getSubscribeThread();

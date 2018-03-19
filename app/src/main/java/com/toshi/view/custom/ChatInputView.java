@@ -35,7 +35,7 @@ import android.widget.LinearLayout;
 
 import com.jakewharton.rxbinding.widget.RxTextView;
 import com.toshi.R;
-import com.toshi.util.LogUtil;
+import com.toshi.util.logging.LogUtil;
 
 import rx.Subscription;
 import rx.subscriptions.CompositeSubscription;
@@ -154,7 +154,7 @@ public class ChatInputView extends LinearLayout {
                 RxTextView.textChanges(userInput)
                 .subscribe(
                         this::showOrHideSendButton,
-                        throwable -> LogUtil.e(getClass(), "Error when typing " + throwable)
+                        throwable -> LogUtil.w("Error when typing " + throwable)
                 );
 
         this.subscriptions.add(sub);

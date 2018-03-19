@@ -22,7 +22,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.toshi.crypto.util.ByteUtil;
-import com.toshi.util.LogUtil;
+import com.toshi.util.logging.LogUtil;
 import com.toshi.view.BaseApplication;
 
 import org.whispersystems.libsignal.InvalidKeyIdException;
@@ -64,7 +64,7 @@ public class SignalPreKeyStore implements PreKeyStore, SignedPreKeyStore {
             try {
                 return new PreKeyRecord(loadSerializedRecord(getPreKeyFile(preKeyId)));
             } catch (IOException | InvalidMessageException e) {
-                LogUtil.w(getClass(), e.getMessage());
+                LogUtil.exception("Error while ", e);
                 throw new InvalidKeyIdException(e);
             }
         }
@@ -76,7 +76,7 @@ public class SignalPreKeyStore implements PreKeyStore, SignedPreKeyStore {
             try {
                 return new SignedPreKeyRecord(loadSerializedRecord(getSignedPreKeyFile(signedPreKeyId)));
             } catch (IOException | InvalidMessageException e) {
-                LogUtil.w(getClass(), e.getMessage());
+                LogUtil.exception("Error while loading signed pre key", e);
                 throw new InvalidKeyIdException(e);
             }
         }
@@ -92,7 +92,7 @@ public class SignalPreKeyStore implements PreKeyStore, SignedPreKeyStore {
                 try {
                     results.add(new SignedPreKeyRecord(loadSerializedRecord(signedPreKeyFile)));
                 } catch (IOException | InvalidMessageException e) {
-                    LogUtil.w(getClass(), e.getMessage());
+                    LogUtil.exception("Error while loading signed pre key", e);
                 }
             }
 
@@ -106,6 +106,7 @@ public class SignalPreKeyStore implements PreKeyStore, SignedPreKeyStore {
             try {
                 storeSerializedRecord(getPreKeyFile(preKeyId), record.serialize());
             } catch (IOException e) {
+                LogUtil.exception("Error while storing pre key", e);
                 throw new AssertionError(e);
             }
         }
@@ -117,6 +118,7 @@ public class SignalPreKeyStore implements PreKeyStore, SignedPreKeyStore {
             try {
                 storeSerializedRecord(getSignedPreKeyFile(signedPreKeyId), record.serialize());
             } catch (IOException e) {
+                LogUtil.exception("Error while storing signed pre key", e);
                 throw new AssertionError(e);
             }
         }
@@ -158,7 +160,7 @@ public class SignalPreKeyStore implements PreKeyStore, SignedPreKeyStore {
 
                     storePreKey(preKeyId, record);
                 } catch (InvalidKeyIdException | NumberFormatException e) {
-                    LogUtil.w(getClass(), e.getMessage());
+                    LogUtil.exception("Error while migrating records", e);
                 }
             }
 
@@ -171,7 +173,7 @@ public class SignalPreKeyStore implements PreKeyStore, SignedPreKeyStore {
 
                     storeSignedPreKey(signedPreKeyId, record);
                 } catch (InvalidKeyIdException | NumberFormatException e) {
-                    LogUtil.w(getClass(), e.getMessage());
+                    LogUtil.exception("Error while migrating records", e);
                 }
             }
         }
@@ -227,7 +229,7 @@ public class SignalPreKeyStore implements PreKeyStore, SignedPreKeyStore {
 
         if (!directory.exists()) {
             if (!directory.mkdirs()) {
-                LogUtil.w(getClass(), "PreKey directory creation failed!");
+                LogUtil.exception("PreKey directory creation failed!");
             }
         }
 
@@ -257,7 +259,4 @@ public class SignalPreKeyStore implements PreKeyStore, SignedPreKeyStore {
         byte[] valueBytes = ByteUtil.intToByteArray(value);
         out.write(ByteBuffer.wrap(valueBytes));
     }
-
-
-
 }

@@ -21,7 +21,7 @@ import com.toshi.manager.chat.SofaMessageSender
 import com.toshi.manager.store.ConversationStore
 import com.toshi.model.local.Group
 import com.toshi.model.local.IncomingMessage
-import com.toshi.util.LogUtil
+import com.toshi.util.logging.LogUtil
 import org.whispersystems.signalservice.api.SignalServiceMessageReceiver
 import org.whispersystems.signalservice.api.messages.SignalServiceDataMessage
 import org.whispersystems.signalservice.api.messages.SignalServiceGroup
@@ -53,7 +53,7 @@ class GroupUpdateTask(
                 .observeOn(Schedulers.io())
                 .subscribe(
                         {},
-                        { LogUtil.e(javaClass, "Request for group info failed.") }
+                        { LogUtil.w("Request for group info failed.") }
                 )
     }
 

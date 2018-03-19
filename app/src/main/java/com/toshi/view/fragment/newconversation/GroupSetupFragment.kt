@@ -35,12 +35,18 @@ import com.toshi.extensions.toast
 import com.toshi.model.local.User
 import com.toshi.util.ImageUtil
 import com.toshi.util.KeyboardUtil
-import com.toshi.util.LogUtil
+import com.toshi.util.logging.LogUtil
 import com.toshi.view.activity.ConversationSetupActivity
 import com.toshi.view.adapter.GroupParticipantAdapter
 import com.toshi.view.adapter.listeners.TextChangedListener
 import com.toshi.viewModel.GroupSetupViewModel
-import kotlinx.android.synthetic.main.fragment_group_setup.*
+import kotlinx.android.synthetic.main.fragment_group_setup.avatar
+import kotlinx.android.synthetic.main.fragment_group_setup.closeButton
+import kotlinx.android.synthetic.main.fragment_group_setup.create
+import kotlinx.android.synthetic.main.fragment_group_setup.groupName
+import kotlinx.android.synthetic.main.fragment_group_setup.loadingSpinner
+import kotlinx.android.synthetic.main.fragment_group_setup.numberOfParticipants
+import kotlinx.android.synthetic.main.fragment_group_setup.participants
 
 class GroupSetupFragment : Fragment() {
 
@@ -123,7 +129,7 @@ class GroupSetupFragment : Fragment() {
             (this.activity as ConversationSetupActivity).openConversation(it)
         })
         viewModel.error.observe(this, Observer {
-            LogUtil.exception(this::class.java, it)
+            LogUtil.exception(it)
             toast(R.string.error__group_creation, Toast.LENGTH_LONG)
         })
         viewModel.isCreatingGroup.observe(this, Observer {

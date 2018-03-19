@@ -23,9 +23,9 @@ import com.toshi.model.local.Review
 import com.toshi.model.local.User
 import com.toshi.model.network.ReputationScore
 import com.toshi.model.network.ServerTime
-import com.toshi.util.LogUtil
 import com.toshi.util.SingleLiveEvent
 import com.toshi.util.SoundManager
+import com.toshi.util.logging.LogUtil
 import com.toshi.view.BaseApplication
 import rx.Completable
 import rx.android.schedulers.AndroidSchedulers
@@ -86,7 +86,7 @@ class ViewUserViewModel : ViewModel() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { isFavored.value = it },
-                        { LogUtil.e(javaClass, "Error while fetching local user $it") }
+                        { LogUtil.w("Error while fetching local user $it") }
                 )
 
         subscriptions.add(sub)
@@ -100,7 +100,7 @@ class ViewUserViewModel : ViewModel() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { isLocalUser.value = it },
-                        { LogUtil.e(javaClass, "Error while fetching local user $it") }
+                        { LogUtil.w("Error while fetching local user $it") }
                 )
 
         subscriptions.add(sub)
@@ -112,7 +112,7 @@ class ViewUserViewModel : ViewModel() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { reputation.value = it },
-                        { LogUtil.exception(javaClass, "Error during reputation fetching $it") }
+                        { LogUtil.exception("Error during reputation fetching $it") }
                 )
 
         subscriptions.add(reputationSub)
@@ -124,7 +124,7 @@ class ViewUserViewModel : ViewModel() {
                 .flatMapCompletable { favorOrUnFavorUser(user, it) }
                 .subscribe(
                         { },
-                        { LogUtil.exception(javaClass, "Error during saving contact $it") }
+                        { LogUtil.exception("Error during saving contact $it") }
                 )
 
         subscriptions.add(sub)
@@ -177,7 +177,7 @@ class ViewUserViewModel : ViewModel() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { isUserBlocked.value = it },
-                        { LogUtil.e(javaClass, "Error while checking if user is blocking $it") }
+                        { LogUtil.w("Error while checking if user is blocking $it") }
                 )
 
         this.subscriptions.add(sub)
@@ -190,7 +190,7 @@ class ViewUserViewModel : ViewModel() {
                 .doOnCompleted { isUserBlocked.value = true }
                 .subscribe(
                         { blocking.value = BlockingAction.BLOCKED },
-                        { LogUtil.e(javaClass, "Error while blocking user $it") }
+                        { LogUtil.w("Error while blocking user $it") }
                 )
 
         this.subscriptions.add(sub)
@@ -203,7 +203,7 @@ class ViewUserViewModel : ViewModel() {
                 .doOnCompleted { isUserBlocked.value = false }
                 .subscribe(
                         { blocking.value = BlockingAction.UNBLOCKED },
-                        { LogUtil.e(javaClass, "Error while unblocking user $it") }
+                        { LogUtil.w("Error while unblocking user $it") }
                 )
 
         this.subscriptions.add(sub)

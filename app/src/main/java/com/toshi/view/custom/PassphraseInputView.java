@@ -38,7 +38,7 @@ import com.google.android.flexbox.FlexboxLayout;
 import com.jakewharton.rxbinding.widget.RxTextView;
 import com.toshi.R;
 import com.toshi.util.KeyboardUtil;
-import com.toshi.util.LogUtil;
+import com.toshi.util.logging.LogUtil;
 import com.toshi.util.SearchUtil;
 
 import java.util.ArrayList;
@@ -297,14 +297,14 @@ public class PassphraseInputView extends FrameLayout {
                 .subscribeOn(Schedulers.io())
                 .subscribe(
                         this::handleWordSuggestion,
-                        throwable -> LogUtil.e(getClass(), throwable.toString())
+                        throwable -> LogUtil.w(throwable.toString())
                 );
 
         final Subscription uiSub =
                 textSource
                 .subscribe(
                         this::updateUi,
-                        throwable ->  LogUtil.e(getClass(), throwable.toString())
+                        throwable ->  LogUtil.w(throwable.toString())
                 );
 
         final Subscription connectSub = textSource.connect();
@@ -475,7 +475,7 @@ public class PassphraseInputView extends FrameLayout {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         matchResult -> addWordToView(matchResult, cellIndex),
-                        throwable -> LogUtil.d(getClass(), throwable.toString())
+                        throwable -> LogUtil.d(throwable.toString())
                 );
 
         this.subscriptions.add(sub);
@@ -581,7 +581,7 @@ public class PassphraseInputView extends FrameLayout {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         this::addValidatedPassphraseToView,
-                        throwable -> LogUtil.e(getClass(), throwable.toString())
+                        throwable -> LogUtil.w(throwable.toString())
                 );
 
         this.subscriptions.add(sub);

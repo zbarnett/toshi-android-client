@@ -26,8 +26,8 @@ import com.toshi.model.network.token.ERCToken
 import com.toshi.model.network.token.EtherToken
 import com.toshi.model.network.token.Token
 import com.toshi.util.EthUtil
-import com.toshi.util.LogUtil
 import com.toshi.util.SingleLiveEvent
+import com.toshi.util.logging.LogUtil
 import com.toshi.view.BaseApplication
 import rx.Single
 import rx.android.schedulers.AndroidSchedulers
@@ -66,7 +66,7 @@ class TokenViewModel : ViewModel() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { erc20Tokens.value = it },
-                        { LogUtil.exception(javaClass, "Error during fetching balance $it") }
+                        { LogUtil.exception("Error during fetching balance $it") }
                 )
 
         subscriptions.add(sub)

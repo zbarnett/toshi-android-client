@@ -27,7 +27,7 @@ import com.toshi.model.local.dapp.DappGoogleSearch
 import com.toshi.model.local.dapp.DappListItem
 import com.toshi.model.local.dapp.DappUrl
 import com.toshi.model.network.dapp.Dapp
-import com.toshi.util.LogUtil
+import com.toshi.util.logging.LogUtil
 import com.toshi.view.adapter.viewholder.DappUrlViewHolder
 import com.toshi.view.adapter.viewholder.SearchDappCategoryViewHolder
 import com.toshi.view.adapter.viewholder.SearchDappViewHolder
@@ -183,7 +183,7 @@ class SearchDappAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 holder.setDappUrlItem(dapp)
                         .setOnGoToClickListener(dapp) { onGoToClickListener?.invoke(it) }
             }
-            else -> LogUtil.exception(javaClass, "Invalid dapp in this context " + dapp.toString())
+            else -> LogUtil.exception("Invalid dapp in this context " + dapp.toString())
         }
     }
 

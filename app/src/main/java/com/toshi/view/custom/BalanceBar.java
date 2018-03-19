@@ -26,7 +26,7 @@ import android.widget.TextView;
 import com.toshi.model.network.Balance;
 import com.toshi.R;
 import com.toshi.util.EthUtil;
-import com.toshi.util.LogUtil;
+import com.toshi.util.logging.LogUtil;
 import com.toshi.util.SoundManager;
 import com.toshi.view.BaseApplication;
 
@@ -111,7 +111,7 @@ public class BalanceBar extends LinearLayout {
     }
 
     private void handleBalanceError(final Throwable throwable) {
-        LogUtil.exception(getClass(), "Error while getting balance", throwable);
+        LogUtil.exception("Error while getting balance", throwable);
     }
 
     private void setEthBalanceFromBigInteger(final BigInteger weiBalance) {

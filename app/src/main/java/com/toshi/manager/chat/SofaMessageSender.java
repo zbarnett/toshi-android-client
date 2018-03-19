@@ -39,7 +39,7 @@ import com.toshi.model.local.Recipient;
 import com.toshi.model.local.SendState;
 import com.toshi.model.local.User;
 import com.toshi.model.sofa.SofaMessage;
-import com.toshi.util.LogUtil;
+import com.toshi.util.logging.LogUtil;
 
 import org.jetbrains.annotations.NotNull;
 import org.whispersystems.libsignal.util.guava.Optional;
@@ -188,6 +188,6 @@ public class SofaMessageSender {
     }
 
     private void handleMessageError(final Throwable throwable, final String message) {
-        LogUtil.exception(getClass(), message, throwable);
+        LogUtil.exception(message, throwable);
     }
 }

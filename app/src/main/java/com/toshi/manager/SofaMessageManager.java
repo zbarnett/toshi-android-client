@@ -42,7 +42,7 @@ import com.toshi.model.sofa.Init;
 import com.toshi.model.sofa.SofaAdapters;
 import com.toshi.model.sofa.SofaMessage;
 import com.toshi.util.LocaleUtil;
-import com.toshi.util.LogUtil;
+import com.toshi.util.logging.LogUtil;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.notification.ChatNotificationManager;
 
@@ -324,7 +324,7 @@ public final class SofaMessageManager {
                 .filter(isConnected -> isConnected)
                 .subscribe(
                         __ -> handleConnectivity(),
-                        throwable -> LogUtil.exception(getClass(), "Error checking connection state", throwable)
+                        throwable -> LogUtil.exception("Error checking connection state", throwable)
                 );
     }
 
@@ -333,7 +333,7 @@ public final class SofaMessageManager {
                 .subscribeOn(Schedulers.io())
                 .subscribe(
                         () -> {},
-                        throwable -> LogUtil.exception(getClass(), "Error during registration task", throwable)
+                        throwable -> LogUtil.exception("Error during registration task", throwable)
                 );
     }
 

@@ -23,12 +23,12 @@ import com.toshi.manager.store.PendingTransactionStore
 import com.toshi.model.local.PendingTransaction
 import com.toshi.model.local.Recipient
 import com.toshi.model.local.User
-import com.toshi.model.sofa.payment.Payment
 import com.toshi.model.sofa.PaymentRequest
 import com.toshi.model.sofa.SofaAdapters
 import com.toshi.model.sofa.SofaMessage
 import com.toshi.model.sofa.SofaType
-import com.toshi.util.LogUtil
+import com.toshi.model.sofa.payment.Payment
+import com.toshi.util.logging.LogUtil
 import com.toshi.view.BaseApplication
 import rx.Observable
 import rx.Subscription
@@ -53,7 +53,7 @@ class UpdateTransactionManager(private val pendingTransactionStore: PendingTrans
                 .subscribeOn(Schedulers.io())
                 .subscribe(
                         { processUpdatedPayment(it) },
-                        { LogUtil.exception(javaClass, "Error when updating payment $it") }
+                        { LogUtil.exception("Error when updating payment $it") }
                 )
 
         subscriptions.add(updatePaymentSub)
@@ -65,7 +65,7 @@ class UpdateTransactionManager(private val pendingTransactionStore: PendingTrans
                 .subscribeOn(Schedulers.io())
                 .subscribe(
                         { updatePendingTransaction(it, payment) },
-                        { LogUtil.exception(javaClass, "Error while handling pending transactions $it") }
+                        { LogUtil.exception("Error while handling pending transactions $it") }
                 )
 
         subscriptions.add(sub)
@@ -88,7 +88,7 @@ class UpdateTransactionManager(private val pendingTransactionStore: PendingTrans
                 .subscribeOn(Schedulers.io())
                 .subscribe(
                         { updatePendingTransaction(it.first, it.second) },
-                        { LogUtil.exception(javaClass, "Error during updating pending transaction $it") }
+                        { LogUtil.exception("Error during updating pending transaction $it") }
                 )
 
         subscriptions.add(sub)
@@ -112,7 +112,7 @@ class UpdateTransactionManager(private val pendingTransactionStore: PendingTrans
             pendingTransactionStore.save(updatedPendingTransaction)
             true
         } catch (ex: IOException) {
-            LogUtil.exception(javaClass, "Unable to update pending transaction $ex")
+            LogUtil.exception("Unable to update pending transaction $ex")
             false
         }
     }
@@ -146,7 +146,7 @@ class UpdateTransactionManager(private val pendingTransactionStore: PendingTrans
             sofaMessage.payload = updatedPayload
             sofaMessageManager.updateMessage(recipient, sofaMessage)
         } catch (ex: IOException) {
-            LogUtil.exception(javaClass, "Error changing Payment Request state $ex")
+            LogUtil.exception("Error changing Payment Request state $ex")
         }
     }
 

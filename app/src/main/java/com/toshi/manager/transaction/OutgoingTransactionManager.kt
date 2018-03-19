@@ -32,7 +32,7 @@ import com.toshi.model.local.User
 import com.toshi.model.sofa.SofaAdapters
 import com.toshi.model.sofa.SofaMessage
 import com.toshi.model.sofa.payment.Payment
-import com.toshi.util.LogUtil
+import com.toshi.util.logging.LogUtil
 import com.toshi.view.BaseApplication
 import rx.Single
 import rx.Subscription
@@ -60,7 +60,7 @@ class OutgoingTransactionManager(
                 .subscribeOn(Schedulers.io())
                 .subscribe(
                         { processNewOutgoingPayment(it) },
-                        { LogUtil.e(javaClass, "Error while handling outgoing payment $it") }
+                        { LogUtil.exception("Error while handling outgoing payment $it") }
                 )
 
         subscriptions.add(outgoingPaymentSub)
@@ -79,7 +79,7 @@ class OutgoingTransactionManager(
         getUpdatedToshiPayment(paymentTask)
                 .subscribe(
                         { handleOutgoingToshiPayment(it.first, it.second) },
-                        { LogUtil.e(javaClass, "Error while sending payment $it") }
+                        { LogUtil.exception("Error while sending payment $it") }
                 )
     }
 
@@ -131,7 +131,7 @@ class OutgoingTransactionManager(
                 .map { paymentTask.copy(sofaMessage = it) }
                 .subscribe(
                         { handleOutgoingResendPayment(it) },
-                        { LogUtil.e(javaClass, "Error while resending payment $it") }
+                        { LogUtil.exception("Error while resending payment $it") }
                 )
     }
 

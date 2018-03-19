@@ -26,7 +26,7 @@ import com.toshi.model.sofa.PaymentRequest;
 import com.toshi.model.sofa.SofaAdapters;
 import com.toshi.model.sofa.SofaMessage;
 import com.toshi.model.sofa.SofaType;
-import com.toshi.util.LogUtil;
+import com.toshi.util.logging.LogUtil;
 import com.toshi.view.BaseApplication;
 
 import java.io.IOException;
@@ -125,7 +125,7 @@ public abstract class ToshiNotification {
         try {
             return SofaAdapters.get().txRequestFrom(sofaMessage.getPayload());
         } catch (IOException e) {
-            LogUtil.e(getTag(), "Error while parsing payment request " + e);
+            LogUtil.w("Error while parsing payment request " + e);
         }
         return null;
     }
@@ -134,7 +134,7 @@ public abstract class ToshiNotification {
         try {
             return SofaAdapters.get().paymentFrom(sofaMessage.getPayload());
         } catch (IOException e) {
-            LogUtil.e(getTag(), "Error while parsing payment " + e);
+            LogUtil.w("Error while parsing payment " + e);
         }
         return null;
     }
@@ -143,7 +143,7 @@ public abstract class ToshiNotification {
         try {
             return SofaAdapters.get().messageFrom(sofaMessage.getPayload()).getBody();
         } catch (final IOException ex) {
-            LogUtil.e("ChatNotificationManager", "Error while parsing message " + ex);
+            LogUtil.w("Error while parsing message " + ex);
         }
         return null;
     }

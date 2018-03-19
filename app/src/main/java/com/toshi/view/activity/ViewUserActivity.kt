@@ -27,21 +27,35 @@ import android.view.Menu
 import android.view.MenuItem
 import com.toshi.R
 import com.toshi.extensions.isVisible
+import com.toshi.extensions.startActivity
 import com.toshi.extensions.startActivityAndFinish
 import com.toshi.extensions.startActivityForResult
-import com.toshi.extensions.startActivity
 import com.toshi.extensions.toast
 import com.toshi.model.local.User
 import com.toshi.model.network.ReputationScore
 import com.toshi.util.ImageUtil
-import com.toshi.util.LogUtil
 import com.toshi.util.PaymentType
 import com.toshi.util.RatingHandler
 import com.toshi.util.SoundManager
 import com.toshi.util.UserBlockingHandler
 import com.toshi.util.UserReportingHandler
+import com.toshi.util.logging.LogUtil
 import com.toshi.viewModel.ViewUserViewModel
-import kotlinx.android.synthetic.main.activity_view_user.*
+import kotlinx.android.synthetic.main.activity_view_user.aboutBot
+import kotlinx.android.synthetic.main.activity_view_user.aboutUser
+import kotlinx.android.synthetic.main.activity_view_user.avatar
+import kotlinx.android.synthetic.main.activity_view_user.closeButton
+import kotlinx.android.synthetic.main.activity_view_user.location
+import kotlinx.android.synthetic.main.activity_view_user.messageContactButton
+import kotlinx.android.synthetic.main.activity_view_user.pay
+import kotlinx.android.synthetic.main.activity_view_user.rate
+import kotlinx.android.synthetic.main.activity_view_user.ratingInfo
+import kotlinx.android.synthetic.main.activity_view_user.ratingView
+import kotlinx.android.synthetic.main.activity_view_user.reputationScore
+import kotlinx.android.synthetic.main.activity_view_user.reviewCount
+import kotlinx.android.synthetic.main.activity_view_user.toolbar
+import kotlinx.android.synthetic.main.activity_view_user.userDescriptionSection
+import kotlinx.android.synthetic.main.activity_view_user.username
 
 class ViewUserActivity : AppCompatActivity() {
 
@@ -257,7 +271,7 @@ class ViewUserActivity : AppCompatActivity() {
             R.id.favorite -> favorOrUnFavor()
             R.id.block -> blockOrUnblock()
             R.id.report -> showReportDialog()
-            else -> LogUtil.d(javaClass, "Not valid menu item")
+            else -> LogUtil.d("Not valid menu item")
         }
         return super.onOptionsItemSelected(item)
     }

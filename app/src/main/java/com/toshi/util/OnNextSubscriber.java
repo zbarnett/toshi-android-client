@@ -18,6 +18,8 @@
 package com.toshi.util;
 
 
+import com.toshi.util.logging.LogUtil;
+
 import rx.Subscriber;
 
 public abstract class OnNextSubscriber<T> extends Subscriber<T> {
@@ -25,11 +27,11 @@ public abstract class OnNextSubscriber<T> extends Subscriber<T> {
     @Override
     public void onCompleted() {
         final String programmerFriendlyMessage = "Unhandled onCompleted. This is potentially a programming error.";
-        LogUtil.w(getClass(), programmerFriendlyMessage);
+        LogUtil.w(programmerFriendlyMessage);
     }
 
     @Override
     public void onError(final Throwable e) {
-        LogUtil.exception(getClass(), "Unhandled onError ", e);
+        LogUtil.exception("Unhandled onError ", e);
     }
 }

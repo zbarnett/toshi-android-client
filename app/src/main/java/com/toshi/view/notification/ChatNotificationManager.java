@@ -38,7 +38,7 @@ import com.toshi.model.sofa.PaymentRequest;
 import com.toshi.model.sofa.SofaAdapters;
 import com.toshi.model.sofa.SofaMessage;
 import com.toshi.model.sofa.SofaType;
-import com.toshi.util.LogUtil;
+import com.toshi.util.logging.LogUtil;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.notification.model.ChatNotification;
 
@@ -101,7 +101,7 @@ public class ChatNotificationManager extends ToshiNotificationBuilder {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         conversationStatus -> tryShowNotification(sender, sofaMessage, conversationStatus),
-                        throwable -> LogUtil.e("ChatNotificationManager", "Error while parsing sofa message " + throwable)
+                        throwable -> LogUtil.w("Error while parsing sofa message " + throwable)
                 );
     }
 
@@ -140,7 +140,7 @@ public class ChatNotificationManager extends ToshiNotificationBuilder {
         try {
             return SofaAdapters.get().txRequestFrom(sofaMessage.getPayload());
         } catch (Exception e) {
-            LogUtil.e("ChatNotificationManager", "Error while parsing sofa message " + e);
+            LogUtil.w("Error while parsing sofa message " + e);
         }
         return null;
     }
@@ -149,7 +149,7 @@ public class ChatNotificationManager extends ToshiNotificationBuilder {
         try {
             return SofaAdapters.get().paymentFrom(sofaMessage.getPayload());
         } catch (Exception e) {
-            LogUtil.e("ChatNotificationManager", "Error while parsing sofa message " + e);
+            LogUtil.w("Error while parsing sofa message " + e);
         }
         return null;
     }
@@ -164,7 +164,7 @@ public class ChatNotificationManager extends ToshiNotificationBuilder {
                 .map(pr -> addLocalPriceToSofaMessage(pr, sofaMessage))
                 .subscribe(
                         sofaMessageWithLocalPrice -> showPaymentRequestNotification(sender, sofaMessageWithLocalPrice),
-                        throwable -> LogUtil.e("ChatNotificationManager", "Error " + throwable)
+                        throwable -> LogUtil.w("Error " + throwable)
                 );
     }
 
@@ -182,7 +182,7 @@ public class ChatNotificationManager extends ToshiNotificationBuilder {
                 .map(paymentWithLocalPrice -> addLocalPriceToSofaMessage(paymentWithLocalPrice, sofaMessage))
                 .subscribe(
                         sofaMessageWithLocalPrice -> showPaymentNotification(sender, sofaMessageWithLocalPrice),
-                        throwable -> LogUtil.e("ChatNotificationManager", "Error while fetching local price " + throwable)
+                        throwable -> LogUtil.w("Error while fetching local price " + throwable)
                 );
     }
 

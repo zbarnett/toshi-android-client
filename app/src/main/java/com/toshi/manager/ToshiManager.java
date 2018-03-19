@@ -25,7 +25,7 @@ import com.toshi.crypto.HDWallet;
 import com.toshi.crypto.signal.SignalPreferences;
 import com.toshi.manager.store.DbMigration;
 import com.toshi.util.ImageUtil;
-import com.toshi.util.LogUtil;
+import com.toshi.util.logging.LogUtil;
 import com.toshi.util.SharedPrefsUtil;
 import com.toshi.view.BaseApplication;
 
@@ -72,7 +72,7 @@ public class ToshiManager {
         tryInit()
                 .subscribe(
                         () -> {},
-                        ex -> LogUtil.i(getClass(), "Early init failed."));
+                        ex -> LogUtil.i("Early init failed."));
     }
 
     // Ignores any data that may be stored on disk and always creates a new wallet.
@@ -87,6 +87,7 @@ public class ToshiManager {
                 .doOnSuccess(__ -> SharedPrefsUtil.setHasOnboarded(false))
                 .flatMapCompletable(__ -> initManagers())
                 .doOnError(__ -> signOut())
+                .doOnError(throwable -> LogUtil.exception("Error while initiating new wallet", throwable))
                 .subscribeOn(Schedulers.from(this.singleExecutor));
     }
 
@@ -94,6 +95,7 @@ public class ToshiManager {
         this.setWallet(wallet);
         return initManagers()
                 .doOnError(__ -> signOut())
+                .doOnError(throwable -> LogUtil.exception("Error while initiating wallet", throwable))
                 .subscribeOn(Schedulers.from(this.singleExecutor));
     }
 
@@ -106,6 +108,7 @@ public class ToshiManager {
                 .doOnSuccess(this::setWallet)
                 .doOnError(__ -> clearUserSession())
                 .flatMapCompletable(__ -> initManagers())
+                .doOnError(throwable -> LogUtil.exception("Error while trying to init wallet", throwable))
                 .subscribeOn(Schedulers.from(this.singleExecutor));
     }
 
@@ -133,7 +136,7 @@ public class ToshiManager {
     }
 
     private void handleInitManagersError(final Throwable throwable) {
-        LogUtil.exception(getClass(), "Error while initiating managers " + throwable);
+        LogUtil.exception("Error while initiating managers " + throwable);
         Toast.makeText(
                 BaseApplication.get(),
                 R.string.init_manager_error,
@@ -202,7 +205,7 @@ public class ToshiManager {
         return
                 this.walletSubject
                 .filter(wallet -> wallet != null)
-                .doOnError(t -> LogUtil.exception(getClass(), "Wallet is null", t))
+                .doOnError(t -> LogUtil.exception("Wallet is null", t))
                 .onErrorReturn(__ -> null)
                 .first()
                 .toSingle();

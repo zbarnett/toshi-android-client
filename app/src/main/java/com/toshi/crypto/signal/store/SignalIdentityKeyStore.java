@@ -19,6 +19,7 @@ package com.toshi.crypto.signal.store;
 
 import com.toshi.crypto.signal.SignalPreferences;
 import com.toshi.crypto.signal.model.SignalIdentity;
+import com.toshi.util.logging.LogUtil;
 import com.toshi.view.BaseApplication;
 
 import org.whispersystems.libsignal.IdentityKey;
@@ -40,6 +41,7 @@ public class SignalIdentityKeyStore implements IdentityKeyStore {
             }
             return new IdentityKeyPair(serializedKey);
         } catch (final InvalidKeyException ex) {
+            LogUtil.exception("Error while getting identity key pair", ex);
             throw new RuntimeException(ex);
         }
     }

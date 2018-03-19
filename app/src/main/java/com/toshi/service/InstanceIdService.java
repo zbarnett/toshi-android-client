@@ -36,7 +36,7 @@ package com.toshi.service;
 import android.content.Intent;
 
 import com.google.firebase.iid.FirebaseInstanceIdService;
-import com.toshi.util.LogUtil;
+import com.toshi.util.logging.LogUtil;
 
 public class InstanceIdService extends FirebaseInstanceIdService {
     /**
@@ -46,7 +46,7 @@ public class InstanceIdService extends FirebaseInstanceIdService {
      */
     @Override
     public void onTokenRefresh() {
-        LogUtil.d(getClass(), "onTokenRefresh");
+        LogUtil.d("onTokenRefresh");
         startService(new Intent(this, RegistrationIntentService.class));
     }
 }
