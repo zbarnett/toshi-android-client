@@ -19,8 +19,10 @@ package com.toshi.view.activity.webView;
 
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.widget.Toast;
 
 import com.toshi.R;
 import com.toshi.databinding.ActivityWebViewBinding;
@@ -30,6 +32,7 @@ import com.toshi.presenter.LoaderIds;
 import com.toshi.presenter.factory.PresenterFactory;
 import com.toshi.presenter.factory.WebViewPresenterFactory;
 import com.toshi.presenter.webview.WebViewPresenter;
+import com.toshi.view.BaseApplication;
 import com.toshi.view.activity.BasePresenterActivity;
 
 public class JellyBeanWebViewActivity extends BasePresenterActivity<WebViewPresenter, JellyBeanWebViewActivity> {
@@ -44,6 +47,14 @@ public class JellyBeanWebViewActivity extends BasePresenterActivity<WebViewPrese
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (Build.VERSION.SDK_INT < 17) {
+            Toast.makeText(
+                    BaseApplication.get(),
+                    R.string.web_view_disabled,
+                    Toast.LENGTH_LONG
+            ).show();
+            finish();
+        }
         init();
     }
 
