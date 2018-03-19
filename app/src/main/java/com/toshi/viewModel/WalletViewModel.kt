@@ -53,4 +53,9 @@ class WalletViewModel : ViewModel() {
 
         subscriptions.add(sub)
     }
+
+    override fun onCleared() {
+        super.onCleared()
+        subscriptions.clear()
+    }
 }
