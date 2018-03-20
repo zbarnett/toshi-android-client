@@ -33,6 +33,7 @@ import com.toshi.exception.PermissionException
 import com.toshi.extensions.getPxSize
 import com.toshi.extensions.isGroupId
 import com.toshi.extensions.isVisible
+import com.toshi.extensions.openWebView
 import com.toshi.extensions.toast
 import com.toshi.model.local.Conversation
 import com.toshi.model.local.Networks
@@ -170,6 +171,7 @@ class ChatActivity : AppCompatActivity() {
                 .addOnPaymentRequestApproveListener { showPaymentRequestConfirmationDialog(it) }
                 .addOnPaymentRequestRejectListener { viewModel.updatePaymentRequestState(it, PaymentRequest.REJECTED) }
                 .addOnUsernameClickListener { chatNavigation.startProfileActivityWithUsername(this, it) }
+                .addOnLinkClickListener { openWebView(it) }
                 .addOnImageClickListener { chatNavigation.startImageActivity(this, it) }
                 .addOnFileClickListener { chatNavigation.startAttachmentPicker(this, it) }
                 .addOnResendListener {

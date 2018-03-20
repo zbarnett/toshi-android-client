@@ -15,9 +15,11 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.toshi.extensions
+package com.toshi.keywordFinder
 
-const val NETWORK_TIMEOUT_SECONDS = 30L
-const val DB_TIMEOUT_SECONDS = 2L
+import com.toshi.util.spannables.Keyword
 
-const val USERNAME_PATTERN = "(?<![0-9a-zA-Z])(@\\w+)"
+data class KeywordTestData(
+        val testText: String,
+        val expectedKeywords: List<Keyword>
+)

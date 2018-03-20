@@ -20,10 +20,6 @@ package com.toshi.view.adapter.viewholder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.method.LinkMovementMethod;
-import android.text.style.ClickableSpan;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -34,14 +30,9 @@ import com.toshi.model.local.SendState;
 import com.toshi.model.network.SofaError;
 import com.toshi.model.sofa.SofaMessage;
 import com.toshi.util.ImageUtil;
-import com.toshi.util.SingleClickableSpan;
+import com.toshi.util.spannables.ClickableSpanUtil;
 import com.toshi.view.adapter.listeners.OnItemClickListener;
 import com.vdurmont.emoji.EmojiParser;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -180,59 +171,10 @@ public final class TextViewHolder extends RecyclerView.ViewHolder {
         if (this.sofaError != null) this.errorMessage.setText(this.sofaError.getMessage());
     }
 
-    public void setClickableUsernames(final OnItemClickListener<String> listener) {
-        if (this.text == null) {
-            return;
-        }
-
-        final SpannableString spannableString = new SpannableString(this.text);
-        int lastEndPos = 0;
-
-        for (final String word : getUsernames()) {
-            final int currentStartPos = this.text.indexOf(word, lastEndPos);
-            final int currentEndPos = this.text.indexOf(word, lastEndPos) + word.length();
-
-            spannableString.setSpan(new SingleClickableSpan() {
-                @Override
-                public void onSingleClick(final View view) {
-                   handleSpannedClicked(view, listener, this);
-                }
-            }, currentStartPos,
-               currentEndPos,
-               Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-
-            lastEndPos = currentEndPos;
-        }
-
-        this.message.setText(spannableString);
-        this.message.setMovementMethod(LinkMovementMethod.getInstance());
-    }
-
-    private List<String> getUsernames() {
-        final Pattern pattern = Pattern.compile("(?:^|\\s|[^a-zA-Z])(@\\w+)");
-        final Matcher matcher = pattern.matcher(this.text);
-        final List<String> matches = new ArrayList<>();
-
-        while (matcher.find()) {
-            matches.add(matcher.group(1));
-        }
-
-        return matches;
-    }
-
-    private void handleSpannedClicked(final View view,
-                                      final OnItemClickListener<String> listener,
-                                      final ClickableSpan clickableSpan) {
-        final TextView tv = (TextView) view;
-        final Spanned spannedString = (Spanned) tv.getText();
-        final String username =
-                spannedString
-                        .subSequence(
-                                spannedString.getSpanStart(clickableSpan),
-                                spannedString.getSpanEnd(clickableSpan))
-                        .toString()
-                        .substring(1);
-
-        listener.onItemClick(username);
+    public TextViewHolder addClickableKeywords(final OnItemClickListener<String> webUrlClickedListener,
+                                               final OnItemClickListener<String> usernameClickedListener) {
+        if (this.text == null) return this;
+        ClickableSpanUtil.Companion.addClickableKeywords(this.text, this.message, webUrlClickedListener, usernameClickedListener);
+        return this;
     }
 }

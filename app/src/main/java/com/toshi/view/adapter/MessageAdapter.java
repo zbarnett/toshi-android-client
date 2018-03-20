@@ -64,6 +64,7 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
     private OnItemClickListener<SofaMessage> onPaymentRequestApproveListener;
     private OnItemClickListener<SofaMessage> onPaymentRequestRejectListener;
     private OnItemClickListener<String> onUsernameClickListener;
+    private OnItemClickListener<String> onWebUrlClickListener;
     private OnItemClickListener<String> onImageClickListener;
     private OnItemClickListener<String> onFileClickListener;
     private OnItemClickListener<SofaMessage> onResendListener;
@@ -86,6 +87,11 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     public final MessageAdapter addOnUsernameClickListener(final OnItemClickListener<String> listener) {
         this.onUsernameClickListener = listener;
+        return this;
+    }
+
+    public final MessageAdapter addOnLinkClickListener(final OnItemClickListener<String> listener) {
+        this.onWebUrlClickListener = listener;
         return this;
     }
 
@@ -269,7 +275,7 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
                         .setOnResendListener(this.onResendListener, sofaMessage)
                         .setErrorMessage(sofaMessage.getErrorMessage())
                         .draw()
-                        .setClickableUsernames(this.onUsernameClickListener);
+                        .addClickableKeywords(this.onWebUrlClickListener, this.onUsernameClickListener);
                 break;
             }
 

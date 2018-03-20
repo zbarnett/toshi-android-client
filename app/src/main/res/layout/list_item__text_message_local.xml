@@ -46,7 +46,6 @@
             android:paddingBottom="@dimen/bubbleVerticalPadding"
             android:gravity="left"
             android:background="@drawable/background__local_message"
-            android:autoLink="web"
             android:lineSpacingExtra="2dp"
             android:textColor="@color/textColorContrast"
             android:textColorLink="@color/textColorContrast"
