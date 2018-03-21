@@ -142,7 +142,8 @@ class ToshiWebClient(
     private fun loadSofaScript(): String {
         val sb = StringBuilder()
         val rcpUrl = "window.SOFA = {" +
-                "config: {accounts: [\"${getWallet().paymentAddress}\"]," +
+                "config: {netVersion: \"${context.getString(R.string.net_version)}\", " +
+                "accounts: [\"${getWallet().paymentAddress}\"]," +
                 "rcpUrl: \"${context.getString(R.string.rcp_url)}\"}" +
                 "};"
         sb.append(rcpUrl)

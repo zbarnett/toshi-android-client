@@ -156,7 +156,8 @@ import rx.subscriptions.CompositeSubscription;
     }
 
     private String getRcpUrlInjection() {
-        return String.format("window.SOFA = {config: {accounts: [\"%s\"], rcpUrl: \"%s\"}};",
+        return String.format("window.SOFA = {config: {netVersion: \"%s\", accounts: [\"%s\"], rcpUrl: \"%s\"}};",
+                BaseApplication.get().getResources().getString(R.string.net_version),
                 this.wallet.getPaymentAddress(),
                 BaseApplication.get().getResources().getString(R.string.rcp_url));
     }
