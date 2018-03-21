@@ -70,7 +70,7 @@ public class HDWallet {
             deriveKeysFromWallet(wallet);
             return this;
         })
-        .doOnError(throwable -> LogUtil.exception("Error while getting existing wallet"));
+        .doOnError(throwable -> LogUtil.exception("Error while getting existing wallet", throwable));
     }
 
     // WARNING: This will delete any wallet stored on disk
@@ -80,7 +80,7 @@ public class HDWallet {
             deriveKeysFromWallet(wallet);
             return this;
         })
-        .doOnError(throwable -> LogUtil.exception("Error while creating new wallet"));
+        .doOnError(throwable -> LogUtil.exception("Error while creating new wallet", throwable));
     }
 
     private Wallet generateNewWallet() {

@@ -41,7 +41,15 @@ import com.toshi.util.OnSingleClickListener
 import com.toshi.util.PermissionUtil
 import com.toshi.view.fragment.DialogFragment.ChooserDialog
 import com.toshi.viewModel.EditProfileViewModel
-import kotlinx.android.synthetic.main.activity_edit_profile.*
+import kotlinx.android.synthetic.main.activity_edit_profile.avatar
+import kotlinx.android.synthetic.main.activity_edit_profile.closeButton
+import kotlinx.android.synthetic.main.activity_edit_profile.editProfilePhoto
+import kotlinx.android.synthetic.main.activity_edit_profile.inputAbout
+import kotlinx.android.synthetic.main.activity_edit_profile.inputLocation
+import kotlinx.android.synthetic.main.activity_edit_profile.inputName
+import kotlinx.android.synthetic.main.activity_edit_profile.inputUsername
+import kotlinx.android.synthetic.main.activity_edit_profile.publicSwitch
+import kotlinx.android.synthetic.main.activity_edit_profile.saveButton
 import java.io.File
 
 class EditProfileActivity : AppCompatActivity() {
@@ -145,7 +153,7 @@ class EditProfileActivity : AppCompatActivity() {
         user.usernameForEditing?.let { inputUsername.setText(it) }
         user.about?.let { inputAbout.setText(it) }
         user.location?.let { inputLocation.setText(it) }
-        user.isPublic?.let { publicSwitch.isChecked = it }
+        user.isPublic.let { publicSwitch.isChecked = it }
     }
 
     private fun loadAvatar(avatarUrl: String?) {

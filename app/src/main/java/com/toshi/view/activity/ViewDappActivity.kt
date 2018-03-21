@@ -82,7 +82,7 @@ class ViewDappActivity : AppCompatActivity() {
     }
 
     private fun initListeners() {
-        categories.itemClickedListener = { categoryId, categoryName -> startDappCategoryActivity(categoryId, categoryName) }
+        categories.itemClickedListener = { categoryId, _ -> startDappCategoryActivity(categoryId) }
         openBtn.setOnClickListener { openWebViewActivity() }
         header.closeButton.setOnClickListener { finish() }
         header.offsetChangedListener = { setStatusBarAlpha(it) }
@@ -92,7 +92,7 @@ class ViewDappActivity : AppCompatActivity() {
         }
     }
 
-    private fun startDappCategoryActivity(categoryId: Int, categoryName: String) {
+    private fun startDappCategoryActivity(categoryId: Int) {
         startActivity<ViewAllDappsActivity> {
             putExtra(ViewAllDappsActivity.CATEGORY_ID, categoryId)
             putExtra(ViewAllDappsActivity.VIEW_TYPE, ViewAllDappsActivity.CATEGORY)

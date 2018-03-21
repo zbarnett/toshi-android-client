@@ -404,7 +404,7 @@ public final class SofaMessageManager {
         if (this.messageRegister == null) {
             return Completable.error(new NullPointerException("Unable to register as class hasn't been initialised yet."));
         }
-        return this.messageRegister.forceRegisterChatGcm();
+        return this.messageRegister.registerChatGcm();
     }
 
     public void resendPendingMessage(final SofaMessage sofaMessage) {

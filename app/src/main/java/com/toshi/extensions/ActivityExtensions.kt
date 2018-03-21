@@ -59,7 +59,7 @@ inline fun AppCompatActivity.setActivityResultAndFinish(resultCode: Int, func: I
     finish()
 }
 
-inline fun AppCompatActivity.setActivityResultAndFinish(resultCode: Int) {
+fun AppCompatActivity.setActivityResultAndFinish(resultCode: Int) {
     setResult(resultCode, intent)
     finish()
 }

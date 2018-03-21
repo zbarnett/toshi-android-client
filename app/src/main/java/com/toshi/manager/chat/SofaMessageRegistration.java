@@ -74,26 +74,22 @@ public class SofaMessageRegistration {
         return Completable.fromAction(SignalPreferences::setRegisteredWithServer);
     }
 
-    public Completable forceRegisterChatGcm() {
-        GcmPrefsUtil.setChatGcmTokenSentToServer(false);
-        return registerChatGcm();
-    }
-
-    private Completable registerChatGcm() {
-        if (GcmPrefsUtil.isChatGcmTokenSentToServer()) return Completable.complete();
+    public Completable registerChatGcm() {
         return GcmUtil.getGcmToken()
                 .flatMapCompletable(this::tryRegisterChatGcm);
     }
 
     private Completable tryRegisterChatGcm(final String token) {
+        if (token == null) {
+            LogUtil.exception("Token is null while trying GCM registration");
+            return Completable.error(new IllegalStateException("Token can't be null"));
+        }
         return Completable.fromAction(() -> {
             try {
                 final Optional<String> optional = Optional.of(token);
                 this.chatService.setGcmId(optional);
-                GcmPrefsUtil.setChatGcmTokenSentToServer(true);
             } catch (IOException e) {
                 LogUtil.exception("Error during registering of GCM " + e.getMessage());
-                GcmPrefsUtil.setChatGcmTokenSentToServer(false);
                 Completable.error(e);
             }
         })
@@ -104,7 +100,6 @@ public class SofaMessageRegistration {
         return Completable.fromAction(() -> {
             try {
                 this.chatService.setGcmId(Optional.absent());
-                GcmPrefsUtil.setChatGcmTokenSentToServer(false);
             } catch (IOException e) {
                 LogUtil.exception("Error during unregistering of GCM " + e.getMessage());
                 Completable.error(e);

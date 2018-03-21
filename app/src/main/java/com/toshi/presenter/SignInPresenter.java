@@ -27,6 +27,7 @@ import android.widget.Toast;
 import com.google.common.base.Joiner;
 import com.toshi.R;
 import com.toshi.crypto.HDWallet;
+import com.toshi.util.KeyboardUtil;
 import com.toshi.util.logging.LogUtil;
 import com.toshi.util.SharedPrefsUtil;
 import com.toshi.view.BaseApplication;
@@ -182,6 +183,8 @@ public class SignInPresenter implements Presenter<SignInActivity> {
     }
 
     private void goToMainActivity() {
+        if (this.activity == null) return;
+        KeyboardUtil.hideKeyboard(this.activity.getBinding().passphraseInputView);
         SharedPrefsUtil.setSignedIn();
         final Intent intent = new Intent(this.activity, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

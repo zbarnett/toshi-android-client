@@ -507,7 +507,7 @@ class ChatActivity : AppCompatActivity() {
     private fun tryScrollToBottom(animate: Boolean) {
         if (messageAdapter.itemCount == 0) return
         // Only animate if we're already near the bottom
-        if (layoutManager.findLastVisibleItemPosition() < messageAdapter.itemCount - 2) return
+        if (layoutManager.findLastVisibleItemPosition() < messageAdapter.itemCount - 3) return
         val bottomPosition = messageAdapter.itemCount - 1
         if (animate) messagesList.smoothScrollToPosition(bottomPosition)
         else messagesList.scrollToPosition(bottomPosition)

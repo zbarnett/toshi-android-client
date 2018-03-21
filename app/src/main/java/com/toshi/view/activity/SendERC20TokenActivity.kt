@@ -189,14 +189,14 @@ class SendERC20TokenActivity : AppCompatActivity() {
 
     private fun initTextListeners() {
         toAmount.addTextChangedListener(object : TextChangedListener() {
-            override fun onTextChanged(amountInput: CharSequence?, start: Int, before: Int, count: Int) {
-                validateAmount(amountInput.toString())
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                validateAmount(s.toString())
                 enableOrDisableContinueButton()
             }
         })
         toAddress.addTextChangedListener(object : TextChangedListener() {
-            override fun onTextChanged(addressInput: CharSequence?, start: Int, before: Int, count: Int) {
-                validateAddress(addressInput.toString())
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                validateAddress(s.toString())
                 enableOrDisableContinueButton()
             }
         })

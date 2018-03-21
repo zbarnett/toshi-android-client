@@ -70,6 +70,7 @@ public class BalanceManager {
     private Subscription connectivitySub;
 
     /* package */ BalanceManager() {
+        initPrefs();
     }
 
     public BehaviorSubject<Balance> getBalanceObservable() {
@@ -79,7 +80,6 @@ public class BalanceManager {
     public Completable init(final HDWallet wallet) {
         this.wallet = wallet;
         this.networks = Networks.getInstance();
-        initPrefs();
         initCachedBalance();
         return registerEthGcm()
                 .onErrorComplete()
