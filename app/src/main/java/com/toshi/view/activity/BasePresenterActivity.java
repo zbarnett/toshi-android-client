@@ -45,6 +45,7 @@ public abstract class BasePresenterActivity<P extends Presenter<V>, V> extends A
             @Override
             public final void onLoadFinished(Loader<P> loader, P presenter) {
                 BasePresenterActivity.this.presenter = presenter;
+                presenter.onViewAttached(getPresenterView());
                 onPresenterPrepared(presenter);
             }
 
@@ -54,12 +55,6 @@ public abstract class BasePresenterActivity<P extends Presenter<V>, V> extends A
                 onPresenterDestroyed();
             }
         });
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        presenter.onViewAttached(getPresenterView());
     }
 
     @Override

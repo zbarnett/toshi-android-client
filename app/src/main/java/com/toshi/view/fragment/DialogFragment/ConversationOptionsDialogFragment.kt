@@ -28,7 +28,7 @@ import android.view.Window
 import com.toshi.R
 import com.toshi.model.local.ConversationInfo
 import com.toshi.view.adapter.ConversationOptionsAdapter
-import kotlinx.android.synthetic.main.fragment_conversation_options.*
+import kotlinx.android.synthetic.main.fragment_conversation_options.options
 
 class ConversationOptionsDialogFragment : DialogFragment() {
 
@@ -64,11 +64,11 @@ class ConversationOptionsDialogFragment : DialogFragment() {
         return dialog
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater?.inflate(R.layout.fragment_conversation_options, container)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_conversation_options, container)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         getOptionList()
         initView()
     }
@@ -80,9 +80,10 @@ class ConversationOptionsDialogFragment : DialogFragment() {
     private fun createOptionListFromBundle(): List<String> {
         isMuted = arguments?.getBoolean(IS_MUTED) ?: false
         isBlocked = arguments?.getBoolean(IS_BLOCKED) ?: false
-        val options = context.resources.getStringArray(R.array.conversation_options).toMutableList()
-        if (isMuted) options[0] = context.getString(R.string.unmute)
-        if (isBlocked) options[1] = context.getString(R.string.unblock)
+        val options = context?.resources?.getStringArray(R.array.conversation_options)?.toMutableList()
+                ?: return emptyList()
+        if (isMuted) options[0] = context?.getString(R.string.unmute).orEmpty()
+        if (isBlocked) options[1] = context?.getString(R.string.unblock).orEmpty()
         return options.toList()
     }
 

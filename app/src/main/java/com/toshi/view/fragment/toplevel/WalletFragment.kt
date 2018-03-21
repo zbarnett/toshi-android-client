@@ -24,6 +24,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
+import android.support.v4.app.FragmentActivity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -51,27 +52,28 @@ class WalletFragment : TopLevelFragment() {
     private lateinit var viewModel: WalletViewModel
     private lateinit var walletAdapter: WalletPagerAdapter
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater?.inflate(R.layout.fragment_wallet, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_wallet, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) = init()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) = init()
 
     private fun init() {
-        setStatusBarColor()
-        initViewModel()
+        val activity = activity ?: return
+        setStatusBarColor(activity)
+        initViewModel(activity)
         initClickListeners()
         initAdapter()
         initRefreshListener()
         initObservers()
     }
 
-    private fun setStatusBarColor() {
+    private fun setStatusBarColor(activity: FragmentActivity) {
         if (Build.VERSION.SDK_INT < 21) return
-        activity.window.statusBarColor = getColorById(R.color.colorPrimaryDark)
+        activity.window.statusBarColor = getColorById(R.color.colorPrimaryDark) ?: 0
     }
 
-    private fun initViewModel() {
+    private fun initViewModel(activity: FragmentActivity) {
         viewModel = ViewModelProviders.of(activity).get(WalletViewModel::class.java)
     }
 
@@ -82,14 +84,14 @@ class WalletFragment : TopLevelFragment() {
 
     private fun showShareWalletDialog() {
         val dialog = ShareWalletAddressDialog.newInstance()
-        dialog.show(activity.supportFragmentManager, ShareWalletAddressDialog.TAG)
+        dialog.show(activity?.supportFragmentManager, ShareWalletAddressDialog.TAG)
     }
 
     private fun handleCopyToClipboardClicked() {
         val walletAddress = viewModel.walletAddress.value ?: return
-        val clipboard = activity.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clipboard = activity?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
         val clip = ClipData.newPlainText(getString(R.string.payment_address), walletAddress)
-        clipboard.primaryClip = clip
+        clipboard?.primaryClip = clip
         toast(R.string.copied_to_clipboard)
     }
 

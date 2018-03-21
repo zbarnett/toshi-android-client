@@ -58,15 +58,15 @@ class AllDappsAdapter : RecyclerView.Adapter<DappViewHolder>() {
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): DappViewHolder {
-        val v = LayoutInflater.from(parent?.context).inflate(R.layout.list_item__dapp, parent, false)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DappViewHolder {
+        val v = LayoutInflater.from(parent.context).inflate(R.layout.list_item__dapp, parent, false)
         return DappViewHolder(v)
     }
 
-    override fun onBindViewHolder(holder: DappViewHolder?, position: Int) {
+    override fun onBindViewHolder(holder: DappViewHolder, position: Int) {
         val dapp = dapps[position]
-        holder?.setDapp(dapp)
-                ?.setOnClickListener(dapp) { onItemClickedListener?.invoke(it) }
+        holder.setDapp(dapp)
+                .setOnClickListener(dapp) { onItemClickedListener?.invoke(it) }
     }
 
     override fun getItemCount() = dapps.size

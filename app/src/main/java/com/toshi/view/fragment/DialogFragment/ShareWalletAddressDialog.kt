@@ -34,7 +34,11 @@ import android.view.Window
 import com.toshi.R
 import com.toshi.extensions.toast
 import com.toshi.viewModel.ShareWalletAddressViewModel
-import kotlinx.android.synthetic.main.fragment_share_wallet_address.*
+import kotlinx.android.synthetic.main.fragment_share_wallet_address.closeButton
+import kotlinx.android.synthetic.main.fragment_share_wallet_address.copyBtn
+import kotlinx.android.synthetic.main.fragment_share_wallet_address.qrCodeView
+import kotlinx.android.synthetic.main.fragment_share_wallet_address.shareBtn
+import kotlinx.android.synthetic.main.fragment_share_wallet_address.walletAddress
 
 class ShareWalletAddressDialog : DialogFragment() {
 
@@ -54,11 +58,11 @@ class ShareWalletAddressDialog : DialogFragment() {
         return dialog
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater?.inflate(R.layout.fragment_share_wallet_address, container)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_share_wallet_address, container)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         init()
     }
@@ -81,8 +85,8 @@ class ShareWalletAddressDialog : DialogFragment() {
 
     private fun copyToClipboard() {
         val paymentAddress = viewModel.wallet.value?.paymentAddress ?: return
-        val clipboard = activity.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        clipboard.primaryClip = ClipData.newPlainText(getString(R.string.payment_address), paymentAddress)
+        val clipboard = activity?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
+        clipboard?.primaryClip = ClipData.newPlainText(getString(R.string.payment_address), paymentAddress)
         toast(R.string.copied_to_clipboard)
     }
 

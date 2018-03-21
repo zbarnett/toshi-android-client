@@ -22,6 +22,7 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.support.v4.app.FragmentActivity
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
@@ -61,27 +62,28 @@ class FavoritesFragment : TopLevelFragment() {
     private lateinit var viewModel: FavoritesViewModel
     private lateinit var favoriteAdapter: UserAdapter
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, inState: Bundle?): View? {
-        return inflater?.inflate(R.layout.fragment_favorites, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, inState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_favorites, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) = init()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) = init()
 
     private fun init() {
-        setStatusBarColor()
-        initViewModel()
+        val activity = activity ?: return
+        setStatusBarColor(activity)
+        initViewModel(activity)
         initMenu()
         initClickListeners()
         initRecyclerView()
         initObservers()
     }
 
-    private fun setStatusBarColor() {
+    private fun setStatusBarColor(activity: FragmentActivity) {
         if (Build.VERSION.SDK_INT < 21) return
-        activity.window.statusBarColor = getColorById(R.color.colorPrimaryDark)
+        activity.window.statusBarColor = getColorById(R.color.colorPrimaryDark) ?: 0
     }
 
-    private fun initViewModel() {
+    private fun initViewModel(activity: FragmentActivity) {
         viewModel = ViewModelProviders.of(activity).get(FavoritesViewModel::class.java)
     }
 

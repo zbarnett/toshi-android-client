@@ -63,20 +63,20 @@ class ConversationRequestAdapter(
         notifyItemRemoved(index)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ConversationRequestViewHolder {
-        val layoutInflater = LayoutInflater.from(parent?.context)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ConversationRequestViewHolder {
+        val layoutInflater = LayoutInflater.from(parent.context)
         return ConversationRequestViewHolder(layoutInflater.inflate(R.layout.list_item__conversation_request, parent, false))
     }
 
-    override fun onBindViewHolder(holder: ConversationRequestViewHolder?, position: Int) {
+    override fun onBindViewHolder(holder: ConversationRequestViewHolder, position: Int) {
         val conversation = conversations[position]
         val formattedLatestMessage = conversation.latestMessage?.let { formatLastMessage(it) } ?: ""
         holder
-                ?.setConversation(conversation)
-                ?.setLatestMessage(formattedLatestMessage)
-                ?.setOnItemClickListener(conversation, onItemCLickListener)
-                ?.setOnAcceptClickListener(conversation, onAcceptClickListener)
-                ?.setOnRejectClickListener(conversation, onRejectClickListener)
+                .setConversation(conversation)
+                .setLatestMessage(formattedLatestMessage)
+                .setOnItemClickListener(conversation, onItemCLickListener)
+                .setOnAcceptClickListener(conversation, onAcceptClickListener)
+                .setOnRejectClickListener(conversation, onRejectClickListener)
     }
 
     private fun formatLastMessage(sofaMessage: SofaMessage): String {

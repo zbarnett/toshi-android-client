@@ -35,14 +35,14 @@ class CollectibleAdapter(private val collectibleName: String?) : RecyclerView.Ad
         notifyDataSetChanged()
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): CollectibleViewHolder {
-        val v = LayoutInflater.from(parent?.context).inflate(R.layout.list_item__collectible, parent, false)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CollectibleViewHolder {
+        val v = LayoutInflater.from(parent.context).inflate(R.layout.list_item__collectible, parent, false)
         return CollectibleViewHolder(collectibleName, v)
     }
 
-    override fun onBindViewHolder(holder: CollectibleViewHolder?, position: Int) {
+    override fun onBindViewHolder(holder: CollectibleViewHolder, position: Int) {
         val collectible = collectibles[position]
-        holder?.setCollectible(collectible)
+        holder.setCollectible(collectible)
     }
 
     override fun getItemCount() = collectibles.size

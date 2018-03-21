@@ -28,15 +28,15 @@ class ConversationOptionsAdapter(
         private val listener: (String) -> Unit) :
         RecyclerView.Adapter<ConversationOptionsViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ConversationOptionsViewHolder {
-        val layoutInflater = LayoutInflater.from(parent?.context)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ConversationOptionsViewHolder {
+        val layoutInflater = LayoutInflater.from(parent.context)
         return ConversationOptionsViewHolder(layoutInflater.inflate(R.layout.list_item__conversation_option, parent, false))
     }
 
-    override fun onBindViewHolder(holder: ConversationOptionsViewHolder?, position: Int) {
+    override fun onBindViewHolder(holder: ConversationOptionsViewHolder, position: Int) {
         val option = options[position]
-        holder?.setOption(option)
-                ?.setOnItemClickListener(option, listener)
+        holder.setOption(option)
+                .setOnItemClickListener(option, listener)
     }
 
     override fun getItemCount() = options.size

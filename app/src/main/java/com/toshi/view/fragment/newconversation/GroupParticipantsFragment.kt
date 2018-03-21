@@ -17,11 +17,11 @@
 
 package com.toshi.view.fragment.newconversation
 
-import android.app.Activity
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentActivity
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.text.Editable
@@ -40,42 +40,49 @@ import com.toshi.util.SingleClickableSpan
 import com.toshi.view.activity.ConversationSetupActivity
 import com.toshi.view.adapter.SelectGroupParticipantAdapter
 import com.toshi.viewModel.GroupParticipantsViewModel
-import kotlinx.android.synthetic.main.view_group_participants.*
+import kotlinx.android.synthetic.main.view_group_participants.clearButton
+import kotlinx.android.synthetic.main.view_group_participants.closeButton
+import kotlinx.android.synthetic.main.view_group_participants.next
+import kotlinx.android.synthetic.main.view_group_participants.participants
+import kotlinx.android.synthetic.main.view_group_participants.search
+import kotlinx.android.synthetic.main.view_group_participants.searchResults
 
 class GroupParticipantsFragment : Fragment() {
 
     private lateinit var viewModel: GroupParticipantsViewModel
     private lateinit var userAdapter: SelectGroupParticipantAdapter
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater?.inflate(R.layout.view_group_participants, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.view_group_participants, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) = init()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) = init()
 
     private fun init() {
-        initViewModel()
+        val activity = activity ?: return
+        initViewModel(activity)
         initRecyclerView()
         initClickListeners()
         initObservers()
     }
 
-    private fun initViewModel() {
-        viewModel = ViewModelProviders.of(this.activity).get(GroupParticipantsViewModel::class.java)
+    private fun initViewModel(activity: FragmentActivity) {
+        viewModel = ViewModelProviders.of(activity).get(GroupParticipantsViewModel::class.java)
     }
 
     private fun initClickListeners() {
         closeButton.setOnClickListener { onBackPressed() }
         clearButton.setOnClickListener { search.text = null }
-        next.setOnClickListener { handleNextClicked(activity) }
+        next.setOnClickListener { handleNextClicked() }
     }
 
     private fun onBackPressed() {
         viewModel.clearParticipants()
-        activity.onBackPressed()
+        activity?.onBackPressed()
     }
 
-    private fun handleNextClicked(activity: Activity) {
+    private fun handleNextClicked() {
+        val activity = activity ?: return
         if (activity is ConversationSetupActivity) {
             activity.openGroupSetupFlow(viewModel.selectedParticipants.value ?: listOf())
         } else throw IllegalStateException("Activity is not a ConversationSetupActivity")

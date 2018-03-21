@@ -21,6 +21,7 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentActivity
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.text.Editable
@@ -36,39 +37,44 @@ import com.toshi.util.KeyboardUtil
 import com.toshi.view.activity.ConversationSetupActivity
 import com.toshi.view.adapter.UserAdapter
 import com.toshi.viewModel.UserParticipantsViewModel
-import kotlinx.android.synthetic.main.fragment_user_participants.*
+import kotlinx.android.synthetic.main.fragment_user_participants.clearButton
+import kotlinx.android.synthetic.main.fragment_user_participants.closeButton
+import kotlinx.android.synthetic.main.fragment_user_participants.newGroup
+import kotlinx.android.synthetic.main.fragment_user_participants.search
+import kotlinx.android.synthetic.main.fragment_user_participants.searchResults
 
 class UserParticipantsFragment : Fragment() {
 
     private lateinit var viewModel: UserParticipantsViewModel
     private lateinit var userAdapter: UserAdapter
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater?.inflate(R.layout.fragment_user_participants, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_user_participants, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) = init()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) = init()
 
     private fun init() {
-        initViewModel()
+        val activity = activity ?: return
+        initViewModel(activity)
         initClickListeners()
         initRecyclerView()
         initObservers()
     }
 
-    private fun initViewModel() {
-        viewModel = ViewModelProviders.of(this.activity).get(UserParticipantsViewModel::class.java)
+    private fun initViewModel(activity: FragmentActivity) {
+        viewModel = ViewModelProviders.of(activity).get(UserParticipantsViewModel::class.java)
     }
 
     private fun initClickListeners() {
-        closeButton.setOnClickListener { this.handleCloseClicked(it) }
+        closeButton.setOnClickListener { handleCloseClicked(it) }
         clearButton.setOnClickListener { search.text = null }
         newGroup.setOnClickListener { handleNewGroupClicked() }
     }
 
     private fun handleCloseClicked(v: View?) {
         KeyboardUtil.hideKeyboard(v)
-        this.activity.onBackPressed()
+        activity?.onBackPressed()
     }
 
     private fun handleNewGroupClicked() = (this.activity as ConversationSetupActivity).openNewGroupFlow()

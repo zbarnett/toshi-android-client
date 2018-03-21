@@ -22,6 +22,7 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.support.v4.app.FragmentActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
@@ -69,28 +70,29 @@ class DappFragment : BackableTopLevelFragment() {
 
     override fun getFragmentTag() = TAG
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater?.inflate(R.layout.fragment_dapps, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_dapps, container, false)
     }
 
-    override fun onViewCreated(view: View?, inState: Bundle?) = init()
+    override fun onViewCreated(view: View, inState: Bundle?) = init()
 
     private fun init() {
-        setStatusBarColor()
-        initViewModel()
+        val activity = activity ?: return
+        setStatusBarColor(activity)
+        initViewModel(activity)
         initAdapters()
         setRecyclerViewVisibility()
         initListeners()
         initObservers()
     }
 
-    private fun setStatusBarColor() {
+    private fun setStatusBarColor(activity: FragmentActivity) {
         if (Build.VERSION.SDK_INT < 21) return
-        activity.window.statusBarColor = getColorById(R.color.colorPrimaryDarkTransparent)
+        activity.window.statusBarColor = getColorById(R.color.colorPrimaryDarkTransparent) ?: 0
     }
 
-    private fun initViewModel() {
-        viewModel = ViewModelProviders.of(this.activity).get(DappViewModel::class.java)
+    private fun initViewModel(activity: FragmentActivity) {
+        viewModel = ViewModelProviders.of(activity).get(DappViewModel::class.java)
     }
 
     private fun initAdapters() {

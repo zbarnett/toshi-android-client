@@ -22,6 +22,7 @@ import android.arch.lifecycle.ViewModelProviders
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentActivity
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
@@ -62,21 +63,22 @@ class GroupSetupFragment : Fragment() {
         return this
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater?.inflate(R.layout.fragment_group_setup, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_group_setup, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) = init()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) = init()
 
     private fun init() {
-        initViewModel()
+        val activity = activity ?: return
+        initViewModel(activity)
         initView()
         initClickListeners()
         initObservers()
     }
 
-    private fun initViewModel() {
-        viewModel = ViewModelProviders.of(this.activity).get(GroupSetupViewModel::class.java)
+    private fun initViewModel(activity: FragmentActivity) {
+        viewModel = ViewModelProviders.of(activity).get(GroupSetupViewModel::class.java)
         if (!selectedParticipants.isEmpty()) viewModel.selectedParticipants = selectedParticipants
     }
 
@@ -89,8 +91,8 @@ class GroupSetupFragment : Fragment() {
 
     private fun initClickListeners() {
         create.setOnClickListener { createGroup() }
-        closeButton.setOnClickListener { this.activity.onBackPressed() }
-        avatar.setOnClickListener { (this.activity as ConversationSetupActivity).showImageChooserDialog() }
+        closeButton.setOnClickListener { activity?.onBackPressed() }
+        avatar.setOnClickListener { (activity as ConversationSetupActivity).showImageChooserDialog() }
     }
 
     private fun createGroup() {

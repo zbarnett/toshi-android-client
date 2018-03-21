@@ -82,8 +82,8 @@ class PaymentConfirmationFragment : BottomSheetDialogFragment() {
     private var onFinishedListener: (() -> Unit)? = null
     private var approvedPayment = false
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, inState: Bundle?): View? {
-        return inflater?.inflate(R.layout.fragment_payment_confirmation, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, inState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_payment_confirmation, container, false)
     }
 
     override fun onStart() {
@@ -106,7 +106,7 @@ class PaymentConfirmationFragment : BottomSheetDialogFragment() {
         }
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) = init()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) = init()
 
     private fun init() {
         initViewModel()
@@ -342,7 +342,7 @@ class PaymentConfirmationFragment : BottomSheetDialogFragment() {
 
     private fun setStatusMessage(text: String, color: Int = R.color.textColorPrimary) {
         statusMessage.text = text
-        statusMessage.setTextColor(getColor(color))
+        statusMessage.setTextColor(getColor(color) ?: 0)
     }
 
     // Set the approve listener to null if you want PaymentConfirmation to send the transaction
@@ -466,7 +466,7 @@ class PaymentConfirmationFragment : BottomSheetDialogFragment() {
     }
 
     private fun isW3Payment(): Boolean {
-        val confirmationType = arguments.getInt(CONFIRMATION_TYPE)
+        val confirmationType = arguments?.getInt(CONFIRMATION_TYPE)
         return confirmationType == PaymentConfirmationType.WEB
     }
 

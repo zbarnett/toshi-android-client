@@ -40,18 +40,18 @@ inline fun <reified T> Fragment.startActivity() = startActivity(Intent(activity,
 
 fun Fragment.getPxSize(@DimenRes id: Int) = resources.getDimensionPixelSize(id)
 
-fun Fragment.getColorById(@ColorRes id: Int) = ContextCompat.getColor(activity, id)
+fun Fragment.getColorById(@ColorRes id: Int) = context?.let { ContextCompat.getColor(it, id) }
 
 fun Fragment.startExternalActivity(func: Intent.() -> Intent) = startActivity(Intent().func(), null)
 
 inline fun <reified T> Fragment.startActivityAndFinish() {
     startActivity(Intent(activity, T::class.java))
-    activity.finish()
+    activity?.finish()
 }
 
 fun Fragment.toast(@StringRes id: Int, duration: Int = Toast.LENGTH_SHORT) = Toast.makeText(context, id, duration).show()
 
-fun Fragment.getColor(@ColorRes id: Int) = ContextCompat.getColor(context, id)
+fun Fragment.getColor(@ColorRes id: Int) = context?.let { ContextCompat.getColor(it, id) }
 
 fun Fragment.isWebUrl(value: String) = Patterns.WEB_URL.matcher(value.trim()).matches()
 

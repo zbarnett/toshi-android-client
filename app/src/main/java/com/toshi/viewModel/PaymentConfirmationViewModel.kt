@@ -75,7 +75,7 @@ class PaymentConfirmationViewModel : ViewModel() {
     val error by lazy { SingleLiveEvent<Int>() }
     val finish by lazy { SingleLiveEvent<Unit>() }
 
-    lateinit var bundle: Bundle
+    var bundle: Bundle? = null
 
     init {
         listenForOutgoingPaymentS()
@@ -117,7 +117,7 @@ class PaymentConfirmationViewModel : ViewModel() {
         subscriptions.add(sub)
     }
 
-    fun init(bundle: Bundle) {
+    fun init(bundle: Bundle?) {
         this.bundle = bundle
         getPaymentTask()
     }
@@ -131,35 +131,32 @@ class PaymentConfirmationViewModel : ViewModel() {
         val tokenSymbol = getTokenSymbol()
         val tokenDecimals = getTokenDecimals()
 
-        val isUnsignedW3Transaction = unsignedW3Transaction != null
-        val isToshiPayment = toshiId != null
-        val isERC20Payment = tokenAddress != null && paymentAddress != null && tokenSymbol != null
-        val isExternalPayment = paymentAddress != null
-
         when {
-            isUnsignedW3Transaction -> getPaymentTaskWithUnsignedW3Transaction(unsignedW3Transaction)
-            isToshiPayment -> getPaymentTaskWithToshiId(toshiId, encodedEthAmount)
-            isERC20Payment -> getPaymentTaskWithTokenAddress(tokenAddress, tokenSymbol, tokenDecimals, paymentAddress, encodedEthAmount)
-            isExternalPayment -> getPaymentTaskWithPaymentAddress(paymentAddress, encodedEthAmount)
+            unsignedW3Transaction != null -> getPaymentTaskWithUnsignedW3Transaction(unsignedW3Transaction) // Unsigned transaction
+            toshiId != null -> getPaymentTaskWithToshiId(toshiId, encodedEthAmount) // Toshi transaction
+            tokenAddress != null && paymentAddress != null && tokenSymbol != null && tokenDecimals != null -> { // Token transaction
+                getPaymentTaskWithTokenAddress(tokenAddress, tokenSymbol, tokenDecimals, paymentAddress, encodedEthAmount)
+            }
+            paymentAddress != null -> getPaymentTaskWithPaymentAddress(paymentAddress, encodedEthAmount) // External transaction
             else -> LogUtil.exception("Unhandled payment unsignedW3Transaction, toshiId and paymentAddress is null")
         }
     }
 
-    private fun getToshiId() = bundle.getString(TOSHI_ID)
-    private fun getUnsignedW3Transaction() = bundle.getString(UNSIGNED_TRANSACTION)
-    fun getPaymentAddress() = bundle.getString(PAYMENT_ADDRESS)
-    fun getTokenAddress() = bundle.getString(TOKEN_ADDRESS)
-    fun getTokenSymbol() = bundle.getString(TOKEN_SYMBOL)
-    fun getTokenDecimals() = bundle.getInt(TOKEN_DECIMALS)
-    fun getPaymentType() = bundle.getInt(PAYMENT_TYPE)
-    fun getEncodedEthAmount() = bundle.getString(ETH_AMOUNT)
-    fun getCallbackId() = bundle.getString(CALLBACK_ID)
-    fun getDappUrl() = bundle.getString(DAPP_URL)
-    fun getDappTitle() = bundle.getString(DAPP_TITLE)
-    fun getDappFavicon() = bundle.getParcelable<Bitmap>(DAPP_FAVICON)
-    fun isSendingMaxAmount() = bundle.getBoolean(SEND_MAX_AMOUNT, false)
+    private fun getToshiId(): String? = bundle?.getString(TOSHI_ID)
+    private fun getUnsignedW3Transaction(): String? = bundle?.getString(UNSIGNED_TRANSACTION)
+    fun getPaymentAddress(): String? = bundle?.getString(PAYMENT_ADDRESS)
+    fun getTokenAddress(): String? = bundle?.getString(TOKEN_ADDRESS)
+    fun getTokenSymbol(): String? = bundle?.getString(TOKEN_SYMBOL)
+    fun getTokenDecimals(): Int? = bundle?.getInt(TOKEN_DECIMALS)
+    fun getPaymentType(): Int? = bundle?.getInt(PAYMENT_TYPE)
+    fun getEncodedEthAmount(): String = bundle?.getString(ETH_AMOUNT) ?: "0x0"
+    fun getCallbackId(): String? = bundle?.getString(CALLBACK_ID)
+    fun getDappUrl(): String? = bundle?.getString(DAPP_URL)
+    fun getDappTitle(): String? = bundle?.getString(DAPP_TITLE)
+    fun getDappFavicon(): Bitmap? = bundle?.getParcelable(DAPP_FAVICON)
+    fun isSendingMaxAmount() = bundle?.getBoolean(SEND_MAX_AMOUNT, false) ?: false
     fun getCurrencyMode(): CurrencyMode {
-        val currencyMode = bundle.getSerializable(CURRENCY_MODE) ?: CurrencyMode.FIAT
+        val currencyMode = bundle?.getSerializable(CURRENCY_MODE) ?: CurrencyMode.FIAT
         return currencyMode as CurrencyMode
     }
 

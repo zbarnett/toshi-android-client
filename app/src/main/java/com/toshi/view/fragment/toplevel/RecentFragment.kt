@@ -21,6 +21,7 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Build
 import android.os.Bundle
+import android.support.v4.app.FragmentActivity
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -63,27 +64,28 @@ class RecentFragment : TopLevelFragment() {
     private lateinit var recentAdapter: RecentAdapter
     private var scrollPosition = 0
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater?.inflate(R.layout.fragment_recent, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_recent, container, false)
     }
 
-    override fun onViewCreated(view: View?, inState: Bundle?) = init(inState)
+    override fun onViewCreated(view: View, inState: Bundle?) = init(inState)
 
     private fun init(inState: Bundle?) {
-        setStatusBarColor()
-        initViewModel()
+        val activity = activity ?: return
+        setStatusBarColor(activity)
+        initViewModel(activity)
         initClickListeners()
         restoreScrollPosition(inState)
         initRecentAdapter()
         initObservers()
     }
 
-    private fun setStatusBarColor() {
+    private fun setStatusBarColor(activity: FragmentActivity) {
         if (Build.VERSION.SDK_INT < 21) return
-        activity.window.statusBarColor = getColorById(R.color.colorPrimaryDark)
+        activity.window.statusBarColor = getColorById(R.color.colorPrimaryDark) ?: 0
     }
 
-    private fun initViewModel() {
+    private fun initViewModel(activity: FragmentActivity) {
         viewModel = ViewModelProviders.of(activity).get(RecentViewModel::class.java)
     }
 
@@ -217,13 +219,13 @@ class RecentFragment : TopLevelFragment() {
 
     private fun getAcceptedAndUnacceptedConversations() = viewModel.getAcceptedAndUnAcceptedConversations()
 
-    override fun onSaveInstanceState(outState: Bundle?) {
+    override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(setOutState(outState))
     }
 
-    private fun setOutState(outState: Bundle?): Bundle? {
+    private fun setOutState(outState: Bundle): Bundle {
         val recentsLayoutManager = recents.layoutManager as LinearLayoutManager
-        return outState?.apply {
+        return outState.apply {
             putInt(SCROLL_POSITION, recentsLayoutManager.findFirstCompletelyVisibleItemPosition())
         }
     }

@@ -26,7 +26,7 @@ import com.toshi.view.fragment.ERC20Fragment
 import com.toshi.view.fragment.ERC721Fragment
 
 class WalletPagerAdapter(
-        private val context: Context,
+        private val context: Context?,
         fm: FragmentManager?
 ) : FragmentPagerAdapter(fm) {
 
@@ -41,8 +41,8 @@ class WalletPagerAdapter(
 
     override fun getPageTitle(position: Int): CharSequence {
         return when (position) {
-            0 -> context.getString(R.string.tokens)
-            else -> context.getString(R.string.collectibles)
+            0 -> context?.getString(R.string.tokens) ?: ""
+            else -> context?.getString(R.string.collectibles) ?: ""
         }
     }
 }

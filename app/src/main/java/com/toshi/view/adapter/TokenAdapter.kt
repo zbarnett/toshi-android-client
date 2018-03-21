@@ -54,8 +54,8 @@ class TokenAdapter(private val tokenType: TokenType) : RecyclerView.Adapter<Recy
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): RecyclerView.ViewHolder {
-        val layoutInflater = LayoutInflater.from(parent?.context)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        val layoutInflater = LayoutInflater.from(parent.context)
         return when (viewType) {
             FOOTER -> {
                 val view = layoutInflater.inflate(R.layout.list_item__token_footer, parent, false)
@@ -68,7 +68,7 @@ class TokenAdapter(private val tokenType: TokenType) : RecyclerView.Adapter<Recy
         }
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder?, position: Int) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val token = tokens[position]
         when (holder) {
             is TokenFooterViewHolder -> {}
