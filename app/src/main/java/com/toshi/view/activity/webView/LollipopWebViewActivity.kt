@@ -84,7 +84,7 @@ class LollipopWebViewActivity : AppCompatActivity() {
     }
 
     private fun initViewModel() {
-        val url = intent.getStringExtra(EXTRA__ADDRESS)
+        val url = intent.getStringExtra(EXTRA__ADDRESS).orEmpty()
         viewModel = ViewModelProviders.of(
                 this,
                 WebViewViewModelFactory(url)
