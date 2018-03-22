@@ -84,10 +84,10 @@ class ToshiWebClient(
 
     @TargetApi(21)
     private fun interceptRequest(webRequest: WebResourceRequest): WebResourceResponse? {
-        val request = buildRequest(webRequest)
+        val request = buildRequest(webRequest) ?: return null
         return try {
             val response = httpClient.newCall(request).execute()
-            return if (response.priorResponse()?.isRedirect == true) {
+            if (response.priorResponse()?.isRedirect == true) {
                 handleRedirectOnOldApiVersions(response)
                 null
             } else {
@@ -109,14 +109,18 @@ class ToshiWebClient(
     }
 
     @TargetApi(21)
-    private fun buildRequest(webRequest: WebResourceRequest): Request {
-        val requestBuilder = Request.Builder()
-                .get()
-                .url(webRequest.url.toString())
-        webRequest.requestHeaders.forEach {
-            requestBuilder.addHeader(it.key, it.value)
+    private fun buildRequest(webRequest: WebResourceRequest): Request? {
+        return try {
+            val requestBuilder = Request.Builder()
+                    .get()
+                    .url(webRequest.url.toString())
+            webRequest.requestHeaders.forEach {
+                requestBuilder.addHeader(it.key, it.value)
+            }
+            requestBuilder.build()
+        } catch (e: IllegalArgumentException) {
+            null
         }
-        return requestBuilder.build()
     }
 
     private fun buildWebResponse(response: Response): WebResourceResponse? {
