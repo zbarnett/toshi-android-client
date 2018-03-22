@@ -97,7 +97,8 @@
         <activity android:name="com.toshi.view.activity.QrCodeActivity"/>
         <activity android:name="com.toshi.view.activity.QrCodeHandlerActivity" />
         <activity android:name="com.toshi.view.activity.webView.JellyBeanWebViewActivity"
-                  android:configChanges="keyboard|keyboardHidden|orientation|screenSize"/>
+            android:theme="@style/WhiteTheme"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"/>
         <activity android:name="com.toshi.view.activity.ImageCropActivity"
                   android:theme="@style/DarkTheme"/>
         <activity android:name="com.toshi.view.activity.CurrencyActivity" />

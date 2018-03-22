@@ -15,10 +15,10 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.toshi.presenter.webview;
+package com.toshi.view.activity.webView;
 
 
-/* package */ class SofaInjectResponse {
+public class SofaInjectResponse {
 
     private final String address;
     private final String data;

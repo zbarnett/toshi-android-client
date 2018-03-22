@@ -42,20 +42,16 @@ import com.toshi.util.PermissionUtil
 import com.toshi.view.fragment.DialogFragment.ChooserDialog
 import com.toshi.viewModel.ViewModelFactory.WebViewViewModelFactory
 import com.toshi.viewModel.WebViewViewModel
-import kotlinx.android.synthetic.main.activity_lollipop_view_view.input
-import kotlinx.android.synthetic.main.activity_lollipop_view_view.progressBar
-import kotlinx.android.synthetic.main.activity_lollipop_view_view.webview
-import kotlinx.android.synthetic.main.view_address_bar_input.backButton
-import kotlinx.android.synthetic.main.view_address_bar_input.forwardButton
+import kotlinx.android.synthetic.main.activity_lollipop_view_view.*
+import kotlinx.android.synthetic.main.view_address_bar_input.*
 import java.io.File
 
-class LollipopWebViewActivity : AppCompatActivity() {
+class JellyBeanWebViewActivity : AppCompatActivity() {
 
     companion object {
         const val EXTRA__ADDRESS = "address"
         const val EXIT_ACTION = "exitAction"
         const val RESULT_CODE = 101
-
         private const val PICK_IMAGE = 1
         private const val CAPTURE_IMAGE = 2
         private const val IMAGE_TYPE = "image/*"
@@ -65,8 +61,10 @@ class LollipopWebViewActivity : AppCompatActivity() {
 
     private var filePathCallback: ValueCallback<Array<Uri>>? = null
     private var capturedImagePath: String? = null
+    private var currentUrl: String? = null
     private lateinit var viewModel: WebViewViewModel
     private lateinit var sofaHostWrapper: SofaHostWrapper
+    private lateinit var webViewClient: JellyBeanWebClient
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -136,12 +134,15 @@ class LollipopWebViewActivity : AppCompatActivity() {
         val address = viewModel.tryGetAddress()
         sofaHostWrapper = SofaHostWrapper(this, webview, address)
         webview.addJavascriptInterface(sofaHostWrapper.sofaHost, "SOFAHost")
-        webview.webViewClient = ToshiWebClient(
+        webViewClient = JellyBeanWebClient(
                 this,
                 { viewModel.updateToolbar() },
-                { viewModel.url.postValue(it) },
+                { url -> currentUrl = url },
+                this::handleWebResourceResponse,
                 { onPageCommitVisible(it) }
+
         )
+        webview.webViewClient = webViewClient
         val chromeWebClient = ToshiChromeWebViewClient(this::handleFileChooserCallback)
         chromeWebClient.progressListener = { progressBar.setProgress(it) }
         webview.webChromeClient = chromeWebClient
@@ -152,13 +153,23 @@ class LollipopWebViewActivity : AppCompatActivity() {
         updateToolbarNavigation()
     }
 
+    private fun handleWebResourceResponse(response: SofaInjectResponse) {
+        webview.loadDataWithBaseURL(
+                response.address,
+                response.data,
+                response.mimeType,
+                response.encoding,
+                null
+        )
+    }
+
     private fun initObservers() {
         viewModel.toolbarUpdate.observe(this, Observer { updateToolbar() })
         viewModel.url.observe(this, Observer { load() })
     }
 
     private fun updateToolbar() {
-        input.text = webview.url
+        input.text = currentUrl ?: webview.url
         title = webview.title
         updateToolbarNavigation()
     }
@@ -168,7 +179,7 @@ class LollipopWebViewActivity : AppCompatActivity() {
         forwardButton.alpha = if (webview.canGoForward()) ALPHA_ENABLED else ALPHA_DISABLED
     }
 
-    private fun load() = webview.loadUrl(viewModel.tryGetAddress())
+    private fun load() = webViewClient.newPageLoad(viewModel.tryGetAddress())
 
     private fun handleFileChooserCallback(valueCallback: ValueCallback<Array<Uri>>?): Boolean {
         this.filePathCallback = valueCallback
@@ -281,6 +292,7 @@ class LollipopWebViewActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         sofaHostWrapper.clear()
+        webViewClient.clear()
         webview.destroy()
         super.onDestroy()
     }

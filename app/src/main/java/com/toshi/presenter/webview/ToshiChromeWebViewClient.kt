@@ -18,21 +18,32 @@
 package com.toshi.presenter.webview
 
 import android.net.Uri
+import android.os.Build
+import android.webkit.ConsoleMessage
 import android.webkit.ValueCallback
 import android.webkit.WebChromeClient
 import android.webkit.WebView
+import com.toshi.BuildConfig
+import com.toshi.util.logging.LogUtil
 
 class ToshiChromeWebViewClient(
-        private val fileCallback: (ValueCallback<Array<Uri>>?, FileChooserParams?) -> Boolean
+        private val fileCallback: (ValueCallback<Array<Uri>>?) -> Boolean
 ) : WebChromeClient() {
 
     var progressListener: ((Int) -> Unit)? = null
 
     override fun onShowFileChooser(webView: WebView?, filePathCallback: ValueCallback<Array<Uri>>?, fileChooserParams: FileChooserParams?): Boolean {
-        return fileCallback(filePathCallback, fileChooserParams)
+        return fileCallback(filePathCallback)
     }
 
     override fun onProgressChanged(view: WebView?, newProgress: Int) {
         progressListener?.invoke(newProgress)
+    }
+
+    override fun onConsoleMessage(consoleMessage: ConsoleMessage?): Boolean {
+        if (BuildConfig.DEBUG && Build.VERSION.SDK_INT <= 18) {
+            LogUtil.d("WebView Console: ${consoleMessage?.message()}")
+        }
+        return super.onConsoleMessage(consoleMessage)
     }
 }
