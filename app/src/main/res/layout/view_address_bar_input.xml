@@ -93,7 +93,7 @@
                 android:scrollHorizontally="true"
                 android:layout_weight="1"
                 android:padding="6dp"
-                android:inputType="textUri"
+                android:inputType="textUri|textNoSuggestions"
                 android:layout_height="match_parent"
                 android:singleLine="true"
                 android:maxLines="1"

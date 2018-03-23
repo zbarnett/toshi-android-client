@@ -100,7 +100,6 @@ class CollapsingToshiView : AppBarLayout {
     }
 
     fun expandAndHideCloseButton() {
-        setExpanded(true, true)
         input.setText("")
         closeButton.isVisible(false)
         input.addPadding(left = input.paddingRight, right = input.paddingRight)

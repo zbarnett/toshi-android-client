@@ -118,6 +118,7 @@
                 android:layout_marginRight="@dimen/activity_horizontal_margin"
                 android:textSize="14sp"
                 android:textColor="@color/textColorPrimaryTransparent"
+                android:lineSpacingMultiplier="1.2"
                 tools:text="Fully decentralized collectable dueling game on the Ethereum blockchain. Collect, breed, battle. Welcome to the World of Ether."/>
 
             <android.support.v4.widget.Space

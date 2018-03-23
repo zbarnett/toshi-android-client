@@ -38,6 +38,7 @@ import com.toshi.extensions.setActivityResultAndFinish
 import com.toshi.presenter.webview.SofaHostWrapper
 import com.toshi.presenter.webview.ToshiChromeWebViewClient
 import com.toshi.util.FileUtil
+import com.toshi.util.KeyboardUtil
 import com.toshi.util.PermissionUtil
 import com.toshi.view.fragment.DialogFragment.ChooserDialog
 import com.toshi.viewModel.ViewModelFactory.WebViewViewModelFactory
@@ -47,6 +48,7 @@ import kotlinx.android.synthetic.main.activity_lollipop_view_view.progressBar
 import kotlinx.android.synthetic.main.activity_lollipop_view_view.webview
 import kotlinx.android.synthetic.main.view_address_bar_input.backButton
 import kotlinx.android.synthetic.main.view_address_bar_input.forwardButton
+import kotlinx.android.synthetic.main.view_address_bar_input.view.userInput
 import java.io.File
 
 class LollipopWebViewActivity : AppCompatActivity() {
@@ -113,6 +115,7 @@ class LollipopWebViewActivity : AppCompatActivity() {
     }
 
     private fun handleExitClicked() {
+        KeyboardUtil.hideKeyboard(input.userInput)
         val isListeningForExitAction = intent.getBooleanExtra(EXIT_ACTION, false)
         if (isListeningForExitAction) setActivityResultAndFinish(RESULT_CODE)
         else finish()
