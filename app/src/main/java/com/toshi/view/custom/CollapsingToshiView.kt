@@ -52,6 +52,7 @@ class CollapsingToshiView : AppBarLayout {
     var onHeaderCollapsed: (() -> Unit)? = null
     var onHeaderExpanded: (() -> Unit)? = null
     var onEnterClicked: ((String) -> Unit)? = null
+    var onCloseButtonClicked: (() -> Unit)? = null
 
     constructor(context: Context): super(context) {
         init()
@@ -78,7 +79,7 @@ class CollapsingToshiView : AppBarLayout {
     }
 
     private fun initListeners() {
-        closeButton.setOnClickListener { expandAndHideCloseButton() }
+        closeButton.setOnClickListener { hideCloseButton() }
         input.setOnFocusChangeListener { _, hasFocus -> handleFocusChanged(hasFocus) }
         input.setOnClickListener { if (it.hasFocus()) collapse() }
         addOnOffsetChangedListener { appBarLayout, verticalOffset ->
@@ -100,10 +101,18 @@ class CollapsingToshiView : AppBarLayout {
     }
 
     fun expandAndHideCloseButton() {
+        setExpanded(true, true)
         input.setText("")
         closeButton.isVisible(false)
         input.addPadding(left = input.paddingRight, right = input.paddingRight)
         onHeaderExpanded?.invoke()
+    }
+
+    private fun hideCloseButton() {
+        closeButton.isVisible(false)
+        input.setText("")
+        input.addPadding(left = input.paddingRight, right = input.paddingRight)
+        onCloseButtonClicked?.invoke()
     }
 
     private fun collapse() {

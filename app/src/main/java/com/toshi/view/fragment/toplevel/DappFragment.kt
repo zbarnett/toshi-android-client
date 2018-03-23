@@ -158,6 +158,7 @@ class DappFragment : BackableTopLevelFragment() {
         header.onHeaderCollapsed = { showSearchUI(input.text.toString()) }
         header.onHeaderExpanded = { showBrowseUI(); hideKeyboardAndUnfocus() }
         header.onEnterClicked = { if (it.isWebUrl()) openWebViewForResult(BROWSER_REQUEST_CODE, it) }
+        header.onCloseButtonClicked = { showBrowseUI(); hideKeyboardAndUnfocus() }
     }
 
     private fun setOnApplyWindowInsetsListener() {
@@ -228,15 +229,20 @@ class DappFragment : BackableTopLevelFragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == BROWSER_REQUEST_CODE && resultCode == RESULT_CODE) {
-            header?.expandAndHideCloseButton()
+            expandAndScrollToTop()
         }
     }
 
     override fun onBackPressed(): Boolean {
         if (!header.isFullyExpanded) {
-            header.expandAndHideCloseButton()
+            expandAndScrollToTop()
             return true
         }
         return false
+    }
+
+    private fun expandAndScrollToTop() {
+        dapps.scrollToPosition(0)
+        header?.expandAndHideCloseButton()
     }
 }
