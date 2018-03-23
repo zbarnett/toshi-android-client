@@ -101,7 +101,7 @@ class SearchDappAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private fun isGoogleSearchItemsAdded(): Boolean {
         val availablePosition = getAvailableGoogleSearchPosition()
-        return dapps.size > availablePosition + 1
+        return dapps.size > availablePosition
                 && dapps[availablePosition] is DappGoogleSearch
     }
 
@@ -130,7 +130,7 @@ class SearchDappAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private fun isUrlItemsAdded(): Boolean {
         val availablePosition = getAvailableUrlPosition()
-        return dapps.size > availablePosition + 1
+        return dapps.size > availablePosition
                 && dapps[availablePosition] is DappUrl
     }
 

@@ -24,6 +24,7 @@ import android.view.KeyEvent
 import android.widget.LinearLayout
 import com.toshi.R
 import com.toshi.util.KeyboardUtil
+import com.toshi.view.adapter.listeners.TextChangedListener
 import kotlinx.android.synthetic.main.view_address_bar_input.view.userInput
 import kotlinx.android.synthetic.main.view_address_bar_input.view.backButton
 import kotlinx.android.synthetic.main.view_address_bar_input.view.forwardButton
@@ -35,14 +36,18 @@ class AddressBarInputView : LinearLayout {
     var onForwardClickedListener: (() -> Unit)? = null
     var onGoClickedListener: ((String) -> Unit)? = null
     var onExitClickedListener: (() -> Unit)? = null
+    var onFocusChangedListener: ((Boolean) -> Unit)? = null
+    var onTextChangedListener: ((String) -> Unit)? = null
 
     private var keyListener: KeyListener? = null
+    private var skipFirst = true
 
     var text: String
         get() {
             return userInput.text.toString()
         }
         set(value) {
+            skipFirst = true
             userInput.setText(value)
         }
 
@@ -75,23 +80,36 @@ class AddressBarInputView : LinearLayout {
         keyListener = userInput.keyListener
         userInput.setOnFocusChangeListener { _, hasFocus ->
             userInput.keyListener = if (hasFocus) keyListener else null
+            onFocusChangedListener?.invoke(hasFocus)
         }
         userInput.setOnKeyListener { _, _, event ->
             val isEnter = event.keyCode == KeyEvent.KEYCODE_ENTER
             val isActionUp = event.action == KeyEvent.ACTION_UP
             if (event != null && isEnter && isActionUp) {
-                userInput.clearFocus()
-                KeyboardUtil.hideKeyboard(userInput)
+                clearFocus()
                 handleGoClicked()
                 return@setOnKeyListener true
             }
             return@setOnKeyListener false
         }
+        userInput.addTextChangedListener(object : TextChangedListener() {
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val skip = skipFirst && s?.isEmpty() == true
+                if (!skip) onTextChangedListener?.invoke(s.toString())
+                skipFirst = false
+            }
+        })
     }
 
     private fun handleGoClicked() {
         val url = userInput.text.toString()
         if (url.trim().isEmpty()) return
         onGoClickedListener?.invoke(url)
+    }
+
+    override fun clearFocus() {
+        super.clearFocus()
+        userInput.clearFocus()
+        KeyboardUtil.hideKeyboard(userInput)
     }
 }

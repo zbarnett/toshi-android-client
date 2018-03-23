@@ -139,7 +139,7 @@ class DappFragment : BackableTopLevelFragment() {
     }
 
     private fun openBrowserAndSearchGoogle(searchValue: String) {
-        val address = "https://www.google.com/search?q=$searchValue"
+        val address = getString(R.string.google_search_url).format(searchValue)
         openWebViewForResult(BROWSER_REQUEST_CODE, address)
     }
 
@@ -157,7 +157,7 @@ class DappFragment : BackableTopLevelFragment() {
         header.onTextChangedListener = { showSearchUI(it) }
         header.onHeaderCollapsed = { showSearchUI(input.text.toString()) }
         header.onHeaderExpanded = { showBrowseUI(); hideKeyboardAndUnfocus() }
-        header.onEnterClicked = { if (isWebUrl(it)) openWebViewForResult(BROWSER_REQUEST_CODE, it) }
+        header.onEnterClicked = { if (it.isWebUrl()) openWebViewForResult(BROWSER_REQUEST_CODE, it) }
     }
 
     private fun setOnApplyWindowInsetsListener() {
@@ -196,7 +196,7 @@ class DappFragment : BackableTopLevelFragment() {
     private fun search(input: String) {
         viewModel.search(input)
         searchDappAdapter.addGoogleSearchItems(input)
-        if (isWebUrl(input)) searchDappAdapter.addWebUrlItems(input)
+        if (input.isWebUrl()) searchDappAdapter.addWebUrlItems(input)
         else searchDappAdapter.removeWebUrl()
     }
 

@@ -24,7 +24,6 @@ import android.support.annotation.DimenRes
 import android.support.annotation.StringRes
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
-import android.util.Patterns
 import android.widget.Toast
 import com.toshi.view.activity.webView.JellyBeanWebViewActivity
 import com.toshi.view.activity.webView.LollipopWebViewActivity
@@ -52,8 +51,6 @@ inline fun <reified T> Fragment.startActivityAndFinish() {
 fun Fragment.toast(@StringRes id: Int, duration: Int = Toast.LENGTH_SHORT) = Toast.makeText(context, id, duration).show()
 
 fun Fragment.getColor(@ColorRes id: Int) = context?.let { ContextCompat.getColor(it, id) }
-
-fun Fragment.isWebUrl(value: String) = Patterns.WEB_URL.matcher(value.trim()).matches()
 
 fun Fragment.openWebView(address: String) {
     if (Build.VERSION.SDK_INT >= 21) {

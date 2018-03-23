@@ -29,23 +29,31 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.support.v4.content.FileProvider
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.LinearLayoutManager
 import android.webkit.ValueCallback
 import android.webkit.WebSettings
 import android.webkit.WebView
 import com.toshi.BuildConfig
 import com.toshi.R
+import com.toshi.extensions.isVisible
+import com.toshi.extensions.isWebUrl
 import com.toshi.extensions.setActivityResultAndFinish
+import com.toshi.model.local.dapp.DappCategory
+import com.toshi.model.network.dapp.Dapp
 import com.toshi.presenter.webview.SofaHostWrapper
 import com.toshi.presenter.webview.ToshiChromeWebViewClient
 import com.toshi.util.FileUtil
 import com.toshi.util.KeyboardUtil
 import com.toshi.util.PermissionUtil
+import com.toshi.view.adapter.SearchDappAdapter
 import com.toshi.view.fragment.DialogFragment.ChooserDialog
+import com.toshi.viewModel.DappViewModel
 import com.toshi.viewModel.ViewModelFactory.WebViewViewModelFactory
 import com.toshi.viewModel.WebViewViewModel
 import kotlinx.android.synthetic.main.activity_lollipop_view_view.input
 import kotlinx.android.synthetic.main.activity_lollipop_view_view.progressBar
 import kotlinx.android.synthetic.main.activity_lollipop_view_view.webview
+import kotlinx.android.synthetic.main.activity_lollipop_view_view.searchDapps
 import kotlinx.android.synthetic.main.view_address_bar_input.backButton
 import kotlinx.android.synthetic.main.view_address_bar_input.forwardButton
 import kotlinx.android.synthetic.main.view_address_bar_input.view.userInput
@@ -67,19 +75,23 @@ class LollipopWebViewActivity : AppCompatActivity() {
 
     private var filePathCallback: ValueCallback<Array<Uri>>? = null
     private var capturedImagePath: String? = null
-    private lateinit var viewModel: WebViewViewModel
+    private lateinit var webViewModel: WebViewViewModel
+    private lateinit var dappSearchViewModel: DappViewModel
     private lateinit var sofaHostWrapper: SofaHostWrapper
+    private lateinit var searchDappAdapter: SearchDappAdapter
+    private var addressBarHasFocus = false
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_lollipop_view_view)
         initWebClient()
         load()
+        initSearchAdapter()
     }
 
     private fun initWebClient() {
         initViewModel()
-        initClickListeners()
+        initListeners()
         initWebSettings()
         injectEverything()
         initObservers()
@@ -88,37 +100,75 @@ class LollipopWebViewActivity : AppCompatActivity() {
     private fun initViewModel() {
         val url = intent.getStringExtra(EXTRA__ADDRESS).orEmpty()
         input.text = url
-        viewModel = ViewModelProviders.of(
+        webViewModel = ViewModelProviders.of(
                 this,
                 WebViewViewModelFactory(url)
         ).get(WebViewViewModel::class.java)
+        dappSearchViewModel = ViewModelProviders.of(this).get(DappViewModel::class.java)
     }
 
-    private fun initClickListeners() {
+    private fun initListeners() {
         input.onBackClickedListener = { handleBackButtonClicked() }
         input.onForwardClickedListener = { handleForwardButtonClicked() }
-        input.onGoClickedListener = { viewModel.url.postValue(it) }
+        input.onGoClickedListener = { onGoClicked(it) }
         input.onExitClickedListener = { handleExitClicked() }
+        input.onFocusChangedListener = { onAddressBarFocusChanged(it) }
+        input.onTextChangedListener = { showSearchUI(it) }
     }
 
     private fun handleBackButtonClicked() {
         if (webview.canGoBack()) webview.goBack()
+        clearAddressBarFocus()
     }
 
     private fun handleForwardButtonClicked() {
         if (webview.canGoForward()) webview.goForward()
+        clearAddressBarFocus()
     }
 
-    override fun onBackPressed() {
-        if (webview.canGoBack()) webview.goBack()
-        else super.onBackPressed()
+    private fun onGoClicked(it: String) {
+        webViewModel.url.postValue(it)
+        clearAddressBarFocus()
     }
+
+    private fun clearAddressBarFocus() = input.clearFocus()
 
     private fun handleExitClicked() {
         KeyboardUtil.hideKeyboard(input.userInput)
         val isListeningForExitAction = intent.getBooleanExtra(EXIT_ACTION, false)
         if (isListeningForExitAction) setActivityResultAndFinish(RESULT_CODE)
         else finish()
+    }
+
+    private fun onAddressBarFocusChanged(hasFocus: Boolean) {
+        if (!hasFocus) searchDapps.isVisible(false)
+        addressBarHasFocus = hasFocus
+    }
+
+    private fun showSearchUI(input: String) {
+        if (!addressBarHasFocus) return
+        searchDapps.isVisible(true)
+        if (input.isEmpty()) setSearchEmptyState()
+        else search(input)
+    }
+
+    private fun setSearchEmptyState() {
+        dappSearchViewModel.getAllDapps()
+        val dapps = dappSearchViewModel.allDapps.value ?: emptyList()
+        val category = DappCategory(getString(R.string.dapps), -1)
+        searchDappAdapter.setEmptyState(dapps, category)
+    }
+
+    private fun search(input: String) {
+        searchDappAdapter.addGoogleSearchItems(input)
+        dappSearchViewModel.search(input)
+        if (input.isWebUrl()) searchDappAdapter.addWebUrlItems(input)
+        else searchDappAdapter.removeWebUrl()
+    }
+
+    override fun onBackPressed() {
+        if (webview.canGoBack()) webview.goBack()
+        else super.onBackPressed()
     }
 
     private fun initWebSettings() {
@@ -137,13 +187,13 @@ class LollipopWebViewActivity : AppCompatActivity() {
     }
 
     private fun injectEverything() {
-        val address = viewModel.tryGetAddress()
+        val address = webViewModel.tryGetAddress()
         sofaHostWrapper = SofaHostWrapper(this, webview, address)
         webview.addJavascriptInterface(sofaHostWrapper.sofaHost, "SOFAHost")
         webview.webViewClient = ToshiWebClient(
                 this,
-                { viewModel.updateToolbar() },
-                { viewModel.url.postValue(it) },
+                { webViewModel.updateToolbar() },
+                { webViewModel.url.postValue(it) },
                 { onPageCommitVisible(it) }
         )
         val chromeWebClient = ToshiChromeWebViewClient(this::handleFileChooserCallback)
@@ -157,8 +207,19 @@ class LollipopWebViewActivity : AppCompatActivity() {
     }
 
     private fun initObservers() {
-        viewModel.toolbarUpdate.observe(this, Observer { updateToolbar() })
-        viewModel.url.observe(this, Observer { load() })
+        webViewModel.toolbarUpdate.observe(this, Observer { updateToolbar() })
+        webViewModel.url.observe(this, Observer { load() })
+        dappSearchViewModel.searchResult.observe(this, Observer {
+            if (it != null && input.text.isNotEmpty()) setSearchResult(it.results.dapps)
+        })
+        dappSearchViewModel.allDapps.observe(this, Observer {
+            if (it != null) setSearchResult(it)
+        })
+    }
+
+    private fun setSearchResult(dapps: List<Dapp>) {
+        val dappsCategory = DappCategory(getString(R.string.dapps), -1)
+        searchDappAdapter.setDapps(dapps, dappsCategory)
     }
 
     private fun updateToolbar() {
@@ -172,7 +233,37 @@ class LollipopWebViewActivity : AppCompatActivity() {
         forwardButton.alpha = if (webview.canGoForward()) ALPHA_ENABLED else ALPHA_DISABLED
     }
 
-    private fun load() = webview.loadUrl(viewModel.tryGetAddress())
+    private fun load() = webview.loadUrl(webViewModel.tryGetAddress())
+
+    private fun initSearchAdapter() {
+        searchDappAdapter = SearchDappAdapter().apply {
+            onSearchClickListener = { openBrowserAndSearchGoogle(it) }
+            onGoToClickListener = { goToUrl(it) }
+            onItemClickedListener = { goToDappUrl(it) }
+        }
+        searchDapps.apply {
+            adapter = searchDappAdapter
+            layoutManager = LinearLayoutManager(context)
+            itemAnimator = null
+            setOnClickListener { clearAddressBarFocus() }
+        }
+    }
+
+    private fun goToDappUrl(it: Dapp) {
+        webViewModel.url.value = it.url
+        clearAddressBarFocus()
+    }
+
+    private fun goToUrl(it: String) {
+        webViewModel.url.value = it
+        clearAddressBarFocus()
+    }
+
+    private fun openBrowserAndSearchGoogle(searchValue: String) {
+        val address = getString(R.string.google_search_url).format(searchValue)
+        webViewModel.url.value = address
+        clearAddressBarFocus()
+    }
 
     private fun handleFileChooserCallback(valueCallback: ValueCallback<Array<Uri>>?): Boolean {
         this.filePathCallback = valueCallback

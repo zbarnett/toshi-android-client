@@ -17,9 +17,12 @@
 @file:JvmName("StringUtils")
 package com.toshi.extensions
 
+import android.util.Patterns
 import com.toshi.model.local.Group.GROUP_ID_LENGTH
 
 fun String.isGroupId(): Boolean {
     // Todo - check compatability with other clients (i.e. iOS)
     return length == GROUP_ID_LENGTH
 }
+
+fun String.isWebUrl() = Patterns.WEB_URL.matcher(this.trim()).matches()
