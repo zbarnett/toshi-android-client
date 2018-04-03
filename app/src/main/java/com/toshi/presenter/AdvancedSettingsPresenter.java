@@ -29,10 +29,12 @@ import com.toshi.model.local.Network;
 import com.toshi.model.local.Networks;
 import com.toshi.util.BuildTypes;
 import com.toshi.util.DialogUtil;
+import com.toshi.util.ScannerResultType;
 import com.toshi.util.logging.LogUtil;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.activity.AdvancedSettingsActivity;
 import com.toshi.view.activity.LicenseListActivity;
+import com.toshi.view.activity.ScannerActivity;
 import com.toshi.view.fragment.DialogFragment.NetworkSwitcherDialog;
 
 import rx.Subscription;
@@ -41,6 +43,8 @@ import rx.subscriptions.CompositeSubscription;
 
 public class AdvancedSettingsPresenter implements Presenter<AdvancedSettingsActivity> {
 
+    private final static int SCAN_REQUEST_CODE = 200;
+
     private AdvancedSettingsActivity activity;
     private CompositeSubscription subscriptions;
     private boolean firstTimeAttaching = true;
@@ -48,6 +52,7 @@ public class AdvancedSettingsPresenter implements Presenter<AdvancedSettingsActi
     private Dialog infoDialog;
     private NetworkSwitcherDialog networkDialog;
     private boolean onGoingTask = false;
+    private int scannerCounter = 0;
 
     @Override
     public void onViewAttached(AdvancedSettingsActivity view) {
@@ -73,9 +78,21 @@ public class AdvancedSettingsPresenter implements Presenter<AdvancedSettingsActi
     }
 
     private void initCLickListeners() {
+        this.activity.getBinding().version.setOnClickListener(__ -> handleVersionClicked());
         this.activity.getBinding().closeButton.setOnClickListener(__ -> this.activity.finish());
         this.activity.getBinding().currentNetworkWrapper.setOnClickListener(__ -> handleCurrentNetworkClicked());
         this.activity.getBinding().openSourceLicenses.setOnClickListener(this::handleOpenSourceLicencesClicked);
+    }
+
+    private void handleVersionClicked() {
+        scannerCounter++;
+        if ((scannerCounter % 10) == 0) startScannerActivity();
+    }
+
+    private void startScannerActivity() {
+        final Intent intent = new Intent(this.activity, ScannerActivity.class)
+                .putExtra(ScannerActivity.SCANNER_RESULT_TYPE, ScannerResultType.NO_ACTION);
+        this.activity.startActivityForResult(intent, SCAN_REQUEST_CODE);
     }
 
     private void handleCurrentNetworkClicked() {
