@@ -20,6 +20,7 @@ package com.toshi.viewModel
 import android.arch.lifecycle.ViewModel
 import com.toshi.util.SingleLiveEvent
 import com.toshi.view.BaseApplication
+import rx.android.schedulers.AndroidSchedulers
 import rx.subscriptions.CompositeSubscription
 import java.math.BigDecimal
 
@@ -33,6 +34,7 @@ class AmountViewModel : ViewModel() {
     fun getEthAmount(localValue: BigDecimal) {
         val sub = balanceManager
                 .convertLocalCurrencyToEth(localValue)
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { ethAmount.value = it },
                         { ethAmount.value = null }

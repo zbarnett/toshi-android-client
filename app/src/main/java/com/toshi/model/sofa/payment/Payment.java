@@ -24,15 +24,10 @@ import android.support.annotation.StringRes;
 import com.squareup.moshi.Json;
 import com.toshi.R;
 import com.toshi.crypto.HDWallet;
-import com.toshi.crypto.util.TypeConverter;
 import com.toshi.model.local.SendState;
 import com.toshi.model.sofa.SofaType;
-import com.toshi.util.EthUtil;
 import com.toshi.util.LocaleUtil;
 import com.toshi.view.BaseApplication;
-
-import java.math.BigDecimal;
-import java.math.BigInteger;
 
 import rx.Single;
 import rx.schedulers.Schedulers;
@@ -126,16 +121,6 @@ public class Payment {
         return this.androidClientSideCustomData.localPrice;
     }
 
-    public Single<Payment> generateLocalPrice() {
-        final BigInteger weiAmount = TypeConverter.StringHexToBigInteger(this.value);
-        final BigDecimal ethAmount = EthUtil.weiToEth(weiAmount);
-        return BaseApplication
-                .get()
-                .getBalanceManager()
-                .convertEthToLocalCurrencyString(ethAmount)
-                .map(this::setLocalPrice);
-    }
-
     public String toUserVisibleString(final boolean sentByLocal, final @SendState.State int sentStatus) {
         final @StringRes int successMessageId = sentByLocal
                 ? R.string.latest_message__payment_outgoing
@@ -151,8 +136,7 @@ public class Payment {
     }
 
     public Single<Integer> getPaymentDirection() {
-        return BaseApplication
-                .get()
+        return BaseApplication.get()
                 .getToshiManager()
                 .getWallet()
                 .toObservable()
