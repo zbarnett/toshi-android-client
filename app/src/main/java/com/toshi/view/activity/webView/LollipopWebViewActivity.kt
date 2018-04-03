@@ -30,6 +30,7 @@ import android.provider.MediaStore
 import android.support.v4.content.FileProvider
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.view.View
 import android.webkit.ValueCallback
 import android.webkit.WebSettings
 import android.webkit.WebView
@@ -54,6 +55,7 @@ import kotlinx.android.synthetic.main.activity_lollipop_view_view.input
 import kotlinx.android.synthetic.main.activity_lollipop_view_view.progressBar
 import kotlinx.android.synthetic.main.activity_lollipop_view_view.webview
 import kotlinx.android.synthetic.main.activity_lollipop_view_view.searchDapps
+import kotlinx.android.synthetic.main.activity_lollipop_view_view.swipeToRefresh
 import kotlinx.android.synthetic.main.view_address_bar_input.backButton
 import kotlinx.android.synthetic.main.view_address_bar_input.forwardButton
 import kotlinx.android.synthetic.main.view_address_bar_input.view.userInput
@@ -114,6 +116,7 @@ class LollipopWebViewActivity : AppCompatActivity() {
         input.onExitClickedListener = { handleExitClicked() }
         input.onFocusChangedListener = { onAddressBarFocusChanged(it) }
         input.onTextChangedListener = { showSearchUI(it) }
+        swipeToRefresh.setOnRefreshListener { webview.reload() }
     }
 
     private fun handleBackButtonClicked() {
@@ -190,20 +193,23 @@ class LollipopWebViewActivity : AppCompatActivity() {
         val address = webViewModel.tryGetAddress()
         sofaHostWrapper = SofaHostWrapper(this, webview, address)
         webview.addJavascriptInterface(sofaHostWrapper.sofaHost, "SOFAHost")
-        webview.webViewClient = ToshiWebClient(
-                this,
-                { webViewModel.updateToolbar() },
-                { webViewModel.url.postValue(it) },
-                { onPageCommitVisible(it) }
-        )
+        webview.webViewClient = ToshiWebClient(this)
+                .apply {
+                    onHistoryUpdatedListener = webViewModel::updateToolbar
+                    onUrlUpdatedListener = { webViewModel.url.postValue(it) }
+                    onPageLoadingStartedListener = { webview.visibility = View.INVISIBLE }
+                    onPageLoadedListener = { onPageLoaded(it) }
+                }
         val chromeWebClient = ToshiChromeWebViewClient(this::handleFileChooserCallback)
         chromeWebClient.progressListener = { progressBar.setProgress(it) }
         webview.webChromeClient = chromeWebClient
     }
 
-    private fun onPageCommitVisible(url: String?) {
+    private fun onPageLoaded(url: String?) {
         if (url != null) input.text = url
         updateToolbarNavigation()
+        swipeToRefresh.isRefreshing = false
+        webview.visibility = View.VISIBLE
     }
 
     private fun initObservers() {
