@@ -163,14 +163,11 @@ dependencies {
             //Architecture components
             "android.arch.lifecycle:extensions:$archVersion",
             'com.jakewharton.timber:timber:4.6.1',
+            "com.crashlytics.sdk.android:crashlytics:2.9.1"
     )
 
-    kapt 'com.android.databinding:compiler:2.3.1'
     ktlint "com.github.shyiko:ktlint:0.12.1"
 
-    compile('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
-        transitive = true
-    }
     testImplementation(
             'junit:junit:4.12',
             'org.hamcrest:hamcrest-library:1.3',
@@ -186,12 +183,7 @@ dependencies {
 
 dependencyVerification {
     verify = [
-            'com.crashlytics.sdk.android:crashlytics:8fd52c8fd857e67fb015de4f7eaa2510223a19bb308c59d8264f08f7dd641372',
             'com.google.firebase:firebase-core:ad7954769f68912b17b2794c3346376d378f851a4a77345682d5b50be8e95588',
-            'com.crashlytics.sdk.android:beta:5045a1dcfd4461ef398ea999a94d8f7fa31ab589d296cb849ea0b751e91d75ca',
-            'com.crashlytics.sdk.android:crashlytics-core:8ea320d38abcb9d1aea7f2b9895781137925babb17c40a4ae9c298570670ec93',
-            'com.crashlytics.sdk.android:answers:8ac7ec5ae3977f2e8e59889853f958d818b60f751973ea3b8108a8695a1de6c5',
-            'io.fabric.sdk.android:fabric:2d2e8b920042bc59b7610639885314718b53ac3f3f9744587d04d0304880a557',
             'com.google.firebase:firebase-analytics:9a7e631ced30ceab9045482703b8ebe060f24a0f4d248e7584fa354d438700c2',
             'com.google.firebase:firebase-analytics-impl:30e7607128faad3a9e4e0cfe0e7677ec89299164382f77f79af9f0b6db125edd',
             'com.google.firebase:firebase-iid:7e026d50ed0e4af6dde2041791a14cae1f0214e71d1bda0b50ac27bf295a3789',
