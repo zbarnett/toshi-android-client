@@ -30,14 +30,14 @@ import com.toshi.exception.CurrencyException
 import com.toshi.extensions.isVisible
 import com.toshi.extensions.setActivityResultAndFinish
 import com.toshi.extensions.toast
-import com.toshi.model.local.Networks
+import com.toshi.model.local.network.Networks
 import com.toshi.util.BuildTypes
 import com.toshi.util.CurrencyUtil
 import com.toshi.util.EthUtil
 import com.toshi.util.LocaleUtil
 import com.toshi.util.OnSingleClickListener
 import com.toshi.util.PaymentType
-import com.toshi.util.sharedPrefs.SharedPrefs
+import com.toshi.util.sharedPrefs.AppPrefs
 import com.toshi.view.adapter.AmountInputAdapter
 import com.toshi.viewModel.AmountViewModel
 import kotlinx.android.synthetic.main.activity_amount.amountInputView
@@ -186,7 +186,7 @@ class AmountActivity : AppCompatActivity() {
 
     private fun setCurrency() {
         try {
-            val currency = SharedPrefs.getCurrency()
+            val currency = AppPrefs.getCurrency()
             val currencyCode = CurrencyUtil.getCode(currency)
             val currencySymbol = CurrencyUtil.getSymbol(currency)
             localCurrencySymbol.text = currencySymbol

@@ -22,7 +22,6 @@ import com.toshi.crypto.signal.ChatService;
 import com.toshi.crypto.signal.SignalPreferences;
 import com.toshi.crypto.signal.store.ProtocolStore;
 import com.toshi.manager.OnboardingManager;
-import com.toshi.util.GcmPrefsUtil;
 import com.toshi.util.GcmUtil;
 import com.toshi.util.logging.LogUtil;
 
@@ -106,9 +105,5 @@ public class SofaMessageRegistration {
             }
         })
         .subscribeOn(Schedulers.io());
-    }
-
-    public void clearGcmPrefs() {
-        GcmPrefsUtil.clear();
     }
 }

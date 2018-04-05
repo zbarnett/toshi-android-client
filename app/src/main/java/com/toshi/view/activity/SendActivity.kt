@@ -29,7 +29,7 @@ import com.toshi.crypto.util.isPaymentAddressValid
 import com.toshi.extensions.isVisible
 import com.toshi.extensions.startActivityForResult
 import com.toshi.extensions.toast
-import com.toshi.model.local.Networks
+import com.toshi.model.local.network.Networks
 import com.toshi.util.BuildTypes
 import com.toshi.util.PaymentType
 import com.toshi.util.QrCodeHandler

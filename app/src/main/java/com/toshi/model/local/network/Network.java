@@ -15,7 +15,7 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.toshi.model.local;
+package com.toshi.model.local.network;
 
 public class Network {
     private final String id;
@@ -30,6 +30,12 @@ public class Network {
         this.url = splitString[0];
         this.name = splitString[1];
         this.id = splitString[2];
+    }
+
+    public Network(final String id, final String name, final String url) {
+        this.id = id;
+        this.name = name;
+        this.url = url;
     }
 
     public String getId() {

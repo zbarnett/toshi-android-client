@@ -25,8 +25,8 @@ import android.widget.Toast;
 
 import com.toshi.BuildConfig;
 import com.toshi.R;
-import com.toshi.model.local.Network;
-import com.toshi.model.local.Networks;
+import com.toshi.model.local.network.Network;
+import com.toshi.model.local.network.Networks;
 import com.toshi.util.BuildTypes;
 import com.toshi.util.DialogUtil;
 import com.toshi.util.ScannerResultType;

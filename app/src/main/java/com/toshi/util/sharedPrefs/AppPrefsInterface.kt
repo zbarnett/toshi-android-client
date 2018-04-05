@@ -17,9 +17,9 @@
 
 package com.toshi.util.sharedPrefs
 
-import com.toshi.model.local.Network
+import com.toshi.model.local.network.Network
 
-interface SharedPrefsInterface {
+interface AppPrefsInterface {
     fun hasOnboarded(): Boolean
     fun setHasOnboarded(hasOnboarded: Boolean)
     fun hasLoadedApp(): Boolean

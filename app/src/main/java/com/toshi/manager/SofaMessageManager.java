@@ -419,7 +419,6 @@ public final class SofaMessageManager {
     public void clear() {
         clearMessageReceiver();
         clearMessageSender();
-        clearMessageRegistration();
         clearConnectivitySubscription();
     }
 
@@ -434,13 +433,6 @@ public final class SofaMessageManager {
         if (this.messageSender != null) {
             this.messageSender.clear();
             this.messageSender = null;
-        }
-    }
-
-    private void clearMessageRegistration() {
-        if (this.messageRegister != null) {
-            this.messageRegister.clearGcmPrefs();
-            this.messageRegister = null;
         }
     }
 

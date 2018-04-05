@@ -36,7 +36,7 @@ import com.toshi.extensions.isVisible
 import com.toshi.extensions.openWebView
 import com.toshi.extensions.toast
 import com.toshi.model.local.Conversation
-import com.toshi.model.local.Networks
+import com.toshi.model.local.network.Networks
 import com.toshi.model.local.Recipient
 import com.toshi.model.sofa.Control
 import com.toshi.model.sofa.PaymentRequest

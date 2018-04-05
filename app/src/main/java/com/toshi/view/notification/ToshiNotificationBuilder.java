@@ -29,7 +29,7 @@ import android.support.v4.content.ContextCompat;
 
 import com.toshi.R;
 import com.toshi.model.sofa.SofaType;
-import com.toshi.util.sharedPrefs.SharedPrefs;
+import com.toshi.util.sharedPrefs.AppPrefs;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.notification.model.ToshiNotification;
 
@@ -129,7 +129,7 @@ public class ToshiNotificationBuilder {
     //TODO: can be deleted 8th Feb 2018
     @RequiresApi(api = 26)
     private static void clearNotificationChannelsIfNeeded() {
-        final boolean hasClearedNotificationChannels = SharedPrefs.INSTANCE.hasClearedNotificationChannels();
+        final boolean hasClearedNotificationChannels = AppPrefs.INSTANCE.hasClearedNotificationChannels();
         if (hasClearedNotificationChannels) return;
 
         final NotificationManager manager = (NotificationManager) BaseApplication.get().getSystemService(Context.NOTIFICATION_SERVICE);
@@ -139,7 +139,7 @@ public class ToshiNotificationBuilder {
             manager.deleteNotificationChannel(channel.getId());
         }
 
-        SharedPrefs.INSTANCE.setHasClearedNotificationChannels();
+        AppPrefs.INSTANCE.setHasClearedNotificationChannels();
     }
 
     private static NotificationCompat.Style generateNotificationStyle(final ToshiNotification notification) {

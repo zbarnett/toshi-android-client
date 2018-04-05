@@ -19,12 +19,12 @@ package com.toshi.util.sharedPrefs
 
 import android.content.Context
 import com.toshi.exception.CurrencyException
-import com.toshi.model.local.Network
+import com.toshi.model.local.network.Network
 import com.toshi.util.CurrencyUtil
 import com.toshi.util.FileNames
 import com.toshi.view.BaseApplication
 
-object SharedPrefs : SharedPrefsInterface {
+object AppPrefs : AppPrefsInterface {
     private const val STORED_QR_CODE = "STORED_QR_CODE"
     private const val HAS_ONBOARDED = "hasOnboarded"
     private const val HAS_SIGNED_OUT = "hasSignedIn"

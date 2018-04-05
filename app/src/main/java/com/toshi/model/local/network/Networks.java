@@ -15,12 +15,12 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.toshi.model.local;
+package com.toshi.model.local.network;
 
 import android.support.annotation.Nullable;
 
 import com.toshi.R;
-import com.toshi.util.sharedPrefs.SharedPrefs;
+import com.toshi.util.sharedPrefs.AppPrefs;
 import com.toshi.view.BaseApplication;
 
 import java.util.ArrayList;
@@ -114,7 +114,8 @@ public class Networks {
         throw new NullPointerException("No network exists with that ID");
     }
 
-    private @Nullable String getCurrentNetworkId() {
-        return SharedPrefs.INSTANCE.getCurrentNetworkId();
+    @Nullable
+    public String getCurrentNetworkId() {
+        return AppPrefs.INSTANCE.getCurrentNetworkId();
     }
 }

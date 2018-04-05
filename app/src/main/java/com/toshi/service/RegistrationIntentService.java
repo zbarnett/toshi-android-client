@@ -33,7 +33,7 @@ public class RegistrationIntentService extends IntentService {
         BaseApplication
                 .get()
                 .getBalanceManager()
-                .forceRegisterEthGcm();
+                .registerEthGcm();
 
         BaseApplication
                 .get()

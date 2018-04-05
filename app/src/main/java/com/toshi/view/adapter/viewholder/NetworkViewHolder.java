@@ -24,7 +24,7 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.toshi.R;
-import com.toshi.model.local.Network;
+import com.toshi.model.local.network.Network;
 import com.toshi.view.adapter.listeners.OnItemClickListener;
 
 public class NetworkViewHolder extends RecyclerView.ViewHolder {

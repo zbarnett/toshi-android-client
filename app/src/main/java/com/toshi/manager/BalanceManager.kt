@@ -19,19 +19,16 @@ package com.toshi.manager
 
 import com.toshi.crypto.HDWallet
 import com.toshi.crypto.util.TypeConverter
+import com.toshi.manager.ethRegistration.EthGcmRegistration
 import com.toshi.manager.network.CurrencyInterface
 import com.toshi.manager.network.CurrencyService
 import com.toshi.manager.network.EthereumInterface
 import com.toshi.manager.network.EthereumService
-import com.toshi.model.local.Network
-import com.toshi.model.local.Networks
+import com.toshi.model.local.network.Network
 import com.toshi.model.network.Balance
 import com.toshi.model.network.Currencies
 import com.toshi.model.network.ERC721TokenWrapper
 import com.toshi.model.network.ExchangeRate
-import com.toshi.model.network.GcmDeregistration
-import com.toshi.model.network.GcmRegistration
-import com.toshi.model.network.ServerTime
 import com.toshi.model.network.token.ERC20Tokens
 import com.toshi.model.network.token.ERC721Tokens
 import com.toshi.model.network.token.ERCToken
@@ -39,13 +36,11 @@ import com.toshi.model.sofa.payment.Payment
 import com.toshi.util.CurrencyUtil
 import com.toshi.util.EthUtil
 import com.toshi.util.EthUtil.BIG_DECIMAL_SCALE
-import com.toshi.util.GcmPrefsUtil
-import com.toshi.util.GcmUtil
 import com.toshi.util.logging.LogUtil
+import com.toshi.util.sharedPrefs.AppPrefs
+import com.toshi.util.sharedPrefs.AppPrefsInterface
 import com.toshi.util.sharedPrefs.BalancePrefs
 import com.toshi.util.sharedPrefs.BalancePrefsInterface
-import com.toshi.util.sharedPrefs.SharedPrefs
-import com.toshi.util.sharedPrefs.SharedPrefsInterface
 import com.toshi.view.BaseApplication
 import rx.Completable
 import rx.Scheduler
@@ -61,16 +56,18 @@ class BalanceManager(
         private val ethService: EthereumInterface = EthereumService.getApi(),
         private val currencyService: CurrencyInterface = CurrencyService.getApi(),
         private val balancePrefs: BalancePrefsInterface = BalancePrefs(),
-        private val sharedPrefs: SharedPrefsInterface = SharedPrefs,
+        private val appPrefs: AppPrefsInterface = AppPrefs,
+        private val ethGcmRegistration: EthGcmRegistration = EthGcmRegistration(appPrefs = appPrefs, ethService = ethService),
+        private val baseApplication: BaseApplication = BaseApplication.get(),
         private val subscribeOnScheduler: Scheduler = Schedulers.io()
 ) {
     private lateinit var wallet: HDWallet
-    private val networks by lazy { Networks.getInstance() }
     private var connectivitySub: Subscription? = null
     val balanceObservable: BehaviorSubject<Balance> = BehaviorSubject.create<Balance>()
 
     fun init(wallet: HDWallet): Completable {
         this.wallet = wallet
+        ethGcmRegistration.init(wallet)
         initCachedBalance()
         return registerEthGcm()
                 .onErrorComplete()
@@ -84,8 +81,7 @@ class BalanceManager(
 
     private fun attachConnectivityObserver() {
         clearConnectivitySubscription()
-        connectivitySub = BaseApplication
-                .get()
+        connectivitySub = baseApplication
                 .isConnectedSubject
                 .subscribeOn(subscribeOnScheduler)
                 .filter { isConnected -> isConnected }
@@ -104,6 +100,8 @@ class BalanceManager(
                         { LogUtil.exception("Error while registering eth gcm", it) }
                 )
     }
+
+    fun registerEthGcm(): Completable = ethGcmRegistration.forceRegisterEthGcm()
 
     fun refreshBalance() {
         getBalance()
@@ -198,7 +196,7 @@ class BalanceManager(
         return String.format("%s%s %s", currencySymbol, amount, currencyCode)
     }
 
-    fun getLocalCurrency(): Single<String> = Single.fromCallable { sharedPrefs.getCurrency() }
+    private fun getLocalCurrency(): Single<String> = Single.fromCallable { appPrefs.getCurrency() }
 
     fun convertEthToLocalCurrency(ethAmount: BigDecimal): Single<BigDecimal> {
         return getLocalCurrencyExchangeRate()
@@ -227,100 +225,24 @@ class BalanceManager(
         }
     }
 
-    private fun unregisterEthGcmWithTimestamp(token: String, serverTime: ServerTime?): Completable {
-        return if (serverTime == null) Completable.error(IllegalStateException("Unable to fetch server time"))
-        else ethService
-                .unregisterGcm(serverTime.get(), GcmDeregistration(token))
-                .toCompletable()
-    }
-
     fun getTransactionStatus(transactionHash: String): Single<Payment> {
         return EthereumService
                 .get()
                 .getStatusOfTransaction(transactionHash)
     }
 
-    //Don't unregister the default network
-    fun changeNetwork(network: Network): Completable {
-        return if (networks.onDefaultNetwork()) {
-            changeEthBaseUrl(network)
-                    .andThen(registerEthGcm())
-                    .subscribeOn(subscribeOnScheduler)
-                    .doOnCompleted { sharedPrefs.setCurrentNetwork(network) }
-        } else GcmUtil
-                .getGcmToken()
-                .flatMapCompletable { unregisterFromEthGcm(it) }
-                .andThen(changeEthBaseUrl(network))
-                .andThen(registerEthGcm())
-                .subscribeOn(subscribeOnScheduler)
-                .doOnCompleted { sharedPrefs.setCurrentNetwork(network) }
-    }
-
-    fun unregisterFromEthGcm(token: String): Completable {
-        val currentNetworkId = networks.currentNetwork.id
-        return ethService
-                .timestamp
-                .subscribeOn(subscribeOnScheduler)
-                .flatMapCompletable { unregisterEthGcmWithTimestamp(token, it) }
-                .doOnCompleted { GcmPrefsUtil.setEthGcmTokenSentToServer(currentNetworkId, false) }
-    }
-
-    private fun changeEthBaseUrl(network: Network): Completable {
-        return Completable.fromAction { EthereumService.get().changeBaseUrl(network.url) }
-    }
-
-    fun forceRegisterEthGcm(): Completable {
-        if (wallet == null || networks == null) {
-            return Completable.error(IllegalStateException("Unable to register GCM as class hasn't been initialised yet"))
-        }
-        val currentNetworkId = networks.currentNetwork.id
-        GcmPrefsUtil.setEthGcmTokenSentToServer(currentNetworkId, false)
-        return registerEthGcm()
-    }
-
-    private fun registerEthGcm(): Completable {
-        val currentNetworkId = networks.currentNetwork.id
-        return if (GcmPrefsUtil.isEthGcmTokenSentToServer(currentNetworkId)) Completable.complete()
-        else GcmUtil
-                .getGcmToken()
-                .flatMapCompletable { registerEthGcmToken(it) }
-    }
-
-    private fun registerEthGcmToken(token: String): Completable {
-        return ethService
-                .timestamp
-                .subscribeOn(subscribeOnScheduler)
-                .flatMapCompletable { registerEthGcmWithTimestamp(token, it) }
-                .doOnCompleted { setEthGcmTokenSentToServer() }
-                .doOnError { handleGcmRegisterError(it) }
-    }
-
-    private fun setEthGcmTokenSentToServer() {
-        val currentNetworkId = networks.currentNetwork.id
-        GcmPrefsUtil.setEthGcmTokenSentToServer(currentNetworkId, true)
-    }
-
-    @Throws(IllegalStateException::class)
-    private fun registerEthGcmWithTimestamp(token: String, serverTime: ServerTime?): Completable {
-        if (serverTime == null) throw IllegalStateException("ServerTime was null")
-        return ethService
-                .registerGcm(serverTime.get(), GcmRegistration(token, wallet.paymentAddress))
-                .toCompletable()
-    }
-
-    private fun handleGcmRegisterError(throwable: Throwable) {
-        LogUtil.exception("Error during registering of GCM", throwable)
-        val currentNetworkId = networks.currentNetwork.id
-        GcmPrefsUtil.setEthGcmTokenSentToServer(currentNetworkId, false)
-    }
-
     private fun readLastKnownBalance(): String = balancePrefs.readLastKnownBalance()
 
     private fun writeLastKnownBalance(balance: Balance) = balancePrefs.writeLastKnownBalance(balance)
 
+    fun changeNetwork(network: Network) = ethGcmRegistration.changeNetwork(network)
+
+    fun unregisterFromEthGcm(token: String) = ethGcmRegistration.unregisterFromEthGcm(token)
+
     fun clear() {
         clearConnectivitySubscription()
         balancePrefs.clear()
+        ethGcmRegistration.clear()
     }
 
     private fun getWallet(): Single<HDWallet> {

@@ -29,7 +29,7 @@ import com.toshi.R;
 import com.toshi.crypto.HDWallet;
 import com.toshi.util.KeyboardUtil;
 import com.toshi.util.logging.LogUtil;
-import com.toshi.util.sharedPrefs.SharedPrefs;
+import com.toshi.util.sharedPrefs.AppPrefs;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.activity.MainActivity;
 import com.toshi.view.activity.SignInActivity;
@@ -156,7 +156,7 @@ public class SignInPresenter implements Presenter<SignInActivity> {
                 .flatMapCompletable(this::initWallet)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnCompleted(SharedPrefs.INSTANCE::setHasBackedUpPhrase)
+                .doOnCompleted(AppPrefs.INSTANCE::setHasBackedUpPhrase)
                 .subscribe(
                         this::handleWalletSuccess,
                         this::handleWalletError
@@ -185,7 +185,7 @@ public class SignInPresenter implements Presenter<SignInActivity> {
     private void goToMainActivity() {
         if (this.activity == null) return;
         KeyboardUtil.hideKeyboard(this.activity.getBinding().passphraseInputView);
-        SharedPrefs.INSTANCE.setSignedIn();
+        AppPrefs.INSTANCE.setSignedIn();
         final Intent intent = new Intent(this.activity, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         this.activity.startActivity(intent);

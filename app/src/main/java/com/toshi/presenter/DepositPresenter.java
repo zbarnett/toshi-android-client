@@ -31,13 +31,13 @@ import android.widget.Toast;
 import com.toshi.BuildConfig;
 import com.toshi.R;
 import com.toshi.crypto.HDWallet;
-import com.toshi.model.local.Network;
-import com.toshi.model.local.Networks;
+import com.toshi.model.local.network.Network;
+import com.toshi.model.local.network.Networks;
 import com.toshi.util.BuildTypes;
 import com.toshi.util.DialogUtil;
 import com.toshi.util.logging.LogUtil;
 import com.toshi.util.QrCode;
-import com.toshi.util.sharedPrefs.SharedPrefs;
+import com.toshi.util.sharedPrefs.AppPrefs;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.activity.BackupPhraseInfoActivity;
 import com.toshi.view.activity.DepositActivity;
@@ -79,7 +79,7 @@ public class DepositPresenter implements Presenter<DepositActivity> {
     }
 
     private void showWarningDialogIfNotBackedUp() {
-        if (SharedPrefs.INSTANCE.hasBackedUpPhrase()) return;
+        if (AppPrefs.INSTANCE.hasBackedUpPhrase()) return;
 
         final AlertDialog.Builder builder =
                 DialogUtil.getBaseDialog(

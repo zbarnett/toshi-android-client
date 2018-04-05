@@ -31,8 +31,8 @@ import android.view.Window;
 
 import com.toshi.R;
 import com.toshi.databinding.FragmentNetworkSwitcherBinding;
-import com.toshi.model.local.Network;
-import com.toshi.model.local.Networks;
+import com.toshi.model.local.network.Network;
+import com.toshi.model.local.network.Networks;
 import com.toshi.view.adapter.NetworkAdapter;
 import com.toshi.view.adapter.listeners.OnItemClickListener;
 

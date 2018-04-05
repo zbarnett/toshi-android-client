@@ -15,39 +15,21 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.toshi.model.network;
+package com.toshi.util.sharedPrefs
 
-import java.math.BigDecimal;
+import android.content.Context
+import com.toshi.util.FileNames
+import com.toshi.view.BaseApplication
 
-public class ExchangeRate {
+class EthGcmPrefs : EthGcmPrefsInterface {
 
-    private String from;
-    private String to;
-    private BigDecimal rate;
-    private Integer timestamp;
+    private val prefs by lazy { BaseApplication.get().getSharedPreferences(FileNames.GCM_PREFS, Context.MODE_PRIVATE) }
 
-    // For tests only
-    public ExchangeRate(final String from, final String to, final BigDecimal rate, final Integer timestamp) {
-        this.from = from;
-        this.to = to;
-        this.rate = rate;
-        this.timestamp = timestamp;
+    override fun setEthGcmTokenSentToServer(networkId: String, isSentToServer: Boolean) {
+        prefs.edit().putBoolean(networkId, isSentToServer).commit()
     }
 
-    public String getFrom() {
-        return from;
-    }
+    override fun isEthGcmTokenSentToServer(networkId: String) = prefs.getBoolean(networkId, false)
 
-    public String getTo() {
-        return to;
-    }
-
-    public BigDecimal getRate() {
-        return rate;
-    }
-
-    public Integer getTimestamp() {
-        return timestamp;
-    }
-
+    override fun clear() = prefs.edit().clear().apply()
 }

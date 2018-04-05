@@ -26,8 +26,8 @@ import com.toshi.manager.model.ERC20TokenPaymentTask
 import com.toshi.manager.model.PaymentTask
 import com.toshi.manager.model.ToshiPaymentTask
 import com.toshi.manager.model.W3PaymentTask
-import com.toshi.manager.network.CurrencyInterface
 import com.toshi.manager.network.EthereumInterface
+import com.toshi.managers.BalanceManagerMocker
 import com.toshi.model.local.UnsignedW3Transaction
 import com.toshi.model.local.User
 import com.toshi.model.network.ExchangeRate
@@ -35,8 +35,6 @@ import com.toshi.model.network.TransactionRequest
 import com.toshi.model.network.UnsignedTransaction
 import com.toshi.util.EthUtil
 import com.toshi.util.paymentTask.PaymentTaskBuilder
-import com.toshi.util.sharedPrefs.BalancePrefsInterface
-import com.toshi.util.sharedPrefs.SharedPrefsInterface
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.instanceOf
@@ -44,7 +42,6 @@ import org.hamcrest.Matchers.notNullValue
 import org.junit.Before
 import org.junit.Test
 import org.mockito.ArgumentMatchers.any
-import org.mockito.ArgumentMatchers.anyString
 import org.mockito.Mockito
 import rx.Single
 import rx.schedulers.Schedulers
@@ -85,16 +82,7 @@ class PaymentTaskBuilderTest {
     }
 
     private fun mockEthToUsdExchangeRate() {
-        exchangeRate = Mockito.mock(ExchangeRate::class.java)
-        Mockito
-                .`when`(exchangeRate.from)
-                .thenReturn(fromCurrency)
-        Mockito
-                .`when`(exchangeRate.to)
-                .thenReturn(toCurrency)
-        Mockito
-                .`when`(exchangeRate.rate)
-                .thenReturn(BigDecimal("581.10"))
+        exchangeRate = ExchangeRate(fromCurrency, toCurrency, BigDecimal("581.10"), 0)
     }
 
     private fun calcSendAmount() {
@@ -157,26 +145,7 @@ class PaymentTaskBuilderTest {
     }
 
     private fun mockBalanceManager() {
-        val ethApi = Mockito.mock(EthereumInterface::class.java)
-        val currencyApi = Mockito.mock(CurrencyInterface::class.java)
-        val sharedPrefs = Mockito.mock(SharedPrefsInterface::class.java)
-        val balancePrefs = Mockito.mock(BalancePrefsInterface::class.java)
-
-        Mockito
-                .`when`(currencyApi.getRates(anyString()))
-                .thenReturn(Single.just(exchangeRate))
-
-        Mockito
-                .`when`(sharedPrefs.getCurrency())
-                .thenReturn("USD")
-
-        balanceManager = BalanceManager(
-                ethService = ethApi,
-                currencyService = currencyApi,
-                sharedPrefs = sharedPrefs,
-                balancePrefs = balancePrefs,
-                subscribeOnScheduler = Schedulers.trampoline()
-        )
+        balanceManager = BalanceManagerMocker(exchangeRate = exchangeRate).mock()
     }
 
     private fun createPaymentTaskBuilder() {
