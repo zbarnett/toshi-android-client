@@ -88,7 +88,7 @@ class JellyBeanWebViewActivity : AppCompatActivity() {
 
     private fun initViewModel() {
         val url = intent.getStringExtra(EXTRA__ADDRESS).orEmpty()
-        input.text = url
+        input.url = url
         viewModel = ViewModelProviders.of(
                 this,
                 WebViewViewModelFactory(url)
@@ -156,7 +156,7 @@ class JellyBeanWebViewActivity : AppCompatActivity() {
     }
 
     private fun onPageCommitVisible(url: String?) {
-        if (url != null) input.text = url
+        if (url != null) input.url = url
         updateToolbarNavigation()
     }
 
@@ -176,7 +176,7 @@ class JellyBeanWebViewActivity : AppCompatActivity() {
     }
 
     private fun updateToolbar() {
-        input.text = currentUrl ?: webview.url
+        input.url = currentUrl ?: webview.url
         title = webview.title
         updateToolbarNavigation()
     }

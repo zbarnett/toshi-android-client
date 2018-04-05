@@ -43,9 +43,10 @@ class WebViewViewModel(startUrl: String) : ViewModel() {
 
     @Throws(IllegalArgumentException::class)
     private fun getAddress(): String {
-        val uri = URI.create(url.value)
-        return if (uri.scheme == null) "http://" + uri.toASCIIString()
-        else uri.toASCIIString()
+        val value = url.value ?: throw IllegalArgumentException()
+        val prefixedValue = if (value.startsWith("http")) value else "http://$value"
+        val uri = URI.create(prefixedValue)
+        return uri.toASCIIString()
     }
 
     fun updateToolbar() = toolbarUpdate.postValue(Unit)

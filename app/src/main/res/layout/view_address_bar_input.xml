@@ -23,98 +23,150 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    tools:parentTag="android.widget.LinearLayout"
     tools:orientation="horizontal">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:orientation="horizontal">
-
-    <android.support.v4.widget.Space
-        android:layout_width="8dp"
-        android:layout_height="0dp" />
-
-    <ImageButton
-        android:id="@+id/backButton"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:scaleType="fitCenter"
-        android:tint="@color/textColorSecondary"
-        app:srcCompat="@drawable/ic_chevron_right_active"
-        android:scaleX="-1"
-        style="@style/closeButtonStyle"/>
-
-    <ImageButton
-        android:id="@+id/forwardButton"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:scaleType="fitCenter"
-        android:tint="@color/textColorSecondary"
-        app:srcCompat="@drawable/ic_chevron_right_active"
-        style="@style/closeButtonStyle"/>
-
-    <android.support.v4.widget.Space
-        android:layout_width="8dp"
-        android:layout_height="0dp" />
-
     <FrameLayout
-        android:layout_width="0dp"
-        android:layout_weight="1"
+        android:layout_width="match_parent"
         android:layout_height="match_parent">
-
-        <View
-            android:id="@+id/inputFrame"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="6dp"
-            android:layout_marginBottom="6dp"
-            android:background="@drawable/background_with_radius_border_2dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:orientation="horizontal">
+
+        <android.support.v4.widget.Space
+            android:layout_width="8dp"
+            android:layout_height="0dp" />
+
+        <ImageButton
+            android:id="@+id/backButton"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:scaleType="fitCenter"
+            android:tint="@color/textColorSecondary"
+            app:srcCompat="@drawable/ic_chevron_right_active"
+            android:scaleX="-1"
+            style="@style/closeButtonStyle"/>
+
+        <ImageButton
+            android:id="@+id/forwardButton"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:scaleType="fitCenter"
+            android:tint="@color/textColorSecondary"
+            app:srcCompat="@drawable/ic_chevron_right_active"
+            style="@style/closeButtonStyle"/>
+
+        <android.support.v4.widget.Space
+            android:layout_width="8dp"
+            android:layout_height="0dp" />
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:focusable="true"
+            android:focusableInTouchMode="true">
+
+            <View
+                android:id="@+id/inputFrame"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="6dp"
+                android:layout_marginBottom="6dp"
+                android:background="@drawable/background_with_radius_border_2dp" />
+
+            <LinearLayout
+                android:id="@+id/addressField"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/pageTypeIcon"
+                    android:layout_width="36dp"
+                    android:translationX="6dp"
+                    android:layout_height="match_parent"
+                    android:tint="@color/textColorSecondary"
+                    app:srcCompat="@drawable/ic_earth"
+                    style="@style/closeButtonStyle"/>
+
+                <TextView
+                    android:id="@+id/addressPrefix"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:scrollHorizontally="true"
+                    android:paddingLeft="6dp"
+                    android:singleLine="true"
+                    android:maxLines="1"
+                    android:textColor="@color/inactiveTextColor"
+                    android:textSize="18sp"
+                    android:gravity="center_vertical"/>
+
+                <TextView
+                    android:id="@+id/address"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:ellipsize="end"
+                    android:textSize="18sp"
+                    android:singleLine="true"
+                    android:maxLines="1"
+                    android:gravity="center_vertical"/>
+
+            </LinearLayout>
+
+        </FrameLayout>
+
+        <ImageButton
+            android:id="@+id/closeButton"
+            style="@style/closeButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="fitCenter"
+            android:tint="@color/textColorSecondary"
+            app:srcCompat="@drawable/ic_clear" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/addressInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            android:background="@color/windowBackground">
 
             <ImageButton
-                android:id="@+id/pageTypeIcon"
-                android:layout_width="36dp"
-                android:translationX="6dp"
-                android:layout_height="match_parent"
+                android:id="@+id/backArrowButton"
+                style="@style/closeButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scaleType="fitCenter"
                 android:tint="@color/textColorSecondary"
-                app:srcCompat="@drawable/ic_earth"
-                style="@style/closeButtonStyle"/>
+                app:srcCompat="@drawable/ic_arrow_back" />
 
             <EditText
                 android:id="@+id/userInput"
+                android:layout_height="match_parent"
                 android:layout_width="0dp"
+                android:layout_weight="1"
                 android:ellipsize="end"
                 android:scrollHorizontally="true"
-                android:layout_weight="1"
-                android:padding="6dp"
+                android:paddingTop="6dp"
+                android:paddingBottom="6dp"
+                android:paddingRight="6dp"
                 android:inputType="textUri|textNoSuggestions"
-                android:layout_height="match_parent"
                 android:singleLine="true"
                 android:maxLines="1"
                 android:selectAllOnFocus="true"
                 android:background="@android:color/transparent"
                 android:imeOptions="actionGo"
                 android:hint="@string/dapp_search_hint" />
-
         </LinearLayout>
 
     </FrameLayout>
-
-    <ImageButton
-        android:id="@+id/closeButton"
-        style="@style/closeButtonStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:scaleType="fitCenter"
-        android:tint="@color/textColorSecondary"
-        app:srcCompat="@drawable/ic_clear" />
-
-    </LinearLayout>
 
 </merge>

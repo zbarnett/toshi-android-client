@@ -23,12 +23,18 @@ import android.util.AttributeSet
 import android.view.KeyEvent
 import android.widget.LinearLayout
 import com.toshi.R
+import com.toshi.extensions.isVisible
 import com.toshi.util.KeyboardUtil
 import com.toshi.view.adapter.listeners.TextChangedListener
 import kotlinx.android.synthetic.main.view_address_bar_input.view.userInput
 import kotlinx.android.synthetic.main.view_address_bar_input.view.backButton
 import kotlinx.android.synthetic.main.view_address_bar_input.view.forwardButton
 import kotlinx.android.synthetic.main.view_address_bar_input.view.closeButton
+import kotlinx.android.synthetic.main.view_address_bar_input.view.addressInput
+import kotlinx.android.synthetic.main.view_address_bar_input.view.addressPrefix
+import kotlinx.android.synthetic.main.view_address_bar_input.view.addressField
+import kotlinx.android.synthetic.main.view_address_bar_input.view.address
+import kotlinx.android.synthetic.main.view_address_bar_input.view.backArrowButton
 
 class AddressBarInputView : LinearLayout {
 
@@ -41,14 +47,16 @@ class AddressBarInputView : LinearLayout {
 
     private var keyListener: KeyListener? = null
     private var skipFirst = true
+    private var editTextVisible = false
 
-    var text: String
+    var url: String
         get() {
-            return userInput.text.toString()
+            return "${addressPrefix.text}${address.text}"
         }
         set(value) {
             skipFirst = true
-            userInput.setText(value)
+            setStaticUrl(value)
+            if (isAddressInputVisible()) copyAddressBarValueToEditText()
         }
 
     constructor(context: Context) : super(context) {
@@ -72,7 +80,33 @@ class AddressBarInputView : LinearLayout {
     private fun initClickListener() {
         backButton.setOnClickListener { onBackClickedListener?.invoke() }
         forwardButton.setOnClickListener { onForwardClickedListener?.invoke() }
+        addressField.setOnClickListener { showAddressInput() }
+        addressField.setOnLongClickListener { showAddressInput() }
         closeButton.setOnClickListener { onExitClickedListener?.invoke() }
+        backArrowButton.setOnClickListener { clearFocus() }
+    }
+
+    private fun showAddressInput(): Boolean {
+        addressInput.isVisible(true)
+        editTextVisible = true
+        copyAddressBarValueToEditText()
+        return true
+    }
+
+    private fun copyAddressBarValueToEditText() {
+        userInput.setText(url)
+        selectAll()
+    }
+
+    private fun selectAll() {
+        userInput.requestFocus()
+        KeyboardUtil.showKeyboard(userInput)
+        userInput.selectAll()
+    }
+
+    private fun hideAddressInput() {
+        addressInput.isVisible(false)
+        editTextVisible = false
     }
 
     private fun initListeners() {
@@ -101,15 +135,36 @@ class AddressBarInputView : LinearLayout {
         })
     }
 
+    override fun dispatchKeyEventPreIme(event: KeyEvent?): Boolean {
+        val actionUp = event?.action == KeyEvent.ACTION_UP
+        val keyCodeBack = event?.keyCode == KeyEvent.KEYCODE_BACK
+        // Hide EditText when keyboard is being closed
+        if (isAddressInputVisible() && actionUp && keyCodeBack) hideAddressInput()
+        return super.dispatchKeyEventPreIme(event)
+    }
+
     private fun handleGoClicked() {
-        val url = userInput.text.toString()
+        url = userInput.text.toString()
         if (url.trim().isEmpty()) return
         onGoClickedListener?.invoke(url)
+        hideAddressInput()
+    }
+
+    private fun setStaticUrl(url: String) {
+        val regex = "^(https?://)?(.+)".toRegex()
+        val matchResult = regex.find(url)
+        val matchGroups = matchResult?.groups ?: return
+        if (matchGroups.size < 3) return
+        addressPrefix.text = matchGroups[1]?.value.orEmpty()
+        address.text = matchGroups[2]?.value.orEmpty()
     }
 
     override fun clearFocus() {
         super.clearFocus()
         userInput.clearFocus()
         KeyboardUtil.hideKeyboard(userInput)
+        hideAddressInput()
     }
+
+    fun isAddressInputVisible() = editTextVisible
 }

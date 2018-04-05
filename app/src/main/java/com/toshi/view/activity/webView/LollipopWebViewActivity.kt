@@ -95,13 +95,13 @@ class LollipopWebViewActivity : AppCompatActivity() {
         initViewModel()
         initListeners()
         initWebSettings()
-        injectEverything()
+        initWebView()
         initObservers()
     }
 
     private fun initViewModel() {
         val url = intent.getStringExtra(EXTRA__ADDRESS).orEmpty()
-        input.text = url
+        input.url = url
         webViewModel = ViewModelProviders.of(
                 this,
                 WebViewViewModelFactory(url)
@@ -110,7 +110,7 @@ class LollipopWebViewActivity : AppCompatActivity() {
     }
 
     private fun initListeners() {
-        input.onBackClickedListener = { handleBackButtonClicked() }
+        input.onBackClickedListener = { handleToolbarBackButtonClicked() }
         input.onForwardClickedListener = { handleForwardButtonClicked() }
         input.onGoClickedListener = { onGoClicked(it) }
         input.onExitClickedListener = { handleExitClicked() }
@@ -119,7 +119,7 @@ class LollipopWebViewActivity : AppCompatActivity() {
         swipeToRefresh.setOnRefreshListener { webview.reload() }
     }
 
-    private fun handleBackButtonClicked() {
+    private fun handleToolbarBackButtonClicked() {
         if (webview.canGoBack()) webview.goBack()
         clearAddressBarFocus()
     }
@@ -144,8 +144,9 @@ class LollipopWebViewActivity : AppCompatActivity() {
     }
 
     private fun onAddressBarFocusChanged(hasFocus: Boolean) {
-        if (!hasFocus) searchDapps.isVisible(false)
         addressBarHasFocus = hasFocus
+        if (hasFocus) showSearchUI(input.url)
+        else searchDapps.isVisible(false)
     }
 
     private fun showSearchUI(input: String) {
@@ -170,8 +171,11 @@ class LollipopWebViewActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if (webview.canGoBack()) webview.goBack()
-        else super.onBackPressed()
+        when {
+            input.isAddressInputVisible() -> input.clearFocus()
+            webview.canGoBack() -> webview.goBack()
+            else -> super.onBackPressed()
+        }
     }
 
     private fun initWebSettings() {
@@ -189,7 +193,7 @@ class LollipopWebViewActivity : AppCompatActivity() {
         }
     }
 
-    private fun injectEverything() {
+    private fun initWebView() {
         val address = webViewModel.tryGetAddress()
         sofaHostWrapper = SofaHostWrapper(this, webview, address)
         webview.addJavascriptInterface(sofaHostWrapper.sofaHost, "SOFAHost")
@@ -197,7 +201,7 @@ class LollipopWebViewActivity : AppCompatActivity() {
                 .apply {
                     onHistoryUpdatedListener = webViewModel::updateToolbar
                     onUrlUpdatedListener = { webViewModel.url.postValue(it) }
-                    onPageLoadingStartedListener = { webview.visibility = View.INVISIBLE }
+                    onPageLoadingStartedListener = { handlePageLoading() }
                     onPageLoadedListener = { onPageLoaded(it) }
                 }
         val chromeWebClient = ToshiChromeWebViewClient(this::handleFileChooserCallback)
@@ -205,8 +209,13 @@ class LollipopWebViewActivity : AppCompatActivity() {
         webview.webChromeClient = chromeWebClient
     }
 
+    private fun handlePageLoading() {
+        webview.isVisible(true)
+        progressBar.alpha = 1.0f
+    }
+
     private fun onPageLoaded(url: String?) {
-        if (url != null) input.text = url
+        if (url != null) input.url = url
         updateToolbarNavigation()
         swipeToRefresh.isRefreshing = false
         webview.visibility = View.VISIBLE
@@ -216,7 +225,7 @@ class LollipopWebViewActivity : AppCompatActivity() {
         webViewModel.toolbarUpdate.observe(this, Observer { updateToolbar() })
         webViewModel.url.observe(this, Observer { load() })
         dappSearchViewModel.searchResult.observe(this, Observer {
-            if (it != null && input.text.isNotEmpty()) setSearchResult(it.results.dapps)
+            if (it != null && input.url.isNotEmpty()) setSearchResult(it.results.dapps)
         })
         dappSearchViewModel.allDapps.observe(this, Observer {
             if (it != null) setSearchResult(it)
@@ -229,7 +238,7 @@ class LollipopWebViewActivity : AppCompatActivity() {
     }
 
     private fun updateToolbar() {
-        input.text = webview.url
+        input.url = webview.url
         title = webview.title
         updateToolbarNavigation()
     }
