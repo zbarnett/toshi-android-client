@@ -31,10 +31,6 @@
         android:icon="@drawable/ic_action_wallet" />
 
     <item
-        android:title="@string/tab_4"
-        android:icon="@drawable/ic_action_contacts" />
-
-    <item
         android:title="@string/tab_5"
         android:icon="@drawable/ic_action_settings" />
 </menu>

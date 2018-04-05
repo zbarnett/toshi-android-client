@@ -138,9 +138,6 @@ class ViewUserActivity : AppCompatActivity() {
         viewModel.isLocalUser.observe(this, Observer {
             isLocalUser -> isLocalUser?.let { rate.isVisible(!it) }
         })
-        viewModel.isFavored.observe(this, Observer {
-            isFavored -> isFavored?.let { updateFavoriteState(it) }
-        })
         viewModel.isUserBlocked.observe(this, Observer {
             isUserBlocked -> isUserBlocked?.let { updateMenu(it) }
         })
@@ -209,12 +206,6 @@ class ViewUserActivity : AppCompatActivity() {
         putExtra(AmountActivity.VIEW_TYPE, PaymentType.TYPE_SEND)
     })
 
-    private fun updateFavoriteState(isFavored: Boolean) {
-        val menuItem = menu?.findItem(R.id.favorite) ?: return
-        if (isFavored) menuItem.title = getString(R.string.remove_from_favorites)
-        else menuItem.title = getString(R.string.save_to_favorites)
-    }
-
     private fun updateMenu(isUserBlocked: Boolean) {
         val menuItem = menu?.findItem(R.id.block) ?: return
         if (isUserBlocked) menuItem.title = getString(R.string.unblock)
@@ -268,7 +259,6 @@ class ViewUserActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.favorite -> favorOrUnFavor()
             R.id.block -> blockOrUnblock()
             R.id.report -> showReportDialog()
             else -> LogUtil.d("Not valid menu item")
@@ -284,12 +274,6 @@ class ViewUserActivity : AppCompatActivity() {
     private fun blockOrUnblock() {
         val isUserBlocked = viewModel.isUserBlocked.value
         isUserBlocked?.let { blockingHandler.showDialog(it) }
-    }
-
-    private fun favorOrUnFavor() {
-        viewModel.user.value?.let {
-            viewModel.favorOrUnFavorUser(it)
-        }
     }
 
     private fun showReportDialog() {

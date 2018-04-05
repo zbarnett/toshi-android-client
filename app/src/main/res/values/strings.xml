@@ -34,7 +34,6 @@
     <string name="profile_about">About</string>
     <string name="profile_location">Location</string>
     <string name="profile_name">Display Name</string>
-    <string name="contact_list__empty_state">You have no contacts, yet!</string>
     <string name="error__required">This is required</string>
     <string name="error__invalid_characters">Invalid characters. No spaces allowed.</string>
     <string name="button_pay">Pay</string>
@@ -199,7 +198,6 @@
     <string name="no_chats_yet">No Chats yet</string>
     <string name="empty_state_recent_message">Once you start a new conversation, you’ll see it here.</string>
     <string name="start_a_chat">Start a chat</string>
-    <string name="empty_state_contact_message">Your favorites will be listed here. You can invite friends to join Toshi.</string>
     <string name="no_favorites_yet">No Favorites yet</string>
     <string name="welcome_to_toshi">Welcome to Toshi</string>
     <string name="splash_view_info">A browser for the Ethereum network that provides universal access to financial services</string>
@@ -327,8 +325,6 @@
     <string name="est_network_fees">Est. Network Fees</string>
     <string name="your_balance">Your balance: %s</string>
     <string name="insufficient_balance">Insufficient balance: %s</string>
-    <string name="save_to_favorites">Save to Favorites</string>
-    <string name="remove_from_favorites">Remove from Favorites</string>
     <string name="untitled">Untitled</string>
     <string name="unknown">Unknown</string>
     <string name="init_manager_error">Something went wrong. Please try again</string>

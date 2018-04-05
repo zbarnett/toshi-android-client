@@ -26,7 +26,7 @@ import com.toshi.view.BaseApplication
 import rx.android.schedulers.AndroidSchedulers
 import rx.subscriptions.CompositeSubscription
 
-class ViewERC721TokensViewModel(contactAddress: String) : ViewModel() {
+class ViewERC721TokensViewModel(contractAddress: String) : ViewModel() {
 
     private val subscriptions by lazy { CompositeSubscription() }
     private val balanceManager by lazy { BaseApplication.get().balanceManager }
@@ -35,7 +35,7 @@ class ViewERC721TokensViewModel(contactAddress: String) : ViewModel() {
     val error by lazy { SingleLiveEvent<Int>() }
 
     init {
-        getERC721Token(contactAddress)
+        getERC721Token(contractAddress)
     }
 
     private fun getERC721Token(contactAddress: String) {

@@ -60,24 +60,11 @@ class GroupParticipantsViewModel : ViewModel() {
                         { LogUtil.w("Error while listening for query changes $it") }
                 )
 
-        val defaultSub = recipientManager
-                .loadAllUserContacts()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        { cacheDefaultResults(it) },
-                        { LogUtil.w("Error while fetching contacts $it") }
-                )
-        this.subscriptions.addAll(startSearchSub, clearSub, defaultSub)
+        subscriptions.addAll(startSearchSub, clearSub)
     }
 
     private fun showDefaultResults() {
         if (searchResults.value != defaultResults) searchResults.value = defaultResults
-    }
-
-    private fun cacheDefaultResults(contacts: List<User>) {
-        defaultResults.clear()
-        defaultResults.addAll(contacts)
-        if (searchResults.value == null) searchResults.value = defaultResults
     }
 
     fun queryUpdated(query: CharSequence?) = querySubject.onNext(query.toString())
@@ -91,22 +78,22 @@ class GroupParticipantsViewModel : ViewModel() {
                         { LogUtil.w("Error while search for user $it") }
                 )
 
-        this.subscriptions.add(searchSub)
+        subscriptions.add(searchSub)
     }
 
     fun toggleSelectedParticipant(user: User) {
         if (participants.contains(user)) participants.remove(user)
         else participants.add(user)
-        this.selectedParticipants.value = this.participants
+        selectedParticipants.value = participants
     }
 
     fun clearParticipants() {
-        this.participants.clear()
-        this.selectedParticipants.value = this.participants
+        participants.clear()
+        selectedParticipants.value = participants
     }
 
     override fun onCleared() {
         super.onCleared()
-        this.subscriptions.clear()
+        subscriptions.clear()
     }
 }

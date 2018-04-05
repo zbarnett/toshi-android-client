@@ -29,6 +29,7 @@ import io.realm.DynamicRealmObject;
 import io.realm.FieldAttribute;
 import io.realm.RealmMigration;
 import io.realm.RealmObjectSchema;
+import io.realm.RealmResults;
 import io.realm.RealmSchema;
 
 public class DbMigration implements RealmMigration {
@@ -313,6 +314,20 @@ public class DbMigration implements RealmMigration {
             if (!schema.get("Group").hasField("avatar")) {
                 schema.get("Group")
                         .addRealmObjectField("avatar", schema.get("Avatar"));
+            }
+
+            oldVersion++;
+        }
+
+        if (oldVersion == 20) {
+            final RealmResults<DynamicRealmObject> contacts = realm
+                    .where("Contact")
+                    .findAll();
+
+            contacts.deleteAllFromRealm();
+
+            if (schema.contains("Contact")) {
+                schema.remove("Contact");
             }
 
             oldVersion++;

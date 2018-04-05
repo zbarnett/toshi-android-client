@@ -24,7 +24,6 @@ import com.toshi.model.local.User
 import com.toshi.model.network.ReputationScore
 import com.toshi.model.network.ServerTime
 import com.toshi.util.SingleLiveEvent
-import com.toshi.util.SoundManager
 import com.toshi.util.logging.LogUtil
 import com.toshi.view.BaseApplication
 import rx.Completable
@@ -40,7 +39,6 @@ class ViewUserViewModel : ViewModel() {
     val isLocalUser by lazy { SingleLiveEvent<Boolean>() }
     val noUser by lazy { SingleLiveEvent<Unit>() }
     val reputation by lazy { SingleLiveEvent<ReputationScore>() }
-    val isFavored by lazy { SingleLiveEvent<Boolean>() }
     val review by lazy { SingleLiveEvent<Boolean>() }
     val report by lazy { SingleLiveEvent<Boolean>() }
     val isUserBlocked by lazy { SingleLiveEvent<Boolean>() }
@@ -50,7 +48,6 @@ class ViewUserViewModel : ViewModel() {
         val sub = getRecipientManager()
                 .getUserFromToshiId(userAddress)
                 .doOnSuccess { fetchUserReputation(it.toshiId) }
-                .doOnSuccess { isFavored(it) }
                 .doOnSuccess { isLocalUser(it) }
                 .doOnSuccess { isUserBlocked(it) }
                 .observeOn(AndroidSchedulers.mainThread())
@@ -69,24 +66,11 @@ class ViewUserViewModel : ViewModel() {
                 .filter { it.usernameForEditing.toLowerCase() == searchedForUsername.toLowerCase() }
                 .toSingle()
                 .doOnSuccess { fetchUserReputation(it.toshiId) }
-                .doOnSuccess { isFavored(it) }
                 .doOnSuccess { isLocalUser(it) }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { user.value = it },
                         { noUser.value = Unit }
-                )
-
-        subscriptions.add(sub)
-    }
-
-    private fun isFavored(user: User) {
-        val sub = getRecipientManager()
-                .isUserAContact(user)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        { isFavored.value = it },
-                        { LogUtil.w("Error while fetching local user $it") }
                 )
 
         subscriptions.add(sub)
@@ -116,28 +100,6 @@ class ViewUserViewModel : ViewModel() {
                 )
 
         subscriptions.add(reputationSub)
-    }
-
-    fun favorOrUnFavorUser(user: User) {
-        val sub = getRecipientManager()
-                .isUserAContact(user)
-                .flatMapCompletable { favorOrUnFavorUser(user, it) }
-                .subscribe(
-                        { },
-                        { LogUtil.exception("Error during saving contact $it") }
-                )
-
-        subscriptions.add(sub)
-    }
-
-    private fun favorOrUnFavorUser(user: User, isAContact: Boolean): Completable {
-        val favoriteAction = if (isAContact) deleteContact(user)
-        else saveContact(user)
-                .doOnCompleted { SoundManager.getInstance().playSound(SoundManager.ADD_CONTACT) }
-
-        return favoriteAction
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnCompleted { isFavored.value = !isAContact }
     }
 
     fun submitReview(review: Review) {
@@ -214,10 +176,6 @@ class ViewUserViewModel : ViewModel() {
     private fun getReputationManager() = BaseApplication.get().reputationManager
 
     private fun getUserManager() = BaseApplication.get().userManager
-
-    private fun deleteContact(user: User) = getRecipientManager().deleteContact(user)
-
-    private fun saveContact(user: User) = getRecipientManager().saveContact(user)
 
     fun checkIfLocalUserFromId(userAddress: String) = getLocalUser()?.toshiId == userAddress
 

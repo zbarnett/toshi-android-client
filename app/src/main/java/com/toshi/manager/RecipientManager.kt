@@ -4,11 +4,9 @@ import com.toshi.extensions.isGroupId
 import com.toshi.manager.network.IdInterface
 import com.toshi.manager.network.IdService
 import com.toshi.manager.store.BlockedUserStore
-import com.toshi.manager.store.ContactStore
 import com.toshi.manager.store.GroupStore
 import com.toshi.manager.store.UserStore
 import com.toshi.model.local.BlockedUser
-import com.toshi.model.local.Contact
 import com.toshi.model.local.Group
 import com.toshi.model.local.Recipient
 import com.toshi.model.local.Report
@@ -25,7 +23,6 @@ import java.io.IOException
 
 class RecipientManager(
         private val idService: IdInterface = IdService.getApi(),
-        private val contactStore: ContactStore = ContactStore(),
         private val groupStore: GroupStore = GroupStore(),
         private val userStore: UserStore = UserStore(),
         private val blockedUserStore: BlockedUserStore = BlockedUserStore(),
@@ -121,35 +118,6 @@ class RecipientManager(
                 )
     }
 
-    fun loadAllContacts(): Single<List<User>> {
-        return contactStore
-                .loadAll()
-                .toObservable()
-                .flatMapIterable { it }
-                .map { it.user }
-                .toList()
-                .toSingle()
-                .subscribeOn(scheduler)
-    }
-
-    fun loadAllUserContacts(): Single<List<User>> {
-        return contactStore
-                .loadAll()
-                .toObservable()
-                .flatMapIterable { it }
-                .map { it.user }
-                .filter { !it.isApp }
-                .toList()
-                .toSingle()
-                .subscribeOn(scheduler)
-    }
-
-    fun searchContacts(query: String): Single<List<Contact>> {
-        return contactStore
-                .searchByName(query)
-                .subscribeOn(scheduler)
-    }
-
     fun searchOnlineUsersAndApps(query: String): Single<List<User>> {
         return idService
                 .searchByUsername(query)
@@ -162,21 +130,6 @@ class RecipientManager(
                 .searchOnlyUsersByUsername(query)
                 .subscribeOn(scheduler)
                 .map { it.results }
-    }
-
-    fun isUserAContact(user: User): Single<Boolean> {
-        return contactStore.userIsAContact(user)
-                .subscribeOn(scheduler)
-    }
-
-    fun deleteContact(user: User): Completable {
-        return contactStore.delete(user)
-                .subscribeOn(scheduler)
-    }
-
-    fun saveContact(user: User): Completable {
-        return contactStore.save(user)
-                .subscribeOn(scheduler)
     }
 
     fun isUserBlocked(ownerAddress: String): Single<Boolean> {

@@ -10,8 +10,8 @@ import com.aurelhubert.ahbottomnavigation.AHBottomNavigation
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationAdapter
 import com.toshi.R
 import com.toshi.extensions.getColorById
-import com.toshi.util.sharedPrefs.SharedPrefs
 import com.toshi.util.SoundManager
+import com.toshi.util.sharedPrefs.SharedPrefs
 import com.toshi.view.adapter.NavigationAdapter
 import com.toshi.view.fragment.toplevel.BackableTopLevelFragment
 import com.toshi.view.fragment.toplevel.DappFragment
@@ -24,7 +24,8 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         const val EXTRA__ACTIVE_TAB = "active_tab"
-        private val CURRENT_ITEM = "current_item"
+        private const val CURRENT_ITEM = "current_item"
+        private const val ALERT_BACKUP_PASSPHRASE_BADGE_POSITION = 3
     }
 
     private lateinit var viewModel: MainViewModel
@@ -133,9 +134,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun hideAlertBadge() = navBar.setNotification("", 4)
+    private fun hideAlertBadge() = navBar.setNotification("", ALERT_BACKUP_PASSPHRASE_BADGE_POSITION)
 
-    private fun showAlertBadge() = navBar.setNotification("!", 4)
+    private fun showAlertBadge() = navBar.setNotification("!", ALERT_BACKUP_PASSPHRASE_BADGE_POSITION)
 
     private fun showFirstRunDialog() {
         if (SharedPrefs.hasLoadedApp()) return
