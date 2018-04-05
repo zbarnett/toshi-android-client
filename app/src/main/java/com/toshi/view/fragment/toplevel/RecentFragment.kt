@@ -31,6 +31,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.toshi.R
 import com.toshi.extensions.getColorById
+import com.toshi.extensions.isEmpty
 import com.toshi.extensions.isVisible
 import com.toshi.extensions.startActivity
 import com.toshi.model.local.Conversation
@@ -38,9 +39,10 @@ import com.toshi.model.local.ConversationInfo
 import com.toshi.view.activity.ChatActivity
 import com.toshi.view.activity.ConversationRequestActivity
 import com.toshi.view.activity.ConversationSetupActivity
-import com.toshi.view.adapter.RecentAdapter
-import com.toshi.view.adapter.listeners.OnItemClickListener
-import com.toshi.view.adapter.listeners.OnUpdateListener
+import com.toshi.view.adapter.CompoundAdapter
+import com.toshi.view.adapter.ConversationAdapter
+import com.toshi.view.adapter.ConversationsHeaderAdapter
+import com.toshi.view.adapter.ConversationRequestsAdapter
 import com.toshi.view.adapter.viewholder.ThreadViewHolder
 import com.toshi.view.fragment.DialogFragment.ConversationOptionsDialogFragment
 import com.toshi.viewModel.RecentViewModel
@@ -53,15 +55,17 @@ class RecentFragment : TopLevelFragment() {
 
     companion object {
         private const val TAG = "RecentFragment"
-        private const val NO_MESSAGE_REQUESTS_START_POSITION = 0
-        private const val MESSAGE_REQUESTS_START_POSITION = 2
         private const val SCROLL_POSITION = "ScrollPosition"
     }
 
     override fun getFragmentTag() = TAG
 
     private lateinit var viewModel: RecentViewModel
-    private lateinit var recentAdapter: RecentAdapter
+    private lateinit var compoundAdapter: CompoundAdapter
+    private lateinit var conversationRequestsAdapter: ConversationRequestsAdapter
+    private lateinit var conversationAdapter: ConversationAdapter
+    private lateinit var conversationsHeaderAdapter: ConversationsHeaderAdapter
+
     private var scrollPosition = 0
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -76,7 +80,7 @@ class RecentFragment : TopLevelFragment() {
         initViewModel(activity)
         initClickListeners()
         restoreScrollPosition(inState)
-        initRecentAdapter()
+        initCompoundAdapter()
         initObservers()
     }
 
@@ -100,24 +104,27 @@ class RecentFragment : TopLevelFragment() {
         }
     }
 
-    private fun initRecentAdapter() {
-        recentAdapter = RecentAdapter()
-                .apply {
-                    onItemClickListener = OnItemClickListener {
-                        startActivity<ChatActivity> { putExtra(ChatActivity.EXTRA__THREAD_ID, it.threadId) }
-                    }
-                    onItemLongClickListener = OnItemClickListener {
-                        viewModel.showConversationOptionsDialog(it.threadId)
-                    }
-                    onRequestsClickListener = OnUpdateListener {
-                        startActivity<ConversationRequestActivity>()
-                    }
-                }
+    private fun initCompoundAdapter() {
+        // TODO: Add sections for search at the top and invite at the bottom
+        conversationRequestsAdapter = ConversationRequestsAdapter(
+                { startActivity<ConversationRequestActivity>() }
+        )
+        conversationsHeaderAdapter = ConversationsHeaderAdapter()
+        conversationAdapter = ConversationAdapter(
+                { conversation -> startActivity<ChatActivity> { putExtra(ChatActivity.EXTRA__THREAD_ID, conversation.threadId) } },
+                { conversation -> viewModel.showConversationOptionsDialog(conversation.threadId) }
+        )
+
+        compoundAdapter = CompoundAdapter(listOf(
+                conversationRequestsAdapter,
+                conversationsHeaderAdapter,
+                conversationAdapter
+        ))
 
         recents.apply {
             layoutManager = LinearLayoutManager(context)
             itemAnimator = DefaultItemAnimator()
-            adapter = recentAdapter
+            adapter = compoundAdapter
         }
 
         addSwipeToDeleteListener(recents)
@@ -132,29 +139,30 @@ class RecentFragment : TopLevelFragment() {
             conversation -> conversation?.let { handleAcceptedConversation(it) }
         })
         viewModel.updatedUnacceptedConversation.observe(this, Observer {
-            conversation -> conversation?.let { handleUnacceptedConversation(it) }
+            conversation -> conversation?.let { handleUpdatedUnacceptedConversation(it) }
         })
         viewModel.conversationInfo.observe(this, Observer {
             conversationInfo -> conversationInfo?.let { showConversationOptionsDialog(it) }
         })
         viewModel.deleteConversation.observe(this, Observer {
-            deletedConversation -> deletedConversation?.let { removeItemAtWithUndo(it) }
+            deletedConversation -> deletedConversation?.let { removeItemWithUndo(it) }
         })
     }
 
     private fun handleConversations(acceptedConversations: List<Conversation>, unacceptedConversation: List<Conversation>) {
-        recentAdapter.setUnacceptedConversations(unacceptedConversation)
-        recentAdapter.setConversations(acceptedConversations)
+        conversationRequestsAdapter.setUnacceptedConversations(unacceptedConversation)
+        conversationAdapter.setItemList(acceptedConversations)
         updateViewState()
     }
 
     private fun handleAcceptedConversation(updatedConversation: Conversation) {
-        recentAdapter.updateAcceptedConversation(updatedConversation)
+        conversationRequestsAdapter.removeConversation(updatedConversation)
+        conversationAdapter.addItem(updatedConversation)
         updateViewState()
     }
 
-    private fun handleUnacceptedConversation(updatedConversation: Conversation) {
-        recentAdapter.updateUnacceptedConversation(updatedConversation)
+    private fun handleUpdatedUnacceptedConversation(updatedConversation: Conversation) {
+        conversationRequestsAdapter.addOrUpdateConversation(updatedConversation)
         updateViewState()
     }
 
@@ -164,8 +172,8 @@ class RecentFragment : TopLevelFragment() {
                 .show(fragmentManager, ConversationOptionsDialogFragment.TAG)
     }
 
-    private fun removeItemAtWithUndo(conversation: Conversation) {
-        recentAdapter.removeItem(conversation, recents)
+    private fun removeItemWithUndo(conversation: Conversation) {
+        conversationAdapter.removeItemWithUndo(conversation, recents)
         updateViewState()
     }
 
@@ -181,7 +189,7 @@ class RecentFragment : TopLevelFragment() {
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, swipeDir: Int) {
-                recentAdapter.removeItemAtWithUndo(viewHolder.adapterPosition, recyclerView)
+                compoundAdapter.removeItemAtWithUndo(viewHolder.adapterPosition, recyclerView)
                 updateEmptyState()
             }
         })
@@ -190,26 +198,24 @@ class RecentFragment : TopLevelFragment() {
 
     private fun updateViewState() {
         updateEmptyState()
-        updateDividers()
+        updateConversationHeader()
+    }
+
+    private fun updateConversationHeader() {
+        val acceptedConversationsExist = !conversationAdapter.isEmpty()
+        conversationsHeaderAdapter.setVisibile(acceptedConversationsExist)
     }
 
     private fun updateEmptyState() {
-        val isAdapterEmpty = recentAdapter.itemCount == 0
-        val isAcceptedConversationsEmpty = recentAdapter.isAcceptedConversationsEmpty
+        val isAcceptedConversationsEmpty = conversationAdapter.isEmpty()
+        val areBothRequestsAndAcceptedChatsEmpty = isAcceptedConversationsEmpty && conversationRequestsAdapter.isEmpty()
 
         val params = recents.layoutParams
         params.height = if (isAcceptedConversationsEmpty) ViewGroup.LayoutParams.WRAP_CONTENT else ViewGroup.LayoutParams.MATCH_PARENT
         recents.layoutParams = params
 
-        recents.isVisible(!isAdapterEmpty)
-        emptyState.isVisible(isAcceptedConversationsEmpty || isAdapterEmpty)
-    }
-
-    private fun updateDividers() {
-        val dividerStartPosition =
-                if (recentAdapter.isUnacceptedConversationsEmpty) NO_MESSAGE_REQUESTS_START_POSITION
-                else MESSAGE_REQUESTS_START_POSITION
-        recents.setDividerStartPosition(dividerStartPosition)
+        recents.isVisible(!areBothRequestsAndAcceptedChatsEmpty)
+        emptyState.isVisible(isAcceptedConversationsEmpty)
     }
 
     override fun onStart() {
@@ -232,6 +238,6 @@ class RecentFragment : TopLevelFragment() {
 
     override fun onStop() {
         super.onStop()
-        recentAdapter.doDelete()
+        compoundAdapter.doDelete()
     }
 }

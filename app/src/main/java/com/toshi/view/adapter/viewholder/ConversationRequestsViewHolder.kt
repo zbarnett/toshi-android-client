@@ -21,7 +21,6 @@ import android.support.v7.widget.RecyclerView
 import android.view.View
 import com.toshi.R
 import com.toshi.model.local.Conversation
-import com.toshi.view.adapter.listeners.OnUpdateListener
 import kotlinx.android.synthetic.main.list_item__conversation_requests.view.*
 
 class ConversationRequestsViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
@@ -37,8 +36,8 @@ class ConversationRequestsViewHolder(itemView: View?) : RecyclerView.ViewHolder(
         itemView.avatar.loadAvatars(lastTwoElements)
     }
 
-    fun setOnItemClickListener(onItemClickListener: OnUpdateListener): ConversationRequestsViewHolder {
-        itemView.setOnClickListener { onItemClickListener.onUpdate() }
+    fun setOnItemClickListener(listener: () -> Unit): ConversationRequestsViewHolder {
+        itemView.setOnClickListener { listener() }
         return this
     }
 }
