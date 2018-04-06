@@ -25,7 +25,6 @@ import com.toshi.util.FileNames
 import com.toshi.view.BaseApplication
 
 object AppPrefs : AppPrefsInterface {
-    private const val STORED_QR_CODE = "STORED_QR_CODE"
     private const val HAS_ONBOARDED = "hasOnboarded"
     private const val HAS_SIGNED_OUT = "hasSignedIn"
     private const val HAS_BACKED_UP_PHRASE = "hasBackedUpPhrase"
@@ -91,7 +90,6 @@ object AppPrefs : AppPrefsInterface {
     override fun clear() {
         prefs.edit()
                 .putBoolean(HAS_BACKED_UP_PHRASE, false)
-                .putString(STORED_QR_CODE, null)
                 .putString(LOCAL_CURRENCY_CODE, null)
                 .putBoolean(WAS_MIGRATED, false)
                 .putBoolean(HAS_ONBOARDED, false)

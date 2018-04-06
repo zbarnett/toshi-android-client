@@ -15,18 +15,16 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.toshi.model.network;
+package com.toshi.util.gcm
 
+import com.google.firebase.iid.FirebaseInstanceId
+import rx.Single
+import rx.schedulers.Schedulers
 
-public final class ServerTime {
-
-    private long timestamp;
-
-    public ServerTime(final long timestamp) {
-        this.timestamp = timestamp;
-    }
-
-    public final long get() {
-        return this.timestamp;
+class GcmToken : GcmTokenInterface {
+    override fun get(): Single<String?> {
+        return Single
+                .fromCallable { FirebaseInstanceId.getInstance().token }
+                .subscribeOn(Schedulers.io())
     }
 }

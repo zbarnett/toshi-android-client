@@ -15,18 +15,11 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.toshi.model.network;
+package com.toshi.testSharedPrefs
 
+import com.toshi.util.gcm.GcmTokenInterface
+import rx.Single
 
-public final class ServerTime {
-
-    private long timestamp;
-
-    public ServerTime(final long timestamp) {
-        this.timestamp = timestamp;
-    }
-
-    public final long get() {
-        return this.timestamp;
-    }
+class TestGcmToken : GcmTokenInterface {
+    override fun get(): Single<String?> = Single.just("token")
 }

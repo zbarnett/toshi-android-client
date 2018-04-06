@@ -15,18 +15,20 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.toshi.model.network;
+package com.toshi.testSharedPrefs
 
+import com.toshi.util.sharedPrefs.EthGcmPrefsInterface
 
-public final class ServerTime {
+class TestEthGcmPrefs : EthGcmPrefsInterface {
+    private val map by lazy { HashMap<String, Any?>() }
 
-    private long timestamp;
-
-    public ServerTime(final long timestamp) {
-        this.timestamp = timestamp;
+    override fun setEthGcmTokenSentToServer(networkId: String, isSentToServer: Boolean) {
+        map[networkId] = isSentToServer
     }
 
-    public final long get() {
-        return this.timestamp;
+    override fun isEthGcmTokenSentToServer(networkId: String): Boolean {
+        return map[networkId] as Boolean? ?: false
     }
+
+    override fun clear() = map.clear()
 }

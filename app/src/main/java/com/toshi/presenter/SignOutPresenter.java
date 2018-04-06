@@ -19,7 +19,7 @@ package com.toshi.presenter;
 
 import android.content.Intent;
 
-import com.toshi.util.GcmUtil;
+import com.toshi.util.gcm.GcmToken;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.activity.LandingActivity;
 import com.toshi.view.activity.SignOutActivity;
@@ -66,8 +66,8 @@ public class SignOutPresenter implements Presenter<SignOutActivity> {
     }
 
     private Completable unregisterEthGcm() {
-        return GcmUtil
-                .getGcmToken()
+        return new GcmToken()
+                .get()
                 .flatMapCompletable(token -> BaseApplication
                         .get()
                         .getBalanceManager()

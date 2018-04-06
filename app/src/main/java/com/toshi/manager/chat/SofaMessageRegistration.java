@@ -22,7 +22,7 @@ import com.toshi.crypto.signal.ChatService;
 import com.toshi.crypto.signal.SignalPreferences;
 import com.toshi.crypto.signal.store.ProtocolStore;
 import com.toshi.manager.OnboardingManager;
-import com.toshi.util.GcmUtil;
+import com.toshi.util.gcm.GcmToken;
 import com.toshi.util.logging.LogUtil;
 
 import org.whispersystems.libsignal.util.guava.Optional;
@@ -74,7 +74,7 @@ public class SofaMessageRegistration {
     }
 
     public Completable registerChatGcm() {
-        return GcmUtil.getGcmToken()
+        return new GcmToken().get()
                 .flatMapCompletable(this::tryRegisterChatGcm);
     }
 

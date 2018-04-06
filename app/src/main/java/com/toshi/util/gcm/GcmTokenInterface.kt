@@ -15,17 +15,10 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.toshi.util;
+package com.toshi.util.gcm
 
-import com.google.firebase.iid.FirebaseInstanceId;
+import rx.Single
 
-import rx.Single;
-import rx.schedulers.Schedulers;
-
-public class GcmUtil {
-
-    public static Single<String> getGcmToken() {
-        return Single.fromCallable(() -> FirebaseInstanceId.getInstance().getToken())
-        .subscribeOn(Schedulers.io());
-    }
+interface GcmTokenInterface {
+    fun get(): Single<String?>
 }

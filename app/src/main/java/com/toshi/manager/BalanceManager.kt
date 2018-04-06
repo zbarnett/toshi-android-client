@@ -247,7 +247,7 @@ class BalanceManager(
 
     private fun getWallet(): Single<HDWallet> {
         return Single.fromCallable<HDWallet> {
-            while (wallet == null) Thread.sleep(100)
+            while (!::wallet.isInitialized) Thread.sleep(100)
             wallet
         }
         .subscribeOn(subscribeOnScheduler)
