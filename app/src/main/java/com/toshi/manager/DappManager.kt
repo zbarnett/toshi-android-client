@@ -17,54 +17,53 @@
 
 package com.toshi.manager
 
+import com.toshi.manager.network.DirectoryInterface
 import com.toshi.manager.network.DirectoryService
 import com.toshi.model.network.dapp.DappResult
 import com.toshi.model.network.dapp.DappSearchResult
 import com.toshi.model.network.dapp.DappSections
+import rx.Scheduler
 import rx.Single
 import rx.schedulers.Schedulers
 
-class DappManager {
+class DappManager(
+        private val directoryService: DirectoryInterface = DirectoryService.get(),
+        private val scheduler: Scheduler = Schedulers.io()
+) {
 
     fun getFrontPageDapps(): Single<DappSections> {
-        return DirectoryService
-                .get()
+        return directoryService
                 .getFrontpageDapps()
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(scheduler)
     }
 
     fun search(input: String): Single<DappSearchResult> {
-        return DirectoryService
-                .get()
+        return directoryService
                 .search(input)
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(scheduler)
     }
 
     fun getAllDapps(): Single<DappSearchResult> {
-        return DirectoryService
-                .get()
+        return directoryService
                 .getAllDapps()
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(scheduler)
     }
 
     fun getAllDappsWithOffset(offset: Int): Single<DappSearchResult> {
-        return DirectoryService
-                .get()
+        return directoryService
                 .getAllDappsWithOffset(offset, 20)
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(scheduler)
     }
 
     fun getAllDappsInCategoryWithOffset(categoryId: Int, offset: Int): Single<DappSearchResult> {
-        return DirectoryService
-                .get()
+        return directoryService
                 .getAllDappsInCategory(categoryId, offset, 20)
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(scheduler)
     }
 
     fun getDapp(dappId: Long): Single<DappResult> {
-        return DirectoryService
-                .get()
+        return directoryService
                 .getDapp(dappId)
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(scheduler)
     }
 }
