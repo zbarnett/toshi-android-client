@@ -179,7 +179,7 @@ class GroupInfoActivity : AppCompatActivity() {
     }
 
     private fun returnToMainActivity() = startActivity<MainActivity> {
-        putExtra(MainActivity.EXTRA__ACTIVE_TAB, 1)
+        putExtra(MainActivity.EXTRA__ACTIVE_TAB, MainActivity.CHATS_TAB)
         addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
     }
 }

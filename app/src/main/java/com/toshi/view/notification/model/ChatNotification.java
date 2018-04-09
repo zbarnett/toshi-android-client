@@ -93,7 +93,7 @@ public class ChatNotification extends ToshiNotification {
 
     private Intent getMainIntent() {
         return new Intent(BaseApplication.get(), MainActivity.class)
-                .putExtra(MainActivity.EXTRA__ACTIVE_TAB, 1);
+                .putExtra(MainActivity.EXTRA__ACTIVE_TAB, MainActivity.CHATS_TAB);
     }
 
     private PendingIntent getFallbackPendingIntent(final Intent mainIntent) {

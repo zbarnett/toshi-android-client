@@ -92,7 +92,7 @@ public class BackupPhraseVerifyPresenter implements Presenter<BackupPhraseVerify
 
         final Intent intent = new Intent(this.activity, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.putExtra(MainActivity.EXTRA__ACTIVE_TAB, 4);
+        intent.putExtra(MainActivity.EXTRA__ACTIVE_TAB, MainActivity.ME_TAB);
         this.activity.startActivity(intent);
         ActivityCompat.finishAffinity(this.activity);
     }

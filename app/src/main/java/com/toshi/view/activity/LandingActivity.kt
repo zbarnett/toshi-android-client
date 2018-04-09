@@ -13,7 +13,9 @@ import com.toshi.extensions.startActivityAndFinish
 import com.toshi.extensions.toast
 import com.toshi.util.TermsDialog
 import com.toshi.viewModel.LandingViewModel
-import kotlinx.android.synthetic.main.activity_landing.*
+import kotlinx.android.synthetic.main.activity_landing.createNewAccount
+import kotlinx.android.synthetic.main.activity_landing.loadingSpinner
+import kotlinx.android.synthetic.main.activity_landing.signIn
 
 class LandingActivity : AppCompatActivity() {
 
@@ -64,7 +66,7 @@ class LandingActivity : AppCompatActivity() {
 
     private fun goToChatActivity(onboardingBotId: String) {
         val mainIntent = Intent(this, MainActivity::class.java)
-                .putExtra(MainActivity.EXTRA__ACTIVE_TAB, 1)
+                .putExtra(MainActivity.EXTRA__ACTIVE_TAB, MainActivity.CHATS_TAB)
 
         val chatIntent = Intent(this, ChatActivity::class.java)
                 .putExtra(ChatActivity.EXTRA__THREAD_ID, onboardingBotId)

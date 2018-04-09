@@ -25,7 +25,9 @@ class MainActivity : AppCompatActivity() {
     companion object {
         const val EXTRA__ACTIVE_TAB = "active_tab"
         private const val CURRENT_ITEM = "current_item"
-        private const val ALERT_BACKUP_PASSPHRASE_BADGE_POSITION = 3
+        const val DAPP_TAB = 0
+        const val CHATS_TAB = 1
+        const val ME_TAB = 3
     }
 
     private lateinit var viewModel: MainViewModel
@@ -98,9 +100,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun trySelectTabFromIntent(inState: Bundle?) {
-        val activeTab = intent.getIntExtra(EXTRA__ACTIVE_TAB, 0)
-        val currentItem = inState?.getInt(CURRENT_ITEM, 0)
-        if (activeTab == 0 && currentItem != null && currentItem != 0) {
+        val activeTab = intent.getIntExtra(EXTRA__ACTIVE_TAB, DAPP_TAB)
+        val currentItem = inState?.getInt(CURRENT_ITEM, DAPP_TAB)
+        if (activeTab == DAPP_TAB && currentItem != null && currentItem != DAPP_TAB) {
             navBar.currentItem = currentItem
         } else {
             navBar.currentItem = activeTab
@@ -134,9 +136,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun hideAlertBadge() = navBar.setNotification("", ALERT_BACKUP_PASSPHRASE_BADGE_POSITION)
+    private fun hideAlertBadge() = navBar.setNotification("", ME_TAB)
 
-    private fun showAlertBadge() = navBar.setNotification("!", ALERT_BACKUP_PASSPHRASE_BADGE_POSITION)
+    private fun showAlertBadge() = navBar.setNotification("!", ME_TAB)
 
     private fun showFirstRunDialog() {
         if (AppPrefs.hasLoadedApp()) return
