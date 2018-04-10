@@ -286,4 +286,17 @@
         <item name="android:tint">@color/inactiveIconColor</item>
     </style>
 
+    <style name="CircleWithInsetIcon">
+        <item name="android:background">@drawable/circle_border</item>
+        <item name="android:layout_height">@dimen/avatar_size_small</item>
+        <item name="android:layout_width">@dimen/avatar_size_small</item>
+        <item name="android:padding">@dimen/margin_three_quarters</item>
+        <item name="android:tint">@color/colorPrimary</item>
+    </style>
+
+    <style name="SectionedRecyclerViewSeparator">
+        <item name="android:layout_height">20dp</item>
+        <item name="android:layout_width">0dp</item>
+    </style>
+
 </resources>

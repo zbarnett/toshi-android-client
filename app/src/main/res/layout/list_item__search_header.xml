@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ 	Copyright (c) 2017. Toshi Inc
+  ~ 	Copyright (c) 2018. Toshi Inc
   ~
   ~ 	This program is free software: you can redistribute it and/or modify
   ~     it under the terms of the GNU General Public License as published by
@@ -15,61 +15,42 @@
   ~     You should have received a copy of the GNU General Public License
   ~     along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    >
+    android:layout_width="match_parent"
+    android:orientation="vertical">
 
     <LinearLayout
-        android:id="@+id/wrapper"
         android:layout_width="match_parent"
         android:layout_height="@dimen/list_item_height_default"
-        android:orientation="horizontal"
         android:paddingLeft="@dimen/margin_primary"
         android:paddingStart="@dimen/margin_primary"
         android:paddingRight="@dimen/margin_primary"
         android:paddingEnd="@dimen/margin_primary"
         android:background="@color/windowBackground"
-        android:gravity="center_vertical">
-
-        <com.toshi.view.custom.DoubleAvatarView
-            android:id="@+id/avatar"
-            android:layout_width="@dimen/avatar_size_small"
-            android:layout_height="@dimen/avatar_size_small" />
-
-        <android.support.v4.widget.Space
-            android:layout_width="12dp"
-            android:layout_height="0dp" />
-
-        <TextView
-            android:id="@+id/messageRequests"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:textSize="@dimen/text_size_default"
-            android:textColor="@color/textColorPrimary"
-            style="@style/NormalEllipsizeEndStyle"
-            tools:text="Message requests (2)"/>
-
-        <android.support.v4.widget.Space
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="0dp" />
+        android:orientation="horizontal">
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_chevron_right"
+            style="@style/CircleWithInsetIcon"
+            android:layout_marginRight="@dimen/margin_primary"
+            android:layout_marginEnd="@dimen/margin_primary"
+            android:layout_gravity="center_vertical"
+            app:srcCompat="@drawable/ic_search"
             tools:ignore="ContentDescription" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorPrimary"
+            android:layout_gravity="center_vertical"
+            android:textSize="@dimen/text_size_default"
+            android:text = "@string/start_user_search" />
 
     </LinearLayout>
 
     <android.support.v4.widget.Space
-        style="@style/SectionedRecyclerViewSeparator"
-        />
+        style="@style/SectionedRecyclerViewSeparator" />
 
 </LinearLayout>

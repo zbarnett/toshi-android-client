@@ -68,4 +68,18 @@
     <dimen name="dappsInputElevation">2dp</dimen>
     <dimen name="dappsInputZ">4dp</dimen>
     <dimen name="dappsInputMargin">40dp</dimen>
+
+    <!-- New attempt at organizing dimens starts here! -->
+
+    <dimen name="margin_primary">16dp</dimen>
+    <dimen name="margin_three_quarters">12dp</dimen>
+    <dimen name="margin_half">8dp</dimen>
+    <dimen name="margin_quarter">4dp</dimen>
+
+    <dimen name="border_width_default">1dp</dimen>
+
+    <dimen name="list_item_height_default">80dp</dimen>
+
+    <dimen name="text_size_default">14sp</dimen>
+
 </resources>

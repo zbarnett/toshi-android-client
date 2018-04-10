@@ -71,6 +71,8 @@
     <color name="border_color_light">#DBDBDB</color>
     <color name="file_avatar_background">#9E9E9E</color>
     <color name="icon_tint_dark">#9B9DA4</color>
+    <color name="sectioned_recyclerview_background">#F2F3F4</color>
+
 
     <color name="web_view_progress_foreground">#03671E</color>
     <color name="web_view_progress_background">#99E6AE</color>

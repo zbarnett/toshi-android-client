@@ -1,5 +1,5 @@
 /*
- * 	Copyright (c) 2017. Toshi Inc
+ * 	Copyright (c) 2018. Toshi Inc
  *
  * 	This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -20,4 +20,4 @@ package com.toshi.view.adapter.viewholder
 import android.support.v7.widget.RecyclerView
 import android.view.View
 
-class ConversationDividerViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView)
+class SearchHeaderViewHolder(view: View) : RecyclerView.ViewHolder(view)

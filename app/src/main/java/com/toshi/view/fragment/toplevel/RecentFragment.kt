@@ -19,6 +19,7 @@ package com.toshi.view.fragment.toplevel
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.FragmentActivity
@@ -31,9 +32,8 @@ import android.view.View
 import android.view.ViewGroup
 import com.toshi.R
 import com.toshi.extensions.getColorById
-import com.toshi.extensions.isEmpty
-import com.toshi.extensions.isVisible
 import com.toshi.extensions.startActivity
+import com.toshi.extensions.startExternalActivity
 import com.toshi.model.local.Conversation
 import com.toshi.model.local.ConversationInfo
 import com.toshi.view.activity.ChatActivity
@@ -41,15 +41,14 @@ import com.toshi.view.activity.ConversationRequestActivity
 import com.toshi.view.activity.ConversationSetupActivity
 import com.toshi.view.adapter.CompoundAdapter
 import com.toshi.view.adapter.ConversationAdapter
-import com.toshi.view.adapter.ConversationsHeaderAdapter
 import com.toshi.view.adapter.ConversationRequestsAdapter
+import com.toshi.view.adapter.InviteFriendAdapter
+import com.toshi.view.adapter.SearchHeaderAdapter
 import com.toshi.view.adapter.viewholder.ThreadViewHolder
 import com.toshi.view.fragment.DialogFragment.ConversationOptionsDialogFragment
 import com.toshi.viewModel.RecentViewModel
 import kotlinx.android.synthetic.main.fragment_recent.add
-import kotlinx.android.synthetic.main.fragment_recent.emptyState
 import kotlinx.android.synthetic.main.fragment_recent.recents
-import kotlinx.android.synthetic.main.fragment_recent.startChat
 
 class RecentFragment : TopLevelFragment() {
 
@@ -64,7 +63,6 @@ class RecentFragment : TopLevelFragment() {
     private lateinit var compoundAdapter: CompoundAdapter
     private lateinit var conversationRequestsAdapter: ConversationRequestsAdapter
     private lateinit var conversationAdapter: ConversationAdapter
-    private lateinit var conversationsHeaderAdapter: ConversationsHeaderAdapter
 
     private var scrollPosition = 0
 
@@ -94,7 +92,6 @@ class RecentFragment : TopLevelFragment() {
     }
 
     private fun initClickListeners() {
-        startChat.setOnClickListener { startActivity<ConversationSetupActivity>() }
         add.setOnClickListener { startActivity<ConversationSetupActivity>() }
     }
 
@@ -105,20 +102,25 @@ class RecentFragment : TopLevelFragment() {
     }
 
     private fun initCompoundAdapter() {
-        // TODO: Add sections for search at the top and invite at the bottom
+        val searchHeaderAdapter = SearchHeaderAdapter(
+                { startActivity<ConversationSetupActivity>() }
+        )
         conversationRequestsAdapter = ConversationRequestsAdapter(
                 { startActivity<ConversationRequestActivity>() }
         )
-        conversationsHeaderAdapter = ConversationsHeaderAdapter()
         conversationAdapter = ConversationAdapter(
                 { conversation -> startActivity<ChatActivity> { putExtra(ChatActivity.EXTRA__THREAD_ID, conversation.threadId) } },
                 { conversation -> viewModel.showConversationOptionsDialog(conversation.threadId) }
         )
+        val inviteAdapter = InviteFriendAdapter(
+                { handleInviteFriends() }
+        )
 
         compoundAdapter = CompoundAdapter(listOf(
+                searchHeaderAdapter,
                 conversationRequestsAdapter,
-                conversationsHeaderAdapter,
-                conversationAdapter
+                conversationAdapter,
+                inviteAdapter
         ))
 
         recents.apply {
@@ -152,18 +154,21 @@ class RecentFragment : TopLevelFragment() {
     private fun handleConversations(acceptedConversations: List<Conversation>, unacceptedConversation: List<Conversation>) {
         conversationRequestsAdapter.setUnacceptedConversations(unacceptedConversation)
         conversationAdapter.setItemList(acceptedConversations)
-        updateViewState()
     }
 
     private fun handleAcceptedConversation(updatedConversation: Conversation) {
         conversationRequestsAdapter.removeConversation(updatedConversation)
         conversationAdapter.addItem(updatedConversation)
-        updateViewState()
     }
 
     private fun handleUpdatedUnacceptedConversation(updatedConversation: Conversation) {
         conversationRequestsAdapter.addOrUpdateConversation(updatedConversation)
-        updateViewState()
+    }
+
+    private fun handleInviteFriends() = startExternalActivity {
+        action = Intent.ACTION_SEND
+        type = "text/plain"
+        putExtra(Intent.EXTRA_TEXT, getString(R.string.invite_friends_intent_message))
     }
 
     private fun showConversationOptionsDialog(conversationInfo: ConversationInfo) {
@@ -174,7 +179,6 @@ class RecentFragment : TopLevelFragment() {
 
     private fun removeItemWithUndo(conversation: Conversation) {
         conversationAdapter.removeItemWithUndo(conversation, recents)
-        updateViewState()
     }
 
     private fun addSwipeToDeleteListener(recyclerView: RecyclerView) {
@@ -190,32 +194,9 @@ class RecentFragment : TopLevelFragment() {
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, swipeDir: Int) {
                 compoundAdapter.removeItemAtWithUndo(viewHolder.adapterPosition, recyclerView)
-                updateEmptyState()
             }
         })
         itemTouchHelper.attachToRecyclerView(recyclerView)
-    }
-
-    private fun updateViewState() {
-        updateEmptyState()
-        updateConversationHeader()
-    }
-
-    private fun updateConversationHeader() {
-        val acceptedConversationsExist = !conversationAdapter.isEmpty()
-        conversationsHeaderAdapter.setVisibile(acceptedConversationsExist)
-    }
-
-    private fun updateEmptyState() {
-        val isAcceptedConversationsEmpty = conversationAdapter.isEmpty()
-        val areBothRequestsAndAcceptedChatsEmpty = isAcceptedConversationsEmpty && conversationRequestsAdapter.isEmpty()
-
-        val params = recents.layoutParams
-        params.height = if (isAcceptedConversationsEmpty) ViewGroup.LayoutParams.WRAP_CONTENT else ViewGroup.LayoutParams.MATCH_PARENT
-        recents.layoutParams = params
-
-        recents.isVisible(!areBothRequestsAndAcceptedChatsEmpty)
-        emptyState.isVisible(isAcceptedConversationsEmpty)
     }
 
     override fun onStart() {

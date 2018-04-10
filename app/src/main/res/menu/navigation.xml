@@ -23,7 +23,7 @@
         android:icon="@drawable/ic_action_dapps" />
 
     <item
-        android:title="@string/tab_recent"
+        android:title="@string/tab_chats"
         android:icon="@drawable/ic_action_recent" />
 
     <item
