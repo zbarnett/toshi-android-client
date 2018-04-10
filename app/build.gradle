@@ -183,26 +183,7 @@ dependencies {
 
 dependencyVerification {
     verify = [
-            'com.google.firebase:firebase-core:ad7954769f68912b17b2794c3346376d378f851a4a77345682d5b50be8e95588',
-            'com.google.firebase:firebase-analytics:9a7e631ced30ceab9045482703b8ebe060f24a0f4d248e7584fa354d438700c2',
-            'com.google.firebase:firebase-analytics-impl:30e7607128faad3a9e4e0cfe0e7677ec89299164382f77f79af9f0b6db125edd',
-            'com.google.firebase:firebase-iid:7e026d50ed0e4af6dde2041791a14cae1f0214e71d1bda0b50ac27bf295a3789',
-            'com.google.firebase:firebase-common:1087fa973146806d76b58c4099de09434af76598705543bd89e114a5aa5188f0',
-            'com.google.android.gms:play-services-tasks:7170ce5450c460323076bdd2cacc8fefdcd1f00e3e127c8a9dd7e8bdc302ef3d',
-            'com.google.android.gms:play-services-basement:92c9c5768d19f00b94617782288af1ee381c93777063f382a864b662ac031ba0',
-            'com.google.firebase:firebase-analytics-license:8f0a811ff5e0f4bfdfe38a6191e78bcfecd82dd8be286d7697d31b8353e155d3',
-            'com.android.support:support-v4:cd030f875dc7ee73b58e17598f368a2e12824fb3ceb4ed515ed815a47160228c',
-            'com.google.android.gms:play-services-basement-license:a5eb1b1f56c51e94014ff0f955af35fe81d97e9a58426bcda2eedab879b73ad8',
-            'com.google.firebase:firebase-common-license:e52362ba02569c2f3ad8ccc05ca87854dd8ff4f3afe9226c37905496d8ae9e26',
-            'com.google.firebase:firebase-analytics-impl-license:eea62c319d999225e82bb41c622f761075940cc864401cd8d7bfac9e17b49ff1',
-            'com.android.support:support-fragment:f12633dd4d418a4edeb5ecf3bf4393edd0770b1eaa5d1ee3078c5e7c174868fd',
-            'com.android.support:support-media-compat:e9f820d08e6a5735cfdb2a7d81d3c86b4a31897ac1edaeb55c7de06bcb370343',
-            'com.android.support:support-core-utils:e0561cc9d00ae125d9e1ad8985d4639e68ce8399ae973e91674e97faaf658243',
-            'com.android.support:support-core-ui:cf3c75fd9a1b1dcbb6042d610515cd79cd0d65d3efd272d2250727187e8ca2ed',
-            'com.android.support:support-compat:5a7b6e18903458e3a561df24033476518f998cd7ae1ed747c2874e0685b999c7',
-            'com.google.android.gms:play-services-tasks-license:c7d1faa9af7c460ab7829f6c08770391ed8cff4bd16c15cc2e0c1999a5952b1a',
-            'com.google.firebase:firebase-iid-license:5a9c31d1da9d0273f270ff595c75ba4b3d84675a629b9015bc23dbcdd8803110',
-            'com.android.support:support-annotations:47a2a30eab487a490a8a8f16678007c3d2b6dcae1e09b0485a12bbf921200ec3',
+        // TODO: Update this when https://github.com/signalapp/gradle-witness/issues/27 is fixed
     ]
 }
 
