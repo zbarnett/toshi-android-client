@@ -96,7 +96,11 @@ class WalletFragment : TopLevelFragment() {
     }
 
     private fun initAdapter() {
-        walletAdapter = WalletPagerAdapter(activity, childFragmentManager)
+        val tabs = listOf(
+                getString(R.string.tokens),
+                getString(R.string.collectibles)
+        )
+        walletAdapter = WalletPagerAdapter(tabs, childFragmentManager)
         viewPager.adapter = walletAdapter
         tabLayout.setupWithViewPager(viewPager)
     }

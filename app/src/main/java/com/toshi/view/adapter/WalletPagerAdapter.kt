@@ -17,16 +17,14 @@
 
 package com.toshi.view.adapter
 
-import android.content.Context
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
-import com.toshi.R
 import com.toshi.view.fragment.ERC20Fragment
 import com.toshi.view.fragment.ERC721Fragment
 
 class WalletPagerAdapter(
-        private val context: Context?,
+        private val tabs: List<String>,
         fm: FragmentManager?
 ) : FragmentPagerAdapter(fm) {
 
@@ -41,8 +39,8 @@ class WalletPagerAdapter(
 
     override fun getPageTitle(position: Int): CharSequence {
         return when (position) {
-            0 -> context?.getString(R.string.tokens) ?: ""
-            else -> context?.getString(R.string.collectibles) ?: ""
+            0 -> tabs[0]
+            else -> tabs[1]
         }
     }
 }
