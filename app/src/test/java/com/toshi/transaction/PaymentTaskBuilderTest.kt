@@ -27,7 +27,7 @@ import com.toshi.manager.model.PaymentTask
 import com.toshi.manager.model.ToshiPaymentTask
 import com.toshi.manager.model.W3PaymentTask
 import com.toshi.manager.network.EthereumInterface
-import com.toshi.managers.BalanceManagerMocker
+import com.toshi.managers.balanceManager.BalanceManagerMocker
 import com.toshi.model.local.UnsignedW3Transaction
 import com.toshi.model.local.User
 import com.toshi.model.network.ExchangeRate

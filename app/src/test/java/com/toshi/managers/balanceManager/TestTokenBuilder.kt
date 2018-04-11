@@ -15,7 +15,7 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.toshi.managers
+package com.toshi.managers.balanceManager
 
 import com.toshi.model.network.ERC721TokenWrapper
 import com.toshi.model.network.token.ERC20Tokens

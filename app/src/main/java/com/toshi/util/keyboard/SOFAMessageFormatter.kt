@@ -67,7 +67,7 @@ class SOFAMessageFormatter() {
                 SofaType.LOCAL_STATUS_MESSAGE -> {
                     val localStatusMessage = SofaAdapters.get().localStatusMessageRequestFrom(sofaMessage.payload)
                     val sender = localStatusMessage.sender
-                    val isSenderLocalUser = sender != null && localUser.toshiId == sender.toshiId
+                    val isSenderLocalUser = sender != null && localUser?.toshiId == sender.toshiId
                     return localStatusMessage.loadString(isSenderLocalUser)
                 }
                 SofaType.COMMAND_REQUEST,

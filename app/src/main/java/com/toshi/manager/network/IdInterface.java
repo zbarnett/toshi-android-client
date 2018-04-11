@@ -37,6 +37,7 @@ import retrofit2.http.PUT;
 import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
+import rx.Completable;
 import rx.Single;
 
 public interface IdInterface {
@@ -79,8 +80,8 @@ public interface IdInterface {
 
     @Headers("Cache-control: no-store")
     @GET("/v1/login/{id}")
-    Single<Void> webLogin(@Path("id") String loginToken,
-                          @Query("timestamp") long timestamp);
+    Completable webLogin(@Path("id") String loginToken,
+                         @Query("timestamp") long timestamp);
 
     @Multipart
     @PUT("v1/user")

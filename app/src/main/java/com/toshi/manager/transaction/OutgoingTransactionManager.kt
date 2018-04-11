@@ -252,7 +252,7 @@ class OutgoingTransactionManager(
         outgoingPaymentResultSubject.onNext(unsuccessfulPayment)
     }
 
-    private fun getLocalUser() = userManager.getCurrentUser().toBlocking().value()
+    private fun getLocalUser(): User? = userManager.getCurrentUser().toBlocking().value()
     private fun clearSubscription() = outgoingPaymentSub?.unsubscribe()
     private fun addOutgoingPaymentTask(paymentTask: PaymentTask) = newOutgoingPaymentQueue.onNext(paymentTask)
     fun clearSubscriptions() = subscriptions.clear()
