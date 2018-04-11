@@ -39,7 +39,7 @@
     <com.toshi.view.custom.RatingBar
         android:id="@+id/rating_bar"
         android:layout_width="match_parent"
-        android:layout_height="16dp"
+        android:layout_height="@dimen/rating_bar_height"
         android:layout_marginLeft="8dp"
         app:backgroundColor="#FFFFFF"
         app:foregroundColor="@color/ratingPrimary"
