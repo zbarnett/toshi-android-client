@@ -22,7 +22,7 @@
     <solid
         android:color="@color/windowBackground" />
     <corners
-        android:radius="@dimen/controlRadiusSize" />
+        android:radius="@dimen/control_corner_radius" />
     <stroke
         android:width="@dimen/border_size_default"
         android:color="@color/control_selected_color" />

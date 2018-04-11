@@ -29,8 +29,8 @@
         android:background="@drawable/control_background_with_border"
         android:paddingLeft="@dimen/margin_three_quarters"
         android:paddingRight="@dimen/margin_three_quarters"
-        android:paddingTop="@dimen/bubbleVerticalPadding"
-        android:paddingBottom="@dimen/bubbleVerticalPadding">
+        android:paddingTop="@dimen/chat_bubble_vertical_padding"
+        android:paddingBottom="@dimen/chat_bubble_vertical_padding">
 
         <TextView
             android:layout_width="wrap_content"
@@ -53,8 +53,8 @@
         android:background="@drawable/control_background_with_border"
         android:paddingLeft="@dimen/margin_three_quarters"
         android:paddingRight="@dimen/margin_three_quarters"
-        android:paddingTop="@dimen/bubbleVerticalPadding"
-        android:paddingBottom="@dimen/bubbleVerticalPadding">
+        android:paddingTop="@dimen/chat_bubble_vertical_padding"
+        android:paddingBottom="@dimen/chat_bubble_vertical_padding">
 
         <TextView
             android:layout_width="wrap_content"

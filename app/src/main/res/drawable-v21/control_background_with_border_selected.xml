@@ -25,7 +25,7 @@
             <stroke
                 android:width="@dimen/border_size_default"
                 android:color="@color/control_selected_color" />
-            <corners android:radius="@dimen/controlRadiusSize" />
+            <corners android:radius="@dimen/control_corner_radius" />
         </shape>
     </item>
 </ripple>

@@ -16,65 +16,71 @@
   -->
 
 <resources>
-    <!-- Default screen margins, per the Android Design guidelines. -->
-    <dimen name="messageListRightMargin">32dp</dimen>
-    <dimen name="bubbleVerticalPadding">9dp</dimen>
 
-    <dimen name="radiusSize">6dp</dimen>
-    <dimen name="controlRadiusSize">32dp</dimen>
+    <!-- MARGINS -->
 
-    <dimen name="balance_bar_text_size">14sp</dimen>
-    <dimen name="qr_code_size">170dp</dimen>
+    <dimen name="margin_two_and_a_half">40dp</dimen>
+    <dimen name="margin_double">32dp</dimen>
+    <dimen name="margin_one_and_a_half">24dp</dimen>
+    <dimen name="margin_primary">16dp</dimen>
+    <dimen name="margin_three_quarters">12dp</dimen>
+    <dimen name="margin_half">8dp</dimen>
+    <dimen name="margin_quarter">4dp</dimen>
 
-    <dimen name="control_group_recycleview_padding">24dp</dimen>
+    <!-- margin_primary + margin_three_quarters + avatar_size_small -->
+    <dimen name="border_left_margin_with_small_avatar">72dp</dimen>
 
-    <dimen name="amount_view_horizontal_spacing">17dp</dimen>
-    <dimen name="amount_view_vertical_spacing">18dp</dimen>
+    <!--
+    DEFAULT SIZES
+    (used many places in the app)
+    -->
 
-    <dimen name="star_right_margin">2dp</dimen>
     <dimen name="avatar_size_small">44dp</dimen>
     <dimen name="avatar_size_medium">72dp</dimen>
 
-    <dimen name="rating_bar_radius">3dp</dimen>
-    <dimen name="rating_bar_width">160dp</dimen>
+    <dimen name="border_size_default">1dp</dimen>
+
+    <dimen name="corner_radius_default">8dp</dimen>
+    <dimen name="corner_radius_small">6dp</dimen>
+
+    <dimen name="elevation_default">2dp</dimen>
+
+    <dimen name="keyboard_threshold">100dp</dimen>
+
+    <dimen name="list_item_height_default">80dp</dimen>
+
+    <!-- Size which will allow a ConstraintLayout to size the element-->
+    <dimen name="match_constraints">0dp</dimen>
+
+    <dimen name="progress_height">2dp</dimen>
+
+
+    <!--
+    SPECIFIC REUSED SIZES
+    (Things used in both code and XML, or used in multiple places)
+     -->
+
+    <dimen name="amount_view_horizontal_spacing">17dp</dimen>
+    <dimen name="amount_view_vertical_spacing">18dp</dimen>
 
     <dimen name="backup_phrase_spacing">10dp</dimen>
 
     <dimen name="chat_image__max_width">250dp</dimen>
     <dimen name="chat_payment_width">261dp</dimen>
     <dimen name="chat_file_width">261dp</dimen>
+    <dimen name="chat_bubble_vertical_padding">9dp</dimen>
+
+    <dimen name="control_corner_radius">32dp</dimen>
 
 
+    <dimen name="dapps_input_z">4dp</dimen>
 
-    <dimen name="keyboard_threshold">100dp</dimen>
+    <dimen name="qr_code_size">170dp</dimen>
 
-    <dimen name="progress_height">2dp</dimen>
+    <dimen name="rating_bar_radius">3dp</dimen>
+    <dimen name="rating_bar_width">160dp</dimen>
+    <dimen name="rating_bar_star_right_margin">2dp</dimen>
 
-    <dimen name="dappsInputElevation">2dp</dimen>
-    <dimen name="dappsInputZ">4dp</dimen>
-    <dimen name="dappsInputMargin">40dp</dimen>
-
-    <!-- New attempt at organizing dimens starts here! -->
-
-    <dimen name="margin_primary">16dp</dimen>
-    <dimen name="margin_three_quarters">12dp</dimen>
-    <dimen name="margin_half">8dp</dimen>
-    <dimen name="margin_quarter">4dp</dimen>
-
-    <!-- Size which will allow a ConstraintLayout to size the element-->
-    <dimen name="match_constraints">0dp</dimen>
-
-    <dimen name="border_size_default">1dp</dimen>
-
-    <dimen name="corner_radius_default">8dp</dimen>
-
-
-    <dimen name="list_item_height_default">80dp</dimen>
-
-    <dimen name="text_size_default">14sp</dimen>
-
-    <!-- margin_primary + margin_three_quarters + avatar_size_small -->
-    <dimen name="border_left_margin_with_small_avatar">72dp</dimen>
     <!--
     TEXT SIZES
     (remember to always use sp!)

@@ -58,12 +58,12 @@
             android:id="@+id/inputWrapper"
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:layout_marginLeft="@dimen/dappsInputMargin"
-            android:layout_marginRight="@dimen/dappsInputMargin"
-            android:layout_marginBottom="@dimen/dappsInputMargin"
+            android:layout_marginLeft="@dimen/margin_two_and_a_half"
+            android:layout_marginRight="@dimen/margin_two_and_a_half"
+            android:layout_marginBottom="@dimen/margin_two_and_a_half"
             android:background="@drawable/background_with_small_radius"
-            android:translationZ="@dimen/dappsInputZ"
-            android:elevation="@dimen/dappsInputElevation">
+            android:translationZ="@dimen/dapps_input_z"
+            android:elevation="@dimen/elevation_default">
 
             <ImageButton
                 android:id="@+id/closeButton"

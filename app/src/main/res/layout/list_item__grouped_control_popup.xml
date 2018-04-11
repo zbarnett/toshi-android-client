@@ -20,8 +20,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="@dimen/avatar_size_small"
-    android:paddingLeft="@dimen/control_group_recycleview_padding"
-    android:paddingRight="@dimen/control_group_recycleview_padding"
+    android:paddingLeft="@dimen/margin_one_and_a_half"
+    android:paddingRight="@dimen/margin_one_and_a_half"
     android:background="?android:selectableItemBackground">
 
     <TextView
