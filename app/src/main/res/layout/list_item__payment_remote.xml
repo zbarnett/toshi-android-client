@@ -58,7 +58,7 @@
             android:id="@+id/eth_amount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="13sp"
+            android:textSize="@dimen/text_size_body"
             android:textColor="@color/textColorSecondary"
             tools:text="0.02454 ETH"/>
 
@@ -68,7 +68,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="13dp"
             android:visibility="gone"
-            android:textSize="13sp"
+            android:textSize="@dimen/text_size_body"
             android:textColor="@color/textColorPaymentBody"
             tools:text="I owed you. Thanks for taking care of drinks and burgers"
             tools:visibility="visible"/>

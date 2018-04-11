@@ -55,7 +55,7 @@
                 android:id="@+id/eth_amount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="13sp"
+                android:textSize="@dimen/text_size_body"
                 android:textColor="@color/textColorSecondary"
                 tools:text="0.02454 ETH"/>
 
@@ -64,7 +64,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13dp"
-                android:textSize="13sp"
+                android:textSize="@dimen/text_size_body"
                 android:textColor="@color/textColorPaymentBody"
                 tools:text="Pay me back for taking care of drinks and burgers."/>
 
@@ -90,7 +90,7 @@
         style="@style/TextStyleMedium"
         android:textColor="@color/error_color"
         android:textAllCaps="true"
-        android:textSize="13sp"
+        android:textSize="@dimen/text_size_body"
         android:visibility="gone"
         tools:visibility="visible"
         android:text="@string/not_delivered" />

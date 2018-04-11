@@ -68,7 +68,7 @@
             android:layout_marginRight="@dimen/margin_primary"
             android:lineSpacingExtra="2dp"
             android:textColor="@color/textColorSecondary"
-            android:textSize="13sp"
+            android:textSize="@dimen/text_size_body"
             tools:text="0.4534 ETH"
             app:layout_columnSpan="3"/>
 
@@ -80,7 +80,7 @@
             android:layout_marginTop="13dp"
             android:lineSpacingExtra="2dp"
             android:textColor="@color/textColorPaymentBody"
-            android:textSize="13sp"
+            android:textSize="@dimen/text_size_body"
             android:visibility="gone"
             tools:text="This is what the money is for. It should wrap over to several lines."
             app:layout_columnSpan="3"/>
@@ -101,7 +101,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 style="@style/TextViewButton"
-                android:textSize="13sp"
+                android:textSize="@dimen/text_size_body"
                 android:text="@string/button_decline"/>
 
             <android.support.v4.widget.Space
@@ -113,7 +113,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 style="@style/TextViewButton"
-                android:textSize="13sp"
+                android:textSize="@dimen/text_size_body"
                 android:text="@string/button_accept"/>
 
         </LinearLayout>
@@ -126,7 +126,7 @@
             style="@style/TextStyleMedium"
             android:textAllCaps="true"
             android:textColor="@color/textColorSecondary"
-            android:textSize="13sp"
+            android:textSize="@dimen/text_size_body"
             android:visibility="gone"
             app:layout_columnSpan="3"
             app:layout_gravity="right"

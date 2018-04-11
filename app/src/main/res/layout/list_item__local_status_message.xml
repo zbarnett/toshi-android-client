@@ -30,5 +30,5 @@
     android:lineSpacingExtra="2dp"
     android:textColor="@color/textColorChatTertiary"
     style="@style/TextStyleMedium"
-    android:textSize="13sp"
+    android:textSize="@dimen/text_size_body"
     tools:text="The group (This is a really long groupname) was created" />

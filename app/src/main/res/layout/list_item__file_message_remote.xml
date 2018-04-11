@@ -74,7 +74,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/textColorSecondary"
-                android:textSize="13sp"
+                android:textSize="@dimen/text_size_body"
                 tools:text="10.00 MB"/>
 
         </LinearLayout>
