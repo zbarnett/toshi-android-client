@@ -24,7 +24,6 @@
     <dimen name="controlRadiusSize">32dp</dimen>
 
     <dimen name="balance_bar_text_size">14sp</dimen>
-    <dimen name="subTitleSize">16sp</dimen>
     <dimen name="qr_code_size">170dp</dimen>
 
     <dimen name="control_group_recycleview_padding">24dp</dimen>
@@ -45,8 +44,6 @@
     <dimen name="chat_payment_width">261dp</dimen>
     <dimen name="chat_file_width">261dp</dimen>
 
-    <dimen name="list_header_text_size">14sp</dimen>
-    <dimen name="list_item_text_size">16sp</dimen>
 
 
     <dimen name="keyboard_threshold">100dp</dimen>
@@ -78,5 +75,12 @@
 
     <!-- margin_primary + margin_three_quarters + avatar_size_small -->
     <dimen name="border_left_margin_with_small_avatar">72dp</dimen>
+    <!--
+    TEXT SIZES
+    (remember to always use sp!)
+    -->
+
+    <dimen name="text_size_default">14sp</dimen>
+    <dimen name="text_size_subtitle">16sp</dimen>
 
 </resources>

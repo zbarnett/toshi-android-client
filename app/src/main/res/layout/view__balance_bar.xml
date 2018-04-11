@@ -41,7 +41,7 @@
         android:id="@+id/local_currency_balance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="@dimen/subTitleSize"
+        android:textSize="@dimen/text_size_subtitle"
         style="@style/TextStyleMedium"
         tools:text="$0.00 USD"/>
 
@@ -52,7 +52,7 @@
         android:layout_marginRight="3dp"
         android:gravity="center"
         android:textColor="@color/textColorSecondary"
-        android:textSize="@dimen/balance_bar_text_size"
+        android:textSize="@dimen/text_size_default"
         android:text="@string/payment_seperator"/>
 
     <TextView
@@ -60,7 +60,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/textColorSecondary"
-        android:textSize="@dimen/balance_bar_text_size"
+        android:textSize="@dimen/text_size_default"
         tools:text="0.0000"/>
 
     <TextView
@@ -68,7 +68,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="4dp"
         android:textColor="@color/textColorSecondary"
-        android:textSize="@dimen/balance_bar_text_size"
+        android:textSize="@dimen/text_size_default"
         android:text="@string/eth_currency_code"/>
 
     <android.support.v4.widget.Space

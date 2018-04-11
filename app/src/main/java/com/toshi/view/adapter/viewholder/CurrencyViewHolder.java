@@ -38,8 +38,8 @@ public class CurrencyViewHolder extends RecyclerView.ViewHolder {
     public CurrencyViewHolder(View itemView) {
         super(itemView);
         this.textView = itemView.findViewById(R.id.currency);
-        this.itemTextSize = BaseApplication.get().getResources().getDimension(R.dimen.list_item_text_size);
-        this.headerTextSize = BaseApplication.get().getResources().getDimension(R.dimen.list_header_text_size);
+        this.itemTextSize = BaseApplication.get().getResources().getDimension(R.dimen.text_size_subtitle);
+        this.headerTextSize = BaseApplication.get().getResources().getDimension(R.dimen.text_size_default);
         this.headerTextColor = ContextCompat.getColor(BaseApplication.get(), R.color.textColorSecondary);
         this.itemTextColor = ContextCompat.getColor(BaseApplication.get(), R.color.textColorPrimary);
     }
