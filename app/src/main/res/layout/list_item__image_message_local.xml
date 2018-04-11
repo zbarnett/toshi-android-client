@@ -25,8 +25,8 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:gravity="right"
-    android:layout_marginTop="@dimen/bubbleMargin"
-    android:layout_marginLeft="@dimen/bubbleMargin">
+    android:layout_marginTop="@dimen/margin_half"
+    android:layout_marginLeft="@dimen/margin_half">
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -39,14 +39,14 @@
             android:layout_height="150dp"
             android:layout_gravity="right"
             android:maxWidth="@dimen/chat_image__max_width"
-            app:riv_corner_radius="@dimen/chatImageRadius"/>
+            app:riv_corner_radius="@dimen/corner_radius_default"/>
 
         <ImageView
             android:id="@+id/sent_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="@dimen/bubbleMargin"
+            android:layout_marginLeft="@dimen/margin_half"
             android:visibility="gone"
             tools:visibility="visible"
             app:srcCompat="@drawable/ic_error"/>

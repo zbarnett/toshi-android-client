@@ -57,7 +57,7 @@
                     android:id="@+id/dappAvatar"
                     android:layout_width="72dp"
                     android:layout_height="72dp"
-                    app:riv_corner_radius="@dimen/chatImageRadius"
+                    app:riv_corner_radius="@dimen/corner_radius_default"
                     app:riv_border_width="@dimen/border_size_default"
                     app:riv_border_color="@color/divider"
                     app:srcCompat="@color/placeholder" />

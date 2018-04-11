@@ -30,7 +30,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="@dimen/bubbleMargin"
+        android:layout_marginTop="@dimen/margin_half"
         android:visibility="visible">
 
         <de.hdodenhof.circleimageview.CircleImageView
@@ -50,7 +50,7 @@
             android:layout_height="150dp"
             android:layout_marginLeft="6dp"
             android:maxWidth="@dimen/chat_image__max_width"
-            app:riv_corner_radius="@dimen/chatImageRadius"/>
+            app:riv_corner_radius="@dimen/corner_radius_default"/>
 
     </LinearLayout>
 

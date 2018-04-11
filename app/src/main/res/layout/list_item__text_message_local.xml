@@ -30,7 +30,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/textBubbleTopMargin"
-        android:layout_marginLeft="@dimen/bubbleMargin"
+        android:layout_marginLeft="@dimen/margin_half"
         android:orientation="horizontal"
         android:layout_gravity="right">
 
@@ -68,7 +68,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="@dimen/bubbleMargin"
+            android:layout_marginLeft="@dimen/margin_half"
             android:visibility="gone"
             tools:visibility="visible"
             app:srcCompat="@drawable/ic_error"/>

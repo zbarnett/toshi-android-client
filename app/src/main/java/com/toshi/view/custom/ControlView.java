@@ -68,7 +68,7 @@ public class ControlView extends LinearLayout implements ControlAdapter.OnContro
     private void initControls() {
         final ControlAdapter adapter = new ControlAdapter(new ArrayList<>());
         final ControlRecyclerView controlRv = findViewById(R.id.control_recycle_view);
-        final int controlSpacing = BaseApplication.get().getResources().getDimensionPixelSize(R.dimen.control_spacing);
+        final int controlSpacing = BaseApplication.get().getResources().getDimensionPixelSize(R.dimen.margin_half);
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this.getContext(), LinearLayoutManager.HORIZONTAL, false);
 
         controlRv.setLayoutManager(layoutManager);

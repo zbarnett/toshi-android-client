@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:background="@drawable/request_background_local"
-            android:layout_marginTop="@dimen/bubbleMargin"
+            android:layout_marginTop="@dimen/margin_half"
             android:padding="16dp">
 
             <TextView
@@ -75,7 +75,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="@dimen/bubbleMargin"
+            android:layout_marginLeft="@dimen/margin_half"
             android:visibility="gone"
             tools:visibility="visible"
             app:srcCompat="@drawable/ic_error"/>

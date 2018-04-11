@@ -39,7 +39,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:background="@drawable/request_background_remote"
-        android:layout_marginTop="@dimen/bubbleMargin"
+        android:layout_marginTop="@dimen/margin_half"
         android:padding="16dp">
 
         <TextView

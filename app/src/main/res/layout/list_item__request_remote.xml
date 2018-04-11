@@ -41,7 +41,7 @@
         android:layout_width="@dimen/chat_payment_width"
         android:layout_height="wrap_content"
         android:background="@drawable/request_background_remote"
-        android:layout_marginTop="@dimen/bubbleMargin"
+        android:layout_marginTop="@dimen/margin_half"
         android:padding="16dp"
         android:minWidth="50dp"
         app:columnCount="3">

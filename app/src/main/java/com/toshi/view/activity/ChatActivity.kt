@@ -491,7 +491,7 @@ class ChatActivity : AppCompatActivity() {
     private fun removePadding() {
         val paddingRight = messagesList.paddingRight
         val paddingLeft = messagesList.paddingLeft
-        val paddingBottom = getPxSize(R.dimen.message_list_bottom_padding)
+        val paddingBottom = getPxSize(R.dimen.margin_half)
         messagesList.setPadding(paddingLeft, 0, paddingRight, paddingBottom)
     }
 

@@ -34,7 +34,7 @@
         android:layout_height="34dp"
         android:layout_gravity="bottom"
         android:layout_marginRight="6dp"
-        android:layout_marginBottom="@dimen/bubbleMargin"
+        android:layout_marginBottom="@dimen/margin_half"
         app:civ_border_width="@dimen/border_size_default"
         app:civ_border_color="@color/divider"/>
 

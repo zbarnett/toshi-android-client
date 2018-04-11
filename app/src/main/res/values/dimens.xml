@@ -18,27 +18,22 @@
 <resources>
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="messageListRightMargin">32dp</dimen>
-    <dimen name="textBubbleHalfPadding">8dp</dimen>
-    <dimen name="bubbleMargin">8dp</dimen>
     <dimen name="textBubbleTopMargin">4dp</dimen>
     <dimen name="bubbleVerticalPadding">9dp</dimen>
     <dimen name="bubbleHorizontalPadding">12dp</dimen>
 
     <dimen name="radiusSize">6dp</dimen>
-    <dimen name="chatImageRadius">8dp</dimen>
     <dimen name="controlRadiusSize">32dp</dimen>
 
     <dimen name="balance_bar_text_size">14sp</dimen>
     <dimen name="subTitleSize">16sp</dimen>
     <dimen name="qr_code_size">170dp</dimen>
 
-    <dimen name="control_spacing">8dp</dimen>
     <dimen name="control_group_recycleview_padding">24dp</dimen>
 
     <dimen name="amount_view_horizontal_spacing">17dp</dimen>
     <dimen name="amount_view_vertical_spacing">18dp</dimen>
 
-    <dimen name="message_list_bottom_padding">8dp</dimen>
     <dimen name="star_right_margin">2dp</dimen>
     <dimen name="avatar_size_small">44dp</dimen>
     <dimen name="avatar_size_medium">72dp</dimen>
@@ -47,7 +42,6 @@
     <dimen name="rating_bar_width">160dp</dimen>
 
     <dimen name="backup_phrase_spacing">10dp</dimen>
-    <dimen name="backup_phrase_corner_radius">8dp</dimen>
 
     <dimen name="chat_image__max_width">250dp</dimen>
     <dimen name="chat_payment_width">261dp</dimen>
@@ -58,7 +52,6 @@
     <dimen name="chat_button_padding">12dp</dimen>
     <dimen name="list_item_avatar_margin">12dp</dimen>
 
-    <dimen name="passphrase_sign_in_spacing">8dp</dimen>
 
     <dimen name="keyboard_threshold">100dp</dimen>
 
@@ -79,6 +72,8 @@
     <dimen name="match_constraints">0dp</dimen>
 
     <dimen name="border_size_default">1dp</dimen>
+
+    <dimen name="corner_radius_default">8dp</dimen>
 
 
     <dimen name="list_item_height_default">80dp</dimen>
