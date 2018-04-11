@@ -79,7 +79,8 @@
     <!-- Size which will allow a ConstraintLayout to size the element-->
     <dimen name="match_constraints">0dp</dimen>
 
-    <dimen name="border_height_default">1dp</dimen>
+    <dimen name="border_size_default">1dp</dimen>
+
 
     <dimen name="list_item_height_default">80dp</dimen>
 

@@ -37,7 +37,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:civ_border_color="@color/divider"
-        app:civ_border_width="@dimen/border_height_default"
+        app:civ_border_width="@dimen/border_size_default"
         tools:src="@mipmap/ic_launcher"/>
 
     <LinearLayout
