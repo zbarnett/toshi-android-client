@@ -50,7 +50,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/textColorPrimary"
-            android:textSize="14sp"
+            android:textSize="@dimen/text_size_default"
             tools:text="Display name"
             style="@style/MediumEllipsizeEndStyle"/>
 
@@ -59,7 +59,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/textColorSecondary"
-            android:textSize="14sp"
+            android:textSize="@dimen/text_size_default"
             tools:text="This is a much longer user biography but we still show it up to two rows. "
             style="@style/NormalEllipsizeEndStyle"/>
 
@@ -87,7 +87,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
-            android:textSize="14sp"
+            android:textSize="@dimen/text_size_default"
             android:textColor="@color/textColorSecondary" />
 
     </LinearLayout>

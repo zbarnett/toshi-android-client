@@ -108,7 +108,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:padding="5dp"
-                        android:textSize="14sp"
+                        android:textSize="@dimen/text_size_default"
                         android:textColor="@color/textColorSecondary"
                         android:text="@string/how_does_it_work"/>
 

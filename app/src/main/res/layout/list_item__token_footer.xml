@@ -21,6 +21,6 @@
     android:layout_height="wrap_content"
     android:padding="@dimen/margin_primary"
     android:background="@color/windowBackgroundSecondary"
-    android:textSize="14sp"
+    android:textSize="@dimen/text_size_default"
     android:textColor="@color/textColorSecondary"
     android:text="@string/empty_state_tokens_message" />

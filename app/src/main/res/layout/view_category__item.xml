@@ -20,6 +20,6 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:textSize="14sp"
+    android:textSize="@dimen/text_size_default"
     android:textColor="@color/colorPrimary"
     style="@style/TextStyleMedium"/>

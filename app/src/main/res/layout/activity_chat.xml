@@ -181,7 +181,7 @@
             android:gravity="center"
             android:background="@color/file_avatar_background"
             style="@style/TextStyleMedium"
-            android:textSize="14sp"
+            android:textSize="@dimen/text_size_default"
             android:textColor="@color/textColorContrast"
             tools:text="Active network: Mainnet"/>
 

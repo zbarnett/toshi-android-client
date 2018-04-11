@@ -96,7 +96,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/margin_primary"
                 android:layout_marginRight="@dimen/margin_primary"
-                android:textSize="14sp"
+                android:textSize="@dimen/text_size_default"
                 android:textColor="@color/textColorPrimary"
                 android:text="@string/qr_code_message"/>
 

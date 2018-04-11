@@ -97,7 +97,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:textColor="@color/textColorPrimary"
-                            android:textSize="14sp"
+                            android:textSize="@dimen/text_size_default"
                             tools:text="Damn Daniel!"
                             style="@style/MediumEllipsizeEndStyle"/>
 
@@ -106,7 +106,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:textColor="@color/textColorSecondary"
-                            android:textSize="14sp"
+                            android:textSize="@dimen/text_size_default"
                             tools:text="\@username"
                             style="@style/NormalEllipsizeEndStyle"/>
                     </LinearLayout>

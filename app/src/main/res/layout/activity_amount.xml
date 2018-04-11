@@ -122,7 +122,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:textColor="@color/textColorSecondary"
-                        android:textSize="14sp" />
+                        android:textSize="@dimen/text_size_default" />
 
                     <android.support.v4.widget.Space
                         android:layout_width="4dp"
@@ -134,7 +134,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:textColor="@color/textColorSecondary"
-                        android:textSize="14sp"
+                        android:textSize="@dimen/text_size_default"
                         android:text="@string/eth_currency_code"/>
 
                     <android.support.v4.widget.Space
@@ -169,7 +169,7 @@
                 android:gravity="center"
                 android:background="@color/file_avatar_background"
                 style="@style/TextStyleMedium"
-                android:textSize="14sp"
+                android:textSize="@dimen/text_size_default"
                 android:textColor="@color/textColorContrast"
                 tools:text="Active network: Mainnet"/>
         </LinearLayout>

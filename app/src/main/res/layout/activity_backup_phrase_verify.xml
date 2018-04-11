@@ -76,7 +76,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="14sp"
+                    android:textSize="@dimen/text_size_default"
                     android:textColor="@color/textColorSecondary"
                     android:layout_marginTop="11dp"
                     android:layout_marginLeft="@dimen/margin_primary"

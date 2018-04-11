@@ -121,7 +121,7 @@
                         android:id="@+id/file_size"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="14sp"
+                        android:textSize="@dimen/text_size_default"
                         android:textColor="@color/textColorSecondary"
                         tools:text="10.3MB"/>
 

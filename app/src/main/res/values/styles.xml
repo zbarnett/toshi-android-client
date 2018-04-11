@@ -153,7 +153,7 @@
     <style name="NavBarButton" parent="FlatButton">
         <item name="android:textAllCaps">true</item>
         <item name="android:textColor">@color/nav_bar_button</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">@dimen/text_size_default</item>
     </style>
 
     <style name="NoPaddingButton" parent="android:Widget.Holo.Button">
@@ -179,7 +179,7 @@
 
     <style name="TextViewButton" parent="InChatButton">
         <item name="android:textAllCaps">true</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">@dimen/text_size_default</item>
         <item name="android:minHeight">0dp</item>
     </style>
 
@@ -266,7 +266,7 @@
 
     <style name="listSubTitleStyle">
         <item name="android:background">@color/subTitleBackgroundColor</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">@dimen/text_size_default</item>
         <item name="android:textColor">@color/subTitleTextColor</item>
         <item name="android:textStyle">bold</item>
         <item name="android:paddingLeft">@dimen/margin_primary</item>

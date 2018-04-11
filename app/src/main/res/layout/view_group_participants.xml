@@ -71,7 +71,7 @@
                 android:visibility="gone"
                 tools:visibility="visible"
                 android:textColor="@color/textColorContrast"
-                android:textSize="14sp"
+                android:textSize="@dimen/text_size_default"
                 android:textAllCaps="true"
                 android:text="@string/next"/>
 

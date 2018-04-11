@@ -90,7 +90,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/margin_primary"
                         android:layout_marginRight="@dimen/margin_primary"
-                        android:textSize="14sp"
+                        android:textSize="@dimen/text_size_default"
                         android:textColor="@color/textColorPrimary"
                         android:text="@string/deposit_info_message"/>
 
@@ -120,7 +120,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/margin_primary"
                         android:layout_marginRight="@dimen/margin_primary"
-                        android:textSize="14sp"
+                        android:textSize="@dimen/text_size_default"
                         android:textColor="@color/textColorPrimary"
                         android:text="@string/eth_deposit_method_1_message"/>
 
@@ -134,7 +134,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/margin_primary"
                         android:layout_marginRight="@dimen/margin_primary"
-                        android:textSize="14sp"
+                        android:textSize="@dimen/text_size_default"
                         android:textColor="@color/textColorPrimary"
                         android:textIsSelectable="true"
                         tools:text="0x20302385903825982853"/>
@@ -152,7 +152,7 @@
                         android:paddingTop="5dp"
                         android:paddingBottom="5dp"
                         android:background="?android:selectableItemBackground"
-                        android:textSize="14sp"
+                        android:textSize="@dimen/text_size_default"
                         android:textColor="@color/colorPrimary"
                         style="@style/TextStyleMedium"
                         android:text="@string/copy_to_clipboard"/>
@@ -193,7 +193,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/margin_primary"
                         android:layout_marginRight="@dimen/margin_primary"
-                        android:textSize="14sp"
+                        android:textSize="@dimen/text_size_default"
                         android:textColor="@color/textColorPrimary"
                         android:text="@string/eth_deposit_method_2_message"/>
 
@@ -223,7 +223,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/margin_primary"
                         android:layout_marginRight="@dimen/margin_primary"
-                        android:textSize="14sp"
+                        android:textSize="@dimen/text_size_default"
                         android:textColor="@color/textColorPrimary"
                         android:text="@string/eth_deposit_method_3_message"/>
 
@@ -253,7 +253,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/margin_primary"
                         android:layout_marginRight="@dimen/margin_primary"
-                        android:textSize="14sp"
+                        android:textSize="@dimen/text_size_default"
                         android:textColor="@color/textColorPrimary"
                         android:text="@string/eth_deposit_method_4_message" />
 
@@ -273,7 +273,7 @@
                 android:gravity="center"
                 android:background="@color/file_avatar_background"
                 style="@style/TextStyleMedium"
-                android:textSize="14sp"
+                android:textSize="@dimen/text_size_default"
                 android:textColor="@color/textColorContrast"
                 tools:text="Active network: Mainnet"
                 tools:visibility="visible"/>

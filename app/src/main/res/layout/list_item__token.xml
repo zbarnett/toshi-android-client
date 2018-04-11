@@ -53,7 +53,7 @@
             android:id="@+id/erc20Abbreviation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
+            android:textSize="@dimen/text_size_default"
             android:textColor="@color/textColorPrimary"
             style="@style/MediumEllipsizeEndStyle"
             tools:text="ZRX"/>
@@ -62,7 +62,7 @@
             android:id="@+id/erc20Name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
+            android:textSize="@dimen/text_size_default"
             android:textColor="@color/textColorSecondary"
             style="@style/NormalEllipsizeEndStyle"
             tools:text="0x"/>
@@ -82,7 +82,7 @@
             android:id="@+id/erc721Name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
+            android:textSize="@dimen/text_size_default"
             android:textColor="@color/textColorPrimary"
             style="@style/NormalEllipsizeEndStyle"
             tools:text="0x"/>
@@ -104,7 +104,7 @@
             android:id="@+id/value"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
+            android:textSize="@dimen/text_size_default"
             android:textColor="@color/textColorPrimary"
             tools:text="2.5459504"/>
 
@@ -112,7 +112,7 @@
             android:id="@+id/fiatValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
+            android:textSize="@dimen/text_size_default"
             android:textColor="@color/textColorSecondary"
             tools:text="$1024 USD"
             android:visibility="gone"/>

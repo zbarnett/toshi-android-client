@@ -91,7 +91,7 @@
                             android:id="@+id/currentNetwork"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="14sp"
+                            android:textSize="@dimen/text_size_default"
                             android:textColor="@color/textColorSecondaryTransparent"
                             tools:text="Ropsten Revival Testnet"/>
 
@@ -113,7 +113,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginRight="@dimen/margin_primary"
                         android:layout_marginLeft="@dimen/margin_primary"
-                        android:textSize="14sp"
+                        android:textSize="@dimen/text_size_default"
                         android:textColor="@color/textColorBody"
                         android:text="@string/develop_message"/>
 

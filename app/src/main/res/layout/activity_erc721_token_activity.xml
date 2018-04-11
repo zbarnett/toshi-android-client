@@ -68,7 +68,7 @@
                 android:maxLines="1"
                 android:ellipsize="end"
                 style="@style/TransparentToolbar.TitleText"
-                android:textSize="14sp"
+                android:textSize="@dimen/text_size_default"
                 android:textColor="@color/textColorSecondary"
                 tools:text="https://cryptopunks.com"/>
 

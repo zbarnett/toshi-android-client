@@ -97,7 +97,7 @@
                 android:padding="10dp"
                 android:textAllCaps="true"
                 android:textColor="@color/textColorContrast"
-                android:textSize="14sp"
+                android:textSize="@dimen/text_size_default"
                 android:fontFamily="@string/fontFamily_medium"
                 android:text="@string/sign_in"/>
 

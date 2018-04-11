@@ -86,7 +86,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/textColorContrastTransparent"
-                        android:textSize="14sp"
+                        android:textSize="@dimen/text_size_default"
                         android:text="@string/wallet_info"/>
 
                     <android.support.v4.widget.Space
@@ -136,7 +136,7 @@
                                 android:id="@+id/copy"
                                 android:layout_width="wrap_content"
                                 android:layout_height="32dp"
-                                android:textSize="14sp"
+                                android:textSize="@dimen/text_size_default"
                                 style="@style/ButtonAllCaps"
                                 android:textColor="@color/textColorPrimary"
                                 android:padding="0dp"
