@@ -63,7 +63,7 @@
             android:paddingTop="10dp"
             android:layout_marginLeft="24dp"
             android:layout_marginRight="24dp"
-            android:textSize="16sp"
+            android:textSize="@dimen/text_size_subtitle"
             android:textColor="@color/textColorPrimary"
             android:textColorHint="@color/textColorInput"
             android:background="@drawable/input_background_underline"

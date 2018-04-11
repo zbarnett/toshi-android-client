@@ -32,7 +32,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:textColor="@color/control_text_color"
-        android:textSize="16sp"
+        android:textSize="@dimen/text_size_subtitle"
         tools:text="Click me"/>
 
 </FrameLayout>

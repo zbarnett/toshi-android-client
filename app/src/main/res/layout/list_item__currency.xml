@@ -31,7 +31,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:textSize="16sp"
+        android:textSize="@dimen/text_size_subtitle"
         android:textColor="@color/textColorPrimary"
         android:gravity="center_vertical"
         tools:text="United States Dollar (USD)"/>

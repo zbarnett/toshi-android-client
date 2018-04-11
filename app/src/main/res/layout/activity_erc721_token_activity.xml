@@ -58,7 +58,7 @@
                 android:maxLines="1"
                 android:ellipsize="end"
                 style="@style/TransparentToolbar.TitleText"
-                android:textSize="16sp"
+                android:textSize="@dimen/text_size_subtitle"
                 tools:text="CryptoPunks"/>
 
             <TextView

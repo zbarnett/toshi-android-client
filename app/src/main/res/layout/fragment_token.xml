@@ -62,7 +62,7 @@
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:textSize="16sp"
+                android:textSize="@dimen/text_size_subtitle"
                 android:textColor="@color/textColorSecondary"
                 android:text="@string/empty_state_tokens_message"/>
 

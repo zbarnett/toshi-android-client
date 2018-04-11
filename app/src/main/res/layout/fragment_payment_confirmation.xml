@@ -112,7 +112,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:textColor="@color/textColorSecondaryTransparent"
-                        android:textSize="16sp"
+                        android:textSize="@dimen/text_size_subtitle"
                         android:text="@string/recipient" />
 
                     <Space
@@ -152,7 +152,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
-                        android:textSize="16sp"
+                        android:textSize="@dimen/text_size_subtitle"
                         android:textColor="@color/textColorSecondaryTransparent"
                         android:text="@string/recipient"/>
 
@@ -202,7 +202,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="16sp"
+                            android:textSize="@dimen/text_size_subtitle"
                             android:textColor="@color/textColorSecondaryTransparent"
                             android:text="@string/recipient"/>
 
@@ -214,7 +214,7 @@
                             android:id="@+id/dappHeader"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="16sp"
+                            android:textSize="@dimen/text_size_subtitle"
                             android:textColor="@color/textColorPrimary"
                             android:maxLines="2"
                             tools:text="CryptoKitties | Collect and breed digital cats!"/>
@@ -227,7 +227,7 @@
                             android:id="@+id/dappUrl"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="16sp"
+                            android:textSize="@dimen/text_size_subtitle"
                             android:textColor="@color/textColorSecondaryTransparent"
                             tools:text="cryptokitties.co"/>
 
@@ -268,7 +268,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="16sp"
+                            android:textSize="@dimen/text_size_subtitle"
                             android:textColor="@color/textColorSecondaryTransparent"
                             android:text="@string/amount"/>
 
@@ -287,7 +287,7 @@
                                 android:id="@+id/amount"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textSize="16sp"
+                                android:textSize="@dimen/text_size_subtitle"
                                 android:textColor="@color/textColorPrimary"
                                 tools:text="$6.10 USD"/>
 
@@ -295,7 +295,7 @@
                                 android:id="@+id/convertedAmount"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textSize="16sp"
+                                android:textSize="@dimen/text_size_subtitle"
                                 android:textColor="@color/textColorSecondary"
                                 tools:text="$6.10 USD"/>
 
@@ -313,7 +313,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="16sp"
+                            android:textSize="@dimen/text_size_subtitle"
                             android:textColor="@color/textColorSecondaryTransparent"
                             android:text="@string/est_network_fees"/>
 
@@ -332,7 +332,7 @@
                                 android:id="@+id/gasPrice"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textSize="16sp"
+                                android:textSize="@dimen/text_size_subtitle"
                                 android:textColor="@color/textColorPrimary"
                                 tools:text="$1.50 USD"/>
 
@@ -340,7 +340,7 @@
                                 android:id="@+id/convertedGasPrice"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textSize="16sp"
+                                android:textSize="@dimen/text_size_subtitle"
                                 android:textColor="@color/textColorSecondary"
                                 tools:text="$1.50 USD"/>
 
@@ -367,7 +367,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="16sp"
+                            android:textSize="@dimen/text_size_subtitle"
                             android:textColor="@color/textColorSecondaryTransparent"
                             android:text="@string/total"/>
 
@@ -380,7 +380,7 @@
                             android:id="@+id/total"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="16sp"
+                            android:textSize="@dimen/text_size_subtitle"
                             android:textColor="@color/textColorPrimary"
                             android:textStyle="bold"
                             tools:text="$7.60 USD"/>
@@ -391,7 +391,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="right"
-                        android:textSize="16sp"
+                        android:textSize="@dimen/text_size_subtitle"
                         android:textColor="@color/textColorSecondaryTransparent"
                         tools:text="0.005063"/>
 
@@ -416,7 +416,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="16sp"
+                            android:textSize="@dimen/text_size_subtitle"
                             android:textColor="@color/textColorSecondaryTransparent"
                             android:text="@string/amount"/>
 
@@ -429,7 +429,7 @@
                             android:id="@+id/ERC20Amount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="16sp"
+                            android:textSize="@dimen/text_size_subtitle"
                             android:textColor="@color/textColorPrimary"
                             tools:text="6.10 OMG"/>
                     </LinearLayout>
@@ -445,7 +445,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="16sp"
+                            android:textSize="@dimen/text_size_subtitle"
                             android:textColor="@color/textColorSecondaryTransparent"
                             android:text="@string/est_network_fees"/>
 
@@ -458,7 +458,7 @@
                             android:id="@+id/ERC20GasPrice"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="16sp"
+                            android:textSize="@dimen/text_size_subtitle"
                             android:textColor="@color/textColorPrimary"
                             tools:text="0.0001 ETH"/>
                     </LinearLayout>
@@ -472,7 +472,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="right"
-                        android:textSize="16sp"
+                        android:textSize="@dimen/text_size_subtitle"
                         android:textColor="@color/textColorSecondaryTransparent"
                         tools:text="0.005063 USD"/>
 
@@ -502,7 +502,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:textSize="16sp"
+                    android:textSize="@dimen/text_size_subtitle"
                     android:textColor="@color/textColorPrimary"
                     tools:text="Your balance: $100.60 USD"/>
 
@@ -553,7 +553,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
+                android:textSize="@dimen/text_size_subtitle"
                 android:textColor="@color/colorPrimary"
                 android:text="@string/transaction_submitted"
                 style="@style/TextStyleMedium"/>

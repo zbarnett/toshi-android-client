@@ -64,7 +64,7 @@
                 android:layout_marginLeft="24dp"
                 android:layout_marginRight="24dp"
                 android:gravity="center"
-                android:textSize="16sp"
+                android:textSize="@dimen/text_size_subtitle"
                 android:textColor="@color/textColorSecondary"
                 android:text="@string/wallet_address_dialog_message"/>
 
@@ -88,7 +88,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="24dp"
                 android:layout_marginRight="24dp"
-                android:textSize="16sp"
+                android:textSize="@dimen/text_size_subtitle"
                 android:textColor="@color/textColorPrimary"
                 android:textIsSelectable="true"
                 tools:text="0x23948398942"/>

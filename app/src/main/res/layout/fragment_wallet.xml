@@ -74,7 +74,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textColor="@color/textColorContrast"
-                        android:textSize="16sp"
+                        android:textSize="@dimen/text_size_subtitle"
                         android:text="@string/wallet_address"
                         style="@style/TextStyleMedium"/>
 
@@ -123,7 +123,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:textColor="@color/textColorPrimary"
-                                android:textSize="16sp"
+                                android:textSize="@dimen/text_size_subtitle"
                                 tools:text="0x115..45F3a"
                                 style="@style/NormalEllipsizeEndStyle"/>
 

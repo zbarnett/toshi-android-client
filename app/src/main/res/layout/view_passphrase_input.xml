@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:paddingLeft="3dp"
-            android:textSize="16sp"
+            android:textSize="@dimen/text_size_subtitle"
             android:hint="@string/enter_passphrase" />
 
         <com.google.android.flexbox.FlexboxLayout

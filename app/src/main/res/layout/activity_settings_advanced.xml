@@ -83,7 +83,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="16sp"
+                            android:textSize="@dimen/text_size_subtitle"
                             android:textColor="@color/textColorPrimary"
                             android:text="@string/network"/>
 
@@ -135,7 +135,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
-                        android:textSize="16sp"
+                        android:textSize="@dimen/text_size_subtitle"
                         android:textColor="@color/textColorPrimary"
                         android:text="@string/about__licenses" />
 
@@ -154,7 +154,7 @@
                     android:gravity="center_vertical"
                     android:paddingLeft="@dimen/margin_primary"
                     android:textColor="@color/textColorBody"
-                    android:textSize="16sp"
+                    android:textSize="@dimen/text_size_subtitle"
                     tools:text="VersionName"/>
 
             </LinearLayout>

@@ -53,7 +53,7 @@
         android:lineSpacingExtra="2dp"
         android:textColor="@color/textColorPrimary"
         android:textColorLink="@color/colorPrimary"
-        android:textSize="16sp"
+        android:textSize="@dimen/text_size_subtitle"
         android:textIsSelectable="true"
         tools:text="Remote Message! www.test.com"  />
 

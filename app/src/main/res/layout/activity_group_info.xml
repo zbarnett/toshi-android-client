@@ -104,7 +104,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/textColorPrimary"
                     android:textColorHint="@color/textColorSecondary"
-                    android:textSize="16sp"
+                    android:textSize="@dimen/text_size_subtitle"
                     android:singleLine="true"
                     android:maxLength="100"
                     tools:text="@string/group_name"/>
@@ -175,7 +175,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="16sp"
+                    android:textSize="@dimen/text_size_subtitle"
                     android:textColor="@color/colorPrimary"
                     android:text="@string/add_participants"/>
 
