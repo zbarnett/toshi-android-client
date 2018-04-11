@@ -48,7 +48,7 @@
 
             <android.support.v4.widget.Space
                 android:layout_width="@dimen/margin_primary"
-                android:layout_height="0dp" />
+                android:layout_height="@dimen/space_unused_dimension" />
 
             <TextView
                 android:id="@+id/toolbarTitle"
@@ -91,7 +91,7 @@
                     tools:visibility="gone">
 
                     <android.support.v4.widget.Space
-                        android:layout_width="0dp"
+                        android:layout_width="@dimen/space_unused_dimension"
                         android:layout_height="61dp" />
 
                     <de.hdodenhof.circleimageview.CircleImageView
@@ -104,7 +104,7 @@
                         app:civ_border_color="@color/divider" />
 
                     <Space
-                        android:layout_width="0dp"
+                        android:layout_width="@dimen/space_unused_dimension"
                         android:layout_height="12dp" />
 
                     <TextView
@@ -116,7 +116,7 @@
                         android:text="@string/recipient" />
 
                     <Space
-                        android:layout_width="0dp"
+                        android:layout_width="@dimen/space_unused_dimension"
                         android:layout_height="8dp" />
 
                     <TextView
@@ -130,7 +130,7 @@
                         style="@style/TextStyleMedium"/>
 
                     <Space
-                        android:layout_width="0dp"
+                        android:layout_width="@dimen/space_unused_dimension"
                         android:layout_height="60dp" />
 
                 </LinearLayout>
@@ -145,7 +145,7 @@
                     android:visibility="gone">
 
                     <android.support.v4.widget.Space
-                        android:layout_width="0dp"
+                        android:layout_width="@dimen/space_unused_dimension"
                         android:layout_height="61dp" />
 
                     <TextView
@@ -157,7 +157,7 @@
                         android:text="@string/recipient"/>
 
                     <android.support.v4.widget.Space
-                        android:layout_width="0dp"
+                        android:layout_width="@dimen/space_unused_dimension"
                         android:layout_height="8dp" />
 
                     <TextView
@@ -173,7 +173,7 @@
                         tools:text="0x1NW28WVOJRQNCE34RTOWZGK3ADCM5HN6WPVUUI4U"/>
 
                     <Space
-                        android:layout_width="0dp"
+                        android:layout_width="@dimen/space_unused_dimension"
                         android:layout_height="60dp" />
 
                 </LinearLayout>
@@ -196,7 +196,7 @@
                         android:orientation="vertical">
 
                         <android.support.v4.widget.Space
-                            android:layout_width="0dp"
+                            android:layout_width="@dimen/space_unused_dimension"
                             android:layout_height="20dp" />
 
                         <TextView
@@ -207,7 +207,7 @@
                             android:text="@string/recipient"/>
 
                         <android.support.v4.widget.Space
-                            android:layout_width="0dp"
+                            android:layout_width="@dimen/space_unused_dimension"
                             android:layout_height="8dp" />
 
                         <TextView
@@ -220,7 +220,7 @@
                             tools:text="CryptoKitties | Collect and breed digital cats!"/>
 
                         <android.support.v4.widget.Space
-                            android:layout_width="0dp"
+                            android:layout_width="@dimen/space_unused_dimension"
                             android:layout_height="4dp" />
 
                         <TextView
@@ -232,14 +232,14 @@
                             tools:text="cryptokitties.co"/>
 
                         <android.support.v4.widget.Space
-                            android:layout_width="0dp"
+                            android:layout_width="@dimen/space_unused_dimension"
                             android:layout_height="20dp" />
 
                     </LinearLayout>
 
                     <android.support.v4.widget.Space
                         android:layout_width="20dp"
-                        android:layout_height="0dp" />
+                        android:layout_height="@dimen/space_unused_dimension" />
 
                     <ImageView
                         android:id="@+id/dappFavicon"
@@ -303,7 +303,7 @@
                     </LinearLayout>
 
                     <Space
-                        android:layout_width="0dp"
+                        android:layout_width="@dimen/space_unused_dimension"
                         android:layout_height="12dp" />
 
                     <LinearLayout
@@ -348,7 +348,7 @@
                     </LinearLayout>
 
                     <Space
-                        android:layout_width="0dp"
+                        android:layout_width="@dimen/space_unused_dimension"
                         android:layout_height="@dimen/margin_primary" />
 
                     <View
@@ -357,7 +357,7 @@
                         android:background="@color/divider" />
 
                     <Space
-                        android:layout_width="0dp"
+                        android:layout_width="@dimen/space_unused_dimension"
                         android:layout_height="@dimen/margin_primary" />
 
                     <LinearLayout
@@ -435,7 +435,7 @@
                     </LinearLayout>
 
                     <Space
-                        android:layout_width="0dp"
+                        android:layout_width="@dimen/space_unused_dimension"
                         android:layout_height="12dp" />
 
                     <LinearLayout
@@ -464,7 +464,7 @@
                     </LinearLayout>
 
                     <Space
-                        android:layout_width="0dp"
+                        android:layout_width="@dimen/space_unused_dimension"
                         android:layout_height="8dp" />
 
                     <TextView
@@ -479,7 +479,7 @@
                 </LinearLayout>
 
                 <Space
-                    android:layout_width="0dp"
+                    android:layout_width="@dimen/space_unused_dimension"
                     android:layout_height="20dp" />
 
                 <Button
@@ -494,7 +494,7 @@
                     android:text="@string/pay" />
 
                 <Space
-                    android:layout_width="0dp"
+                    android:layout_width="@dimen/space_unused_dimension"
                     android:layout_height="12dp" />
 
                 <TextView
@@ -507,7 +507,7 @@
                     tools:text="Your balance: $100.60 USD"/>
 
                 <Space
-                    android:layout_width="0dp"
+                    android:layout_width="@dimen/space_unused_dimension"
                     android:layout_height="20dp" />
 
             </LinearLayout>
@@ -547,7 +547,7 @@
                 android:tint="@color/colorPrimary"/>
 
             <android.support.v4.widget.Space
-                android:layout_width="0dp"
+                android:layout_width="@dimen/space_unused_dimension"
                 android:layout_height="12dp" />
 
             <TextView

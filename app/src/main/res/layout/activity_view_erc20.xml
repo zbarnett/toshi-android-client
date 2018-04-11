@@ -43,7 +43,7 @@
 
         <android.support.v4.widget.Space
             android:layout_width="@dimen/margin_primary"
-            android:layout_height="0dp" />
+            android:layout_height="@dimen/space_unused_dimension" />
 
         <TextView
             android:id="@+id/toolbarTitle"
@@ -62,7 +62,7 @@
         android:gravity="center_horizontal">
 
         <android.support.v4.widget.Space
-            android:layout_width="0dp"
+            android:layout_width="@dimen/space_unused_dimension"
             android:layout_height="40dp" />
 
         <de.hdodenhof.circleimageview.CircleImageView
@@ -74,7 +74,7 @@
             app:civ_border_color="@color/divider" />
 
         <android.support.v4.widget.Space
-            android:layout_width="0dp"
+            android:layout_width="@dimen/space_unused_dimension"
             android:layout_height="12dp" />
 
         <TextView
@@ -86,7 +86,7 @@
             tools:text="0.044545 0x"/>
 
         <android.support.v4.widget.Space
-            android:layout_width="0dp"
+            android:layout_width="@dimen/space_unused_dimension"
             android:layout_height="5dp" />
 
         <TextView
@@ -99,7 +99,7 @@
             android:visibility="gone"/>
 
         <android.support.v4.widget.Space
-            android:layout_width="0dp"
+            android:layout_width="@dimen/space_unused_dimension"
             android:layout_height="40dp" />
 
         <LinearLayout
@@ -123,7 +123,7 @@
 
             <android.support.v4.widget.Space
                 android:layout_width="8dp"
-                android:layout_height="0dp" />
+                android:layout_height="@dimen/space_unused_dimension" />
 
             <Button
                 android:id="@+id/receive"
@@ -140,7 +140,7 @@
         </LinearLayout>
 
         <android.support.v4.widget.Space
-            android:layout_width="0dp"
+            android:layout_width="@dimen/space_unused_dimension"
             android:layout_height="20dp" />
 
         <View

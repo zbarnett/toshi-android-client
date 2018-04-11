@@ -43,7 +43,7 @@
             android:layout_width="match_parent">
 
             <android.support.v4.widget.Space
-                android:layout_width="0dp"
+                android:layout_width="@dimen/space_unused_dimension"
                 android:layout_height="20dp" />
 
             <LinearLayout
@@ -64,7 +64,7 @@
 
                 <android.support.v4.widget.Space
                     android:layout_width="@dimen/margin_primary"
-                    android:layout_height="0dp" />
+                    android:layout_height="@dimen/space_unused_dimension" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -94,7 +94,7 @@
             </LinearLayout>
 
             <android.support.v4.widget.Space
-                android:layout_width="0dp"
+                android:layout_width="@dimen/space_unused_dimension"
                 android:layout_height="20dp" />
 
             <com.toshi.view.custom.CategoryList
@@ -107,7 +107,7 @@
                 tools:text="Games, Collectibles, Exchanges"/>
 
             <android.support.v4.widget.Space
-                android:layout_width="0dp"
+                android:layout_width="@dimen/space_unused_dimension"
                 android:layout_height="20dp" />
 
             <TextView
@@ -122,7 +122,7 @@
                 tools:text="Fully decentralized collectable dueling game on the Ethereum blockchain. Collect, breed, battle. Welcome to the World of Ether."/>
 
             <android.support.v4.widget.Space
-                android:layout_width="0dp"
+                android:layout_width="@dimen/space_unused_dimension"
                 android:layout_height="20dp" />
 
             <Button
@@ -137,7 +137,7 @@
                 android:text="@string/open" />
 
             <android.support.v4.widget.Space
-                android:layout_width="0dp"
+                android:layout_width="@dimen/space_unused_dimension"
                 android:layout_height="62dp" />
 
         </LinearLayout>

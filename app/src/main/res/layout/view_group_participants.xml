@@ -47,7 +47,7 @@
 
             <android.support.v4.widget.Space
                 android:layout_width="@dimen/margin_primary"
-                android:layout_height="0dp" />
+                android:layout_height="@dimen/space_unused_dimension" />
 
             <TextView
                 android:id="@+id/toolbarTitle"
@@ -146,7 +146,7 @@
 
                     <android.support.v4.widget.Space
                         android:layout_width="6dp"
-                        android:layout_height="0dp" />
+                        android:layout_height="@dimen/space_unused_dimension" />
 
                     <TextView
                         android:id="@+id/participants"

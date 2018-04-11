@@ -44,7 +44,7 @@
 
             <android.support.v4.widget.Space
                 android:layout_width="@dimen/margin_primary"
-                android:layout_height="0dp" />
+                android:layout_height="@dimen/space_unused_dimension" />
 
             <TextView
                 android:id="@+id/title"
@@ -70,7 +70,7 @@
                     android:orientation="vertical">
 
                     <android.support.v4.widget.Space
-                        android:layout_width="0dp"
+                        android:layout_width="@dimen/space_unused_dimension"
                         android:layout_height="35dp" />
 
                     <TextView
@@ -82,7 +82,7 @@
                         android:text="@string/add_money_to_wallet"/>
 
                     <android.support.v4.widget.Space
-                        android:layout_width="0dp"
+                        android:layout_width="@dimen/space_unused_dimension"
                         android:layout_height="13dp" />
 
                     <TextView
@@ -95,7 +95,7 @@
                         android:text="@string/deposit_info_message"/>
 
                     <android.support.v4.widget.Space
-                        android:layout_width="0dp"
+                        android:layout_width="@dimen/space_unused_dimension"
                         android:layout_height="30dp" />
 
                     <View
@@ -106,7 +106,7 @@
                         android:background="@color/divider"/>
 
                     <android.support.v4.widget.Space
-                        android:layout_width="0dp"
+                        android:layout_width="@dimen/space_unused_dimension"
                         android:layout_height="@dimen/margin_primary" />
 
                     <TextView
@@ -125,7 +125,7 @@
                         android:text="@string/eth_deposit_method_1_message"/>
 
                     <android.support.v4.widget.Space
-                        android:layout_width="0dp"
+                        android:layout_width="@dimen/space_unused_dimension"
                         android:layout_height="9dp" />
 
                     <TextView
@@ -140,7 +140,7 @@
                         tools:text="0x20302385903825982853"/>
 
                     <android.support.v4.widget.Space
-                        android:layout_width="0dp"
+                        android:layout_width="@dimen/space_unused_dimension"
                         android:layout_height="15dp" />
 
                     <TextView
@@ -158,7 +158,7 @@
                         android:text="@string/copy_to_clipboard"/>
 
                     <android.support.v4.widget.Space
-                        android:layout_width="0dp"
+                        android:layout_width="@dimen/space_unused_dimension"
                         android:layout_height="29dp" />
 
                     <ImageView
@@ -168,7 +168,7 @@
                         android:layout_gravity="center_horizontal"/>
 
                     <android.support.v4.widget.Space
-                        android:layout_width="0dp"
+                        android:layout_width="@dimen/space_unused_dimension"
                         android:layout_height="30dp" />
 
                     <View
@@ -179,7 +179,7 @@
                         android:background="@color/divider"/>
 
                     <android.support.v4.widget.Space
-                        android:layout_width="0dp"
+                        android:layout_width="@dimen/space_unused_dimension"
                         android:layout_height="@dimen/margin_primary" />
 
                     <TextView
@@ -198,7 +198,7 @@
                         android:text="@string/eth_deposit_method_2_message"/>
 
                     <android.support.v4.widget.Space
-                        android:layout_width="0dp"
+                        android:layout_width="@dimen/space_unused_dimension"
                         android:layout_height="30dp" />
 
                     <View
@@ -209,7 +209,7 @@
                         android:background="@color/divider"/>
 
                     <android.support.v4.widget.Space
-                        android:layout_width="0dp"
+                        android:layout_width="@dimen/space_unused_dimension"
                         android:layout_height="@dimen/margin_primary" />
 
                     <TextView
@@ -228,7 +228,7 @@
                         android:text="@string/eth_deposit_method_3_message"/>
 
                     <android.support.v4.widget.Space
-                        android:layout_width="0dp"
+                        android:layout_width="@dimen/space_unused_dimension"
                         android:layout_height="30dp" />
 
                     <View
@@ -239,7 +239,7 @@
                         android:background="@color/divider"/>
 
                     <android.support.v4.widget.Space
-                        android:layout_width="0dp"
+                        android:layout_width="@dimen/space_unused_dimension"
                         android:layout_height="@dimen/margin_primary" />
 
                     <TextView
@@ -258,7 +258,7 @@
                         android:text="@string/eth_deposit_method_4_message" />
 
                     <android.support.v4.widget.Space
-                        android:layout_width="0dp"
+                        android:layout_width="@dimen/space_unused_dimension"
                         android:layout_height="30dp" />
 
                 </LinearLayout>

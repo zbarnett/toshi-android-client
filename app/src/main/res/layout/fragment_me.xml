@@ -194,7 +194,7 @@
 
                     <Space
                         android:layout_width="@dimen/margin_primary"
-                        android:layout_height="0dp"/>
+                        android:layout_height="@dimen/space_unused_dimension"/>
 
                     <ImageView
                         android:layout_width="wrap_content"
@@ -204,7 +204,7 @@
 
                     <Space
                         android:layout_width="@dimen/margin_primary"
-                        android:layout_height="0dp"/>
+                        android:layout_height="@dimen/space_unused_dimension"/>
 
                 </LinearLayout>
 
@@ -240,7 +240,7 @@
 
                         <android.support.v4.widget.Space
                             android:layout_width="@dimen/margin_primary"
-                            android:layout_height="0dp" />
+                            android:layout_height="@dimen/space_unused_dimension" />
 
                     </LinearLayout>
                 </FrameLayout>
@@ -263,7 +263,7 @@
 
                     <android.support.v4.widget.Space
                         android:layout_width="30dp"
-                        android:layout_height="0dp" />
+                        android:layout_height="@dimen/space_unused_dimension" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -310,7 +310,7 @@
 
                     <android.support.v4.widget.Space
                         android:layout_width="30dp"
-                        android:layout_height="0dp" />
+                        android:layout_height="@dimen/space_unused_dimension" />
 
                     <TextView
                         android:layout_width="wrap_content"

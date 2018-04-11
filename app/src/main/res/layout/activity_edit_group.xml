@@ -44,7 +44,7 @@
 
             <android.support.v4.widget.Space
                 android:layout_width="@dimen/margin_primary"
-                android:layout_height="0dp" />
+                android:layout_height="@dimen/space_unused_dimension" />
 
             <TextView
                 android:id="@+id/toolbarTitle"
@@ -80,7 +80,7 @@
                 android:orientation="vertical">
 
                 <android.support.v4.widget.Space
-                    android:layout_width="0dp"
+                    android:layout_width="@dimen/space_unused_dimension"
                     android:layout_height="30dp"/>
 
                 <de.hdodenhof.circleimageview.CircleImageView
@@ -93,7 +93,7 @@
                     app:civ_border_color="@color/divider"/>
 
                 <android.support.v4.widget.Space
-                    android:layout_width="0dp"
+                    android:layout_width="@dimen/space_unused_dimension"
                     android:layout_height="15dp"/>
 
                 <TextView
@@ -108,7 +108,7 @@
                     android:text="@string/edit_group_photo"/>
 
                 <android.support.v4.widget.Space
-                    android:layout_width="0dp"
+                    android:layout_width="@dimen/space_unused_dimension"
                     android:layout_height="27dp"/>
 
                 <android.support.design.widget.TextInputLayout

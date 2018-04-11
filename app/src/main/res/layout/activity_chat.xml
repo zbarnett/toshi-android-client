@@ -50,7 +50,7 @@
 
             <android.support.v4.widget.Space
                 android:layout_width="@dimen/margin_primary"
-                android:layout_height="0dp" />
+                android:layout_height="@dimen/space_unused_dimension" />
 
             <TextView
                 android:id="@+id/toolbarTitle"
@@ -115,7 +115,7 @@
                         app:srcCompat="@drawable/ic_chat_empty_state"/>
 
                     <android.support.v4.widget.Space
-                        android:layout_width="0dp"
+                        android:layout_width="@dimen/space_unused_dimension"
                         android:layout_height="8dp"/>
 
                     <TextView

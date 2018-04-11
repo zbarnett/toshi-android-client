@@ -36,7 +36,7 @@
         app:civ_border_color="@color/divider"/>
 
     <android.support.v4.widget.Space
-        android:layout_width="0dp"
+        android:layout_width="@dimen/space_unused_dimension"
         android:layout_height="20dp"/>
     <FrameLayout
         android:layout_width="wrap_content"
@@ -54,7 +54,7 @@
 
 
     <android.support.v4.widget.Space
-        android:layout_width="0dp"
+        android:layout_width="@dimen/space_unused_dimension"
         android:layout_height="6dp" />
 
     <com.toshi.view.custom.StarRatingView

@@ -37,7 +37,7 @@
             android:background="@drawable/splash_background_image">
 
             <android.support.v4.widget.Space
-                android:layout_width="0dp"
+                android:layout_width="@dimen/space_unused_dimension"
                 android:layout_height="72dp" />
 
             <ImageView
@@ -46,7 +46,7 @@
                 app:srcCompat="@drawable/ic_toshi_icon"/>
 
             <android.support.v4.widget.Space
-                android:layout_width="0dp"
+                android:layout_width="@dimen/space_unused_dimension"
                 android:layout_height="32dp" />
 
             <TextView
@@ -58,7 +58,7 @@
                 android:text="@string/welcome_to_toshi"/>
 
             <android.support.v4.widget.Space
-                android:layout_width="0dp"
+                android:layout_width="@dimen/space_unused_dimension"
                 android:layout_height="@dimen/margin_primary" />
 
             <TextView
@@ -87,7 +87,7 @@
                 android:text="@string/start_with_a_new_account"/>
 
             <android.support.v4.widget.Space
-                android:layout_width="0dp"
+                android:layout_width="@dimen/space_unused_dimension"
                 android:layout_height="3dp" />
 
             <TextView
@@ -102,7 +102,7 @@
                 android:text="@string/sign_in"/>
 
             <android.support.v4.widget.Space
-                android:layout_width="0dp"
+                android:layout_width="@dimen/space_unused_dimension"
                 android:layout_height="35dp" />
 
         </LinearLayout>

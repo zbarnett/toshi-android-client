@@ -38,7 +38,7 @@
 
         <android.support.v4.widget.Space
             android:layout_width="8dp"
-            android:layout_height="0dp" />
+            android:layout_height="@dimen/space_unused_dimension" />
 
         <ImageButton
             android:id="@+id/backButton"
@@ -61,7 +61,7 @@
 
         <android.support.v4.widget.Space
             android:layout_width="8dp"
-            android:layout_height="0dp" />
+            android:layout_height="@dimen/space_unused_dimension" />
 
         <FrameLayout
             android:layout_width="0dp"

@@ -57,7 +57,7 @@
             app:layout_columnSpan="3"/>
 
         <android.support.v4.widget.Space
-            android:layout_width="0dp"
+            android:layout_width="@dimen/space_unused_dimension"
             android:layout_height="6dp" />
 
         <!-- Row 2 -->
@@ -106,7 +106,7 @@
 
             <android.support.v4.widget.Space
                 android:layout_width="20dp"
-                android:layout_height="0dp" />
+                android:layout_height="@dimen/space_unused_dimension" />
 
             <Button
                 android:id="@+id/approve_button"

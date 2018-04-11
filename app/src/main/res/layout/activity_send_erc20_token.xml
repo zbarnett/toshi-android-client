@@ -44,7 +44,7 @@
 
         <android.support.v4.widget.Space
             android:layout_width="@dimen/margin_primary"
-            android:layout_height="0dp" />
+            android:layout_height="@dimen/space_unused_dimension" />
 
         <TextView
             android:id="@+id/toolbarTitle"
@@ -67,7 +67,7 @@
             android:orientation="vertical">
 
             <android.support.v4.widget.Space
-                android:layout_width="0dp"
+                android:layout_width="@dimen/space_unused_dimension"
                 android:layout_height="20dp" />
 
             <TextView
@@ -81,7 +81,7 @@
                 style="@style/TextStyleMedium"/>
 
             <android.support.v4.widget.Space
-                android:layout_width="0dp"
+                android:layout_width="@dimen/space_unused_dimension"
                 android:layout_height="14dp" />
 
             <LinearLayout
@@ -109,7 +109,7 @@
 
                 <android.support.v4.widget.Space
                     android:layout_width="8dp"
-                    android:layout_height="0dp" />
+                    android:layout_height="@dimen/space_unused_dimension" />
 
                 <com.toshi.view.custom.PaddingButton
                     android:id="@+id/max"
@@ -134,7 +134,7 @@
 
                 <android.support.v4.widget.Space
                     android:layout_width="@dimen/margin_primary"
-                    android:layout_height="0dp" />
+                    android:layout_height="@dimen/space_unused_dimension" />
 
             </LinearLayout>
 
@@ -152,7 +152,7 @@
                 tools:visibility="visible"/>
 
             <android.support.v4.widget.Space
-                android:layout_width="0dp"
+                android:layout_width="@dimen/space_unused_dimension"
                 android:layout_height="20dp" />
 
             <TextView
@@ -177,7 +177,7 @@
                 tools:visibility="visible"/>
 
             <android.support.v4.widget.Space
-                android:layout_width="0dp"
+                android:layout_width="@dimen/space_unused_dimension"
                 android:layout_height="20dp" />
 
             <View
@@ -186,7 +186,7 @@
                 android:background="@color/divider"/>
 
             <android.support.v4.widget.Space
-                android:layout_width="0dp"
+                android:layout_width="@dimen/space_unused_dimension"
                 android:layout_height="20dp" />
 
             <TextView
@@ -228,7 +228,7 @@
                 tools:visibility="visible"/>
 
             <android.support.v4.widget.Space
-                android:layout_width="0dp"
+                android:layout_width="@dimen/space_unused_dimension"
                 android:layout_height="15dp" />
 
             <LinearLayout
@@ -248,7 +248,7 @@
 
                 <android.support.v4.widget.Space
                     android:layout_width="8dp"
-                    android:layout_height="0dp" />
+                    android:layout_height="@dimen/space_unused_dimension" />
 
                 <com.toshi.view.custom.PaddingButton
                     android:id="@+id/qrCodeBtn"
@@ -263,7 +263,7 @@
             </LinearLayout>
 
             <android.support.v4.widget.Space
-                android:layout_width="0dp"
+                android:layout_width="@dimen/space_unused_dimension"
                 android:layout_height="20dp" />
 
             <View
@@ -272,7 +272,7 @@
                 android:background="@color/divider"/>
 
             <android.support.v4.widget.Space
-                android:layout_width="0dp"
+                android:layout_width="@dimen/space_unused_dimension"
                 android:layout_height="0dp"
                 android:minHeight="20dp"
                 android:layout_weight="1"/>
@@ -291,7 +291,7 @@
                 android:enabled="false"/>
 
             <android.support.v4.widget.Space
-                android:layout_width="0dp"
+                android:layout_width="@dimen/space_unused_dimension"
                 android:layout_height="@dimen/margin_primary" />
 
         </LinearLayout>

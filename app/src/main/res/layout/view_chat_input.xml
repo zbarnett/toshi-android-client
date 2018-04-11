@@ -40,7 +40,7 @@
         android:id="@+id/attachment_spacing"
         android:visibility="gone"
         android:layout_width="8dp"
-        android:layout_height="0dp" />
+        android:layout_height="@dimen/space_unused_dimension" />
 
     <ImageButton
         android:id="@+id/add_attachments_button"
@@ -77,7 +77,7 @@
         android:id="@+id/send_spacing"
         android:visibility="visible"
         android:layout_width="@dimen/margin_primary"
-        android:layout_height="0dp" />
+        android:layout_height="@dimen/space_unused_dimension" />
 
     <ImageButton
         android:id="@+id/send_button"
