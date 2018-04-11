@@ -63,7 +63,7 @@
                     app:srcCompat="@color/placeholder" />
 
                 <android.support.v4.widget.Space
-                    android:layout_width="16dp"
+                    android:layout_width="@dimen/margin_primary"
                     android:layout_height="0dp" />
 
                 <LinearLayout

@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_gravity="right"
-            android:padding="16dp"
+            android:padding="@dimen/margin_primary"
             android:background="@drawable/request_background_local">
 
             <TextView

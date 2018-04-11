@@ -40,7 +40,7 @@
         android:orientation="vertical"
         android:background="@drawable/request_background_remote"
         android:layout_marginTop="@dimen/margin_half"
-        android:padding="16dp">
+        android:padding="@dimen/margin_primary">
 
         <TextView
             android:id="@+id/title"

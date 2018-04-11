@@ -43,7 +43,7 @@
                 style="@style/closeButtonStyle"/>
 
             <android.support.v4.widget.Space
-                android:layout_width="16dp"
+                android:layout_width="@dimen/margin_primary"
                 android:layout_height="0dp" />
 
             <TextView
@@ -107,7 +107,7 @@
 
                     <android.support.v4.widget.Space
                         android:layout_width="0dp"
-                        android:layout_height="16dp" />
+                        android:layout_height="@dimen/margin_primary" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -180,7 +180,7 @@
 
                     <android.support.v4.widget.Space
                         android:layout_width="0dp"
-                        android:layout_height="16sp" />
+                        android:layout_height="@dimen/margin_primary" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -210,7 +210,7 @@
 
                     <android.support.v4.widget.Space
                         android:layout_width="0dp"
-                        android:layout_height="16sp" />
+                        android:layout_height="@dimen/margin_primary" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -240,7 +240,7 @@
 
                     <android.support.v4.widget.Space
                         android:layout_width="0dp"
-                        android:layout_height="16sp" />
+                        android:layout_height="@dimen/margin_primary" />
 
                     <TextView
                         android:layout_width="match_parent"

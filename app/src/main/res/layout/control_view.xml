@@ -28,7 +28,7 @@
         android:id="@+id/control_grouped_recycle_view_wrapper"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="@dimen/margin_primary"
         android:layout_marginLeft="@dimen/margin_primary"
         android:layout_marginRight="@dimen/margin_primary"
         android:layout_gravity="right|end"

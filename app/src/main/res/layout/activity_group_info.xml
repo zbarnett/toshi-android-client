@@ -42,7 +42,7 @@
             style="@style/closeButtonStyle"/>
 
         <android.support.v4.widget.Space
-            android:layout_width="16dp"
+            android:layout_width="@dimen/margin_primary"
             android:layout_height="0dp" />
 
         <TextView
@@ -121,8 +121,8 @@
                 android:id="@+id/notificationsWrapper"
                 android:layout_width="match_parent"
                 android:layout_height="54dp"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
+                android:paddingLeft="@dimen/margin_primary"
+                android:paddingRight="@dimen/margin_primary"
                 android:background="?android:selectableItemBackground">
 
                 <TextView
@@ -202,8 +202,8 @@
                 android:id="@+id/leaveGroup"
                 android:layout_width="match_parent"
                 android:layout_height="54dp"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
+                android:paddingLeft="@dimen/margin_primary"
+                android:paddingRight="@dimen/margin_primary"
                 android:background="?android:selectableItemBackground">
 
                 <TextView

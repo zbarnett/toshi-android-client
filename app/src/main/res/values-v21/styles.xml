@@ -36,6 +36,6 @@
     </style>
 
     <style name="closeButtonStyle" parent="clickableBorderlessBackground">
-        <item name="android:padding">16dp</item>
+        <item name="android:padding">@dimen/margin_primary</item>
     </style>
 </resources>

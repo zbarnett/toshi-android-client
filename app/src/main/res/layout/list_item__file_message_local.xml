@@ -37,7 +37,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_half"
             android:background="@drawable/background_file_message_local"
-            android:padding="16dp">
+            android:padding="@dimen/margin_primary">
 
             <ImageView
                 android:layout_width="wrap_content"
