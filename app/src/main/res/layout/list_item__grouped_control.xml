@@ -22,8 +22,8 @@
     android:orientation="horizontal"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:paddingLeft="@dimen/bubbleHorizontalPadding"
-    android:paddingRight="@dimen/bubbleHorizontalPadding"
+    android:paddingLeft="@dimen/margin_three_quarters"
+    android:paddingRight="@dimen/margin_three_quarters"
     android:background="@drawable/control_background_with_border"
     android:paddingTop="@dimen/bubbleVerticalPadding"
     android:paddingBottom="@dimen/bubbleVerticalPadding">

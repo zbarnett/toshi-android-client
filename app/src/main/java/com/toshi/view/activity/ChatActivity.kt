@@ -496,7 +496,7 @@ class ChatActivity : AppCompatActivity() {
     }
 
     private fun setPadding(height: Int): Unit? {
-        val paddingBottom = getPxSize(R.dimen.chat_button_padding) + height
+        val paddingBottom = getPxSize(R.dimen.margin_three_quarters) + height
         val paddingRight = messagesList.paddingRight
         val paddingLeft = messagesList.paddingLeft
         messagesList.setPadding(paddingLeft, 0, paddingRight, paddingBottom)

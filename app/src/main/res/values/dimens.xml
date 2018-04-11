@@ -20,7 +20,6 @@
     <dimen name="messageListRightMargin">32dp</dimen>
     <dimen name="textBubbleTopMargin">4dp</dimen>
     <dimen name="bubbleVerticalPadding">9dp</dimen>
-    <dimen name="bubbleHorizontalPadding">12dp</dimen>
 
     <dimen name="radiusSize">6dp</dimen>
     <dimen name="controlRadiusSize">32dp</dimen>
@@ -49,8 +48,6 @@
 
     <dimen name="list_header_text_size">14sp</dimen>
     <dimen name="list_item_text_size">16sp</dimen>
-    <dimen name="chat_button_padding">12dp</dimen>
-    <dimen name="list_item_avatar_margin">12dp</dimen>
 
 
     <dimen name="keyboard_threshold">100dp</dimen>

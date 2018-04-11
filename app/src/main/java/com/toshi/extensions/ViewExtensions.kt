@@ -33,7 +33,7 @@ fun View.isVisible(bool: Boolean?, nonVisibleState: Int = View.GONE) {
 fun RecyclerView.addHorizontalLineDivider(
         leftPadding: Int = getPxSize(R.dimen.avatar_size_small)
                 + getPxSize(R.dimen.margin_primary)
-                + getPxSize(R.dimen.list_item_avatar_margin),
+                + getPxSize(R.dimen.margin_three_quarters),
         rightPadding: Int = getPxSize(R.dimen.margin_primary),
         color: Int = getColorById(R.color.divider),
         startPosition: Int = 0,
