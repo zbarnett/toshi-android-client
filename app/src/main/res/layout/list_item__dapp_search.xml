@@ -22,8 +22,8 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingLeft="@dimen/margin_primary"
+    android:paddingRight="@dimen/margin_primary"
     android:paddingBottom="8dp"
     android:paddingTop="8dp"
     android:background="?selectableItemBackground">
@@ -33,7 +33,7 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         app:riv_corner_radius="@dimen/chatImageRadius"
-        app:riv_border_width="1dp"
+        app:riv_border_width="@dimen/border_size_default"
         app:riv_border_color="@color/divider"/>
 
     <android.support.v4.widget.Space

@@ -64,9 +64,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:paddingTop="@dimen/activity_horizontal_margin"
-                    android:paddingLeft="@dimen/activity_horizontal_margin"
-                    android:paddingRight="@dimen/activity_horizontal_margin"
+                    android:paddingTop="@dimen/margin_primary"
+                    android:paddingLeft="@dimen/margin_primary"
+                    android:paddingRight="@dimen/margin_primary"
                     android:background="@color/colorPrimaryDarkSecondary"
                     app:layout_scrollFlags="scroll">
 
@@ -114,7 +114,7 @@
                                 app:srcCompat="@drawable/ic_qr_code"/>
 
                             <android.support.v4.widget.Space
-                                android:layout_width="@dimen/activity_horizontal_margin"
+                                android:layout_width="@dimen/margin_primary"
                                 android:layout_height="0dp" />
 
                             <com.toshi.view.custom.CollapsingTextView
@@ -170,7 +170,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:background="@color/windowBackground"
-                        android:elevation="1dp" />
+                        android:elevation="@dimen/border_size_default" />
 
                 </LinearLayout>
 

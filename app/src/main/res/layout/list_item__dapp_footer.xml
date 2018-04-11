@@ -18,7 +18,7 @@
 <Button xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="48dp"
-    android:layout_margin="@dimen/activity_horizontal_margin"
+    android:layout_margin="@dimen/margin_primary"
     style="@style/FlatButtonAllCaps"
     android:background="@drawable/background_with_radius_primary_color"
     android:textColor="#FFFFFF"

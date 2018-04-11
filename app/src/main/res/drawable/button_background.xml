@@ -23,7 +23,7 @@
         </shape>
     </item>
 
-    <item android:top="1dp">
+    <item android:top="@dimen/border_size_default">
         <shape android:shape="rectangle">
             <solid android:color="@color/windowBackground" />
         </shape>

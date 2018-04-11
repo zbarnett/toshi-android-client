@@ -71,14 +71,14 @@
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
                     android:background="?android:selectableItemBackground"
-                    android:paddingLeft="@dimen/activity_horizontal_margin"
-                    android:paddingRight="@dimen/activity_horizontal_margin">
+                    android:paddingLeft="@dimen/margin_primary"
+                    android:paddingRight="@dimen/margin_primary">
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/avatar"
                         android:layout_width="@dimen/avatar_size_small"
                         android:layout_height="@dimen/avatar_size_small"
-                        app:civ_border_width="1dp"
+                        app:civ_border_width="@dimen/border_size_default"
                         app:civ_border_color="@color/divider"
                         tools:src="@mipmap/ic_launcher"/>
 
@@ -125,17 +125,17 @@
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                    android:layout_marginRight="@dimen/activity_horizontal_margin"
+                    android:layout_height="@dimen/border_size_default"
+                    android:layout_marginLeft="@dimen/margin_primary"
+                    android:layout_marginRight="@dimen/margin_primary"
                     android:background="@color/divider" />
 
                 <FrameLayout
                     android:id="@+id/myQrCode"
                     android:layout_width="match_parent"
                     android:layout_height="54dp"
-                    android:paddingLeft="@dimen/activity_horizontal_margin"
-                    android:paddingRight="@dimen/activity_horizontal_margin"
+                    android:paddingLeft="@dimen/margin_primary"
+                    android:paddingRight="@dimen/margin_primary"
                     android:background="?android:selectableItemBackground">
 
                     <TextView
@@ -169,7 +169,7 @@
                     android:background="?android:selectableItemBackground">
 
                     <Space
-                        android:layout_width="@dimen/activity_horizontal_margin"
+                        android:layout_width="@dimen/margin_primary"
                         android:layout_height="wrap_content"/>
 
                     <TextView
@@ -193,7 +193,7 @@
                         tools:text="0.0000 ETH"/>
 
                     <Space
-                        android:layout_width="@dimen/activity_horizontal_margin"
+                        android:layout_width="@dimen/margin_primary"
                         android:layout_height="0dp"/>
 
                     <ImageView
@@ -203,7 +203,7 @@
                         app:srcCompat="@drawable/ic_chevron_right" />
 
                     <Space
-                        android:layout_width="@dimen/activity_horizontal_margin"
+                        android:layout_width="@dimen/margin_primary"
                         android:layout_height="0dp"/>
 
                 </LinearLayout>
@@ -239,7 +239,7 @@
                             android:text="@string/your_account_is_at_risk" />
 
                         <android.support.v4.widget.Space
-                            android:layout_width="@dimen/activity_horizontal_margin"
+                            android:layout_width="@dimen/margin_primary"
                             android:layout_height="0dp" />
 
                     </LinearLayout>
@@ -250,8 +250,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="54dp"
                     android:orientation="horizontal"
-                    android:paddingLeft="@dimen/activity_horizontal_margin"
-                    android:paddingRight="@dimen/activity_horizontal_margin"
+                    android:paddingLeft="@dimen/margin_primary"
+                    android:paddingRight="@dimen/margin_primary"
                     android:gravity="center_vertical">
 
                     <CheckBox
@@ -287,9 +287,9 @@
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                    android:layout_marginRight="@dimen/activity_horizontal_margin"
+                    android:layout_height="@dimen/border_size_default"
+                    android:layout_marginLeft="@dimen/margin_primary"
+                    android:layout_marginRight="@dimen/margin_primary"
                     android:background="@color/divider" />
 
                 <LinearLayout
@@ -297,8 +297,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="54dp"
                     android:orientation="horizontal"
-                    android:paddingLeft="@dimen/activity_horizontal_margin"
-                    android:paddingRight="@dimen/activity_horizontal_margin"
+                    android:paddingLeft="@dimen/margin_primary"
+                    android:paddingRight="@dimen/margin_primary"
                     android:gravity="center_vertical">
 
                     <CheckBox

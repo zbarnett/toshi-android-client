@@ -44,7 +44,7 @@
         android:layout_width="34dp"
         android:layout_height="34dp"
         android:layout_gravity="left|top"
-        app:civ_border_width="1dp"
+        app:civ_border_width="@dimen/border_size_default"
         app:civ_border_color="@color/windowBackground"
         android:src="@color/placeholder"
         android:visibility="gone"/>

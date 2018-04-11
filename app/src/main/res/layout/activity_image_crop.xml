@@ -83,7 +83,7 @@
                 app:ci_scale_enabled="true"
                 app:ci_translation_enabled="true"
                 app:ci_crop_shape="oval"
-                app:ci_border_width="1dp"
+                app:ci_border_width="@dimen/border_size_default"
                 app:ci_border_color="#FFF"
                 app:ci_max_scale="100"
                 app:ci_overlay_color="@color/semi_transparent_overlay" />

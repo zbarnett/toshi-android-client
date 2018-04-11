@@ -23,15 +23,15 @@
     android:layout_width="match_parent"
     android:layout_height="79dp"
     android:orientation="horizontal"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin">
+    android:paddingLeft="@dimen/margin_primary"
+    android:paddingRight="@dimen/margin_primary">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/avatar"
         android:layout_width="@dimen/avatar_size_small"
         android:layout_height="@dimen/avatar_size_small"
         android:layout_gravity="center_vertical"
-        app:civ_border_width="1dp"
+        app:civ_border_width="@dimen/border_size_default"
         app:civ_border_color="@color/divider"/>
 
     <LinearLayout

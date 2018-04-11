@@ -68,7 +68,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="42sp"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginLeft="@dimen/margin_primary"
                     android:textSize="18sp"
                     android:textColor="@color/textColorPrimary"
                     android:text="@string/verify_phrase"/>
@@ -79,8 +79,8 @@
                     android:textSize="14sp"
                     android:textColor="@color/textColorSecondary"
                     android:layout_marginTop="11dp"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                    android:layout_marginRight="@dimen/activity_horizontal_margin"
+                    android:layout_marginLeft="@dimen/margin_primary"
+                    android:layout_marginRight="@dimen/margin_primary"
                     android:text="@string/verify_backup_phrase_message"/>
 
                 <com.toshi.view.custom.DragAndDropView

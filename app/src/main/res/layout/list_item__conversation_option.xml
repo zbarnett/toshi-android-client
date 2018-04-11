@@ -23,7 +23,7 @@
     android:gravity="center_vertical"
     android:textSize="14sp"
     android:textColor="@color/textColorPrimary"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingLeft="@dimen/margin_primary"
+    android:paddingRight="@dimen/margin_primary"
     android:background="?android:selectableItemBackground"
     tools:text="Option"/>

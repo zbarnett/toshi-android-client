@@ -76,8 +76,8 @@
                         android:layout_height="72dp"
                         android:orientation="vertical"
                         android:background="?android:selectableItemBackground"
-                        android:paddingLeft="@dimen/activity_horizontal_margin"
-                        android:paddingRight="@dimen/activity_horizontal_margin"
+                        android:paddingLeft="@dimen/margin_primary"
+                        android:paddingRight="@dimen/margin_primary"
                         android:gravity="center_vertical">
 
                         <TextView
@@ -99,9 +99,9 @@
 
                     <View
                         android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                        android:layout_marginRight="@dimen/activity_horizontal_margin"
+                        android:layout_height="@dimen/border_size_default"
+                        android:layout_marginLeft="@dimen/margin_primary"
+                        android:layout_marginRight="@dimen/margin_primary"
                         android:background="@color/divider"/>
 
                     <android.support.v4.widget.Space
@@ -111,8 +111,8 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginRight="@dimen/activity_horizontal_margin"
-                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                        android:layout_marginRight="@dimen/margin_primary"
+                        android:layout_marginLeft="@dimen/margin_primary"
                         android:textSize="14sp"
                         android:textColor="@color/textColorBody"
                         android:text="@string/develop_message"/>
@@ -127,8 +127,8 @@
                     android:id="@+id/open_source_licenses"
                     android:layout_width="match_parent"
                     android:layout_height="54dp"
-                    android:paddingLeft="@dimen/activity_horizontal_margin"
-                    android:paddingRight="@dimen/activity_horizontal_margin"
+                    android:paddingLeft="@dimen/margin_primary"
+                    android:paddingRight="@dimen/margin_primary"
                     android:background="?android:selectableItemBackground">
 
                     <TextView
@@ -152,7 +152,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="54dp"
                     android:gravity="center_vertical"
-                    android:paddingLeft="@dimen/activity_horizontal_margin"
+                    android:paddingLeft="@dimen/margin_primary"
                     android:textColor="@color/textColorBody"
                     android:textSize="16sp"
                     tools:text="VersionName"/>

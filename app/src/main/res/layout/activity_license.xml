@@ -64,7 +64,7 @@
                 android:id="@+id/license"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="@dimen/activity_horizontal_margin"
+                android:padding="@dimen/margin_primary"
                 android:textColor="@color/textColorPrimary"
                 android:textSize="12sp"/>
 

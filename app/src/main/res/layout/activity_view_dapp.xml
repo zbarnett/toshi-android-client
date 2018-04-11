@@ -49,8 +49,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginRight="@dimen/margin_primary"
+                android:layout_marginLeft="@dimen/margin_primary"
                 android:gravity="center_vertical">
 
                 <com.makeramen.roundedimageview.RoundedImageView
@@ -58,7 +58,7 @@
                     android:layout_width="72dp"
                     android:layout_height="72dp"
                     app:riv_corner_radius="@dimen/chatImageRadius"
-                    app:riv_border_width="1dp"
+                    app:riv_border_width="@dimen/border_size_default"
                     app:riv_border_color="@color/divider"
                     app:srcCompat="@color/placeholder" />
 
@@ -101,8 +101,8 @@
                 android:id="@+id/categories"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:layout_marginLeft="@dimen/margin_primary"
+                android:layout_marginRight="@dimen/margin_primary"
                 app:flexWrap="wrap"
                 tools:text="Games, Collectibles, Exchanges"/>
 
@@ -114,8 +114,8 @@
                 android:id="@+id/description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:layout_marginLeft="@dimen/margin_primary"
+                android:layout_marginRight="@dimen/margin_primary"
                 android:textSize="14sp"
                 android:textColor="@color/textColorPrimaryTransparent"
                 android:lineSpacingMultiplier="1.2"
@@ -129,8 +129,8 @@
                 android:id="@+id/openBtn"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginRight="@dimen/margin_primary"
+                android:layout_marginLeft="@dimen/margin_primary"
                 style="@style/FlatButtonAllCaps"
                 android:background="@drawable/background_with_radius_primary_color"
                 android:textColor="#FFFFFF"

@@ -68,7 +68,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="42sp"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginLeft="@dimen/margin_primary"
                     android:textSize="18sp"
                     android:textColor="@color/textColorPrimary"
                     android:text="@string/this_is_your_backup_phrase"/>
@@ -79,16 +79,16 @@
                     android:textSize="14sp"
                     android:textColor="@color/textColorSecondary"
                     android:layout_marginTop="11dp"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                    android:layout_marginRight="@dimen/activity_horizontal_margin"
+                    android:layout_marginLeft="@dimen/margin_primary"
+                    android:layout_marginRight="@dimen/margin_primary"
                     android:text="@string/backup_phrase_warning_message"/>
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/backup_phrase_list"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="@dimen/activity_horizontal_margin"
-                    android:paddingRight="@dimen/activity_horizontal_margin"
+                    android:paddingLeft="@dimen/margin_primary"
+                    android:paddingRight="@dimen/margin_primary"
                     android:layout_marginTop="35dp"/>
 
                 <TextView
@@ -96,7 +96,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="30dp"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginLeft="@dimen/margin_primary"
                     android:textColor="@color/colorPrimary"
                     android:text="@string/copy_phrase_to_clipboard"/>
 
@@ -110,9 +110,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="42dp"
                     android:layout_marginTop="40dp"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                    android:layout_marginRight="@dimen/activity_horizontal_margin"
-                    android:layout_marginBottom="@dimen/activity_horizontal_margin"
+                    android:layout_marginLeft="@dimen/margin_primary"
+                    android:layout_marginRight="@dimen/margin_primary"
+                    android:layout_marginBottom="@dimen/margin_primary"
                     android:textAllCaps="true"
                     android:background="@drawable/background_with_radius_primary_color"
                     android:textColor="#FFFFFF"

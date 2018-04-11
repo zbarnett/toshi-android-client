@@ -32,7 +32,7 @@
         android:id="@+id/avatar"
         android:layout_width="@dimen/avatar_size_small"
         android:layout_height="@dimen/avatar_size_small"
-        app:civ_border_width="1dp"
+        app:civ_border_width="@dimen/border_size_default"
         app:civ_border_color="@color/divider"
         tools:src="@mipmap/ic_launcher"/>
 

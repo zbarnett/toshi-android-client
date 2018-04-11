@@ -66,7 +66,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:padding="@dimen/activity_horizontal_margin"
+                android:padding="@dimen/margin_primary"
                 style="@style/NavBarButton"
                 android:enabled="false"
                 android:text="@string/create"/>
@@ -87,8 +87,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="75dp"
                     android:orientation="horizontal"
-                    android:paddingRight="@dimen/activity_horizontal_margin"
-                    android:paddingLeft="@dimen/activity_horizontal_margin"
+                    android:paddingRight="@dimen/margin_primary"
+                    android:paddingLeft="@dimen/margin_primary"
                     android:gravity="center_vertical">
 
                     <de.hdodenhof.circleimageview.CircleImageView

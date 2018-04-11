@@ -76,9 +76,9 @@
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_height="@dimen/border_size_default"
+                android:layout_marginRight="@dimen/margin_primary"
+                android:layout_marginLeft="@dimen/margin_primary"
                 android:background="@color/divider"/>
 
             <android.support.v4.widget.Space
@@ -94,8 +94,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:layout_marginLeft="@dimen/margin_primary"
+                android:layout_marginRight="@dimen/margin_primary"
                 android:textSize="14sp"
                 android:textColor="@color/textColorPrimary"
                 android:text="@string/qr_code_message"/>

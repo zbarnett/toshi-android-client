@@ -25,8 +25,8 @@
     android:gravity="center_vertical"
     android:paddingTop="18dp"
     android:paddingBottom="17dp"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingLeft="@dimen/margin_primary"
+    android:paddingRight="@dimen/margin_primary"
     android:background="?android:selectableItemBackground">
 
     <de.hdodenhof.circleimageview.CircleImageView

@@ -76,8 +76,8 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                        android:layout_marginRight="@dimen/activity_horizontal_margin"
+                        android:layout_marginLeft="@dimen/margin_primary"
+                        android:layout_marginRight="@dimen/margin_primary"
                         android:textSize="24sp"
                         android:text="@string/add_money_to_wallet"/>
 
@@ -88,8 +88,8 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                        android:layout_marginRight="@dimen/activity_horizontal_margin"
+                        android:layout_marginLeft="@dimen/margin_primary"
+                        android:layout_marginRight="@dimen/margin_primary"
                         android:textSize="14sp"
                         android:textColor="@color/textColorPrimary"
                         android:text="@string/deposit_info_message"/>
@@ -100,9 +100,9 @@
 
                     <View
                         android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                        android:layout_marginRight="@dimen/activity_horizontal_margin"
+                        android:layout_height="@dimen/border_size_default"
+                        android:layout_marginLeft="@dimen/margin_primary"
+                        android:layout_marginRight="@dimen/margin_primary"
                         android:background="@color/divider"/>
 
                     <android.support.v4.widget.Space
@@ -118,8 +118,8 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                        android:layout_marginRight="@dimen/activity_horizontal_margin"
+                        android:layout_marginLeft="@dimen/margin_primary"
+                        android:layout_marginRight="@dimen/margin_primary"
                         android:textSize="14sp"
                         android:textColor="@color/textColorPrimary"
                         android:text="@string/eth_deposit_method_1_message"/>
@@ -132,8 +132,8 @@
                         android:id="@+id/owner_address"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                        android:layout_marginRight="@dimen/activity_horizontal_margin"
+                        android:layout_marginLeft="@dimen/margin_primary"
+                        android:layout_marginRight="@dimen/margin_primary"
                         android:textSize="14sp"
                         android:textColor="@color/textColorPrimary"
                         android:textIsSelectable="true"
@@ -147,8 +147,8 @@
                         android:id="@+id/copy_to_clipboard"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                        android:layout_marginRight="@dimen/activity_horizontal_margin"
+                        android:layout_marginLeft="@dimen/margin_primary"
+                        android:layout_marginRight="@dimen/margin_primary"
                         android:paddingTop="5dp"
                         android:paddingBottom="5dp"
                         android:background="?android:selectableItemBackground"
@@ -173,9 +173,9 @@
 
                     <View
                         android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                        android:layout_marginRight="@dimen/activity_horizontal_margin"
+                        android:layout_height="@dimen/border_size_default"
+                        android:layout_marginLeft="@dimen/margin_primary"
+                        android:layout_marginRight="@dimen/margin_primary"
                         android:background="@color/divider"/>
 
                     <android.support.v4.widget.Space
@@ -191,8 +191,8 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                        android:layout_marginRight="@dimen/activity_horizontal_margin"
+                        android:layout_marginLeft="@dimen/margin_primary"
+                        android:layout_marginRight="@dimen/margin_primary"
                         android:textSize="14sp"
                         android:textColor="@color/textColorPrimary"
                         android:text="@string/eth_deposit_method_2_message"/>
@@ -203,9 +203,9 @@
 
                     <View
                         android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                        android:layout_marginRight="@dimen/activity_horizontal_margin"
+                        android:layout_height="@dimen/border_size_default"
+                        android:layout_marginLeft="@dimen/margin_primary"
+                        android:layout_marginRight="@dimen/margin_primary"
                         android:background="@color/divider"/>
 
                     <android.support.v4.widget.Space
@@ -221,8 +221,8 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                        android:layout_marginRight="@dimen/activity_horizontal_margin"
+                        android:layout_marginLeft="@dimen/margin_primary"
+                        android:layout_marginRight="@dimen/margin_primary"
                         android:textSize="14sp"
                         android:textColor="@color/textColorPrimary"
                         android:text="@string/eth_deposit_method_3_message"/>
@@ -233,9 +233,9 @@
 
                     <View
                         android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                        android:layout_marginRight="@dimen/activity_horizontal_margin"
+                        android:layout_height="@dimen/border_size_default"
+                        android:layout_marginLeft="@dimen/margin_primary"
+                        android:layout_marginRight="@dimen/margin_primary"
                         android:background="@color/divider"/>
 
                     <android.support.v4.widget.Space
@@ -251,8 +251,8 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                        android:layout_marginRight="@dimen/activity_horizontal_margin"
+                        android:layout_marginLeft="@dimen/margin_primary"
+                        android:layout_marginRight="@dimen/margin_primary"
                         android:textSize="14sp"
                         android:textColor="@color/textColorPrimary"
                         android:text="@string/eth_deposit_method_4_message" />

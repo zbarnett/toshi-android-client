@@ -35,7 +35,7 @@
         android:layout_gravity="bottom"
         android:layout_marginRight="6dp"
         android:layout_marginBottom="@dimen/bubbleMargin"
-        app:civ_border_width="1dp"
+        app:civ_border_width="@dimen/border_size_default"
         app:civ_border_color="@color/divider"/>
 
     <TextView

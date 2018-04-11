@@ -137,7 +137,7 @@
     <View
         android:id="@+id/underline"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="@dimen/border_size_default"
         app:layout_wrapBefore="true"
         android:background="@color/input_underline"
         android:clickable="false"/>

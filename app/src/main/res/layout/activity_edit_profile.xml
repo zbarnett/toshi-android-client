@@ -87,7 +87,7 @@
                 android:layout_height="104dp"
                 android:layout_gravity="center_horizontal"
                 android:src="@color/textColorHint"
-                app:civ_border_width="1dp"
+                app:civ_border_width="@dimen/border_size_default"
                 app:civ_border_color="@color/divider"/>
 
             <android.support.v4.widget.Space
@@ -112,8 +112,8 @@
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginRight="@dimen/activity_horizontal_margin">
+                android:layout_marginLeft="@dimen/margin_primary"
+                android:layout_marginRight="@dimen/margin_primary">
 
                 <EditText
                     android:id="@+id/inputName"
@@ -133,8 +133,8 @@
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginRight="@dimen/activity_horizontal_margin">
+                android:layout_marginLeft="@dimen/margin_primary"
+                android:layout_marginRight="@dimen/margin_primary">
 
                 <EditText
                     android:id="@+id/inputUsername"
@@ -154,8 +154,8 @@
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginRight="@dimen/activity_horizontal_margin">
+                android:layout_marginLeft="@dimen/margin_primary"
+                android:layout_marginRight="@dimen/margin_primary">
 
                 <EditText
                     android:id="@+id/inputAbout"
@@ -175,8 +175,8 @@
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginRight="@dimen/activity_horizontal_margin">
+                android:layout_marginLeft="@dimen/margin_primary"
+                android:layout_marginRight="@dimen/margin_primary">
 
                 <EditText
                     android:id="@+id/inputLocation"
@@ -202,8 +202,8 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="54dp"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginRight="@dimen/activity_horizontal_margin">
+                android:layout_marginLeft="@dimen/margin_primary"
+                android:layout_marginRight="@dimen/margin_primary">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -226,8 +226,8 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:layout_marginLeft="@dimen/margin_primary"
+                android:layout_marginRight="@dimen/margin_primary"
                 android:textColor="@color/textColorSecondaryTransparent"
                 android:textSize="14sp"
                 android:text="@string/public_profile_message" />

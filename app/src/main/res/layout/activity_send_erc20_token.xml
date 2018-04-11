@@ -73,7 +73,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginLeft="@dimen/margin_primary"
                 android:textSize="14sp"
                 android:textColor="@color/textColorSecondaryTransparent"
                 android:textAllCaps="true"
@@ -95,7 +95,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginLeft="@dimen/margin_primary"
                     android:textSize="36sp"
                     android:singleLine="true"
                     android:maxLines="1"
@@ -133,7 +133,7 @@
                     android:visibility="gone"/>
 
                 <android.support.v4.widget.Space
-                    android:layout_width="@dimen/activity_horizontal_margin"
+                    android:layout_width="@dimen/margin_primary"
                     android:layout_height="0dp" />
 
             </LinearLayout>
@@ -142,7 +142,7 @@
                 android:id="@+id/toAmountConverted"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginLeft="@dimen/margin_primary"
                 android:layout_marginTop="12dp"
                 android:textSize="16sp"
                 android:textColor="@color/textColorPrimary"
@@ -159,8 +159,8 @@
                 android:id="@+id/balance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:layout_marginLeft="@dimen/margin_primary"
+                android:layout_marginRight="@dimen/margin_primary"
                 android:textColor="@color/textColorSecondary"
                 tools:text="Your balance: 1000 ETH ($1.690.89 USD)"/>
 
@@ -168,7 +168,7 @@
                 android:id="@+id/amountError"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginLeft="@dimen/margin_primary"
                 android:layout_marginTop="10dp"
                 android:textSize="13sp"
                 android:textColor="@color/error_color"
@@ -182,7 +182,7 @@
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
+                android:layout_height="@dimen/border_size_default"
                 android:background="@color/divider"/>
 
             <android.support.v4.widget.Space
@@ -192,7 +192,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginLeft="@dimen/margin_primary"
                 android:textSize="14sp"
                 android:textColor="@color/textColorSecondaryTransparent"
                 android:textAllCaps="true"
@@ -203,8 +203,8 @@
                 android:id="@+id/toAddress"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:layout_marginLeft="@dimen/margin_primary"
+                android:layout_marginRight="@dimen/margin_primary"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
                 android:textSize="18sp"
@@ -219,7 +219,7 @@
                 android:id="@+id/addressError"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginLeft="@dimen/margin_primary"
                 android:layout_marginTop="10dp"
                 android:textSize="13sp"
                 android:textColor="@color/error_color"
@@ -235,7 +235,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin">
+                android:layout_marginLeft="@dimen/margin_primary">
 
                 <com.toshi.view.custom.PaddingButton
                     android:id="@+id/paste"
@@ -268,7 +268,7 @@
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
+                android:layout_height="@dimen/border_size_default"
                 android:background="@color/divider"/>
 
             <android.support.v4.widget.Space
@@ -281,8 +281,8 @@
                 android:id="@+id/continueBtn"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:layout_marginLeft="@dimen/margin_primary"
+                android:layout_marginRight="@dimen/margin_primary"
                 style="@style/FlatButton"
                 android:textAllCaps="true"
                 android:background="@drawable/background_with_radius_disabled"
@@ -292,7 +292,7 @@
 
             <android.support.v4.widget.Space
                 android:layout_width="0dp"
-                android:layout_height="@dimen/activity_horizontal_margin" />
+                android:layout_height="@dimen/margin_primary" />
 
         </LinearLayout>
     </ScrollView>

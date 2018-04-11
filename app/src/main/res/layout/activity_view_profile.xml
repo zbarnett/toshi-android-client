@@ -70,8 +70,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginRight="@dimen/margin_primary"
+                android:layout_marginLeft="@dimen/margin_primary"
                 android:orientation="vertical">
 
                 <LinearLayout
@@ -85,7 +85,7 @@
                         android:layout_width="60dp"
                         android:layout_height="60dp"
                         tools:src="@mipmap/ic_launcher"
-                        app:civ_border_width="1dp"
+                        app:civ_border_width="@dimen/border_size_default"
                         app:civ_border_color="@color/divider"/>
 
                     <android.support.v4.widget.Space
@@ -160,8 +160,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:layout_marginLeft="@dimen/margin_primary"
+                android:layout_marginRight="@dimen/margin_primary"
                 style="@style/Button"
                 android:text="@string/edit_profile"/>
 
@@ -184,7 +184,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginLeft="35dp"
-                android:layout_marginRight="@dimen/activity_horizontal_margin">
+                android:layout_marginRight="@dimen/margin_primary">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
