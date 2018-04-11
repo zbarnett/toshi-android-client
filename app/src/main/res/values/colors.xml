@@ -76,4 +76,5 @@
 
     <color name="web_view_progress_foreground">#03671E</color>
     <color name="web_view_progress_background">#99E6AE</color>
+    <color name="web_view_address_bar_divider">#4467676A</color>
 </resources>

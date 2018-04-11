@@ -15,9 +15,8 @@
   ~     You should have received a copy of the GNU General Public License
   ~     along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -29,7 +28,8 @@
         android:layout_height="?attr/actionBarSize"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        style="@style/Toolbar"
+        style="@style/WhiteToolbar"
+        android:elevation="2dp"
         app:contentInsetStart="0dp">
 
         <com.toshi.view.custom.AddressBarInputView
@@ -41,23 +41,37 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/windowBackground">
+        android:layout_height="match_parent">
 
-        <WebView
-            android:id="@+id/webview"
+        <android.support.v4.widget.SwipeRefreshLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/swipeToRefresh"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <WebView
+                android:id="@+id/webview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </android.support.v4.widget.SwipeRefreshLayout>
+
+        <View
+            android:id="@+id/supportShadow"
+            android:visibility="gone"
+            android:layout_height="1dp"
+            android:layout_width="match_parent"
+            android:background="@color/web_view_address_bar_divider" />
+
+        <com.toshi.view.custom.ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/progress_height" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/searchDapps"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="visible"
-            tools:visibility="visible"/>
-
-        <ImageView
-            android:id="@+id/loading_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:background="@color/windowBackground"
             android:visibility="gone"
-            android:src="@mipmap/ic_launcher"/>
-
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
     </FrameLayout>
 </LinearLayout>

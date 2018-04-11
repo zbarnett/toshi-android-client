@@ -51,11 +51,11 @@ import com.toshi.view.fragment.DialogFragment.ChooserDialog
 import com.toshi.viewModel.DappViewModel
 import com.toshi.viewModel.ViewModelFactory.WebViewViewModelFactory
 import com.toshi.viewModel.WebViewViewModel
-import kotlinx.android.synthetic.main.activity_lollipop_view_view.input
-import kotlinx.android.synthetic.main.activity_lollipop_view_view.progressBar
-import kotlinx.android.synthetic.main.activity_lollipop_view_view.webview
-import kotlinx.android.synthetic.main.activity_lollipop_view_view.searchDapps
-import kotlinx.android.synthetic.main.activity_lollipop_view_view.swipeToRefresh
+import kotlinx.android.synthetic.main.activity_web_view.input
+import kotlinx.android.synthetic.main.activity_web_view.progressBar
+import kotlinx.android.synthetic.main.activity_web_view.webview
+import kotlinx.android.synthetic.main.activity_web_view.searchDapps
+import kotlinx.android.synthetic.main.activity_web_view.swipeToRefresh
 import kotlinx.android.synthetic.main.view_address_bar_input.backButton
 import kotlinx.android.synthetic.main.view_address_bar_input.forwardButton
 import kotlinx.android.synthetic.main.view_address_bar_input.view.userInput
@@ -85,7 +85,7 @@ class LollipopWebViewActivity : AppCompatActivity() {
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_lollipop_view_view)
+        setContentView(R.layout.activity_web_view)
         initWebClient()
         load()
         initSearchAdapter()

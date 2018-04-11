@@ -173,7 +173,7 @@ class JellyBeanWebClient(
         val currentIndex = getCurrentIndex(webView)
         addOrRemoveUrl(currentIndex, newUrl)
         updateLastIndex(webView)
-        if (newUrl != null) onUrlAvailable(newUrl)
+        if (newUrl != null && newUrl != "about:blank") onUrlAvailable(newUrl)
         updateListener()
     }
 

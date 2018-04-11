@@ -124,7 +124,7 @@
             android:id="@+id/closeButton"
             style="@style/closeButtonStyle"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:scaleType="fitCenter"
             android:tint="@color/textColorSecondary"
             app:srcCompat="@drawable/ic_clear" />
@@ -134,7 +134,7 @@
         <LinearLayout
             android:id="@+id/addressInput"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="horizontal"
             android:visibility="gone"
             android:background="@color/windowBackground">
@@ -143,7 +143,7 @@
                 android:id="@+id/backArrowButton"
                 style="@style/closeButtonStyle"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:scaleType="fitCenter"
                 android:tint="@color/textColorSecondary"
                 app:srcCompat="@drawable/ic_arrow_back" />
