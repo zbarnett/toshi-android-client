@@ -50,7 +50,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="32dp"
-            android:textSize="20sp"
+            android:textSize="@dimen/text_size_title"
             android:textColor="@color/contrastBackgroundColor"
             android:text="@string/dapp_title"/>
 

@@ -125,7 +125,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:textColor="@color/textColorPrimary"
-                        android:textSize="20sp"
+                        android:textSize="@dimen/text_size_title"
                         tools:text="Display name"
                         style="@style/TextStyleMedium"/>
 
@@ -168,7 +168,7 @@
                         android:layout_marginLeft="30dp"
                         android:gravity="center"
                         android:textColor="@color/textColorPrimary"
-                        android:textSize="20sp"
+                        android:textSize="@dimen/text_size_title"
                         style="@style/TextStyleMedium"
                         tools:text="0x1NW28WVOJRQNCE34RTOWZGK3ADCM5HN6WPVUUI4U"/>
 

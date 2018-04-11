@@ -85,7 +85,7 @@
     <style name="Toolbar.TitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
         <item name="android:textColor">@color/textColorContrast</item>
         <item name="android:textStyle">normal</item>
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">@dimen/text_size_title</item>
         <item name="android:fontFamily">@string/fontFamily_medium</item>
     </style>
 
