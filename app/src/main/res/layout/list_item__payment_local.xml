@@ -42,7 +42,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/colorPrimary"
-                android:textSize="18sp"
+                android:textSize="@dimen/text_size_instruction"
                 tools:text="Payment for $10.00 USD" />
 
             <android.support.v4.widget.Space

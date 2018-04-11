@@ -43,7 +43,7 @@
                 android:id="@+id/title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="18sp"
+                android:textSize="@dimen/text_size_instruction"
                 android:textColor="@color/colorPrimary"
                 tools:text="Request for $10.00 USD"/>
 

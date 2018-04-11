@@ -207,7 +207,7 @@
                 android:layout_marginRight="@dimen/margin_primary"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
-                android:textSize="18sp"
+                android:textSize="@dimen/text_size_instruction"
                 android:inputType="textNoSuggestions|textMultiLine"
                 android:textColor="@color/textColorPrimary"
                 android:textColorHint="@color/textColorHint"
