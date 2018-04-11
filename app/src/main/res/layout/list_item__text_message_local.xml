@@ -60,7 +60,7 @@
             android:maxWidth="270dp"
             android:layout_gravity="right"
             android:gravity="left"
-            android:textSize="50sp"
+            android:textSize="@dimen/text_size_emoji"
             android:visibility="gone" />
 
         <ImageView

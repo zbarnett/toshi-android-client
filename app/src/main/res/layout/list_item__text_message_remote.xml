@@ -63,6 +63,6 @@
         android:layout_height="wrap_content"
         android:maxWidth="270dp"
         android:layout_gravity="center_vertical"
-        android:textSize="50sp"/>
+        android:textSize="@dimen/text_size_emoji"/>
 
 </LinearLayout>
