@@ -44,8 +44,9 @@
         <item name="colorPrimaryDark">@color/colorSecondaryDark</item>
     </style>
 
-    <style name="WhiteTheme" parent="AppTheme">
+    <style name="WebActivityTheme" parent="AppTheme">
         <item name="colorPrimaryDark">@color/systemBarBackground</item>
+        <item name="android:windowAnimationStyle">@null</item>
     </style>
 
     <style name="WhiteToolbar" parent="@style/ThemeOverlay.AppCompat.ActionBar">
