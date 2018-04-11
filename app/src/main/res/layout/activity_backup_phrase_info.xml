@@ -57,7 +57,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="42sp"
+            android:layout_marginTop="42dp"
             android:layout_marginLeft="@dimen/margin_primary"
             android:textSize="18sp"
             android:textColor="@color/textColorPrimary"

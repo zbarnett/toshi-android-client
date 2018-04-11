@@ -169,7 +169,7 @@
 
                     <android.support.v4.widget.Space
                         android:layout_width="0dp"
-                        android:layout_height="30sp" />
+                        android:layout_height="30dp" />
 
                     <View
                         android:layout_width="match_parent"
@@ -199,7 +199,7 @@
 
                     <android.support.v4.widget.Space
                         android:layout_width="0dp"
-                        android:layout_height="30sp" />
+                        android:layout_height="30dp" />
 
                     <View
                         android:layout_width="match_parent"
@@ -229,7 +229,7 @@
 
                     <android.support.v4.widget.Space
                         android:layout_width="0dp"
-                        android:layout_height="30sp" />
+                        android:layout_height="30dp" />
 
                     <View
                         android:layout_width="match_parent"
