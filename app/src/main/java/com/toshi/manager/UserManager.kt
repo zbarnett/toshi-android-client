@@ -54,7 +54,7 @@ class UserManager(
     private val subscriptions by lazy { CompositeSubscription() }
     private val userSubject by lazy { BehaviorSubject.create<User>() }
     private var connectivitySub: Subscription? = null
-    private lateinit var wallet: HDWallet
+    private var wallet: HDWallet? = null
 
     fun init(wallet: HDWallet): Completable {
         this.wallet = wallet
@@ -93,14 +93,14 @@ class UserManager(
     private fun userNeedsToRegister(): Boolean {
         val oldUserId = userPrefs.getOldUserId()
         val newUserId = userPrefs.getUserId()
-        val expectedAddress = wallet.ownerAddress
+        val expectedAddress = wallet?.ownerAddress
         val userId = newUserId ?: oldUserId
         return userId == null || userId != expectedAddress
     }
 
     private fun userNeedsToMigrate(): Boolean {
         val userId = userPrefs.getUserId()
-        val expectedAddress = wallet.ownerAddress
+        val expectedAddress = wallet?.ownerAddress
         return userId == null || userId != expectedAddress
     }
 
@@ -114,9 +114,7 @@ class UserManager(
     }
 
     private fun registerNewUserWithTimestamp(serverTime: ServerTime): Single<User> {
-        if (!::wallet.isInitialized) {
-            return Single.error(IllegalStateException("Wallet is null while registerNewUserWithTimestamp"))
-        }
+        val wallet = wallet ?: return Single.error(IllegalStateException("Wallet is null while registerNewUserWithTimestamp"))
         val userDetails = UserDetails().setPaymentAddress(wallet.paymentAddress)
         AppPrefs.setForceUserUpdate(false)
         return idService.registerUser(userDetails, serverTime.get())
@@ -171,8 +169,9 @@ class UserManager(
     }
 
     private fun forceUpdateUser(): Completable {
-        val ud = UserDetails().setPaymentAddress(wallet.paymentAddress)
-        return updateUser(ud)
+        return getWallet()
+                .map { UserDetails().setPaymentAddress(it.paymentAddress) }
+                .flatMap { updateUser(it) }
                 .doOnSuccess { AppPrefs.setForceUserUpdate(false) }
                 .doOnError { LogUtil.exception("Error while updating user while initiating $it") }
                 .toCompletable()
@@ -225,8 +224,8 @@ class UserManager(
 
     private fun getWallet(): Single<HDWallet> {
         return Single.fromCallable {
-            while (!::wallet.isInitialized) Thread.sleep(100)
-            wallet
+            while (wallet == null) Thread.sleep(100)
+            return@fromCallable wallet ?: throw IllegalStateException("Wallet is null UserManager::getWallet")
         }
         .subscribeOn(scheduler)
         .timeout(20, TimeUnit.SECONDS)

@@ -59,9 +59,9 @@ class BalanceManager(
         private val appPrefs: AppPrefsInterface = AppPrefs,
         private val ethGcmRegistration: EthGcmRegistration = EthGcmRegistration(appPrefs = appPrefs, ethService = ethService),
         private val baseApplication: BaseApplication = BaseApplication.get(),
-        private val subscribeOnScheduler: Scheduler = Schedulers.io()
+        private val scheduler: Scheduler = Schedulers.io()
 ) {
-    private lateinit var wallet: HDWallet
+    private var wallet: HDWallet? = null
     private var connectivitySub: Subscription? = null
     val balanceObservable: BehaviorSubject<Balance> = BehaviorSubject.create<Balance>()
 
@@ -83,7 +83,7 @@ class BalanceManager(
         clearConnectivitySubscription()
         connectivitySub = baseApplication
                 .isConnectedSubject
-                .subscribeOn(subscribeOnScheduler)
+                .subscribeOn(scheduler)
                 .filter { isConnected -> isConnected }
                 .subscribe(
                         { handleConnectivity() },
@@ -94,7 +94,7 @@ class BalanceManager(
     private fun handleConnectivity() {
         refreshBalance()
         registerEthGcm()
-                .subscribeOn(subscribeOnScheduler)
+                .subscribeOn(scheduler)
                 .subscribe(
                         { },
                         { LogUtil.exception("Error while registering eth gcm", it) }
@@ -105,7 +105,7 @@ class BalanceManager(
 
     fun refreshBalance() {
         getBalance()
-                .observeOn(subscribeOnScheduler)
+                .observeOn(scheduler)
                 .subscribe(
                         { handleNewBalance(it) },
                         { LogUtil.exception("Error while fetching balance", it) }
@@ -121,31 +121,31 @@ class BalanceManager(
     private fun getBalance(): Single<Balance> {
         return getWallet()
                 .flatMap { ethService.getBalance(it.paymentAddress) }
-                .subscribeOn(subscribeOnScheduler)
+                .subscribeOn(scheduler)
     }
 
     fun getERC20Tokens(): Single<ERC20Tokens> {
         return getWallet()
                 .flatMap { ethService.getTokens(it.paymentAddress) }
-                .subscribeOn(subscribeOnScheduler)
+                .subscribeOn(scheduler)
     }
 
     fun getERC20Token(contractAddress: String): Single<ERCToken> {
         return getWallet()
                 .flatMap { ethService.getToken(it.paymentAddress, contractAddress) }
-                .subscribeOn(subscribeOnScheduler)
+                .subscribeOn(scheduler)
     }
 
     fun getERC721Tokens(): Single<ERC721Tokens> {
         return getWallet()
                 .flatMap { ethService.getCollectibles(it.paymentAddress) }
-                .subscribeOn(subscribeOnScheduler)
+                .subscribeOn(scheduler)
     }
 
     fun getERC721Token(contactAddress: String): Single<ERC721TokenWrapper> {
         return getWallet()
                 .flatMap { ethService.getCollectible(it.paymentAddress, contactAddress) }
-                .subscribeOn(subscribeOnScheduler)
+                .subscribeOn(scheduler)
     }
 
     private fun handleNewBalance(balance: Balance) {
@@ -164,7 +164,7 @@ class BalanceManager(
     fun getLocalCurrencyExchangeRate(): Single<ExchangeRate> {
         return getLocalCurrency()
                 .flatMap { fetchLatestExchangeRate(it) }
-                .subscribeOn(subscribeOnScheduler)
+                .subscribeOn(scheduler)
     }
 
     private fun fetchLatestExchangeRate(code: String): Single<ExchangeRate> = currencyService.getRates(code)
@@ -172,7 +172,7 @@ class BalanceManager(
     fun getCurrencies(): Single<Currencies> {
         return currencyService
                 .currencies
-                .subscribeOn(subscribeOnScheduler)
+                .subscribeOn(scheduler)
     }
 
     fun convertEthToLocalCurrencyString(ethAmount: BigDecimal): Single<String> {
@@ -246,11 +246,11 @@ class BalanceManager(
     }
 
     private fun getWallet(): Single<HDWallet> {
-        return Single.fromCallable<HDWallet> {
-            while (!::wallet.isInitialized) Thread.sleep(100)
-            wallet
+        return Single.fromCallable {
+            while (wallet == null) Thread.sleep(100)
+            return@fromCallable wallet ?: throw IllegalStateException("Wallet is null UserManager::getWallet")
         }
-        .subscribeOn(subscribeOnScheduler)
+        .subscribeOn(scheduler)
         .timeout(20, TimeUnit.SECONDS)
     }
 

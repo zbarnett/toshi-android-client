@@ -62,7 +62,7 @@ class BalanceManagerMocker(
                 balancePrefs = balancePrefs,
                 ethGcmRegistration = ethGcmRegistration,
                 baseApplication = baseApplication,
-                subscribeOnScheduler = Schedulers.trampoline()
+                scheduler = Schedulers.trampoline()
         )
 
         val wallet = mockWallet()
