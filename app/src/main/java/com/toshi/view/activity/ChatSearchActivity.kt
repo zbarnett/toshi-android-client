@@ -25,6 +25,7 @@ import com.toshi.extensions.getViewModel
 import com.toshi.extensions.startActivity
 import com.toshi.model.network.user.UserType
 import com.toshi.model.network.user.UserV2
+import com.toshi.util.KeyboardUtil
 import com.toshi.view.adapter.ChatSearchTabAdapter
 import com.toshi.view.adapter.listeners.TextChangedListener
 import com.toshi.view.custom.ChatSearchView
@@ -108,7 +109,12 @@ class ChatSearchActivity : AppCompatActivity() {
     }
 
     private fun initClickListeners() {
-        closeButton.setOnClickListener { finish() }
+        closeButton.setOnClickListener { handleCloseClicked() }
+    }
+
+    private fun handleCloseClicked() {
+        KeyboardUtil.hideKeyboard(search)
+        finish()
     }
 
     private fun initTextListener() {
