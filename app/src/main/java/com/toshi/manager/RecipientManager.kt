@@ -11,7 +11,9 @@ import com.toshi.model.local.Group
 import com.toshi.model.local.Recipient
 import com.toshi.model.local.Report
 import com.toshi.model.local.User
+import com.toshi.model.network.SearchResult
 import com.toshi.model.network.ServerTime
+import com.toshi.model.network.user.UserV2
 import com.toshi.util.logging.LogUtil
 import com.toshi.view.BaseApplication
 import rx.Completable
@@ -157,6 +159,12 @@ class RecipientManager(
                 .flatMap { idService.reportUser(report, it.get()) }
                 .subscribeOn(scheduler)
                 .toCompletable()
+    }
+
+    fun searchForUsers(type: String, query: String): Single<SearchResult<UserV2>> {
+        return idService
+                .search(type, query)
+                .subscribeOn(scheduler)
     }
 
     fun getTimestamp(): Single<ServerTime> = idService.timestamp
