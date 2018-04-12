@@ -111,7 +111,7 @@
 
     <View
         android:id="@+id/divider"
-        style="@style/Border"
+        style="@style/Divider"
         android:layout_width="@dimen/match_constraints"
         android:layout_marginLeft="@dimen/border_left_margin_with_small_avatar"
         android:layout_marginStart="@dimen/border_left_margin_with_small_avatar"

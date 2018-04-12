@@ -28,6 +28,7 @@ class RecipientManager(
         private val groupStore: GroupStore = GroupStore(),
         private val userStore: UserStore = UserStore(),
         private val blockedUserStore: BlockedUserStore = BlockedUserStore(),
+        private val baseApplication: BaseApplication = BaseApplication.get(),
         private val scheduler: Scheduler = Schedulers.io()
 ) {
 
@@ -65,9 +66,11 @@ class RecipientManager(
     }
 
     private fun isUserFresh(user: User?): Boolean {
-        if (user == null) return false
-        return if (!BaseApplication.get().isConnected) true
-        else !user.needsRefresh()
+        return when {
+            user == null -> false
+            baseApplication.isConnected -> true
+            else -> !user.needsRefresh()
+        }
     }
 
     fun getUserFromPaymentAddress(paymentAddress: String): Single<User> {
