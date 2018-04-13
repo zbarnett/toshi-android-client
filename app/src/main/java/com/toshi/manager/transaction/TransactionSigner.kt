@@ -20,7 +20,7 @@ package com.toshi.manager.transaction
 import android.util.Pair
 import com.toshi.crypto.HDWallet
 import com.toshi.manager.model.W3PaymentTask
-import com.toshi.manager.network.EthereumService
+import com.toshi.manager.network.EthereumInterface
 import com.toshi.model.network.SentTransaction
 import com.toshi.model.network.ServerTime
 import com.toshi.model.network.SignedTransaction
@@ -28,7 +28,9 @@ import com.toshi.model.network.UnsignedTransaction
 import com.toshi.util.logging.LogUtil
 import rx.Single
 
-class TransactionSigner {
+class TransactionSigner(
+        private val ethereumService: EthereumInterface
+) {
 
     var wallet: HDWallet? = null
 
@@ -44,27 +46,25 @@ class TransactionSigner {
     fun signW3Transaction(paymentTask: W3PaymentTask) = signTransaction(paymentTask.unsignedTransaction)
 
     private fun signTransaction(unsignedTransaction: UnsignedTransaction): Single<SignedTransaction> {
-        return wallet?.let {
-            val signature = it.signTransaction(unsignedTransaction.transaction)
-            val signedTransaction = SignedTransaction()
+        return Single.fromCallable {
+            val wallet = wallet ?: throw IllegalStateException("Wallet is null TransactionSigner::signTransaction")
+            val signature = wallet.signTransaction(unsignedTransaction.transaction)
+            return@fromCallable SignedTransaction()
                     .setEncodedTransaction(unsignedTransaction.transaction)
                     .setSignature(signature)
-            return Single.just(signedTransaction)
-        } ?: Single.error(Throwable("Wallet is null"))
+        }
     }
 
     fun sendSignedTransaction(signedTransaction: SignedTransaction): Single<SentTransaction> {
         return getServerTime()
                 .flatMap { serverTime -> sendSignedTransaction(signedTransaction, serverTime) }
-                .doOnError { LogUtil.exception("Error while sending signed transaction", it) }
+                .doOnError { LogUtil.exception("Error while sending signed transaction TransactionSigner::sendSignedTransaction", it) }
     }
 
     private fun sendSignedTransaction(signedTransaction: SignedTransaction, serverTime: ServerTime): Single<SentTransaction> {
         val timestamp = serverTime.get()
-        return EthereumService
-                .getApi()
-                .sendSignedTransaction(timestamp, signedTransaction)
+        return ethereumService.sendSignedTransaction(timestamp, signedTransaction)
     }
 
-    private fun getServerTime() = EthereumService.getApi().timestamp
+    private fun getServerTime() = ethereumService.timestamp
 }
