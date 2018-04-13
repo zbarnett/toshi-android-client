@@ -61,7 +61,7 @@ class ChatSearchViewModel(
     }
 
     private fun runSearchQuery(query: String, userType: UserType) {
-        val searchSub = searchForUsers(query, userType)
+        val searchSub = searchForUsers(query = query, type = userType)
                 .observeOn(scheduler)
                 .subscribe(
                         { handleResponse(it) },
@@ -81,9 +81,9 @@ class ChatSearchViewModel(
         }
     }
 
-    private fun searchForUsers(query: String, userType: UserType): Single<SearchResult<UserV2>> {
+    private fun searchForUsers(query: String, type: UserType): Single<SearchResult<UserV2>> {
         return recipientManager
-                .searchForUsers(query, userType.name.toLowerCase())
+                .searchForUsers(type = type.name.toLowerCase(), query = query)
     }
 
     fun search(query: String, userType: UserType) = querySubject.onNext(Pair(query, userType))
