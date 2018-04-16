@@ -312,7 +312,7 @@
                 <FrameLayout
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_marginLeft="40dp">
+                    android:layout_marginLeft="@dimen/margin_two_and_a_half">
 
                     <com.toshi.view.custom.RatingInfo
                         android:id="@+id/ratingInfo"

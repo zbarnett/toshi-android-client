@@ -69,8 +69,8 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:layout_marginTop="@dimen/margin_primary"
-            android:layout_marginLeft="40dp"
-            android:layout_marginRight="40dp"
+            android:layout_marginLeft="@dimen/margin_two_and_a_half"
+            android:layout_marginRight="@dimen/margin_two_and_a_half"
             android:textSize="@dimen/text_size_default"
             android:textColor="@color/textColorSecondary"
             android:text="@string/coming_soon_message"/>
