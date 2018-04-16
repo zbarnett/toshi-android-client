@@ -50,13 +50,15 @@
 
     <dimen name="list_item_height_default">80dp</dimen>
 
-    <!-- Size which will allow a ConstraintLayout to size the element-->
-    <dimen name="match_constraints">0dp</dimen>
-
     <dimen name="progress_height">2dp</dimen>
+
+    <!-- ALIASES -->
 
     <!-- Size of the unused dimension of a Space - height for a horizontal space, width for a vertical space. -->
     <dimen name="space_unused_dimension">0dp</dimen>
+
+    <!-- Size which will allow a ConstraintLayout to size the element-->
+    <dimen name="match_constraints">0dp</dimen>
 
     <!--
     SPECIFIC REUSED SIZES
@@ -77,7 +79,6 @@
     <dimen name="chat_bubble_vertical_padding">9dp</dimen>
 
     <dimen name="control_corner_radius">32dp</dimen>
-
 
     <dimen name="dapps_input_z">4dp</dimen>
 
