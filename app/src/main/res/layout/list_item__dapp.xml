@@ -30,8 +30,8 @@
 
     <ImageView
         android:id="@+id/image"
-        android:layout_width="72dp"
-        android:layout_height="72dp" />
+        android:layout_width="@dimen/avatar_size_medium"
+        android:layout_height="@dimen/avatar_size_medium" />
 
     <android.support.v4.widget.Space
         android:layout_width="@dimen/margin_three_quarters"

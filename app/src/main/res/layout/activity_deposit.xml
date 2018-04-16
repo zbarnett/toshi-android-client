@@ -163,8 +163,8 @@
 
                     <ImageView
                         android:id="@+id/qr_code"
-                        android:layout_width="220dp"
-                        android:layout_height="220dp"
+                        android:layout_width="@dimen/qr_code_size_large"
+                        android:layout_height="@dimen/qr_code_size_large"
                         android:layout_gravity="center_horizontal"/>
 
                     <android.support.v4.widget.Space

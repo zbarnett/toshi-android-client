@@ -19,6 +19,7 @@
 
     <!-- MARGINS -->
 
+    <dimen name="margin_four_and_a_half">72dp</dimen>
     <dimen name="margin_two_and_a_half">40dp</dimen>
     <dimen name="margin_double">32dp</dimen>
     <dimen name="margin_one_and_a_half">24dp</dimen>
@@ -91,6 +92,7 @@
     <dimen name="dapps_input_z">4dp</dimen>
 
     <dimen name="qr_code_size">170dp</dimen>
+    <dimen name="qr_code_size_large">220dp</dimen>
 
     <dimen name="rating_bar_radius">3dp</dimen>
     <dimen name="rating_bar_width">160dp</dimen>

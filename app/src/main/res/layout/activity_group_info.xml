@@ -91,8 +91,8 @@
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/avatar"
-                    android:layout_width="44dp"
-                    android:layout_height="44dp" />
+                    android:layout_width="@dimen/avatar_size_small"
+                    android:layout_height="@dimen/avatar_size_small" />
 
                 <android.support.v4.widget.Space
                     android:layout_width="@dimen/margin_three_quarters"
@@ -185,7 +185,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/border_size_default"
                 android:background="@color/divider"
-                android:layout_marginLeft="72dp"
+                android:layout_marginLeft="@dimen/margin_four_and_a_half"
                 android:layout_marginRight="@dimen/margin_primary"/>
 
             <android.support.v7.widget.RecyclerView
