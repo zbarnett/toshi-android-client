@@ -29,7 +29,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:scaleType="fitCenter"
-        android:paddingRight="8dp"
+        android:paddingRight="@dimen/margin_half"
         android:paddingLeft="18dp"
         android:paddingTop="14dp"
         android:paddingBottom="14dp"
@@ -39,8 +39,8 @@
     <android.support.v4.widget.Space
         android:id="@+id/attachment_spacing"
         android:visibility="gone"
-        android:layout_width="8dp"
-        android:layout_height="0dp" />
+        android:layout_width="@dimen/margin_half"
+        android:layout_height="@dimen/space_unused_dimension" />
 
     <ImageButton
         android:id="@+id/add_attachments_button"
@@ -48,10 +48,10 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:scaleType="fitCenter"
-        android:paddingLeft="8dp"
+        android:paddingLeft="@dimen/margin_half"
         android:paddingTop="14dp"
         android:paddingBottom="14dp"
-        android:paddingRight="16dp"
+        android:paddingRight="@dimen/margin_primary"
         android:background="?android:selectableItemBackground"
         app:srcCompat="@drawable/ic_photo" />
 
@@ -62,8 +62,8 @@
         android:minHeight="36dp"
         android:layout_weight="1"
         android:layout_gravity="center_vertical"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginTop="@dimen/margin_half"
+        android:layout_marginBottom="@dimen/margin_half"
         android:paddingLeft="15dp"
         android:paddingRight="15dp"
         android:background="@drawable/background_input_chat"
@@ -76,15 +76,15 @@
     <android.support.v4.widget.Space
         android:id="@+id/send_spacing"
         android:visibility="visible"
-        android:layout_width="16dp"
-        android:layout_height="0dp" />
+        android:layout_width="@dimen/margin_primary"
+        android:layout_height="@dimen/space_unused_dimension" />
 
     <ImageButton
         android:id="@+id/send_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:paddingLeft="16dp"
+        android:paddingLeft="@dimen/margin_primary"
         android:paddingTop="14dp"
         android:paddingBottom="14dp"
         android:paddingRight="18dp"

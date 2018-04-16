@@ -21,8 +21,8 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingLeft="24dp"
-    android:paddingRight="24dp"
+    android:paddingLeft="@dimen/margin_one_and_a_half"
+    android:paddingRight="@dimen/margin_one_and_a_half"
     android:paddingTop="9dp"
     android:paddingBottom="9dp"
     android:background="?android:selectableItemBackground"
@@ -36,7 +36,7 @@
 
     <android.support.v4.widget.Space
         android:layout_width="25dp"
-        android:layout_height="0dp" />
+        android:layout_height="@dimen/space_unused_dimension" />
 
     <TextView
         android:id="@+id/network"

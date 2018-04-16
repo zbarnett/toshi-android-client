@@ -43,8 +43,8 @@
                 style="@style/closeButtonStyle"/>
 
             <android.support.v4.widget.Space
-                android:layout_width="16dp"
-                android:layout_height="0dp" />
+                android:layout_width="@dimen/margin_primary"
+                android:layout_height="@dimen/space_unused_dimension" />
 
             <TextView
                 android:id="@+id/toolbarTitle"
@@ -55,14 +55,14 @@
 
             <android.support.v4.widget.Space
                 android:layout_width="0dp"
-                android:layout_height="0dp"
+                android:layout_height="@dimen/space_unused_dimension"
                 android:layout_weight="1"/>
 
             <ImageButton
                 android:id="@+id/update"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="16dp"
+                android:layout_marginRight="@dimen/margin_primary"
                 android:scaleType="fitCenter"
                 android:tint="@color/textColorContrast"
                 app:srcCompat="@drawable/ic_done"
@@ -80,7 +80,7 @@
                 android:orientation="vertical">
 
                 <android.support.v4.widget.Space
-                    android:layout_width="0dp"
+                    android:layout_width="@dimen/space_unused_dimension"
                     android:layout_height="30dp"/>
 
                 <de.hdodenhof.circleimageview.CircleImageView
@@ -89,11 +89,11 @@
                     android:layout_height="104dp"
                     android:layout_gravity="center_horizontal"
                     android:src="@color/textColorHint"
-                    app:civ_border_width="1dp"
+                    app:civ_border_width="@dimen/border_size_default"
                     app:civ_border_color="@color/divider"/>
 
                 <android.support.v4.widget.Space
-                    android:layout_width="0dp"
+                    android:layout_width="@dimen/space_unused_dimension"
                     android:layout_height="15dp"/>
 
                 <TextView
@@ -103,19 +103,19 @@
                     android:layout_gravity="center_horizontal"
                     android:paddingTop="5dp"
                     android:paddingBottom="5dp"
-                    android:textSize="14sp"
+                    android:textSize="@dimen/text_size_default"
                     android:textColor="@color/colorPrimary"
                     android:text="@string/edit_group_photo"/>
 
                 <android.support.v4.widget.Space
-                    android:layout_width="0dp"
+                    android:layout_width="@dimen/space_unused_dimension"
                     android:layout_height="27dp"/>
 
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                    android:layout_marginRight="@dimen/activity_horizontal_margin">
+                    android:layout_marginLeft="@dimen/margin_primary"
+                    android:layout_marginRight="@dimen/margin_primary">
 
                     <EditText
                         android:id="@+id/groupName"

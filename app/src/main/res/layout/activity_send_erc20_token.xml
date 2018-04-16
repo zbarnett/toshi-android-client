@@ -43,8 +43,8 @@
             style="@style/closeButtonStyle"/>
 
         <android.support.v4.widget.Space
-            android:layout_width="16dp"
-            android:layout_height="0dp" />
+            android:layout_width="@dimen/margin_primary"
+            android:layout_height="@dimen/space_unused_dimension" />
 
         <TextView
             android:id="@+id/toolbarTitle"
@@ -67,21 +67,21 @@
             android:orientation="vertical">
 
             <android.support.v4.widget.Space
-                android:layout_width="0dp"
-                android:layout_height="20dp" />
+                android:layout_width="@dimen/space_unused_dimension"
+                android:layout_height="@dimen/margin_one_and_a_quarter" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:textSize="14sp"
+                android:layout_marginLeft="@dimen/margin_primary"
+                android:textSize="@dimen/text_size_default"
                 android:textColor="@color/textColorSecondaryTransparent"
                 android:textAllCaps="true"
                 android:text="@string/amount"
                 style="@style/TextStyleMedium"/>
 
             <android.support.v4.widget.Space
-                android:layout_width="0dp"
+                android:layout_width="@dimen/space_unused_dimension"
                 android:layout_height="14dp" />
 
             <LinearLayout
@@ -95,7 +95,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginLeft="@dimen/margin_primary"
                     android:textSize="36sp"
                     android:singleLine="true"
                     android:maxLines="1"
@@ -108,13 +108,13 @@
                     android:hint="@string/_0_0" />
 
                 <android.support.v4.widget.Space
-                    android:layout_width="8dp"
-                    android:layout_height="0dp" />
+                    android:layout_width="@dimen/margin_half"
+                    android:layout_height="@dimen/space_unused_dimension" />
 
                 <com.toshi.view.custom.PaddingButton
                     android:id="@+id/max"
                     android:layout_width="wrap_content"
-                    android:layout_height="40dp"
+                    android:layout_height="@dimen/button_height_large"
                     android:background="@drawable/background_with_round_corners_disabled"
                     android:paddingLeft="17dp"
                     android:paddingRight="17dp"
@@ -123,7 +123,7 @@
                 <com.toshi.view.custom.PaddingButton
                     android:id="@+id/currencySwitcher"
                     android:layout_width="wrap_content"
-                    android:layout_height="40dp"
+                    android:layout_height="@dimen/button_height_large"
                     android:background="@drawable/background_with_round_corners_disabled"
                     android:paddingLeft="17dp"
                     android:paddingRight="17dp"
@@ -133,8 +133,8 @@
                     android:visibility="gone"/>
 
                 <android.support.v4.widget.Space
-                    android:layout_width="@dimen/activity_horizontal_margin"
-                    android:layout_height="0dp" />
+                    android:layout_width="@dimen/margin_primary"
+                    android:layout_height="@dimen/space_unused_dimension" />
 
             </LinearLayout>
 
@@ -142,9 +142,9 @@
                 android:id="@+id/toAmountConverted"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginTop="12dp"
-                android:textSize="16sp"
+                android:layout_marginLeft="@dimen/margin_primary"
+                android:layout_marginTop="@dimen/margin_three_quarters"
+                android:textSize="@dimen/text_size_subtitle"
                 android:textColor="@color/textColorPrimary"
                 android:textStyle="bold"
                 tools:text="$0.00 USD"
@@ -152,15 +152,15 @@
                 tools:visibility="visible"/>
 
             <android.support.v4.widget.Space
-                android:layout_width="0dp"
-                android:layout_height="20dp" />
+                android:layout_width="@dimen/space_unused_dimension"
+                android:layout_height="@dimen/margin_one_and_a_quarter" />
 
             <TextView
                 android:id="@+id/balance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:layout_marginLeft="@dimen/margin_primary"
+                android:layout_marginRight="@dimen/margin_primary"
                 android:textColor="@color/textColorSecondary"
                 tools:text="Your balance: 1000 ETH ($1.690.89 USD)"/>
 
@@ -168,32 +168,32 @@
                 android:id="@+id/amountError"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginLeft="@dimen/margin_primary"
                 android:layout_marginTop="10dp"
-                android:textSize="13sp"
+                android:textSize="@dimen/text_size_body"
                 android:textColor="@color/error_color"
                 tools:text="You can only send tokens to an Ethereum address."
                 android:visibility="gone"
                 tools:visibility="visible"/>
 
             <android.support.v4.widget.Space
-                android:layout_width="0dp"
-                android:layout_height="20dp" />
+                android:layout_width="@dimen/space_unused_dimension"
+                android:layout_height="@dimen/margin_one_and_a_quarter" />
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
+                android:layout_height="@dimen/border_size_default"
                 android:background="@color/divider"/>
 
             <android.support.v4.widget.Space
-                android:layout_width="0dp"
-                android:layout_height="20dp" />
+                android:layout_width="@dimen/space_unused_dimension"
+                android:layout_height="@dimen/margin_one_and_a_quarter" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:textSize="14sp"
+                android:layout_marginLeft="@dimen/margin_primary"
+                android:textSize="@dimen/text_size_default"
                 android:textColor="@color/textColorSecondaryTransparent"
                 android:textAllCaps="true"
                 android:text="@string/to_address"
@@ -203,11 +203,11 @@
                 android:id="@+id/toAddress"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:layout_marginLeft="@dimen/margin_primary"
+                android:layout_marginRight="@dimen/margin_primary"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
-                android:textSize="18sp"
+                android:textSize="@dimen/text_size_instruction"
                 android:inputType="textNoSuggestions|textMultiLine"
                 android:textColor="@color/textColorPrimary"
                 android:textColorHint="@color/textColorHint"
@@ -219,41 +219,41 @@
                 android:id="@+id/addressError"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginLeft="@dimen/margin_primary"
                 android:layout_marginTop="10dp"
-                android:textSize="13sp"
+                android:textSize="@dimen/text_size_body"
                 android:textColor="@color/error_color"
                 tools:text="You can only send tokens to an Ethereum address."
                 android:visibility="gone"
                 tools:visibility="visible"/>
 
             <android.support.v4.widget.Space
-                android:layout_width="0dp"
+                android:layout_width="@dimen/space_unused_dimension"
                 android:layout_height="15dp" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin">
+                android:layout_marginLeft="@dimen/margin_primary">
 
                 <com.toshi.view.custom.PaddingButton
                     android:id="@+id/paste"
                     android:layout_width="wrap_content"
-                    android:layout_height="40dp"
+                    android:layout_height="@dimen/button_height_large"
                     android:background="@drawable/background_with_round_corners_disabled"
                     android:paddingLeft="17dp"
                     android:paddingRight="17dp"
                     app:paddingButtonText="@string/paste"/>
 
                 <android.support.v4.widget.Space
-                    android:layout_width="8dp"
-                    android:layout_height="0dp" />
+                    android:layout_width="@dimen/margin_half"
+                    android:layout_height="@dimen/space_unused_dimension" />
 
                 <com.toshi.view.custom.PaddingButton
                     android:id="@+id/qrCodeBtn"
                     android:layout_width="wrap_content"
-                    android:layout_height="40dp"
+                    android:layout_height="@dimen/button_height_large"
                     android:background="@drawable/background_with_round_corners_disabled"
                     android:paddingLeft="17dp"
                     android:paddingRight="17dp"
@@ -263,26 +263,26 @@
             </LinearLayout>
 
             <android.support.v4.widget.Space
-                android:layout_width="0dp"
-                android:layout_height="20dp" />
+                android:layout_width="@dimen/space_unused_dimension"
+                android:layout_height="@dimen/margin_one_and_a_quarter" />
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
+                android:layout_height="@dimen/border_size_default"
                 android:background="@color/divider"/>
 
             <android.support.v4.widget.Space
-                android:layout_width="0dp"
+                android:layout_width="@dimen/space_unused_dimension"
                 android:layout_height="0dp"
-                android:minHeight="20dp"
+                android:minHeight="@dimen/margin_one_and_a_quarter"
                 android:layout_weight="1"/>
 
             <Button
                 android:id="@+id/continueBtn"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:layout_marginLeft="@dimen/margin_primary"
+                android:layout_marginRight="@dimen/margin_primary"
                 style="@style/FlatButton"
                 android:textAllCaps="true"
                 android:background="@drawable/background_with_radius_disabled"
@@ -291,8 +291,8 @@
                 android:enabled="false"/>
 
             <android.support.v4.widget.Space
-                android:layout_width="0dp"
-                android:layout_height="@dimen/activity_horizontal_margin" />
+                android:layout_width="@dimen/space_unused_dimension"
+                android:layout_height="@dimen/margin_primary" />
 
         </LinearLayout>
     </ScrollView>

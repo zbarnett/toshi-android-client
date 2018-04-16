@@ -42,8 +42,8 @@
                 style="@style/closeButtonStyle"/>
 
             <android.support.v4.widget.Space
-                android:layout_width="16dp"
-                android:layout_height="0dp" />
+                android:layout_width="@dimen/margin_primary"
+                android:layout_height="@dimen/space_unused_dimension" />
 
             <TextView
                 android:id="@+id/title"
@@ -67,28 +67,28 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="42sp"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                    android:textSize="18sp"
+                    android:layout_marginTop="42dp"
+                    android:layout_marginLeft="@dimen/margin_primary"
+                    android:textSize="@dimen/text_size_instruction"
                     android:textColor="@color/textColorPrimary"
                     android:text="@string/this_is_your_backup_phrase"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="14sp"
+                    android:textSize="@dimen/text_size_default"
                     android:textColor="@color/textColorSecondary"
                     android:layout_marginTop="11dp"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                    android:layout_marginRight="@dimen/activity_horizontal_margin"
+                    android:layout_marginLeft="@dimen/margin_primary"
+                    android:layout_marginRight="@dimen/margin_primary"
                     android:text="@string/backup_phrase_warning_message"/>
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/backup_phrase_list"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="@dimen/activity_horizontal_margin"
-                    android:paddingRight="@dimen/activity_horizontal_margin"
+                    android:paddingLeft="@dimen/margin_primary"
+                    android:paddingRight="@dimen/margin_primary"
                     android:layout_marginTop="35dp"/>
 
                 <TextView
@@ -96,12 +96,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="30dp"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginLeft="@dimen/margin_primary"
                     android:textColor="@color/colorPrimary"
                     android:text="@string/copy_phrase_to_clipboard"/>
 
                 <android.support.v4.widget.Space
-                    android:layout_width="0dp"
+                    android:layout_width="@dimen/space_unused_dimension"
                     android:layout_height="0dp"
                     android:layout_weight="1"/>
 
@@ -109,14 +109,14 @@
                     android:id="@+id/verify_phrase_btn"
                     android:layout_width="match_parent"
                     android:layout_height="42dp"
-                    android:layout_marginTop="40dp"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                    android:layout_marginRight="@dimen/activity_horizontal_margin"
-                    android:layout_marginBottom="@dimen/activity_horizontal_margin"
+                    android:layout_marginTop="@dimen/margin_two_and_a_half"
+                    android:layout_marginLeft="@dimen/margin_primary"
+                    android:layout_marginRight="@dimen/margin_primary"
+                    android:layout_marginBottom="@dimen/margin_primary"
                     android:textAllCaps="true"
                     android:background="@drawable/background_with_radius_primary_color"
                     android:textColor="#FFFFFF"
-                    android:textSize="14sp"
+                    android:textSize="@dimen/text_size_default"
                     android:text="@string/verify_phrase"/>
 
             </LinearLayout>

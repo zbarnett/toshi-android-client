@@ -40,8 +40,8 @@
             style="@style/Toolbar">
 
             <android.support.v4.widget.Space
-                android:layout_width="16dp"
-                android:layout_height="0dp" />
+                android:layout_width="@dimen/margin_primary"
+                android:layout_height="@dimen/space_unused_dimension" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -64,9 +64,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:paddingTop="@dimen/activity_horizontal_margin"
-                    android:paddingLeft="@dimen/activity_horizontal_margin"
-                    android:paddingRight="@dimen/activity_horizontal_margin"
+                    android:paddingTop="@dimen/margin_primary"
+                    android:paddingLeft="@dimen/margin_primary"
+                    android:paddingRight="@dimen/margin_primary"
                     android:background="@color/colorPrimaryDarkSecondary"
                     app:layout_scrollFlags="scroll">
 
@@ -74,24 +74,24 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textColor="@color/textColorContrast"
-                        android:textSize="16sp"
+                        android:textSize="@dimen/text_size_subtitle"
                         android:text="@string/wallet_address"
                         style="@style/TextStyleMedium"/>
 
                     <android.support.v4.widget.Space
-                        android:layout_width="0dp"
-                        android:layout_height="4dp" />
+                        android:layout_width="@dimen/space_unused_dimension"
+                        android:layout_height="@dimen/margin_quarter" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/textColorContrastTransparent"
-                        android:textSize="14sp"
+                        android:textSize="@dimen/text_size_default"
                         android:text="@string/wallet_info"/>
 
                     <android.support.v4.widget.Space
-                        android:layout_width="0dp"
-                        android:layout_height="12dp" />
+                        android:layout_width="@dimen/space_unused_dimension"
+                        android:layout_height="@dimen/margin_three_quarters" />
 
                     <android.support.v7.widget.CardView
                         android:layout_width="match_parent"
@@ -105,17 +105,17 @@
                             android:layout_height="wrap_content"
                             android:orientation="horizontal"
                             android:gravity="center_vertical"
-                            android:padding="20dp">
+                            android:padding="@dimen/margin_one_and_a_quarter">
 
                             <ImageView
-                                android:layout_width="24dp"
-                                android:layout_height="24dp"
+                                android:layout_width="@dimen/icon_default"
+                                android:layout_height="@dimen/icon_default"
                                 android:layout_gravity="center_vertical"
                                 app:srcCompat="@drawable/ic_qr_code"/>
 
                             <android.support.v4.widget.Space
-                                android:layout_width="@dimen/activity_horizontal_margin"
-                                android:layout_height="0dp" />
+                                android:layout_width="@dimen/margin_primary"
+                                android:layout_height="@dimen/space_unused_dimension" />
 
                             <com.toshi.view.custom.CollapsingTextView
                                 android:id="@+id/walletAddress"
@@ -123,31 +123,31 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:textColor="@color/textColorPrimary"
-                                android:textSize="16sp"
+                                android:textSize="@dimen/text_size_subtitle"
                                 tools:text="0x115..45F3a"
                                 style="@style/NormalEllipsizeEndStyle"/>
 
                             <Space
                                 android:layout_width="0dp"
-                                android:layout_height="0dp"
+                                android:layout_height="@dimen/space_unused_dimension"
                                 android:layout_weight="1"/>
 
                             <Button
                                 android:id="@+id/copy"
                                 android:layout_width="wrap_content"
                                 android:layout_height="32dp"
-                                android:textSize="14sp"
+                                android:textSize="@dimen/text_size_default"
                                 style="@style/ButtonAllCaps"
                                 android:textColor="@color/textColorPrimary"
-                                android:padding="0dp"
+                                android:padding="@dimen/margin_none"
                                 android:text="@string/copy"/>
 
                         </LinearLayout>
                     </android.support.v7.widget.CardView>
 
                     <android.support.v4.widget.Space
-                        android:layout_width="0dp"
-                        android:layout_height="20dp" />
+                        android:layout_width="@dimen/space_unused_dimension"
+                        android:layout_height="@dimen/margin_one_and_a_quarter" />
 
                 </LinearLayout>
 
@@ -170,7 +170,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:background="@color/windowBackground"
-                        android:elevation="1dp" />
+                        android:elevation="@dimen/border_size_default" />
 
                 </LinearLayout>
 

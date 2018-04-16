@@ -25,19 +25,19 @@
     android:gravity="center_vertical"
     android:paddingTop="18dp"
     android:paddingBottom="17dp"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingLeft="@dimen/margin_primary"
+    android:paddingRight="@dimen/margin_primary"
     android:background="?android:selectableItemBackground">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/avatar"
-        android:layout_width="44dp"
-        android:layout_height="44dp"
+        android:layout_width="@dimen/avatar_size_small"
+        android:layout_height="@dimen/avatar_size_small"
         android:src="@color/placeholder"/>
 
     <android.support.v4.widget.Space
-        android:layout_width="12dp"
-        android:layout_height="0dp" />
+        android:layout_width="@dimen/margin_three_quarters"
+        android:layout_height="@dimen/space_unused_dimension" />
 
     <LinearLayout
         android:layout_width="0dp"
@@ -50,7 +50,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/textColorPrimary"
-            android:textSize="14sp"
+            android:textSize="@dimen/text_size_default"
             tools:text="Display name"
             style="@style/MediumEllipsizeEndStyle"/>
 
@@ -59,14 +59,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/textColorSecondary"
-            android:textSize="14sp"
+            android:textSize="@dimen/text_size_default"
             tools:text="This is a much longer user biography but we still show it up to two rows. "
             style="@style/NormalEllipsizeEndStyle"/>
 
     </LinearLayout>
 
     <android.support.v4.widget.Space
-        android:layout_width="12dp"
+        android:layout_width="@dimen/margin_three_quarters"
         android:layout_height="match_parent"/>
 
     <LinearLayout
@@ -87,7 +87,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
-            android:textSize="14sp"
+            android:textSize="@dimen/text_size_default"
             android:textColor="@color/textColorSecondary" />
 
     </LinearLayout>

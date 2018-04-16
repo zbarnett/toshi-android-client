@@ -26,20 +26,20 @@
     android:background="?selectableItemBackground">
 
     <android.support.v4.widget.Space
-        android:layout_width="16dp"
-        android:layout_height="0dp" />
+        android:layout_width="@dimen/margin_primary"
+        android:layout_height="@dimen/space_unused_dimension" />
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/avatar"
         android:layout_width="@dimen/avatar_size_small"
         android:layout_height="@dimen/avatar_size_small"
         android:src="@color/placeholder"
-        app:civ_border_width="1dp"
+        app:civ_border_width="@dimen/border_size_default"
         app:civ_border_color="@color/divider" />
 
     <android.support.v4.widget.Space
-        android:layout_width="12dp"
-        android:layout_height="0dp" />
+        android:layout_width="@dimen/margin_three_quarters"
+        android:layout_height="@dimen/space_unused_dimension" />
 
     <!-- ERC20 tokens -->
 
@@ -53,7 +53,7 @@
             android:id="@+id/erc20Abbreviation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
+            android:textSize="@dimen/text_size_default"
             android:textColor="@color/textColorPrimary"
             style="@style/MediumEllipsizeEndStyle"
             tools:text="ZRX"/>
@@ -62,7 +62,7 @@
             android:id="@+id/erc20Name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
+            android:textSize="@dimen/text_size_default"
             android:textColor="@color/textColorSecondary"
             style="@style/NormalEllipsizeEndStyle"
             tools:text="0x"/>
@@ -82,7 +82,7 @@
             android:id="@+id/erc721Name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
+            android:textSize="@dimen/text_size_default"
             android:textColor="@color/textColorPrimary"
             style="@style/NormalEllipsizeEndStyle"
             tools:text="0x"/>
@@ -91,7 +91,7 @@
 
     <android.support.v4.widget.Space
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="@dimen/space_unused_dimension"
         android:layout_weight="1"/>
 
     <LinearLayout
@@ -104,7 +104,7 @@
             android:id="@+id/value"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
+            android:textSize="@dimen/text_size_default"
             android:textColor="@color/textColorPrimary"
             tools:text="2.5459504"/>
 
@@ -112,7 +112,7 @@
             android:id="@+id/fiatValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
+            android:textSize="@dimen/text_size_default"
             android:textColor="@color/textColorSecondary"
             tools:text="$1024 USD"
             android:visibility="gone"/>
@@ -120,7 +120,7 @@
     </LinearLayout>
 
     <android.support.v4.widget.Space
-        android:layout_width="@dimen/activity_horizontal_margin"
-        android:layout_height="0dp" />
+        android:layout_width="@dimen/margin_primary"
+        android:layout_height="@dimen/space_unused_dimension" />
 
 </LinearLayout>

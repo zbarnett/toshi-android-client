@@ -27,20 +27,20 @@
         android:id="@+id/stars"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="13sp"
+        android:textSize="@dimen/text_size_body"
         android:textColor="#757575" />
 
     <ImageView
         android:layout_width="11dp"
         android:layout_height="11dp"
-        android:layout_marginLeft="4dp"
+        android:layout_marginLeft="@dimen/margin_quarter"
         app:srcCompat="@drawable/star_grey"/>
 
     <com.toshi.view.custom.RatingBar
         android:id="@+id/rating_bar"
         android:layout_width="match_parent"
-        android:layout_height="16dp"
-        android:layout_marginLeft="8dp"
+        android:layout_height="@dimen/rating_bar_height"
+        android:layout_marginLeft="@dimen/margin_half"
         app:backgroundColor="#FFFFFF"
         app:foregroundColor="@color/ratingPrimary"
         app:radius="@dimen/rating_bar_radius"

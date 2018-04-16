@@ -22,8 +22,8 @@
     android:layout_width="match_parent"
     android:layout_height="54dp"
     android:orientation="horizontal"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingLeft="@dimen/margin_primary"
+    android:paddingRight="@dimen/margin_primary"
     android:background="?android:selectableItemBackground">
 
     <TextView
@@ -31,7 +31,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:textSize="16sp"
+        android:textSize="@dimen/text_size_subtitle"
         android:textColor="@color/textColorPrimary"
         android:gravity="center_vertical"
         tools:text="United States Dollar (USD)"/>

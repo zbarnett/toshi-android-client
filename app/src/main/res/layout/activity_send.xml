@@ -42,8 +42,8 @@
             style="@style/closeButtonStyle"/>
 
         <android.support.v4.widget.Space
-            android:layout_width="16dp"
-            android:layout_height="0dp" />
+            android:layout_width="@dimen/margin_primary"
+            android:layout_height="@dimen/space_unused_dimension" />
 
         <TextView
             android:id="@+id/toolbarTitle"
@@ -54,26 +54,26 @@
     </LinearLayout>
 
     <android.support.v4.widget.Space
-        android:layout_width="0dp"
+        android:layout_width="@dimen/space_unused_dimension"
         android:layout_height="13dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin">
+        android:paddingLeft="@dimen/margin_primary"
+        android:paddingRight="@dimen/margin_primary">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
+            android:textSize="@dimen/text_size_subtitle"
             android:textColor="@color/textColorPrimary"
             android:text="@string/to"/>
 
         <android.support.v4.widget.Space
             android:layout_width="6dp"
-            android:layout_height="0dp" />
+            android:layout_height="@dimen/space_unused_dimension" />
 
         <EditText
             android:id="@+id/recipientAddress"
@@ -83,7 +83,7 @@
             android:gravity="center_vertical"
             android:paddingBottom="10dp"
             android:paddingTop="10dp"
-            android:textSize="16sp"
+            android:textSize="@dimen/text_size_subtitle"
             android:singleLine="true"
             android:maxLines="1"
             android:inputType="textNoSuggestions"
@@ -102,7 +102,7 @@
     </LinearLayout>
 
     <android.support.v4.widget.Space
-        android:layout_width="0dp"
+        android:layout_width="@dimen/space_unused_dimension"
         android:layout_height="0dp"
         android:layout_weight="1"/>
 
@@ -123,7 +123,7 @@
         android:gravity="center"
         android:background="@color/file_avatar_background"
         style="@style/TextStyleMedium"
-        android:textSize="14sp"
+        android:textSize="@dimen/text_size_default"
         android:textColor="@color/textColorContrast"
         tools:text="Active network: Mainnet"/>
 

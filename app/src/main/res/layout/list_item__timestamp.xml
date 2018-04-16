@@ -22,7 +22,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center_horizontal"
-    android:layout_marginTop="@dimen/bubbleMargin">
+    android:layout_marginTop="@dimen/margin_half">
 
     <TextView
         android:id="@+id/day"
@@ -30,7 +30,7 @@
         android:layout_height="wrap_content"
         android:textColor="@color/textColorChatTertiary"
         style="@style/TextStyleMedium"
-        android:textSize="13sp"
+        android:textSize="@dimen/text_size_body"
         tools:text="Today"/>
 
     <TextView
@@ -39,7 +39,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="3dp"
         android:textColor="@color/textColorChatTertiary"
-        android:textSize="13sp"
+        android:textSize="@dimen/text_size_body"
         tools:text="9:30AM"/>
 
 </LinearLayout>

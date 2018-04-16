@@ -42,8 +42,8 @@
             style="@style/closeButtonStyle"/>
 
         <android.support.v4.widget.Space
-            android:layout_width="16dp"
-            android:layout_height="0dp" />
+            android:layout_width="@dimen/margin_primary"
+            android:layout_height="@dimen/space_unused_dimension" />
 
         <TextView
             android:id="@+id/title"
@@ -57,14 +57,14 @@
         <android.support.v4.widget.Space
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:layout_height="0dp" />
+            android:layout_height="@dimen/space_unused_dimension" />
 
         <Button
             android:id="@+id/edit"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:padding="@dimen/activity_horizontal_margin"
+            android:padding="@dimen/margin_primary"
             style="@style/NavBarButton"
             android:enabled="false"
             android:text="@string/edit"/>
@@ -85,18 +85,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="75dp"
                 android:orientation="horizontal"
-                android:paddingRight="@dimen/activity_horizontal_margin"
-                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/margin_primary"
+                android:paddingLeft="@dimen/margin_primary"
                 android:gravity="center_vertical">
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/avatar"
-                    android:layout_width="44dp"
-                    android:layout_height="44dp" />
+                    android:layout_width="@dimen/avatar_size_small"
+                    android:layout_height="@dimen/avatar_size_small" />
 
                 <android.support.v4.widget.Space
-                    android:layout_width="12sp"
-                    android:layout_height="0dp" />
+                    android:layout_width="@dimen/margin_three_quarters"
+                    android:layout_height="@dimen/space_unused_dimension" />
 
                 <TextView
                     android:id="@+id/groupName"
@@ -104,7 +104,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/textColorPrimary"
                     android:textColorHint="@color/textColorSecondary"
-                    android:textSize="16sp"
+                    android:textSize="@dimen/text_size_subtitle"
                     android:singleLine="true"
                     android:maxLength="100"
                     tools:text="@string/group_name"/>
@@ -121,8 +121,8 @@
                 android:id="@+id/notificationsWrapper"
                 android:layout_width="match_parent"
                 android:layout_height="54dp"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
+                android:paddingLeft="@dimen/margin_primary"
+                android:paddingRight="@dimen/margin_primary"
                 android:background="?android:selectableItemBackground">
 
                 <TextView
@@ -161,7 +161,7 @@
 
                 <android.support.v4.widget.Space
                     android:layout_width="26dp"
-                    android:layout_height="0dp" />
+                    android:layout_height="@dimen/space_unused_dimension" />
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -170,12 +170,12 @@
 
                 <android.support.v4.widget.Space
                     android:layout_width="22dp"
-                    android:layout_height="0dp" />
+                    android:layout_height="@dimen/space_unused_dimension" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="16sp"
+                    android:textSize="@dimen/text_size_subtitle"
                     android:textColor="@color/colorPrimary"
                     android:text="@string/add_participants"/>
 
@@ -183,10 +183,10 @@
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
+                android:layout_height="@dimen/border_size_default"
                 android:background="@color/divider"
-                android:layout_marginLeft="72dp"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"/>
+                android:layout_marginLeft="@dimen/margin_four_and_a_half"
+                android:layout_marginRight="@dimen/margin_primary"/>
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/participants"
@@ -195,15 +195,15 @@
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="20dp"
+                android:layout_height="@dimen/margin_one_and_a_quarter"
                 android:background="@color/subTitleBackgroundColor"/>
 
             <FrameLayout
                 android:id="@+id/leaveGroup"
                 android:layout_width="match_parent"
                 android:layout_height="54dp"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
+                android:paddingLeft="@dimen/margin_primary"
+                android:paddingRight="@dimen/margin_primary"
                 android:background="?android:selectableItemBackground">
 
                 <TextView

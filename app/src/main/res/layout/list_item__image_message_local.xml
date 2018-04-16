@@ -25,8 +25,8 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:gravity="right"
-    android:layout_marginTop="@dimen/bubbleMargin"
-    android:layout_marginLeft="@dimen/bubbleMargin">
+    android:layout_marginTop="@dimen/margin_half"
+    android:layout_marginLeft="@dimen/margin_half">
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -39,14 +39,14 @@
             android:layout_height="150dp"
             android:layout_gravity="right"
             android:maxWidth="@dimen/chat_image__max_width"
-            app:riv_corner_radius="@dimen/chatImageRadius"/>
+            app:riv_corner_radius="@dimen/corner_radius_default"/>
 
         <ImageView
             android:id="@+id/sent_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="@dimen/bubbleMargin"
+            android:layout_marginLeft="@dimen/margin_half"
             android:visibility="gone"
             tools:visibility="visible"
             app:srcCompat="@drawable/ic_error"/>
@@ -61,7 +61,7 @@
         style="@style/TextStyleMedium"
         android:textColor="@color/error_color"
         android:textAllCaps="true"
-        android:textSize="13sp"
+        android:textSize="@dimen/text_size_body"
         android:visibility="gone"
         tools:visibility="visible"
         android:text="@string/not_delivered" />
@@ -71,17 +71,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:maxWidth="270dp"
-        android:paddingLeft="@dimen/bubbleHorizontalPadding"
-        android:paddingRight="@dimen/bubbleHorizontalPadding"
-        android:paddingTop="@dimen/bubbleVerticalPadding"
-        android:paddingBottom="@dimen/bubbleVerticalPadding"
-        android:layout_marginTop="4dp"
+        android:paddingLeft="@dimen/margin_three_quarters"
+        android:paddingRight="@dimen/margin_three_quarters"
+        android:paddingTop="@dimen/chat_bubble_vertical_padding"
+        android:paddingBottom="@dimen/chat_bubble_vertical_padding"
+        android:layout_marginTop="@dimen/margin_quarter"
         android:background="@drawable/background__remote_message_last"
         android:autoLink="web"
         android:lineSpacingExtra="2dp"
         android:textColor="@color/textColorPrimary"
         android:textColorLink="@color/colorPrimary"
-        android:textSize="16sp"
+        android:textSize="@dimen/text_size_subtitle"
         android:visibility="gone"
         tools:visibility="visible"
         android:textIsSelectable="true"

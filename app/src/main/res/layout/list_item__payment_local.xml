@@ -34,26 +34,26 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:background="@drawable/request_background_local"
-            android:layout_marginTop="@dimen/bubbleMargin"
-            android:padding="16dp">
+            android:layout_marginTop="@dimen/margin_half"
+            android:padding="@dimen/margin_primary">
 
             <TextView
                 android:id="@+id/title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/colorPrimary"
-                android:textSize="18sp"
+                android:textSize="@dimen/text_size_instruction"
                 tools:text="Payment for $10.00 USD" />
 
             <android.support.v4.widget.Space
-                android:layout_width="0dp"
+                android:layout_width="@dimen/space_unused_dimension"
                 android:layout_height="6dp" />
 
             <TextView
                 android:id="@+id/eth_amount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="13sp"
+                android:textSize="@dimen/text_size_body"
                 android:textColor="@color/textColorSecondary"
                 tools:text="0.02454 ETH"/>
 
@@ -63,7 +63,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13dp"
                 android:visibility="gone"
-                android:textSize="13sp"
+                android:textSize="@dimen/text_size_body"
                 android:textColor="@color/textColorPaymentBody"
                 tools:text="I owed you. Thanks for taking care of drinks and burgers"
                 tools:visibility="visible"/>
@@ -75,7 +75,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="@dimen/bubbleMargin"
+            android:layout_marginLeft="@dimen/margin_half"
             android:visibility="gone"
             tools:visibility="visible"
             app:srcCompat="@drawable/ic_error"/>
@@ -90,7 +90,7 @@
         style="@style/TextStyleMedium"
         android:textColor="@color/error_color"
         android:textAllCaps="true"
-        android:textSize="13sp"
+        android:textSize="@dimen/text_size_body"
         android:visibility="gone"
         tools:visibility="visible"
         tools:text="@string/not_delivered" />

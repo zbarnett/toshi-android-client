@@ -23,15 +23,15 @@
     android:layout_width="match_parent"
     android:layout_height="79dp"
     android:orientation="horizontal"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin">
+    android:paddingLeft="@dimen/margin_primary"
+    android:paddingRight="@dimen/margin_primary">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/avatar"
         android:layout_width="@dimen/avatar_size_small"
         android:layout_height="@dimen/avatar_size_small"
         android:layout_gravity="center_vertical"
-        app:civ_border_width="1dp"
+        app:civ_border_width="@dimen/border_size_default"
         app:civ_border_color="@color/divider"/>
 
     <LinearLayout
@@ -46,19 +46,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             style="@style/TextStyleMedium"
-            android:textSize="14sp"
+            android:textSize="@dimen/text_size_default"
             android:textColor="@color/textColorPrimary"
             tools:text="Username"/>
 
         <android.support.v4.widget.Space
-            android:layout_width="0dp"
+            android:layout_width="@dimen/space_unused_dimension"
             android:layout_height="3dp" />
 
         <TextView
             android:id="@+id/username"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
+            android:textSize="@dimen/text_size_default"
             android:textColor="@color/textColorSecondary"
             tools:text="username"/>
 

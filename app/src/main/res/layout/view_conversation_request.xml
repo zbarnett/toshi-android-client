@@ -27,41 +27,41 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/control_background_with_border"
-        android:paddingLeft="@dimen/bubbleHorizontalPadding"
-        android:paddingRight="@dimen/bubbleHorizontalPadding"
-        android:paddingTop="@dimen/bubbleVerticalPadding"
-        android:paddingBottom="@dimen/bubbleVerticalPadding">
+        android:paddingLeft="@dimen/margin_three_quarters"
+        android:paddingRight="@dimen/margin_three_quarters"
+        android:paddingTop="@dimen/chat_bubble_vertical_padding"
+        android:paddingBottom="@dimen/chat_bubble_vertical_padding">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:textColor="@color/control_text_color"
-            android:textSize="16sp"
+            android:textSize="@dimen/text_size_subtitle"
             android:text="@string/accept"/>
 
     </FrameLayout>
 
     <android.support.v4.widget.Space
-        android:layout_width="8dp"
-        android:layout_height="0dp" />
+        android:layout_width="@dimen/margin_half"
+        android:layout_height="@dimen/space_unused_dimension" />
 
     <FrameLayout
         android:id="@+id/decline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/control_background_with_border"
-        android:paddingLeft="@dimen/bubbleHorizontalPadding"
-        android:paddingRight="@dimen/bubbleHorizontalPadding"
-        android:paddingTop="@dimen/bubbleVerticalPadding"
-        android:paddingBottom="@dimen/bubbleVerticalPadding">
+        android:paddingLeft="@dimen/margin_three_quarters"
+        android:paddingRight="@dimen/margin_three_quarters"
+        android:paddingTop="@dimen/chat_bubble_vertical_padding"
+        android:paddingBottom="@dimen/chat_bubble_vertical_padding">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:textColor="@color/control_text_color"
-            android:textSize="16sp"
+            android:textSize="@dimen/text_size_subtitle"
             android:text="@string/decline"/>
 
     </FrameLayout>

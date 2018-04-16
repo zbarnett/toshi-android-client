@@ -29,7 +29,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fitsSystemWindows="true"
-        app:elevation="0dp" />
+        app:elevation="@dimen/elevation_none" />
 
     <android.support.v4.widget.NestedScrollView
         android:id="@+id/scrollView"
@@ -43,28 +43,28 @@
             android:layout_width="match_parent">
 
             <android.support.v4.widget.Space
-                android:layout_width="0dp"
-                android:layout_height="20dp" />
+                android:layout_width="@dimen/space_unused_dimension"
+                android:layout_height="@dimen/margin_one_and_a_quarter" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginRight="@dimen/margin_primary"
+                android:layout_marginLeft="@dimen/margin_primary"
                 android:gravity="center_vertical">
 
                 <com.makeramen.roundedimageview.RoundedImageView
                     android:id="@+id/dappAvatar"
-                    android:layout_width="72dp"
-                    android:layout_height="72dp"
-                    app:riv_corner_radius="@dimen/chatImageRadius"
-                    app:riv_border_width="1dp"
+                    android:layout_width="@dimen/avatar_size_medium"
+                    android:layout_height="@dimen/avatar_size_medium"
+                    app:riv_corner_radius="@dimen/corner_radius_default"
+                    app:riv_border_width="@dimen/border_size_default"
                     app:riv_border_color="@color/divider"
                     app:srcCompat="@color/placeholder" />
 
                 <android.support.v4.widget.Space
-                    android:layout_width="16dp"
-                    android:layout_height="0dp" />
+                    android:layout_width="@dimen/margin_primary"
+                    android:layout_height="@dimen/space_unused_dimension" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -76,7 +76,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/textColorPrimary"
-                        android:textSize="20sp"
+                        android:textSize="@dimen/text_size_title"
                         android:textStyle="bold"
                         style="@style/NormalEllipsizeEndStyle"
                         tools:text="World of Ether"/>
@@ -86,7 +86,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/textColorSecondary"
-                        android:textSize="14sp"
+                        android:textSize="@dimen/text_size_default"
                         style="@style/NormalEllipsizeEndStyle"
                         tools:text="Game on!"/>
 
@@ -94,50 +94,50 @@
             </LinearLayout>
 
             <android.support.v4.widget.Space
-                android:layout_width="0dp"
-                android:layout_height="20dp" />
+                android:layout_width="@dimen/space_unused_dimension"
+                android:layout_height="@dimen/margin_one_and_a_quarter" />
 
             <com.toshi.view.custom.CategoryList
                 android:id="@+id/categories"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:layout_marginLeft="@dimen/margin_primary"
+                android:layout_marginRight="@dimen/margin_primary"
                 app:flexWrap="wrap"
                 tools:text="Games, Collectibles, Exchanges"/>
 
             <android.support.v4.widget.Space
-                android:layout_width="0dp"
-                android:layout_height="20dp" />
+                android:layout_width="@dimen/space_unused_dimension"
+                android:layout_height="@dimen/margin_one_and_a_quarter" />
 
             <TextView
                 android:id="@+id/description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"
-                android:textSize="14sp"
+                android:layout_marginLeft="@dimen/margin_primary"
+                android:layout_marginRight="@dimen/margin_primary"
+                android:textSize="@dimen/text_size_default"
                 android:textColor="@color/textColorPrimaryTransparent"
                 android:lineSpacingMultiplier="1.2"
                 tools:text="Fully decentralized collectable dueling game on the Ethereum blockchain. Collect, breed, battle. Welcome to the World of Ether."/>
 
             <android.support.v4.widget.Space
-                android:layout_width="0dp"
-                android:layout_height="20dp" />
+                android:layout_width="@dimen/space_unused_dimension"
+                android:layout_height="@dimen/margin_one_and_a_quarter" />
 
             <Button
                 android:id="@+id/openBtn"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginRight="@dimen/margin_primary"
+                android:layout_marginLeft="@dimen/margin_primary"
                 style="@style/FlatButtonAllCaps"
                 android:background="@drawable/background_with_radius_primary_color"
                 android:textColor="#FFFFFF"
                 android:text="@string/open" />
 
             <android.support.v4.widget.Space
-                android:layout_width="0dp"
+                android:layout_width="@dimen/space_unused_dimension"
                 android:layout_height="62dp" />
 
         </LinearLayout>

@@ -31,8 +31,8 @@
             android:layout_width="match_parent"
             android:layout_height="54dp"
             android:gravity="center|left"
-            android:paddingLeft="24dp"
-            android:textSize="16sp"
+            android:paddingLeft="@dimen/margin_one_and_a_half"
+            android:textSize="@dimen/text_size_subtitle"
             android:textColor="@color/textColorPrimary"
             android:text="@string/report_message_spam"
             android:background="?android:selectableItemBackground"/>
@@ -42,8 +42,8 @@
             android:layout_width="match_parent"
             android:layout_height="54dp"
             android:gravity="center|left"
-            android:paddingLeft="24dp"
-            android:textSize="16sp"
+            android:paddingLeft="@dimen/margin_one_and_a_half"
+            android:textSize="@dimen/text_size_subtitle"
             android:textColor="@color/textColorPrimary"
             android:text="@string/report_message_inappropriate"
             android:background="?android:selectableItemBackground"/>

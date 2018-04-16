@@ -41,9 +41,9 @@ import kotlinx.android.synthetic.main.view_collapsing_toshi.view.wrapper
 class CollapsingToshiView : AppBarLayout {
 
     private val backgroundColor by lazy { getColorById(R.color.colorPrimary) }
-    private val inputElevation by lazy { getPxSize(R.dimen.dappsInputElevation) }
-    private val inputZ by lazy { getPxSize(R.dimen.dappsInputZ) }
-    private val inputMargin by lazy { getPxSize(R.dimen.dappsInputMargin) }
+    private val inputElevation by lazy { getPxSize(R.dimen.elevation_default) }
+    private val inputZ by lazy { getPxSize(R.dimen.dapps_input_z) }
+    private val inputMargin by lazy { getPxSize(R.dimen.margin_two_and_a_half) }
     private var prevOffset = -1
     private var skipFirst = true
     var isFullyExpanded = false

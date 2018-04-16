@@ -55,7 +55,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:layout_collapseMode="pin"
-            app:contentInsetStart="0dp">
+            app:contentInsetStart="@dimen/content_inset_none">
 
             <ImageButton
                 android:id="@+id/closeButton"
@@ -66,8 +66,8 @@
                 style="@style/closeButtonStyle"/>
 
             <android.support.v4.widget.Space
-                android:layout_width="16dp"
-                android:layout_height="0dp" />
+                android:layout_width="@dimen/margin_primary"
+                android:layout_height="@dimen/space_unused_dimension" />
 
             <TextView
                 android:id="@+id/toolbarTitle"

@@ -37,7 +37,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:civ_border_color="@color/divider"
-        app:civ_border_width="@dimen/border_height_default"
+        app:civ_border_width="@dimen/border_size_default"
         tools:src="@mipmap/ic_launcher"/>
 
     <LinearLayout
@@ -66,7 +66,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/textColorSecondary"
-            android:textSize="14sp"
+            android:textSize="@dimen/text_size_default"
             tools:text="Damn Daniel! Back at it again with the white vans."
             style="@style/NormalEllipsizeEndStyle"/>
 
@@ -101,11 +101,11 @@
         <TextView
             android:id="@+id/unread_counter"
             android:background="@drawable/green_circle"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="@dimen/icon_small"
+            android:layout_height="@dimen/icon_small"
             android:gravity="center"
             android:textColor="@color/textColorContrast"
-            android:textSize="12sp"
+            android:textSize="@dimen/text_size_description"
             tools:text="99"/>
     </LinearLayout>
 

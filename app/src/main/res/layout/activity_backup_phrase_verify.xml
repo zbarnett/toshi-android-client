@@ -42,8 +42,8 @@
                 style="@style/closeButtonStyle"/>
 
             <android.support.v4.widget.Space
-                android:layout_width="16dp"
-                android:layout_height="0dp" />
+                android:layout_width="@dimen/margin_primary"
+                android:layout_height="@dimen/space_unused_dimension" />
 
             <TextView
                 android:id="@+id/title"
@@ -67,20 +67,20 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="42sp"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                    android:textSize="18sp"
+                    android:layout_marginTop="42dp"
+                    android:layout_marginLeft="@dimen/margin_primary"
+                    android:textSize="@dimen/text_size_instruction"
                     android:textColor="@color/textColorPrimary"
                     android:text="@string/verify_phrase"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="14sp"
+                    android:textSize="@dimen/text_size_default"
                     android:textColor="@color/textColorSecondary"
                     android:layout_marginTop="11dp"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                    android:layout_marginRight="@dimen/activity_horizontal_margin"
+                    android:layout_marginLeft="@dimen/margin_primary"
+                    android:layout_marginRight="@dimen/margin_primary"
                     android:text="@string/verify_backup_phrase_message"/>
 
                 <com.toshi.view.custom.DragAndDropView

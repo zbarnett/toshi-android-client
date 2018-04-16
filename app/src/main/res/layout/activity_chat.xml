@@ -37,7 +37,7 @@
             android:gravity="center_vertical"
             android:orientation="horizontal"
             style="@style/Toolbar"
-            app:contentInsetStart="0dp">
+            app:contentInsetStart="@dimen/content_inset_none">
 
             <ImageButton
                 android:id="@+id/closeButton"
@@ -49,8 +49,8 @@
                 style="@style/closeButtonStyle"/>
 
             <android.support.v4.widget.Space
-                android:layout_width="16dp"
-                android:layout_height="0dp" />
+                android:layout_width="@dimen/margin_primary"
+                android:layout_height="@dimen/space_unused_dimension" />
 
             <TextView
                 android:id="@+id/toolbarTitle"
@@ -63,7 +63,7 @@
                 tools:text="Contact Name"/>
 
             <android.support.v4.widget.Space
-                android:layout_width="12dp"
+                android:layout_width="@dimen/margin_three_quarters"
                 android:layout_height="match_parent"/>
 
             <de.hdodenhof.circleimageview.CircleImageView
@@ -71,7 +71,7 @@
                 tools:src="@mipmap/ic_launcher"
                 android:layout_width="34dp"
                 android:layout_height="34dp"
-                android:layout_marginRight="@dimen/activity_horizontal_margin" />
+                android:layout_marginRight="@dimen/margin_primary" />
 
         </LinearLayout>
 
@@ -94,10 +94,10 @@
                     android:id="@+id/messagesList"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:paddingTop="@dimen/textBubbleHalfPadding"
-                    android:paddingBottom="@dimen/message_list_bottom_padding"
-                    android:paddingLeft="@dimen/activity_horizontal_margin"
-                    android:paddingRight="@dimen/messageListRightMargin"
+                    android:paddingTop="@dimen/margin_half"
+                    android:paddingBottom="@dimen/margin_half"
+                    android:paddingLeft="@dimen/margin_primary"
+                    android:paddingRight="@dimen/margin_double"
                     android:clipToPadding="false"
                     style="@style/VerticalScrollbarStyle"/>
 
@@ -115,8 +115,8 @@
                         app:srcCompat="@drawable/ic_chat_empty_state"/>
 
                     <android.support.v4.widget.Space
-                        android:layout_width="0dp"
-                        android:layout_height="8dp"/>
+                        android:layout_width="@dimen/space_unused_dimension"
+                        android:layout_height="@dimen/margin_half"/>
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -141,8 +141,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|right"
-                android:layout_marginBottom="8dp"
-                android:layout_marginRight="8dp"
+                android:layout_marginBottom="@dimen/margin_half"
+                android:layout_marginRight="@dimen/margin_half"
                 android:visibility="gone"/>
 
             <FrameLayout
@@ -181,7 +181,7 @@
             android:gravity="center"
             android:background="@color/file_avatar_background"
             style="@style/TextStyleMedium"
-            android:textSize="14sp"
+            android:textSize="@dimen/text_size_default"
             android:textColor="@color/textColorContrast"
             tools:text="Active network: Mainnet"/>
 

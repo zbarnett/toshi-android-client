@@ -32,16 +32,16 @@
         android:layout_height="34dp"
         android:layout_gravity="bottom"
         android:layout_marginRight="6dp"
-        app:civ_border_width="1dp"
+        app:civ_border_width="@dimen/border_size_default"
         app:civ_border_color="@color/divider"/>
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="@dimen/chat_file_width"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/bubbleMargin"
+        android:layout_marginTop="@dimen/margin_half"
         android:background="@drawable/background_file_message_remote"
-        android:padding="16dp">
+        android:padding="@dimen/margin_primary">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -50,7 +50,7 @@
 
         <android.support.v4.widget.Space
             android:layout_width="14dp"
-            android:layout_height="0dp" />
+            android:layout_height="@dimen/space_unused_dimension" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -62,19 +62,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/textColorPrimary"
-                android:textSize="16sp"
+                android:textSize="@dimen/text_size_subtitle"
                 tools:text="meeting-notes.pdf"/>
 
             <android.support.v4.widget.Space
                 android:layout_width="3dp"
-                android:layout_height="0dp" />
+                android:layout_height="@dimen/space_unused_dimension" />
 
             <TextView
                 android:id="@+id/file_size"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/textColorSecondary"
-                android:textSize="13sp"
+                android:textSize="@dimen/text_size_body"
                 tools:text="10.00 MB"/>
 
         </LinearLayout>

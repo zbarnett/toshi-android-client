@@ -43,8 +43,8 @@
             style="@style/closeButtonStyle"/>
 
         <android.support.v4.widget.Space
-            android:layout_width="16dp"
-            android:layout_height="0dp" />
+            android:layout_width="@dimen/margin_primary"
+            android:layout_height="@dimen/space_unused_dimension" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -58,7 +58,7 @@
                 android:maxLines="1"
                 android:ellipsize="end"
                 style="@style/TransparentToolbar.TitleText"
-                android:textSize="16sp"
+                android:textSize="@dimen/text_size_subtitle"
                 tools:text="CryptoPunks"/>
 
             <TextView
@@ -68,7 +68,7 @@
                 android:maxLines="1"
                 android:ellipsize="end"
                 style="@style/TransparentToolbar.TitleText"
-                android:textSize="14sp"
+                android:textSize="@dimen/text_size_default"
                 android:textColor="@color/textColorSecondary"
                 tools:text="https://cryptopunks.com"/>
 

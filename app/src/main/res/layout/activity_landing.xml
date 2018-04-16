@@ -37,8 +37,8 @@
             android:background="@drawable/splash_background_image">
 
             <android.support.v4.widget.Space
-                android:layout_width="0dp"
-                android:layout_height="72dp" />
+                android:layout_width="@dimen/space_unused_dimension"
+                android:layout_height="@dimen/margin_four_and_a_half" />
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -46,8 +46,8 @@
                 app:srcCompat="@drawable/ic_toshi_icon"/>
 
             <android.support.v4.widget.Space
-                android:layout_width="0dp"
-                android:layout_height="32dp" />
+                android:layout_width="@dimen/space_unused_dimension"
+                android:layout_height="@dimen/margin_double" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -58,19 +58,19 @@
                 android:text="@string/welcome_to_toshi"/>
 
             <android.support.v4.widget.Space
-                android:layout_width="0dp"
-                android:layout_height="16dp" />
+                android:layout_width="@dimen/space_unused_dimension"
+                android:layout_height="@dimen/margin_primary" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
                 android:textColor="@color/textColorContrastTransparent"
-                android:textSize="16sp"
+                android:textSize="@dimen/text_size_subtitle"
                 android:text="@string/splash_view_info"/>
 
             <android.support.v4.widget.Space
-                android:layout_width="0dp"
+                android:layout_width="@dimen/space_unused_dimension"
                 android:layout_height="0dp"
                 android:layout_weight="1"/>
 
@@ -82,12 +82,12 @@
                 android:gravity="center_horizontal"
                 android:textAllCaps="true"
                 android:textColor="@color/textColorContrast"
-                android:textSize="16sp"
+                android:textSize="@dimen/text_size_subtitle"
                 android:fontFamily="@string/fontFamily_medium"
                 android:text="@string/start_with_a_new_account"/>
 
             <android.support.v4.widget.Space
-                android:layout_width="0dp"
+                android:layout_width="@dimen/space_unused_dimension"
                 android:layout_height="3dp" />
 
             <TextView
@@ -97,12 +97,12 @@
                 android:padding="10dp"
                 android:textAllCaps="true"
                 android:textColor="@color/textColorContrast"
-                android:textSize="14sp"
+                android:textSize="@dimen/text_size_default"
                 android:fontFamily="@string/fontFamily_medium"
                 android:text="@string/sign_in"/>
 
             <android.support.v4.widget.Space
-                android:layout_width="0dp"
+                android:layout_width="@dimen/space_unused_dimension"
                 android:layout_height="35dp" />
 
         </LinearLayout>

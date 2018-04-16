@@ -25,21 +25,21 @@
     android:layout_width="match_parent"
     android:layout_height="79dp"
     android:gravity="center_vertical"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/margin_primary"
+    android:paddingLeft="@dimen/margin_primary"
     android:background="?android:selectableItemBackground">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/avatar"
         android:layout_width="@dimen/avatar_size_small"
         android:layout_height="@dimen/avatar_size_small"
-        app:civ_border_width="1dp"
+        app:civ_border_width="@dimen/border_size_default"
         app:civ_border_color="@color/divider"
         tools:src="@mipmap/ic_launcher"/>
 
     <android.support.v4.widget.Space
-        android:layout_width="12dp"
-        android:layout_height="0dp"/>
+        android:layout_width="@dimen/margin_three_quarters"
+        android:layout_height="@dimen/space_unused_dimension"/>
 
     <LinearLayout
         android:layout_width="0dp"
@@ -52,7 +52,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/textColorPrimary"
-            android:textSize="14sp"
+            android:textSize="@dimen/text_size_default"
             tools:text="Damn Daniel!"
             style="@style/MediumEllipsizeEndStyle"/>
 
@@ -61,13 +61,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/textColorSecondary"
-            android:textSize="14sp"
+            android:textSize="@dimen/text_size_default"
             tools:text="Damn Daniel! Back at it again with the white vans."
             style="@style/NormalEllipsizeEndStyle"/>
     </LinearLayout>
 
     <android.support.v4.widget.Space
-        android:layout_width="12dp"
+        android:layout_width="@dimen/margin_three_quarters"
         android:layout_height="match_parent"/>
 
     <LinearLayout
@@ -78,18 +78,18 @@
 
         <ImageView
             android:id="@+id/accept"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="@dimen/icon_small"
+            android:layout_height="@dimen/icon_small"
             app:srcCompat="@drawable/ic_checked_with_background"/>
 
         <android.support.v4.widget.Space
             android:layout_width="10dp"
-            android:layout_height="0dp" />
+            android:layout_height="@dimen/space_unused_dimension" />
 
         <ImageView
             android:id="@+id/reject"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="@dimen/icon_small"
+            android:layout_height="@dimen/icon_small"
             app:srcCompat="@drawable/ic_clear_circle_background"/>
 
     </LinearLayout>

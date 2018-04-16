@@ -43,8 +43,8 @@
                 style="@style/closeButtonStyle"/>
 
             <android.support.v4.widget.Space
-                android:layout_width="16dp"
-                android:layout_height="0dp" />
+                android:layout_width="@dimen/margin_primary"
+                android:layout_height="@dimen/space_unused_dimension" />
 
             <TextView
                 android:id="@+id/title"
@@ -55,7 +55,7 @@
 
             <android.support.v4.widget.Space
                 android:layout_width="0dp"
-                android:layout_height="0dp"
+                android:layout_height="@dimen/space_unused_dimension"
                 android:layout_weight="1"/>
 
             <ImageButton
@@ -63,7 +63,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:scaleType="fitCenter"
-                android:padding="16dp"
+                android:padding="@dimen/margin_primary"
                 android:tint="@color/textColorContrast"
                 android:background="@android:color/transparent"
                 app:srcCompat="@drawable/ic_done"/>
@@ -74,15 +74,15 @@
             android:id="@+id/file_wrapper"
             android:layout_width="match_parent"
             android:layout_height="74dp"
-            android:layout_margin="8dp"
+            android:layout_margin="@dimen/margin_half"
             android:visibility="gone"
             tools:visibility="visible">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingLeft="@dimen/margin_primary"
+                android:paddingRight="@dimen/margin_primary"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
@@ -93,16 +93,16 @@
                     android:background="@color/file_avatar_background">
 
                     <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
+                        android:layout_width="@dimen/icon_default"
+                        android:layout_height="@dimen/icon_default"
                         android:layout_gravity="center"
                         app:srcCompat="@drawable/file_avatar" />
 
                 </FrameLayout>
 
                 <android.support.v4.widget.Space
-                    android:layout_width="16dp"
-                    android:layout_height="0dp" />
+                    android:layout_width="@dimen/margin_primary"
+                    android:layout_height="@dimen/space_unused_dimension" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -113,7 +113,7 @@
                         android:id="@+id/display_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="16sp"
+                        android:textSize="@dimen/text_size_subtitle"
                         android:textColor="@color/textColorPrimary"
                         tools:text="meetings-notes.pdf"/>
 
@@ -121,7 +121,7 @@
                         android:id="@+id/file_size"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="14sp"
+                        android:textSize="@dimen/text_size_default"
                         android:textColor="@color/textColorSecondary"
                         tools:text="10.3MB"/>
 

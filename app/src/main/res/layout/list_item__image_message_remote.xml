@@ -30,7 +30,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="@dimen/bubbleMargin"
+        android:layout_marginTop="@dimen/margin_half"
         android:visibility="visible">
 
         <de.hdodenhof.circleimageview.CircleImageView
@@ -41,7 +41,7 @@
             android:layout_gravity="bottom"
             android:layout_marginTop="17dp"
             android:layout_marginBottom="17dp"
-            app:civ_border_width="1dp"
+            app:civ_border_width="@dimen/border_size_default"
             app:civ_border_color="@color/divider"/>
 
         <com.makeramen.roundedimageview.RoundedImageView
@@ -50,7 +50,7 @@
             android:layout_height="150dp"
             android:layout_marginLeft="6dp"
             android:maxWidth="@dimen/chat_image__max_width"
-            app:riv_corner_radius="@dimen/chatImageRadius"/>
+            app:riv_corner_radius="@dimen/corner_radius_default"/>
 
     </LinearLayout>
 
@@ -66,7 +66,7 @@
             android:layout_height="34dp"
             android:layout_gravity="bottom"
             android:layout_marginRight="6dp"
-            app:civ_border_width="1dp"
+            app:civ_border_width="@dimen/border_size_default"
             app:civ_border_color="@color/divider"/>
 
         <TextView
@@ -75,17 +75,17 @@
             android:layout_height="wrap_content"
             android:maxWidth="270dp"
             android:layout_gravity="center_vertical"
-            android:paddingLeft="@dimen/bubbleHorizontalPadding"
-            android:paddingRight="@dimen/bubbleHorizontalPadding"
-            android:paddingTop="@dimen/bubbleVerticalPadding"
-            android:paddingBottom="@dimen/bubbleVerticalPadding"
-            android:layout_marginTop="4dp"
+            android:paddingLeft="@dimen/margin_three_quarters"
+            android:paddingRight="@dimen/margin_three_quarters"
+            android:paddingTop="@dimen/margin_three_quarters"
+            android:paddingBottom="@dimen/margin_three_quarters"
+            android:layout_marginTop="@dimen/margin_quarter"
             android:background="@drawable/background__remote_message_last"
             android:autoLink="web"
             android:lineSpacingExtra="2dp"
             android:textColor="@color/textColorPrimary"
             android:textColorLink="@color/colorPrimary"
-            android:textSize="16sp"
+            android:textSize="@dimen/text_size_subtitle"
             android:visibility="gone"
             tools:visibility="visible"
             android:textIsSelectable="true"

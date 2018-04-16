@@ -21,25 +21,25 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="32dp">
+    android:layout_marginTop="@dimen/margin_double">
 
     <android.support.v4.widget.Space
-        android:layout_width="@dimen/activity_horizontal_margin"
-        android:layout_height="0dp" />
+        android:layout_width="@dimen/margin_primary"
+        android:layout_height="@dimen/space_unused_dimension" />
 
     <TextView
         android:id="@+id/category"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/textColorSecondaryTransparent"
-        android:textSize="12sp"
+        android:textSize="@dimen/text_size_description"
         android:textAllCaps="true"
         android:textStyle="bold"
         tools:text="Category"/>
 
     <android.support.v4.widget.Space
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="@dimen/space_unused_dimension"
         android:layout_weight="1"/>
 
     <TextView
@@ -49,13 +49,13 @@
         android:paddingBottom="5dp"
         android:paddingTop="5dp"
         android:textColor="@color/colorPrimary"
-        android:textSize="12sp"
+        android:textSize="@dimen/text_size_description"
         android:textAllCaps="true"
         android:textStyle="bold"
         android:text="@string/see_more" />
 
     <android.support.v4.widget.Space
-        android:layout_width="@dimen/activity_horizontal_margin"
-        android:layout_height="0dp" />
+        android:layout_width="@dimen/margin_primary"
+        android:layout_height="@dimen/space_unused_dimension" />
 
 </LinearLayout>

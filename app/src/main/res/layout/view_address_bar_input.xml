@@ -37,8 +37,8 @@
             android:orientation="horizontal">
 
         <android.support.v4.widget.Space
-            android:layout_width="8dp"
-            android:layout_height="0dp" />
+            android:layout_width="@dimen/margin_half"
+            android:layout_height="@dimen/space_unused_dimension" />
 
         <ImageButton
             android:id="@+id/backButton"
@@ -60,8 +60,8 @@
             style="@style/closeButtonStyle"/>
 
         <android.support.v4.widget.Space
-            android:layout_width="8dp"
-            android:layout_height="0dp" />
+            android:layout_width="@dimen/margin_half"
+            android:layout_height="@dimen/space_unused_dimension" />
 
         <FrameLayout
             android:layout_width="0dp"
@@ -102,7 +102,7 @@
                     android:singleLine="true"
                     android:maxLines="1"
                     android:textColor="@color/inactiveTextColor"
-                    android:textSize="18sp"
+                    android:textSize="@dimen/text_size_instruction"
                     android:gravity="center_vertical"/>
 
                 <TextView
@@ -111,7 +111,7 @@
                     android:layout_weight="1"
                     android:layout_height="match_parent"
                     android:ellipsize="end"
-                    android:textSize="18sp"
+                    android:textSize="@dimen/text_size_instruction"
                     android:singleLine="true"
                     android:maxLines="1"
                     android:gravity="center_vertical"/>

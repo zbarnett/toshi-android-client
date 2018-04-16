@@ -25,38 +25,38 @@
     android:orientation="vertical">
 
     <android.support.v4.widget.Space
-        android:layout_width="0dp"
-        android:layout_height="20dp" />
+        android:layout_width="@dimen/space_unused_dimension"
+        android:layout_height="@dimen/margin_one_and_a_quarter" />
 
     <TextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="24dp"
-        android:layout_marginRight="24dp"
-        android:textSize="20sp"
+        android:layout_marginLeft="@dimen/margin_one_and_a_half"
+        android:layout_marginRight="@dimen/margin_one_and_a_half"
+        android:textSize="@dimen/text_size_title"
         android:textColor="@color/textColorPrimary"
         style="@style/TextStyleMedium"
         android:text="@string/terms_dialog_title"/>
 
     <android.support.v4.widget.Space
-        android:layout_width="0dp"
-        android:layout_height="12dp" />
+        android:layout_width="@dimen/space_unused_dimension"
+        android:layout_height="@dimen/margin_three_quarters" />
 
     <TextView
         android:id="@+id/message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="24dp"
-        android:layout_marginRight="24dp"
-        android:textSize="16sp"
+        android:layout_marginLeft="@dimen/margin_one_and_a_half"
+        android:layout_marginRight="@dimen/margin_one_and_a_half"
+        android:textSize="@dimen/text_size_subtitle"
         android:textColor="@color/textColorSecondaryTransparent"
         android:textColorLink="@color/textColorSecondaryTransparent"
         android:text="@string/terms_dialog_message"
         tools:text="Message body"/>
 
     <android.support.v4.widget.Space
-        android:layout_width="0dp"
+        android:layout_width="@dimen/space_unused_dimension"
         android:layout_height="15dp" />
 
     <LinearLayout
@@ -64,14 +64,14 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical|right"
-        android:paddingRight="8dp"
-        android:paddingLeft="8dp">
+        android:paddingRight="@dimen/margin_half"
+        android:paddingLeft="@dimen/margin_half">
 
         <TextView
             android:id="@+id/cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
+            android:textSize="@dimen/text_size_default"
             android:textColor="@color/colorPrimary"
             android:textAllCaps="true"
             android:text="@string/cancel"
@@ -79,13 +79,13 @@
 
         <android.support.v4.widget.Space
             android:layout_width="5dp"
-            android:layout_height="0dp" />
+            android:layout_height="@dimen/space_unused_dimension" />
 
         <TextView
             android:id="@+id/agree"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
+            android:textSize="@dimen/text_size_default"
             android:textColor="@color/colorPrimary"
             android:textAllCaps="true"
             android:text="@string/agree"
@@ -94,7 +94,7 @@
     </LinearLayout>
 
     <android.support.v4.widget.Space
-        android:layout_width="0dp"
-        android:layout_height="8dp" />
+        android:layout_width="@dimen/space_unused_dimension"
+        android:layout_height="@dimen/margin_half" />
 
 </LinearLayout>

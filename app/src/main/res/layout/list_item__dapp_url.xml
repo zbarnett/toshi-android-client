@@ -20,7 +20,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="@dimen/activity_horizontal_margin"
+    android:padding="@dimen/margin_primary"
     android:orientation="horizontal"
     android:background="?selectableItemBackground">
 
@@ -28,7 +28,7 @@
         android:id="@+id/query"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="16sp"
+        android:textSize="@dimen/text_size_subtitle"
         android:textColor="@color/textColorPrimary"
         style="@style/NormalEllipsizeEndStyle"
         tools:text="wwww.google.com "/>
@@ -37,7 +37,7 @@
         android:id="@+id/postfix"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="16sp"
+        android:textSize="@dimen/text_size_subtitle"
         android:textColor="@color/textColorSecondary"
         style="@style/NormalEllipsizeEndStyle"
         android:text="@string/search_with_google"

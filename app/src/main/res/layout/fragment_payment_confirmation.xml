@@ -35,7 +35,7 @@
             android:orientation="horizontal"
             style="@style/Toolbar"
             android:background="@color/windowBackground"
-            android:elevation="1dp">
+            android:elevation="@dimen/border_size_default">
 
             <ImageButton
                 android:id="@+id/closeButton"
@@ -47,8 +47,8 @@
                 style="@style/closeButtonStyle"/>
 
             <android.support.v4.widget.Space
-                android:layout_width="16dp"
-                android:layout_height="0dp" />
+                android:layout_width="@dimen/margin_primary"
+                android:layout_height="@dimen/space_unused_dimension" />
 
             <TextView
                 android:id="@+id/toolbarTitle"
@@ -76,7 +76,7 @@
                 <!-- Pushes the layout to the bottom -->
 
                 <android.support.v4.widget.Space
-                    android:layout_width="0dp"
+                    android:layout_width="@dimen/space_unused_dimension"
                     android:layout_height="0dp"
                     android:layout_weight="1"/>
 
@@ -91,7 +91,7 @@
                     tools:visibility="gone">
 
                     <android.support.v4.widget.Space
-                        android:layout_width="0dp"
+                        android:layout_width="@dimen/space_unused_dimension"
                         android:layout_height="61dp" />
 
                     <de.hdodenhof.circleimageview.CircleImageView
@@ -100,24 +100,24 @@
                         android:layout_height="80dp"
                         android:layout_gravity="center_horizontal"
                         android:src="@color/textColorHint"
-                        app:civ_border_width="1dp"
+                        app:civ_border_width="@dimen/border_size_default"
                         app:civ_border_color="@color/divider" />
 
                     <Space
-                        android:layout_width="0dp"
-                        android:layout_height="12dp" />
+                        android:layout_width="@dimen/space_unused_dimension"
+                        android:layout_height="@dimen/margin_three_quarters" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:textColor="@color/textColorSecondaryTransparent"
-                        android:textSize="16sp"
+                        android:textSize="@dimen/text_size_subtitle"
                         android:text="@string/recipient" />
 
                     <Space
-                        android:layout_width="0dp"
-                        android:layout_height="8dp" />
+                        android:layout_width="@dimen/space_unused_dimension"
+                        android:layout_height="@dimen/margin_half" />
 
                     <TextView
                         android:id="@+id/displayName"
@@ -125,12 +125,12 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:textColor="@color/textColorPrimary"
-                        android:textSize="20sp"
+                        android:textSize="@dimen/text_size_title"
                         tools:text="Display name"
                         style="@style/TextStyleMedium"/>
 
                     <Space
-                        android:layout_width="0dp"
+                        android:layout_width="@dimen/space_unused_dimension"
                         android:layout_height="60dp" />
 
                 </LinearLayout>
@@ -145,20 +145,20 @@
                     android:visibility="gone">
 
                     <android.support.v4.widget.Space
-                        android:layout_width="0dp"
+                        android:layout_width="@dimen/space_unused_dimension"
                         android:layout_height="61dp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
-                        android:textSize="16sp"
+                        android:textSize="@dimen/text_size_subtitle"
                         android:textColor="@color/textColorSecondaryTransparent"
                         android:text="@string/recipient"/>
 
                     <android.support.v4.widget.Space
-                        android:layout_width="0dp"
-                        android:layout_height="8dp" />
+                        android:layout_width="@dimen/space_unused_dimension"
+                        android:layout_height="@dimen/margin_half" />
 
                     <TextView
                         android:id="@+id/externalAddress"
@@ -168,12 +168,12 @@
                         android:layout_marginLeft="30dp"
                         android:gravity="center"
                         android:textColor="@color/textColorPrimary"
-                        android:textSize="20sp"
+                        android:textSize="@dimen/text_size_title"
                         style="@style/TextStyleMedium"
                         tools:text="0x1NW28WVOJRQNCE34RTOWZGK3ADCM5HN6WPVUUI4U"/>
 
                     <Space
-                        android:layout_width="0dp"
+                        android:layout_width="@dimen/space_unused_dimension"
                         android:layout_height="60dp" />
 
                 </LinearLayout>
@@ -185,8 +185,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:paddingLeft="@dimen/activity_horizontal_margin"
-                    android:paddingRight="@dimen/activity_horizontal_margin"
+                    android:paddingLeft="@dimen/margin_primary"
+                    android:paddingRight="@dimen/margin_primary"
                     android:visibility="gone">
 
                     <LinearLayout
@@ -196,50 +196,50 @@
                         android:orientation="vertical">
 
                         <android.support.v4.widget.Space
-                            android:layout_width="0dp"
-                            android:layout_height="20dp" />
+                            android:layout_width="@dimen/space_unused_dimension"
+                            android:layout_height="@dimen/margin_one_and_a_quarter" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="16sp"
+                            android:textSize="@dimen/text_size_subtitle"
                             android:textColor="@color/textColorSecondaryTransparent"
                             android:text="@string/recipient"/>
 
                         <android.support.v4.widget.Space
-                            android:layout_width="0dp"
-                            android:layout_height="8dp" />
+                            android:layout_width="@dimen/space_unused_dimension"
+                            android:layout_height="@dimen/margin_half" />
 
                         <TextView
                             android:id="@+id/dappHeader"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="16sp"
+                            android:textSize="@dimen/text_size_subtitle"
                             android:textColor="@color/textColorPrimary"
                             android:maxLines="2"
                             tools:text="CryptoKitties | Collect and breed digital cats!"/>
 
                         <android.support.v4.widget.Space
-                            android:layout_width="0dp"
-                            android:layout_height="4dp" />
+                            android:layout_width="@dimen/space_unused_dimension"
+                            android:layout_height="@dimen/margin_quarter" />
 
                         <TextView
                             android:id="@+id/dappUrl"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="16sp"
+                            android:textSize="@dimen/text_size_subtitle"
                             android:textColor="@color/textColorSecondaryTransparent"
                             tools:text="cryptokitties.co"/>
 
                         <android.support.v4.widget.Space
-                            android:layout_width="0dp"
-                            android:layout_height="20dp" />
+                            android:layout_width="@dimen/space_unused_dimension"
+                            android:layout_height="@dimen/margin_one_and_a_quarter" />
 
                     </LinearLayout>
 
                     <android.support.v4.widget.Space
-                        android:layout_width="20dp"
-                        android:layout_height="0dp" />
+                        android:layout_width="@dimen/margin_one_and_a_quarter"
+                        android:layout_height="@dimen/space_unused_dimension" />
 
                     <ImageView
                         android:id="@+id/dappFavicon"
@@ -256,8 +256,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:paddingLeft="@dimen/activity_horizontal_margin"
-                    android:paddingRight="@dimen/activity_horizontal_margin"
+                    android:paddingLeft="@dimen/margin_primary"
+                    android:paddingRight="@dimen/margin_primary"
                     android:visibility="gone"
                     tools:visibility="visible">
 
@@ -268,13 +268,13 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="16sp"
+                            android:textSize="@dimen/text_size_subtitle"
                             android:textColor="@color/textColorSecondaryTransparent"
                             android:text="@string/amount"/>
 
                         <android.support.v4.widget.Space
                             android:layout_width="0dp"
-                            android:layout_height="0dp"
+                            android:layout_height="@dimen/space_unused_dimension"
                             android:layout_weight="1"/>
 
                         <LinearLayout
@@ -287,7 +287,7 @@
                                 android:id="@+id/amount"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textSize="16sp"
+                                android:textSize="@dimen/text_size_subtitle"
                                 android:textColor="@color/textColorPrimary"
                                 tools:text="$6.10 USD"/>
 
@@ -295,7 +295,7 @@
                                 android:id="@+id/convertedAmount"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textSize="16sp"
+                                android:textSize="@dimen/text_size_subtitle"
                                 android:textColor="@color/textColorSecondary"
                                 tools:text="$6.10 USD"/>
 
@@ -303,8 +303,8 @@
                     </LinearLayout>
 
                     <Space
-                        android:layout_width="0dp"
-                        android:layout_height="12dp" />
+                        android:layout_width="@dimen/space_unused_dimension"
+                        android:layout_height="@dimen/margin_three_quarters" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -313,13 +313,13 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="16sp"
+                            android:textSize="@dimen/text_size_subtitle"
                             android:textColor="@color/textColorSecondaryTransparent"
                             android:text="@string/est_network_fees"/>
 
                         <android.support.v4.widget.Space
                             android:layout_width="0dp"
-                            android:layout_height="0dp"
+                            android:layout_height="@dimen/space_unused_dimension"
                             android:layout_weight="1"/>
 
                         <LinearLayout
@@ -332,7 +332,7 @@
                                 android:id="@+id/gasPrice"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textSize="16sp"
+                                android:textSize="@dimen/text_size_subtitle"
                                 android:textColor="@color/textColorPrimary"
                                 tools:text="$1.50 USD"/>
 
@@ -340,7 +340,7 @@
                                 android:id="@+id/convertedGasPrice"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textSize="16sp"
+                                android:textSize="@dimen/text_size_subtitle"
                                 android:textColor="@color/textColorSecondary"
                                 tools:text="$1.50 USD"/>
 
@@ -348,17 +348,17 @@
                     </LinearLayout>
 
                     <Space
-                        android:layout_width="0dp"
-                        android:layout_height="16dp" />
+                        android:layout_width="@dimen/space_unused_dimension"
+                        android:layout_height="@dimen/margin_primary" />
 
                     <View
                         android:layout_width="match_parent"
-                        android:layout_height="1dp"
+                        android:layout_height="@dimen/border_size_default"
                         android:background="@color/divider" />
 
                     <Space
-                        android:layout_width="0dp"
-                        android:layout_height="16dp" />
+                        android:layout_width="@dimen/space_unused_dimension"
+                        android:layout_height="@dimen/margin_primary" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -367,20 +367,20 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="16sp"
+                            android:textSize="@dimen/text_size_subtitle"
                             android:textColor="@color/textColorSecondaryTransparent"
                             android:text="@string/total"/>
 
                         <android.support.v4.widget.Space
                             android:layout_width="0dp"
-                            android:layout_height="0dp"
+                            android:layout_height="@dimen/space_unused_dimension"
                             android:layout_weight="1"/>
 
                         <TextView
                             android:id="@+id/total"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="16sp"
+                            android:textSize="@dimen/text_size_subtitle"
                             android:textColor="@color/textColorPrimary"
                             android:textStyle="bold"
                             tools:text="$7.60 USD"/>
@@ -391,7 +391,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="right"
-                        android:textSize="16sp"
+                        android:textSize="@dimen/text_size_subtitle"
                         android:textColor="@color/textColorSecondaryTransparent"
                         tools:text="0.005063"/>
 
@@ -404,8 +404,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:paddingLeft="@dimen/activity_horizontal_margin"
-                    android:paddingRight="@dimen/activity_horizontal_margin"
+                    android:paddingLeft="@dimen/margin_primary"
+                    android:paddingRight="@dimen/margin_primary"
                     android:visibility="gone"
                     tools:visibility="gone">
 
@@ -416,27 +416,27 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="16sp"
+                            android:textSize="@dimen/text_size_subtitle"
                             android:textColor="@color/textColorSecondaryTransparent"
                             android:text="@string/amount"/>
 
                         <android.support.v4.widget.Space
                             android:layout_width="0dp"
-                            android:layout_height="0dp"
+                            android:layout_height="@dimen/space_unused_dimension"
                             android:layout_weight="1"/>
 
                         <TextView
                             android:id="@+id/ERC20Amount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="16sp"
+                            android:textSize="@dimen/text_size_subtitle"
                             android:textColor="@color/textColorPrimary"
                             tools:text="6.10 OMG"/>
                     </LinearLayout>
 
                     <Space
-                        android:layout_width="0dp"
-                        android:layout_height="12dp" />
+                        android:layout_width="@dimen/space_unused_dimension"
+                        android:layout_height="@dimen/margin_three_quarters" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -445,70 +445,70 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="16sp"
+                            android:textSize="@dimen/text_size_subtitle"
                             android:textColor="@color/textColorSecondaryTransparent"
                             android:text="@string/est_network_fees"/>
 
                         <android.support.v4.widget.Space
                             android:layout_width="0dp"
-                            android:layout_height="0dp"
+                            android:layout_height="@dimen/space_unused_dimension"
                             android:layout_weight="1"/>
 
                         <TextView
                             android:id="@+id/ERC20GasPrice"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="16sp"
+                            android:textSize="@dimen/text_size_subtitle"
                             android:textColor="@color/textColorPrimary"
                             tools:text="0.0001 ETH"/>
                     </LinearLayout>
 
                     <Space
-                        android:layout_width="0dp"
-                        android:layout_height="8dp" />
+                        android:layout_width="@dimen/space_unused_dimension"
+                        android:layout_height="@dimen/margin_half" />
 
                     <TextView
                         android:id="@+id/ERC20GasPriceFiat"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="right"
-                        android:textSize="16sp"
+                        android:textSize="@dimen/text_size_subtitle"
                         android:textColor="@color/textColorSecondaryTransparent"
                         tools:text="0.005063 USD"/>
 
                 </LinearLayout>
 
                 <Space
-                    android:layout_width="0dp"
-                    android:layout_height="20dp" />
+                    android:layout_width="@dimen/space_unused_dimension"
+                    android:layout_height="@dimen/margin_one_and_a_quarter" />
 
                 <Button
                     android:id="@+id/pay"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                    android:layout_marginRight="@dimen/activity_horizontal_margin"
+                    android:layout_marginLeft="@dimen/margin_primary"
+                    android:layout_marginRight="@dimen/margin_primary"
                     style="@style/FlatButton"
                     android:background="@drawable/background_with_radius_primary_color"
                     android:textColor="#FFFFFF"
                     android:text="@string/pay" />
 
                 <Space
-                    android:layout_width="0dp"
-                    android:layout_height="12dp" />
+                    android:layout_width="@dimen/space_unused_dimension"
+                    android:layout_height="@dimen/margin_three_quarters" />
 
                 <TextView
                     android:id="@+id/statusMessage"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:textSize="16sp"
+                    android:textSize="@dimen/text_size_subtitle"
                     android:textColor="@color/textColorPrimary"
                     tools:text="Your balance: $100.60 USD"/>
 
                 <Space
-                    android:layout_width="0dp"
-                    android:layout_height="20dp" />
+                    android:layout_width="@dimen/space_unused_dimension"
+                    android:layout_height="@dimen/margin_one_and_a_quarter" />
 
             </LinearLayout>
         </ScrollView>
@@ -547,13 +547,13 @@
                 android:tint="@color/colorPrimary"/>
 
             <android.support.v4.widget.Space
-                android:layout_width="0dp"
-                android:layout_height="12dp" />
+                android:layout_width="@dimen/space_unused_dimension"
+                android:layout_height="@dimen/margin_three_quarters" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
+                android:textSize="@dimen/text_size_subtitle"
                 android:textColor="@color/colorPrimary"
                 android:text="@string/transaction_submitted"
                 style="@style/TextStyleMedium"/>

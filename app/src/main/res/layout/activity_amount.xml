@@ -41,8 +41,8 @@
             style="@style/closeButtonStyle"/>
 
         <android.support.v4.widget.Space
-            android:layout_width="16dp"
-            android:layout_height="0dp" />
+            android:layout_width="@dimen/margin_primary"
+            android:layout_height="@dimen/space_unused_dimension" />
 
         <TextView
             android:id="@+id/toolbarTitle"
@@ -94,7 +94,7 @@
 
                     <android.support.v4.widget.Space
                         android:layout_width="5dp"
-                        android:layout_height="0dp" />
+                        android:layout_height="@dimen/space_unused_dimension" />
 
                     <TextView
                         android:id="@+id/localCurrencyCode"
@@ -109,7 +109,7 @@
 
                 <android.support.v4.widget.Space
                     android:layout_width="5dp"
-                    android:layout_height="0dp" />
+                    android:layout_height="@dimen/space_unused_dimension" />
 
                 <LinearLayout
                     android:orientation="horizontal"
@@ -122,11 +122,11 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:textColor="@color/textColorSecondary"
-                        android:textSize="14sp" />
+                        android:textSize="@dimen/text_size_default" />
 
                     <android.support.v4.widget.Space
-                        android:layout_width="4dp"
-                        android:layout_height="0dp" />
+                        android:layout_width="@dimen/margin_quarter"
+                        android:layout_height="@dimen/space_unused_dimension" />
 
                     <TextView
                         android:id="@+id/ethCurrency"
@@ -134,12 +134,12 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:textColor="@color/textColorSecondary"
-                        android:textSize="14sp"
+                        android:textSize="@dimen/text_size_default"
                         android:text="@string/eth_currency_code"/>
 
                     <android.support.v4.widget.Space
-                        android:layout_width="4dp"
-                        android:layout_height="0dp" />
+                        android:layout_width="@dimen/margin_quarter"
+                        android:layout_height="@dimen/space_unused_dimension" />
 
                 </LinearLayout>
             </LinearLayout>
@@ -152,7 +152,7 @@
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
+                android:layout_height="@dimen/border_size_default"
                 android:background="@color/divider"/>
 
             <Button
@@ -169,7 +169,7 @@
                 android:gravity="center"
                 android:background="@color/file_avatar_background"
                 style="@style/TextStyleMedium"
-                android:textSize="14sp"
+                android:textSize="@dimen/text_size_default"
                 android:textColor="@color/textColorContrast"
                 tools:text="Active network: Mainnet"/>
         </LinearLayout>

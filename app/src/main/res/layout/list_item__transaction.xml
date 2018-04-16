@@ -23,8 +23,8 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="8dp"
-    android:layout_marginBottom="8dp"
+    android:layout_marginTop="@dimen/margin_half"
+    android:layout_marginBottom="@dimen/margin_half"
     android:gravity="center_vertical">
 
     <LinearLayout
@@ -40,14 +40,14 @@
             tools:src="@drawable/ic_done_green"/>
 
         <Space
-            android:layout_width="12dp"
+            android:layout_width="@dimen/margin_three_quarters"
             android:layout_height="match_parent"/>
 
         <TextView
             android:id="@+id/local_currency_amount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/subTitleSize"
+            android:textSize="@dimen/text_size_subtitle"
             style="@style/TextStyleMedium"
             tools:text="$0.00 USD"/>
 
@@ -60,7 +60,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:textColor="@color/textColorSecondary"
-            android:textSize="@dimen/balance_bar_text_size"
+            android:textSize="@dimen/text_size_default"
             android:text="@string/payment_seperator"/>
 
         <Space
@@ -72,18 +72,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/textColorSecondary"
-            android:textSize="@dimen/balance_bar_text_size"
+            android:textSize="@dimen/text_size_default"
             tools:text="0.0000"/>
 
         <Space
-            android:layout_width="4dp"
+            android:layout_width="@dimen/margin_quarter"
             android:layout_height="match_parent"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/textColorSecondary"
-            android:textSize="@dimen/balance_bar_text_size"
+            android:textSize="@dimen/text_size_default"
             android:text="@string/eth_currency_code"/>
 
     </LinearLayout>
@@ -94,25 +94,25 @@
         android:orientation="horizontal">
 
         <Space
-            android:layout_width="32dp"
+            android:layout_width="@dimen/margin_double"
             android:layout_height="match_parent"/>
 
         <TextView
             android:id="@+id/direction"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
+            android:textSize="@dimen/text_size_default"
             tools:text="from"/>
 
         <Space
-            android:layout_width="4dp"
+            android:layout_width="@dimen/margin_quarter"
             android:layout_height="match_parent"/>
 
         <TextView
             android:id="@+id/address"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
+            android:textSize="@dimen/text_size_default"
         tools:text="0x12345678901234567890"/>
     </LinearLayout>
 </LinearLayout>

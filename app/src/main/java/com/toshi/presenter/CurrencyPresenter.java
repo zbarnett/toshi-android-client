@@ -81,7 +81,7 @@ public class CurrencyPresenter implements Presenter<CurrencyActivity> {
         final CurrencyAdapter adapter = new CurrencyAdapter(this.currencies)
                 .setOnClickListener(this::handleCurrencyClicked);
         currencyList.setAdapter(adapter);
-        final int padding = this.activity.getResources().getDimensionPixelSize(R.dimen.activity_horizontal_margin);
+        final int padding = this.activity.getResources().getDimensionPixelSize(R.dimen.margin_primary);
         final HorizontalLineDivider lineDivider =
                 new HorizontalLineDivider(ContextCompat.getColor(this.activity, R.color.divider))
                         .setRightPadding(padding)

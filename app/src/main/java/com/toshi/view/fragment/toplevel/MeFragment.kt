@@ -122,7 +122,7 @@ class MeFragment : TopLevelFragment() {
         settings.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = meAdapter
-            addHorizontalLineDivider(leftPadding = getPxSize(R.dimen.activity_horizontal_margin))
+            addHorizontalLineDivider(leftPadding = getPxSize(R.dimen.margin_primary))
         }
     }
 

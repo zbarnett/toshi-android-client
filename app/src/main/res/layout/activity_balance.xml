@@ -44,8 +44,8 @@
                 style="@style/closeButtonStyle"/>
 
             <android.support.v4.widget.Space
-                android:layout_width="16dp"
-                android:layout_height="0dp" />
+                android:layout_width="@dimen/margin_primary"
+                android:layout_height="@dimen/space_unused_dimension" />
 
             <TextView
                 android:id="@+id/title"
@@ -84,14 +84,14 @@
                         android:gravity="center_vertical">
 
                         <Space
-                            android:layout_width="@dimen/activity_horizontal_margin"
+                            android:layout_width="@dimen/margin_primary"
                             android:layout_height="wrap_content"/>
 
                         <TextView
                             android:id="@+id/local_currency_balance"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="@dimen/subTitleSize"
+                            android:textSize="@dimen/text_size_subtitle"
                             tools:text="$0.00 USD" />
 
                         <Space
@@ -104,20 +104,20 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textColor="@color/textColorSecondary"
-                            android:textSize="@dimen/balance_bar_text_size"
+                            android:textSize="@dimen/text_size_default"
                             tools:text="0.0000 ETH"/>
 
                         <Space
-                            android:layout_width="@dimen/activity_horizontal_margin"
+                            android:layout_width="@dimen/margin_primary"
                             android:layout_height="wrap_content"/>
 
                     </LinearLayout>
 
                     <View
                         android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                        android:layout_marginRight="@dimen/activity_horizontal_margin"
+                        android:layout_height="@dimen/border_size_default"
+                        android:layout_marginLeft="@dimen/margin_primary"
+                        android:layout_marginRight="@dimen/margin_primary"
                         android:background="@color/divider" />
 
                     <Button
@@ -126,14 +126,14 @@
                         android:layout_width="match_parent"
                         android:layout_height="52dp"
                         android:gravity="left|center_vertical"
-                        android:paddingLeft="@dimen/activity_horizontal_margin"
+                        android:paddingLeft="@dimen/margin_primary"
                         android:text="@string/send_money" />
 
                     <View
                         android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                        android:layout_marginRight="@dimen/activity_horizontal_margin"
+                        android:layout_height="@dimen/border_size_default"
+                        android:layout_marginLeft="@dimen/margin_primary"
+                        android:layout_marginRight="@dimen/margin_primary"
                         android:background="@color/divider" />
 
                     <Button
@@ -142,7 +142,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="52dp"
                         android:gravity="left|center_vertical"
-                        android:paddingLeft="@dimen/activity_horizontal_margin"
+                        android:paddingLeft="@dimen/margin_primary"
                         android:text="@string/deposit_money" />
                 </LinearLayout>
             </ScrollView>

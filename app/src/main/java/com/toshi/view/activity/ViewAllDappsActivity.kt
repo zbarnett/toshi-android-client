@@ -89,8 +89,8 @@ class ViewAllDappsActivity : AppCompatActivity() {
             adapter = allDappsAdapter
             layoutManager = dappsLayoutManager
             addHorizontalLineDivider(leftPadding = getPxSize(R.dimen.avatar_size_medium)
-                    + getPxSize(R.dimen.activity_horizontal_margin)
-                    + getPxSize(R.dimen.activity_horizontal_margin))
+                    + getPxSize(R.dimen.margin_primary)
+                    + getPxSize(R.dimen.margin_primary))
         }
     }
 

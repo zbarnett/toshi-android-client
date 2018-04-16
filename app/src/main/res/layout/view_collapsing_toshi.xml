@@ -49,8 +49,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="10dp"
-            android:layout_marginBottom="32dp"
-            android:textSize="20sp"
+            android:layout_marginBottom="@dimen/margin_double"
+            android:textSize="@dimen/text_size_title"
             android:textColor="@color/contrastBackgroundColor"
             android:text="@string/dapp_title"/>
 
@@ -58,12 +58,12 @@
             android:id="@+id/inputWrapper"
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:layout_marginLeft="@dimen/dappsInputMargin"
-            android:layout_marginRight="@dimen/dappsInputMargin"
-            android:layout_marginBottom="@dimen/dappsInputMargin"
+            android:layout_marginLeft="@dimen/margin_two_and_a_half"
+            android:layout_marginRight="@dimen/margin_two_and_a_half"
+            android:layout_marginBottom="@dimen/margin_two_and_a_half"
             android:background="@drawable/background_with_small_radius"
-            android:translationZ="@dimen/dappsInputZ"
-            android:elevation="@dimen/dappsInputElevation">
+            android:translationZ="@dimen/dapps_input_z"
+            android:elevation="@dimen/elevation_default">
 
             <ImageButton
                 android:id="@+id/closeButton"
@@ -79,8 +79,8 @@
                 android:id="@+id/input"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:paddingLeft="20dp"
-                android:paddingRight="20dp"
+                android:paddingLeft="@dimen/margin_one_and_a_quarter"
+                android:paddingRight="@dimen/margin_one_and_a_quarter"
                 android:background="@null"
                 android:singleLine="true"
                 android:imeOptions="actionGo"

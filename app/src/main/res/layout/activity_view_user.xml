@@ -52,11 +52,11 @@
                 android:layout_gravity="center|bottom">
 
                 <android.support.v4.widget.Space
-                    android:layout_width="0dp"
+                    android:layout_width="@dimen/space_unused_dimension"
                     android:layout_height="?attr/actionBarSize" />
 
                 <android.support.v4.widget.Space
-                    android:layout_width="0dp"
+                    android:layout_width="@dimen/space_unused_dimension"
                     android:layout_height="22dp" />
 
                 <de.hdodenhof.circleimageview.CircleImageView
@@ -65,11 +65,11 @@
                     android:layout_height="60dp"
                     tools:src="@mipmap/ic_launcher"
                     android:layout_gravity="center_horizontal"
-                    app:civ_border_width="1dp"
+                    app:civ_border_width="@dimen/border_size_default"
                     app:civ_border_color="@color/divider"/>
 
                 <android.support.v4.widget.Space
-                    android:layout_width="0dp"
+                    android:layout_width="@dimen/space_unused_dimension"
                     android:layout_height="42dp"/>
 
                 <TextView
@@ -82,8 +82,8 @@
                     tools:text="\@username" />
 
                 <android.support.v4.widget.Space
-                    android:layout_width="0dp"
-                    android:layout_height="12dp" />
+                    android:layout_width="@dimen/space_unused_dimension"
+                    android:layout_height="@dimen/margin_three_quarters" />
 
             </LinearLayout>
 
@@ -98,7 +98,7 @@
                 app:layout_anchor="@id/hero"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
                 app:layout_collapseMode="pin"
-                app:contentInsetStart="0dp">
+                app:contentInsetStart="@dimen/content_inset_none">
 
                 <ImageButton
                     android:id="@+id/closeButton"
@@ -110,8 +110,8 @@
                     style="@style/closeButtonStyle"/>
 
                 <android.support.v4.widget.Space
-                    android:layout_width="16dp"
-                    android:layout_height="0dp" />
+                    android:layout_width="@dimen/margin_primary"
+                    android:layout_height="@dimen/space_unused_dimension" />
 
                 <TextView
                     android:id="@+id/toolbarTitle"
@@ -142,19 +142,19 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginRight="@dimen/margin_primary"
+                android:layout_marginLeft="@dimen/margin_primary"
                 android:orientation="vertical">
 
                 <android.support.v4.widget.Space
-                    android:layout_width="0dp"
+                    android:layout_width="@dimen/space_unused_dimension"
                     android:layout_height="28dp"/>
 
                 <TextView
                     android:id="@+id/aboutBot"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="16sp"
+                    android:textSize="@dimen/text_size_subtitle"
                     android:textColor="@color/textColorPrimary"
                     android:textColorLink="@color/colorPrimary"
                     android:autoLink="web|phone|email"
@@ -175,7 +175,7 @@
                     android:text="@string/message"/>
 
                 <android.support.v4.widget.Space
-                    android:layout_width="0dp"
+                    android:layout_width="@dimen/space_unused_dimension"
                     android:layout_height="10dp" />
 
                 <Button
@@ -192,7 +192,7 @@
             </LinearLayout>
 
             <android.support.v4.widget.Space
-                android:layout_width="0dp"
+                android:layout_width="@dimen/space_unused_dimension"
                 android:layout_height="6dp" />
 
             <LinearLayout
@@ -203,22 +203,22 @@
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
+                    android:layout_height="@dimen/border_size_default"
                     android:background="@color/divider"/>
 
                 <android.support.v4.widget.Space
-                    android:layout_width="0dp"
-                    android:layout_height="8dp" />
+                    android:layout_width="@dimen/space_unused_dimension"
+                    android:layout_height="@dimen/margin_half" />
 
                 <TextView
                     android:id="@+id/aboutUser"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="@dimen/activity_horizontal_margin"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:textSize="16sp"
+                    android:layout_marginRight="@dimen/margin_primary"
+                    android:layout_marginLeft="@dimen/margin_primary"
+                    android:layout_marginTop="@dimen/margin_half"
+                    android:layout_marginBottom="@dimen/margin_half"
+                    android:textSize="@dimen/text_size_subtitle"
                     android:textColor="@color/textColorPrimary"
                     android:textColorLink="@color/colorPrimary"
                     android:autoLink="web|phone|email"
@@ -229,12 +229,12 @@
                     android:id="@+id/location"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="@dimen/activity_horizontal_margin"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
+                    android:layout_marginRight="@dimen/margin_primary"
+                    android:layout_marginLeft="@dimen/margin_primary"
+                    android:layout_marginTop="@dimen/margin_half"
+                    android:layout_marginBottom="@dimen/margin_half"
                     app:layout_columnSpan="2"
-                    android:textSize="16sp"
+                    android:textSize="@dimen/text_size_subtitle"
                     android:textColor="@color/textColorSecondary"
                     android:textColorLink="@color/colorPrimary"
                     android:autoLink="web|phone|email"
@@ -242,18 +242,18 @@
                     tools:text="Amsterdam, ZH"/>
 
                 <android.support.v4.widget.Space
-                    android:layout_width="0dp"
-                    android:layout_height="8dp" />
+                    android:layout_width="@dimen/space_unused_dimension"
+                    android:layout_height="@dimen/margin_half" />
 
             </LinearLayout>
 
             <android.support.v4.widget.Space
-                android:layout_width="0dp"
-                android:layout_height="4dp" />
+                android:layout_width="@dimen/space_unused_dimension"
+                android:layout_height="@dimen/margin_quarter" />
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
+                android:layout_height="@dimen/border_size_default"
                 android:background="@color/divider"/>
 
             <TextView
@@ -264,7 +264,7 @@
                 style="@style/contentSubTitleStyle"/>
 
             <android.support.v4.widget.Space
-                android:layout_width="0dp"
+                android:layout_width="@dimen/space_unused_dimension"
                 android:layout_height="10dp" />
 
             <LinearLayout
@@ -272,7 +272,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginLeft="35dp"
-                android:layout_marginRight="@dimen/activity_horizontal_margin">
+                android:layout_marginRight="@dimen/margin_primary">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -296,14 +296,14 @@
                         android:layout_height="wrap_content" />
 
                     <android.support.v4.widget.Space
-                        android:layout_width="0dp"
-                        android:layout_height="8dp" />
+                        android:layout_width="@dimen/space_unused_dimension"
+                        android:layout_height="@dimen/margin_half" />
 
                     <TextView
                         android:id="@+id/reviewCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="13sp"
+                        android:textSize="@dimen/text_size_body"
                         android:textColor="@color/textColorSecondary"
                         tools:text="2 ratings"/>
 
@@ -312,7 +312,7 @@
                 <FrameLayout
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_marginLeft="40dp">
+                    android:layout_marginLeft="@dimen/margin_two_and_a_half">
 
                     <com.toshi.view.custom.RatingInfo
                         android:id="@+id/ratingInfo"
@@ -325,7 +325,7 @@
             </LinearLayout>
 
             <android.support.v4.widget.Space
-                android:layout_width="0dp"
+                android:layout_width="@dimen/space_unused_dimension"
                 android:layout_height="10dp" />
 
             <Button
@@ -338,7 +338,7 @@
                 style="@style/FlatButton"/>
 
             <android.support.v4.widget.Space
-                android:layout_width="0dp"
+                android:layout_width="@dimen/space_unused_dimension"
                 android:layout_height="30dp" />
 
         </LinearLayout>

@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:paddingLeft="3dp"
-            android:textSize="16sp"
+            android:textSize="@dimen/text_size_subtitle"
             android:hint="@string/enter_passphrase" />
 
         <com.google.android.flexbox.FlexboxLayout
@@ -131,19 +131,19 @@
     </FrameLayout>
 
     <android.support.v4.widget.Space
-        android:layout_width="0dp"
+        android:layout_width="@dimen/space_unused_dimension"
         android:layout_height="5dp" />
 
     <View
         android:id="@+id/underline"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="@dimen/border_size_default"
         app:layout_wrapBefore="true"
         android:background="@color/input_underline"
         android:clickable="false"/>
 
     <android.support.v4.widget.Space
-        android:layout_width="0dp"
+        android:layout_width="@dimen/space_unused_dimension"
         android:layout_height="10dp" />
 
     <FrameLayout
@@ -165,7 +165,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="right"
             android:padding="5dp"
-            android:textSize="14sp"
+            android:textSize="@dimen/text_size_default"
             android:textColor="@color/textColorSecondary"
             android:text="@string/hide_passphrase"/>
 

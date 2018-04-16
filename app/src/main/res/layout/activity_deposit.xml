@@ -43,8 +43,8 @@
                 style="@style/closeButtonStyle"/>
 
             <android.support.v4.widget.Space
-                android:layout_width="16dp"
-                android:layout_height="0dp" />
+                android:layout_width="@dimen/margin_primary"
+                android:layout_height="@dimen/space_unused_dimension" />
 
             <TextView
                 android:id="@+id/title"
@@ -70,44 +70,44 @@
                     android:orientation="vertical">
 
                     <android.support.v4.widget.Space
-                        android:layout_width="0dp"
+                        android:layout_width="@dimen/space_unused_dimension"
                         android:layout_height="35dp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                        android:layout_marginRight="@dimen/activity_horizontal_margin"
+                        android:layout_marginLeft="@dimen/margin_primary"
+                        android:layout_marginRight="@dimen/margin_primary"
                         android:textSize="24sp"
                         android:text="@string/add_money_to_wallet"/>
 
                     <android.support.v4.widget.Space
-                        android:layout_width="0dp"
+                        android:layout_width="@dimen/space_unused_dimension"
                         android:layout_height="13dp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                        android:layout_marginRight="@dimen/activity_horizontal_margin"
-                        android:textSize="14sp"
+                        android:layout_marginLeft="@dimen/margin_primary"
+                        android:layout_marginRight="@dimen/margin_primary"
+                        android:textSize="@dimen/text_size_default"
                         android:textColor="@color/textColorPrimary"
                         android:text="@string/deposit_info_message"/>
 
                     <android.support.v4.widget.Space
-                        android:layout_width="0dp"
+                        android:layout_width="@dimen/space_unused_dimension"
                         android:layout_height="30dp" />
 
                     <View
                         android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                        android:layout_marginRight="@dimen/activity_horizontal_margin"
+                        android:layout_height="@dimen/border_size_default"
+                        android:layout_marginLeft="@dimen/margin_primary"
+                        android:layout_marginRight="@dimen/margin_primary"
                         android:background="@color/divider"/>
 
                     <android.support.v4.widget.Space
-                        android:layout_width="0dp"
-                        android:layout_height="16dp" />
+                        android:layout_width="@dimen/space_unused_dimension"
+                        android:layout_height="@dimen/margin_primary" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -118,69 +118,69 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                        android:layout_marginRight="@dimen/activity_horizontal_margin"
-                        android:textSize="14sp"
+                        android:layout_marginLeft="@dimen/margin_primary"
+                        android:layout_marginRight="@dimen/margin_primary"
+                        android:textSize="@dimen/text_size_default"
                         android:textColor="@color/textColorPrimary"
                         android:text="@string/eth_deposit_method_1_message"/>
 
                     <android.support.v4.widget.Space
-                        android:layout_width="0dp"
+                        android:layout_width="@dimen/space_unused_dimension"
                         android:layout_height="9dp" />
 
                     <TextView
                         android:id="@+id/owner_address"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                        android:layout_marginRight="@dimen/activity_horizontal_margin"
-                        android:textSize="14sp"
+                        android:layout_marginLeft="@dimen/margin_primary"
+                        android:layout_marginRight="@dimen/margin_primary"
+                        android:textSize="@dimen/text_size_default"
                         android:textColor="@color/textColorPrimary"
                         android:textIsSelectable="true"
                         tools:text="0x20302385903825982853"/>
 
                     <android.support.v4.widget.Space
-                        android:layout_width="0dp"
+                        android:layout_width="@dimen/space_unused_dimension"
                         android:layout_height="15dp" />
 
                     <TextView
                         android:id="@+id/copy_to_clipboard"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                        android:layout_marginRight="@dimen/activity_horizontal_margin"
+                        android:layout_marginLeft="@dimen/margin_primary"
+                        android:layout_marginRight="@dimen/margin_primary"
                         android:paddingTop="5dp"
                         android:paddingBottom="5dp"
                         android:background="?android:selectableItemBackground"
-                        android:textSize="14sp"
+                        android:textSize="@dimen/text_size_default"
                         android:textColor="@color/colorPrimary"
                         style="@style/TextStyleMedium"
                         android:text="@string/copy_to_clipboard"/>
 
                     <android.support.v4.widget.Space
-                        android:layout_width="0dp"
+                        android:layout_width="@dimen/space_unused_dimension"
                         android:layout_height="29dp" />
 
                     <ImageView
                         android:id="@+id/qr_code"
-                        android:layout_width="220dp"
-                        android:layout_height="220dp"
+                        android:layout_width="@dimen/qr_code_size_large"
+                        android:layout_height="@dimen/qr_code_size_large"
                         android:layout_gravity="center_horizontal"/>
 
                     <android.support.v4.widget.Space
-                        android:layout_width="0dp"
-                        android:layout_height="30sp" />
+                        android:layout_width="@dimen/space_unused_dimension"
+                        android:layout_height="30dp" />
 
                     <View
                         android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                        android:layout_marginRight="@dimen/activity_horizontal_margin"
+                        android:layout_height="@dimen/border_size_default"
+                        android:layout_marginLeft="@dimen/margin_primary"
+                        android:layout_marginRight="@dimen/margin_primary"
                         android:background="@color/divider"/>
 
                     <android.support.v4.widget.Space
-                        android:layout_width="0dp"
-                        android:layout_height="16sp" />
+                        android:layout_width="@dimen/space_unused_dimension"
+                        android:layout_height="@dimen/margin_primary" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -191,26 +191,26 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                        android:layout_marginRight="@dimen/activity_horizontal_margin"
-                        android:textSize="14sp"
+                        android:layout_marginLeft="@dimen/margin_primary"
+                        android:layout_marginRight="@dimen/margin_primary"
+                        android:textSize="@dimen/text_size_default"
                         android:textColor="@color/textColorPrimary"
                         android:text="@string/eth_deposit_method_2_message"/>
 
                     <android.support.v4.widget.Space
-                        android:layout_width="0dp"
-                        android:layout_height="30sp" />
+                        android:layout_width="@dimen/space_unused_dimension"
+                        android:layout_height="30dp" />
 
                     <View
                         android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                        android:layout_marginRight="@dimen/activity_horizontal_margin"
+                        android:layout_height="@dimen/border_size_default"
+                        android:layout_marginLeft="@dimen/margin_primary"
+                        android:layout_marginRight="@dimen/margin_primary"
                         android:background="@color/divider"/>
 
                     <android.support.v4.widget.Space
-                        android:layout_width="0dp"
-                        android:layout_height="16sp" />
+                        android:layout_width="@dimen/space_unused_dimension"
+                        android:layout_height="@dimen/margin_primary" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -221,26 +221,26 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                        android:layout_marginRight="@dimen/activity_horizontal_margin"
-                        android:textSize="14sp"
+                        android:layout_marginLeft="@dimen/margin_primary"
+                        android:layout_marginRight="@dimen/margin_primary"
+                        android:textSize="@dimen/text_size_default"
                         android:textColor="@color/textColorPrimary"
                         android:text="@string/eth_deposit_method_3_message"/>
 
                     <android.support.v4.widget.Space
-                        android:layout_width="0dp"
-                        android:layout_height="30sp" />
+                        android:layout_width="@dimen/space_unused_dimension"
+                        android:layout_height="30dp" />
 
                     <View
                         android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                        android:layout_marginRight="@dimen/activity_horizontal_margin"
+                        android:layout_height="@dimen/border_size_default"
+                        android:layout_marginLeft="@dimen/margin_primary"
+                        android:layout_marginRight="@dimen/margin_primary"
                         android:background="@color/divider"/>
 
                     <android.support.v4.widget.Space
-                        android:layout_width="0dp"
-                        android:layout_height="16sp" />
+                        android:layout_width="@dimen/space_unused_dimension"
+                        android:layout_height="@dimen/margin_primary" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -251,14 +251,14 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                        android:layout_marginRight="@dimen/activity_horizontal_margin"
-                        android:textSize="14sp"
+                        android:layout_marginLeft="@dimen/margin_primary"
+                        android:layout_marginRight="@dimen/margin_primary"
+                        android:textSize="@dimen/text_size_default"
                         android:textColor="@color/textColorPrimary"
                         android:text="@string/eth_deposit_method_4_message" />
 
                     <android.support.v4.widget.Space
-                        android:layout_width="0dp"
+                        android:layout_width="@dimen/space_unused_dimension"
                         android:layout_height="30dp" />
 
                 </LinearLayout>
@@ -267,13 +267,13 @@
             <TextView
                 android:id="@+id/network"
                 android:layout_width="match_parent"
-                android:layout_height="24dp"
+                android:layout_height="@dimen/icon_default"
                 android:layout_gravity="bottom"
                 android:visibility="gone"
                 android:gravity="center"
                 android:background="@color/file_avatar_background"
                 style="@style/TextStyleMedium"
-                android:textSize="14sp"
+                android:textSize="@dimen/text_size_default"
                 android:textColor="@color/textColorContrast"
                 tools:text="Active network: Mainnet"
                 tools:visibility="visible"/>

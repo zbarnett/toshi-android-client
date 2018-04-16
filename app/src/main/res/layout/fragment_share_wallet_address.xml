@@ -55,21 +55,21 @@
                 android:text="@string/wallet_address"/>
 
             <android.support.v4.widget.Space
-                android:layout_width="0dp"
-                android:layout_height="16dp" />
+                android:layout_width="@dimen/space_unused_dimension"
+                android:layout_height="@dimen/margin_primary" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="24dp"
-                android:layout_marginRight="24dp"
+                android:layout_marginLeft="@dimen/margin_one_and_a_half"
+                android:layout_marginRight="@dimen/margin_one_and_a_half"
                 android:gravity="center"
-                android:textSize="16sp"
+                android:textSize="@dimen/text_size_subtitle"
                 android:textColor="@color/textColorSecondary"
                 android:text="@string/wallet_address_dialog_message"/>
 
             <android.support.v4.widget.Space
-                android:layout_width="0dp"
+                android:layout_width="@dimen/space_unused_dimension"
                 android:layout_height="50dp" />
 
             <ImageView
@@ -79,29 +79,29 @@
                 android:alpha="0"/>
 
             <android.support.v4.widget.Space
-                android:layout_width="0dp"
+                android:layout_width="@dimen/space_unused_dimension"
                 android:layout_height="50dp" />
 
             <TextView
                 android:id="@+id/walletAddress"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="24dp"
-                android:layout_marginRight="24dp"
-                android:textSize="16sp"
+                android:layout_marginLeft="@dimen/margin_one_and_a_half"
+                android:layout_marginRight="@dimen/margin_one_and_a_half"
+                android:textSize="@dimen/text_size_subtitle"
                 android:textColor="@color/textColorPrimary"
                 android:textIsSelectable="true"
                 tools:text="0x23948398942"/>
 
             <android.support.v4.widget.Space
-                android:layout_width="0dp"
+                android:layout_width="@dimen/space_unused_dimension"
                 android:layout_height="0dp"
-                android:minHeight="20dp"
+                android:minHeight="@dimen/margin_one_and_a_quarter"
                 android:layout_weight="1"/>
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
+                android:layout_height="@dimen/border_size_default"
                 android:background="@color/divider"/>
 
             <LinearLayout
@@ -121,7 +121,7 @@
                     android:text="@string/copy"/>
 
                 <View
-                    android:layout_width="1dp"
+                    android:layout_width="@dimen/border_size_default"
                     android:layout_height="match_parent"
                     android:background="@color/divider"/>
 

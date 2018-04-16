@@ -46,8 +46,8 @@
                 style="@style/closeButtonStyle"/>
 
             <android.support.v4.widget.Space
-                android:layout_width="16dp"
-                android:layout_height="0dp" />
+                android:layout_width="@dimen/margin_primary"
+                android:layout_height="@dimen/space_unused_dimension" />
 
             <TextView
                 android:id="@+id/toolbarTitle"
@@ -59,19 +59,19 @@
             <android.support.v4.widget.Space
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_height="0dp" />
+                android:layout_height="@dimen/space_unused_dimension" />
 
             <TextView
                 android:id="@+id/next"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:padding="@dimen/activity_horizontal_margin"
+                android:padding="@dimen/margin_primary"
                 style="@style/TextStyleMedium"
                 android:visibility="gone"
                 tools:visibility="visible"
                 android:textColor="@color/textColorContrast"
-                android:textSize="14sp"
+                android:textSize="@dimen/text_size_default"
                 android:textAllCaps="true"
                 android:text="@string/next"/>
 
@@ -85,7 +85,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/windowBackground"
-                app:elevation="0dp">
+                app:elevation="@dimen/elevation_none">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -100,13 +100,13 @@
                         android:layout_width="0dp"
                         android:layout_weight="1"
                         android:layout_height="54dp"
-                        android:paddingLeft="@dimen/activity_horizontal_margin"
-                        android:paddingRight="@dimen/activity_horizontal_margin"
+                        android:paddingLeft="@dimen/margin_primary"
+                        android:paddingRight="@dimen/margin_primary"
                         android:background="@color/input_bg"
                         android:singleLine="true"
                         android:maxLines="1"
                         android:imeOptions="actionDone"
-                        android:textSize="16sp"
+                        android:textSize="@dimen/text_size_subtitle"
                         android:hint="@string/search_people"/>
 
                     <ImageButton
@@ -130,8 +130,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:paddingLeft="@dimen/activity_horizontal_margin"
-                    android:paddingRight="@dimen/activity_horizontal_margin"
+                    android:paddingLeft="@dimen/margin_primary"
+                    android:paddingRight="@dimen/margin_primary"
                     android:paddingTop="18dp"
                     android:paddingBottom="18dp"
                     app:layout_scrollFlags="scroll"
@@ -140,20 +140,20 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="16sp"
+                        android:textSize="@dimen/text_size_subtitle"
                         android:textColor="@color/textColorSecondary"
                         android:text="@string/to"/>
 
                     <android.support.v4.widget.Space
                         android:layout_width="6dp"
-                        android:layout_height="0dp" />
+                        android:layout_height="@dimen/space_unused_dimension" />
 
                     <TextView
                         android:id="@+id/participants"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
-                        android:textSize="16sp"
+                        android:textSize="@dimen/text_size_subtitle"
                         android:textColor="@color/colorPrimary"
                         tools:text="Ola Nordmann"/>
 

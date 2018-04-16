@@ -52,8 +52,8 @@
                         style="@style/closeButtonStyle"/>
 
                     <android.support.v4.widget.Space
-                        android:layout_width="16dp"
-                        android:layout_height="0dp" />
+                        android:layout_width="@dimen/margin_primary"
+                        android:layout_height="@dimen/space_unused_dimension" />
 
                     <TextView
                         android:id="@+id/title"
@@ -76,14 +76,14 @@
                         android:layout_height="72dp"
                         android:orientation="vertical"
                         android:background="?android:selectableItemBackground"
-                        android:paddingLeft="@dimen/activity_horizontal_margin"
-                        android:paddingRight="@dimen/activity_horizontal_margin"
+                        android:paddingLeft="@dimen/margin_primary"
+                        android:paddingRight="@dimen/margin_primary"
                         android:gravity="center_vertical">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="16sp"
+                            android:textSize="@dimen/text_size_subtitle"
                             android:textColor="@color/textColorPrimary"
                             android:text="@string/network"/>
 
@@ -91,7 +91,7 @@
                             android:id="@+id/currentNetwork"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="14sp"
+                            android:textSize="@dimen/text_size_default"
                             android:textColor="@color/textColorSecondaryTransparent"
                             tools:text="Ropsten Revival Testnet"/>
 
@@ -99,26 +99,26 @@
 
                     <View
                         android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                        android:layout_marginRight="@dimen/activity_horizontal_margin"
+                        android:layout_height="@dimen/border_size_default"
+                        android:layout_marginLeft="@dimen/margin_primary"
+                        android:layout_marginRight="@dimen/margin_primary"
                         android:background="@color/divider"/>
 
                     <android.support.v4.widget.Space
-                        android:layout_width="0dp"
-                        android:layout_height="16dp" />
+                        android:layout_width="@dimen/space_unused_dimension"
+                        android:layout_height="@dimen/margin_primary" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginRight="@dimen/activity_horizontal_margin"
-                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                        android:textSize="14sp"
+                        android:layout_marginRight="@dimen/margin_primary"
+                        android:layout_marginLeft="@dimen/margin_primary"
+                        android:textSize="@dimen/text_size_default"
                         android:textColor="@color/textColorBody"
                         android:text="@string/develop_message"/>
 
                     <android.support.v4.widget.Space
-                        android:layout_width="0dp"
+                        android:layout_width="@dimen/space_unused_dimension"
                         android:layout_height="29dp" />
 
                 </LinearLayout>
@@ -127,15 +127,15 @@
                     android:id="@+id/open_source_licenses"
                     android:layout_width="match_parent"
                     android:layout_height="54dp"
-                    android:paddingLeft="@dimen/activity_horizontal_margin"
-                    android:paddingRight="@dimen/activity_horizontal_margin"
+                    android:paddingLeft="@dimen/margin_primary"
+                    android:paddingRight="@dimen/margin_primary"
                     android:background="?android:selectableItemBackground">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
-                        android:textSize="16sp"
+                        android:textSize="@dimen/text_size_subtitle"
                         android:textColor="@color/textColorPrimary"
                         android:text="@string/about__licenses" />
 
@@ -152,9 +152,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="54dp"
                     android:gravity="center_vertical"
-                    android:paddingLeft="@dimen/activity_horizontal_margin"
+                    android:paddingLeft="@dimen/margin_primary"
                     android:textColor="@color/textColorBody"
-                    android:textSize="16sp"
+                    android:textSize="@dimen/text_size_subtitle"
                     tools:text="VersionName"/>
 
             </LinearLayout>

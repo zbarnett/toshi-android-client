@@ -36,7 +36,7 @@
                 android:layout_height="?attr/actionBarSize"
                 android:gravity="center_vertical"
                 style="@style/Toolbar"
-                app:contentInsetStart="0dp">
+                app:contentInsetStart="@dimen/content_inset_none">
 
                 <ImageButton
                     android:id="@+id/close_button"
@@ -48,8 +48,8 @@
                     style="@style/closeButtonStyle"/>
 
                 <android.support.v4.widget.Space
-                    android:layout_width="16dp"
-                    android:layout_height="0dp" />
+                    android:layout_width="@dimen/margin_primary"
+                    android:layout_height="@dimen/space_unused_dimension" />
 
                 <TextView
                     android:id="@+id/title"
@@ -71,26 +71,26 @@
                     android:orientation="vertical">
 
                     <android.support.v4.widget.Space
-                        android:layout_width="0dp"
+                        android:layout_width="@dimen/space_unused_dimension"
                         android:layout_height="27dp" />
 
                     <com.toshi.view.custom.PassphraseInputView
                         android:id="@+id/passphraseInputView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                        android:layout_marginRight="@dimen/activity_horizontal_margin"/>
+                        android:layout_marginLeft="@dimen/margin_primary"
+                        android:layout_marginRight="@dimen/margin_primary"/>
 
                     <android.support.v4.widget.Space
-                        android:layout_width="0dp"
+                        android:layout_width="@dimen/space_unused_dimension"
                         android:layout_height="22dp" />
 
                     <Button
                         android:id="@+id/sign_in"
                         android:layout_width="match_parent"
                         android:layout_height="42dp"
-                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                        android:layout_marginRight="@dimen/activity_horizontal_margin"
+                        android:layout_marginLeft="@dimen/margin_primary"
+                        android:layout_marginRight="@dimen/margin_primary"
                         android:background="@drawable/background_with_radius_disabled"
                         android:textColor="#FFFFFF"
                         android:textSize="15sp"
@@ -99,7 +99,7 @@
                         android:text="@string/sign_in"/>
 
                     <android.support.v4.widget.Space
-                        android:layout_width="0dp"
+                        android:layout_width="@dimen/space_unused_dimension"
                         android:layout_height="22dp" />
 
                     <TextView
@@ -108,7 +108,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:padding="5dp"
-                        android:textSize="14sp"
+                        android:textSize="@dimen/text_size_default"
                         android:textColor="@color/textColorSecondary"
                         android:text="@string/how_does_it_work"/>
 

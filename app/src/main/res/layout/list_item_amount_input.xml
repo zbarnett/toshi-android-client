@@ -26,7 +26,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="1dp"
+        android:layout_marginBottom="@dimen/border_size_default"
         android:gravity="center_horizontal"
         android:textSize="33sp"
         android:textColor="@color/textColorPrimary" />
@@ -34,7 +34,7 @@
     <View
         android:id="@+id/divider"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="@dimen/border_size_default"
         android:layout_gravity="bottom"
         android:background="@color/divider"/>
 

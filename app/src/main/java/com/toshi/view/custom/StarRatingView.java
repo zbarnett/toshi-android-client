@@ -68,7 +68,7 @@ public class StarRatingView extends RecyclerView {
     }
 
     private void initRecyclerView() {
-        final int spacing = this.getResources().getDimensionPixelSize(R.dimen.star_right_margin);
+        final int spacing = this.getResources().getDimensionPixelSize(R.dimen.rating_bar_star_right_margin);
         this.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         this.addItemDecoration(new SpaceDecoration(spacing));
         final StarAdapter adapter = new StarAdapter(this.clickable ? StarAdapter.CLICKABLE : StarAdapter.READ_ONLY);

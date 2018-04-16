@@ -23,5 +23,5 @@
     android:layout_height="36dp"
     android:gravity="center"
     android:layout_gravity="center"
-    android:paddingLeft="12dp"
-    android:paddingRight="12dp"/>
+    android:paddingLeft="@dimen/margin_three_quarters"
+    android:paddingRight="@dimen/margin_three_quarters"/>

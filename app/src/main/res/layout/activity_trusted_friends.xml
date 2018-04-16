@@ -42,8 +42,8 @@
                 style="@style/closeButtonStyle"/>
 
             <android.support.v4.widget.Space
-                android:layout_width="16dp"
-                android:layout_height="0dp" />
+                android:layout_width="@dimen/margin_primary"
+                android:layout_height="@dimen/space_unused_dimension" />
 
             <TextView
                 android:id="@+id/title"
@@ -59,7 +59,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="44dp"
             android:layout_gravity="center_horizontal"
-            android:textSize="18sp"
+            android:textSize="@dimen/text_size_instruction"
             android:textColor="@color/textColorPrimary"
             style="@style/TextStyleMedium"
             android:text="@string/coming_soon"/>
@@ -68,10 +68,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:layout_marginTop="@dimen/activity_horizontal_margin"
-            android:layout_marginLeft="40dp"
-            android:layout_marginRight="40dp"
-            android:textSize="14sp"
+            android:layout_marginTop="@dimen/margin_primary"
+            android:layout_marginLeft="@dimen/margin_two_and_a_half"
+            android:layout_marginRight="@dimen/margin_two_and_a_half"
+            android:textSize="@dimen/text_size_default"
             android:textColor="@color/textColorSecondary"
             android:text="@string/coming_soon_message"/>
 
@@ -80,8 +80,8 @@
             android:layout_width="match_parent"
             android:layout_height="42dp"
             android:layout_marginTop="25dp"
-            android:layout_marginLeft="@dimen/activity_horizontal_margin"
-            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_marginLeft="@dimen/margin_primary"
+            android:layout_marginRight="@dimen/margin_primary"
             style="@style/FlatButton"
             android:background="@drawable/background_with_radius_primary_color"
             android:textColor="#FFFFFF"

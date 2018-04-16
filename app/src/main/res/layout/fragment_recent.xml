@@ -37,8 +37,8 @@
             android:layout_height="?attr/actionBarSize"
             android:gravity="center_vertical"
             android:theme="@style/AddToolbarTheme"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingLeft="@dimen/margin_primary"
+            android:paddingRight="@dimen/margin_primary"
             style="@style/Toolbar">
 
             <TextView
@@ -51,7 +51,7 @@
             <android.support.v4.widget.Space
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_height="0dp" />
+                android:layout_height="@dimen/space_unused_dimension" />
 
             <ImageButton
                 android:id="@+id/add"

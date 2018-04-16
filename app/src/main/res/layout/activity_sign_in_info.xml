@@ -30,7 +30,7 @@
             android:layout_height="?attr/actionBarSize"
             android:gravity="center_vertical"
             style="@style/Toolbar"
-            app:contentInsetStart="0dp">
+            app:contentInsetStart="@dimen/content_inset_none">
 
             <ImageButton
                 android:id="@+id/close_button"
@@ -42,8 +42,8 @@
                 style="@style/closeButtonStyle"/>
 
             <android.support.v4.widget.Space
-                android:layout_width="16dp"
-                android:layout_height="0dp" />
+                android:layout_width="@dimen/margin_primary"
+                android:layout_height="@dimen/space_unused_dimension" />
 
             <TextView
                 android:id="@+id/title"
@@ -55,16 +55,16 @@
         </android.support.v7.widget.Toolbar>
 
         <android.support.v4.widget.Space
-            android:layout_width="0dp"
+            android:layout_width="@dimen/space_unused_dimension"
             android:layout_height="27dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="@dimen/activity_horizontal_margin"
-            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/margin_primary"
+            android:layout_marginLeft="@dimen/margin_primary"
             android:lineSpacingExtra="5dp"
-            android:textSize="14sp"
+            android:textSize="@dimen/text_size_default"
             android:textColor="@color/textColorBody"
             android:text="@string/sign_in_info_message"/>
 
