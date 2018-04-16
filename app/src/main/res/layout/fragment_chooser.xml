@@ -34,8 +34,8 @@
             android:orientation="horizontal">
 
             <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="@dimen/icon_small"
+                android:layout_height="@dimen/icon_small"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="@dimen/margin_one_and_a_half"
                 app:srcCompat="@drawable/ic_camera"/>
@@ -58,8 +58,8 @@
             android:orientation="horizontal">
 
             <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="@dimen/icon_small"
+                android:layout_height="@dimen/icon_small"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="@dimen/margin_one_and_a_half"
                 app:srcCompat="@drawable/ic_gallery"/>

@@ -93,8 +93,8 @@
                     android:background="@color/file_avatar_background">
 
                     <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
+                        android:layout_width="@dimen/icon_default"
+                        android:layout_height="@dimen/icon_default"
                         android:layout_gravity="center"
                         app:srcCompat="@drawable/file_avatar" />
 

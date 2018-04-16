@@ -267,7 +267,7 @@
             <TextView
                 android:id="@+id/network"
                 android:layout_width="match_parent"
-                android:layout_height="24dp"
+                android:layout_height="@dimen/icon_default"
                 android:layout_gravity="bottom"
                 android:visibility="gone"
                 android:gravity="center"

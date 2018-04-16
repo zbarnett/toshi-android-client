@@ -42,7 +42,7 @@
             android:layout_height="@dimen/space_unused_dimension" />
 
         <ImageView
-            android:layout_width="24dp"
+            android:layout_width="@dimen/icon_default"
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/ic_retry"/>
 
@@ -71,7 +71,7 @@
             android:layout_height="@dimen/space_unused_dimension" />
 
         <ImageView
-            android:layout_width="24dp"
+            android:layout_width="@dimen/icon_default"
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/ic_delete"/>
 
