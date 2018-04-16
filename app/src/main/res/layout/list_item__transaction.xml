@@ -94,7 +94,7 @@
         android:orientation="horizontal">
 
         <Space
-            android:layout_width="32dp"
+            android:layout_width="@dimen/margin_double"
             android:layout_height="match_parent"/>
 
         <TextView
