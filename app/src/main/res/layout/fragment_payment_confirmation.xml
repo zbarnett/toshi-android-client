@@ -197,7 +197,7 @@
 
                         <android.support.v4.widget.Space
                             android:layout_width="@dimen/space_unused_dimension"
-                            android:layout_height="20dp" />
+                            android:layout_height="@dimen/margin_one_and_a_quarter" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -233,12 +233,12 @@
 
                         <android.support.v4.widget.Space
                             android:layout_width="@dimen/space_unused_dimension"
-                            android:layout_height="20dp" />
+                            android:layout_height="@dimen/margin_one_and_a_quarter" />
 
                     </LinearLayout>
 
                     <android.support.v4.widget.Space
-                        android:layout_width="20dp"
+                        android:layout_width="@dimen/margin_one_and_a_quarter"
                         android:layout_height="@dimen/space_unused_dimension" />
 
                     <ImageView
@@ -480,7 +480,7 @@
 
                 <Space
                     android:layout_width="@dimen/space_unused_dimension"
-                    android:layout_height="20dp" />
+                    android:layout_height="@dimen/margin_one_and_a_quarter" />
 
                 <Button
                     android:id="@+id/pay"
@@ -508,7 +508,7 @@
 
                 <Space
                     android:layout_width="@dimen/space_unused_dimension"
-                    android:layout_height="20dp" />
+                    android:layout_height="@dimen/margin_one_and_a_quarter" />
 
             </LinearLayout>
         </ScrollView>

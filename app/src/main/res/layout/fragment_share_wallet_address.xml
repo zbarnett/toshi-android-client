@@ -96,7 +96,7 @@
             <android.support.v4.widget.Space
                 android:layout_width="@dimen/space_unused_dimension"
                 android:layout_height="0dp"
-                android:minHeight="20dp"
+                android:minHeight="@dimen/margin_one_and_a_quarter"
                 android:layout_weight="1"/>
 
             <View
