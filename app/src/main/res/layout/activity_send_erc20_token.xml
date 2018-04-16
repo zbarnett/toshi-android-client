@@ -92,7 +92,7 @@
 
                 <com.toshi.view.custom.PrefixSuffixEditText
                     android:id="@+id/toAmount"
-                    android:layout_width="@dimen/use_weight"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginLeft="@dimen/margin_primary"
@@ -273,7 +273,7 @@
 
             <android.support.v4.widget.Space
                 android:layout_width="@dimen/space_unused_dimension"
-                android:layout_height="@dimen/use_weight"
+                android:layout_height="0dp"
                 android:minHeight="20dp"
                 android:layout_weight="1"/>
 

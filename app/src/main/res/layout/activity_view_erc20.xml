@@ -111,7 +111,7 @@
 
             <Button
                 android:id="@+id/send"
-                android:layout_width="@dimen/use_weight"
+                android:layout_width="0dp"
                 android:layout_height="40dp"
                 android:layout_weight="1"
                 style="@style/FlatButton"
@@ -127,7 +127,7 @@
 
             <Button
                 android:id="@+id/receive"
-                android:layout_width="@dimen/use_weight"
+                android:layout_width="0dp"
                 android:layout_height="40dp"
                 android:layout_weight="1"
                 style="@style/FlatButton"

@@ -73,7 +73,7 @@
 
                 <EditText
                     android:id="@+id/search"
-                    android:layout_width="@dimen/use_weight"
+                    android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="54dp"
                     android:paddingLeft="@dimen/margin_primary"
