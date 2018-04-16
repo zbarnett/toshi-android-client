@@ -51,8 +51,11 @@
 
     <dimen name="progress_height">2dp</dimen>
 
+    <!-- ALIASES -->
+
     <!-- Size of the unused dimension of a Space - height for a horizontal space, width for a vertical space. -->
     <dimen name="space_unused_dimension">0dp</dimen>
+    <dimen name="use_weight">0dp</dimen>
 
     <!--
     SPECIFIC REUSED SIZES

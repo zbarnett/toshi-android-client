@@ -64,7 +64,7 @@
             android:layout_height="@dimen/space_unused_dimension" />
 
         <FrameLayout
-            android:layout_width="0dp"
+            android:layout_width="@dimen/use_weight"
             android:layout_weight="1"
             android:layout_height="match_parent"
             android:focusable="true"
@@ -107,7 +107,7 @@
 
                 <TextView
                     android:id="@+id/address"
-                    android:layout_width="0dp"
+                    android:layout_width="@dimen/use_weight"
                     android:layout_weight="1"
                     android:layout_height="match_parent"
                     android:ellipsize="end"
@@ -151,7 +151,7 @@
             <EditText
                 android:id="@+id/userInput"
                 android:layout_height="match_parent"
-                android:layout_width="0dp"
+                android:layout_width="@dimen/use_weight"
                 android:layout_weight="1"
                 android:ellipsize="end"
                 android:scrollHorizontally="true"
