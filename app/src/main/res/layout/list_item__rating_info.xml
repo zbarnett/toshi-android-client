@@ -40,7 +40,7 @@
         android:id="@+id/rating_bar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/rating_bar_height"
-        android:layout_marginLeft="8dp"
+        android:layout_marginLeft="@dimen/margin_half"
         app:backgroundColor="#FFFFFF"
         app:foregroundColor="@color/ratingPrimary"
         app:radius="@dimen/rating_bar_radius"

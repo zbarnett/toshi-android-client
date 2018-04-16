@@ -208,7 +208,7 @@
 
                 <android.support.v4.widget.Space
                     android:layout_width="@dimen/space_unused_dimension"
-                    android:layout_height="8dp" />
+                    android:layout_height="@dimen/margin_half" />
 
                 <TextView
                     android:id="@+id/aboutUser"
@@ -216,8 +216,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginRight="@dimen/margin_primary"
                     android:layout_marginLeft="@dimen/margin_primary"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="@dimen/margin_half"
+                    android:layout_marginBottom="@dimen/margin_half"
                     android:textSize="@dimen/text_size_subtitle"
                     android:textColor="@color/textColorPrimary"
                     android:textColorLink="@color/colorPrimary"
@@ -231,8 +231,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginRight="@dimen/margin_primary"
                     android:layout_marginLeft="@dimen/margin_primary"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="@dimen/margin_half"
+                    android:layout_marginBottom="@dimen/margin_half"
                     app:layout_columnSpan="2"
                     android:textSize="@dimen/text_size_subtitle"
                     android:textColor="@color/textColorSecondary"
@@ -243,7 +243,7 @@
 
                 <android.support.v4.widget.Space
                     android:layout_width="@dimen/space_unused_dimension"
-                    android:layout_height="8dp" />
+                    android:layout_height="@dimen/margin_half" />
 
             </LinearLayout>
 
@@ -297,7 +297,7 @@
 
                     <android.support.v4.widget.Space
                         android:layout_width="@dimen/space_unused_dimension"
-                        android:layout_height="8dp" />
+                        android:layout_height="@dimen/margin_half" />
 
                     <TextView
                         android:id="@+id/reviewCount"

@@ -93,7 +93,7 @@
             android:text="@string/button_request"/>
 
         <android.support.v4.widget.Space
-            android:layout_width="8dp"
+            android:layout_width="@dimen/margin_half"
             android:layout_height="match_parent" />
 
         <Button

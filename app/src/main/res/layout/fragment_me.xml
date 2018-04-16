@@ -234,7 +234,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="8dp"
+                            android:layout_marginLeft="@dimen/margin_half"
                             android:textColor="@color/error_color"
                             android:text="@string/your_account_is_at_risk" />
 

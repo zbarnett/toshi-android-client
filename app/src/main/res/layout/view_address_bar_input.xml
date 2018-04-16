@@ -37,7 +37,7 @@
             android:orientation="horizontal">
 
         <android.support.v4.widget.Space
-            android:layout_width="8dp"
+            android:layout_width="@dimen/margin_half"
             android:layout_height="@dimen/space_unused_dimension" />
 
         <ImageButton
@@ -60,7 +60,7 @@
             style="@style/closeButtonStyle"/>
 
         <android.support.v4.widget.Space
-            android:layout_width="8dp"
+            android:layout_width="@dimen/margin_half"
             android:layout_height="@dimen/space_unused_dimension" />
 
         <FrameLayout

@@ -24,8 +24,8 @@
     android:layout_height="wrap_content"
     android:paddingLeft="@dimen/margin_primary"
     android:paddingRight="@dimen/margin_primary"
-    android:paddingBottom="8dp"
-    android:paddingTop="8dp"
+    android:paddingBottom="@dimen/margin_half"
+    android:paddingTop="@dimen/margin_half"
     android:background="?selectableItemBackground">
 
     <com.makeramen.roundedimageview.RoundedImageView

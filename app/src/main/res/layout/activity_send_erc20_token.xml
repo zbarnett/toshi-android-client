@@ -108,7 +108,7 @@
                     android:hint="@string/_0_0" />
 
                 <android.support.v4.widget.Space
-                    android:layout_width="8dp"
+                    android:layout_width="@dimen/margin_half"
                     android:layout_height="@dimen/space_unused_dimension" />
 
                 <com.toshi.view.custom.PaddingButton
@@ -247,7 +247,7 @@
                     app:paddingButtonText="@string/paste"/>
 
                 <android.support.v4.widget.Space
-                    android:layout_width="8dp"
+                    android:layout_width="@dimen/margin_half"
                     android:layout_height="@dimen/space_unused_dimension" />
 
                 <com.toshi.view.custom.PaddingButton
