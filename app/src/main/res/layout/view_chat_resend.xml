@@ -47,7 +47,7 @@
             app:srcCompat="@drawable/ic_retry"/>
 
         <android.support.v4.widget.Space
-            android:layout_width="24dp"
+            android:layout_width="@dimen/margin_one_and_a_half"
             android:layout_height="@dimen/space_unused_dimension" />
 
         <TextView
@@ -76,7 +76,7 @@
             app:srcCompat="@drawable/ic_delete"/>
 
         <android.support.v4.widget.Space
-            android:layout_width="24dp"
+            android:layout_width="@dimen/margin_one_and_a_half"
             android:layout_height="@dimen/space_unused_dimension" />
 
         <TextView

@@ -37,7 +37,7 @@
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_gravity="center_vertical"
-                android:layout_marginLeft="24dp"
+                android:layout_marginLeft="@dimen/margin_one_and_a_half"
                 app:srcCompat="@drawable/ic_camera"/>
 
             <TextView
@@ -61,7 +61,7 @@
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_gravity="center_vertical"
-                android:layout_marginLeft="24dp"
+                android:layout_marginLeft="@dimen/margin_one_and_a_half"
                 app:srcCompat="@drawable/ic_gallery"/>
 
             <TextView
