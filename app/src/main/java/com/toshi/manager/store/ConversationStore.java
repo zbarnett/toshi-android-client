@@ -371,7 +371,9 @@ public class ConversationStore {
                 realm.where(Conversation.class)
                     .equalTo("conversationStatus.isAccepted", isAccepted)
                     .isNotEmpty("allMessages");
-            final RealmResults<Conversation> results = query.findAllSorted("updatedTime", Sort.DESCENDING);
+            final RealmResults<Conversation> results = query
+                    .sort("updatedTime", Sort.DESCENDING)
+                    .findAll();
             final List<Conversation> allConversations = realm.copyFromRealm(results);
             realm.close();
             return allConversations;

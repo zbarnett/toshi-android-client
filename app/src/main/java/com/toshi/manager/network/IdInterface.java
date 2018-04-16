@@ -24,6 +24,7 @@ import com.toshi.model.network.SearchResult;
 import com.toshi.model.network.ServerTime;
 import com.toshi.model.network.UserDetails;
 import com.toshi.model.network.UserSearchResults;
+import com.toshi.model.network.user.UserV2;
 
 import java.util.List;
 
@@ -37,6 +38,7 @@ import retrofit2.http.PUT;
 import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
+import rx.Completable;
 import rx.Single;
 
 public interface IdInterface {
@@ -79,8 +81,8 @@ public interface IdInterface {
 
     @Headers("Cache-control: no-store")
     @GET("/v1/login/{id}")
-    Single<Void> webLogin(@Path("id") String loginToken,
-                          @Query("timestamp") long timestamp);
+    Completable webLogin(@Path("id") String loginToken,
+                         @Query("timestamp") long timestamp);
 
     @Multipart
     @PUT("v1/user")
@@ -96,5 +98,11 @@ public interface IdInterface {
                                        @Query("top") boolean isTopRated,
                                        @Query("recent") boolean isRecent,
                                        @Query("limit") int limit);
+
+    @GET("/v2/search/")
+    Single<SearchResult<UserV2>> search(
+            @Query("type") String type,
+            @Query("query") String query
+    );
 }
 

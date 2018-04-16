@@ -32,7 +32,7 @@ class ConversationRequestViewModel : ViewModel() {
 
     private val subscriptions by lazy { CompositeSubscription() }
 
-    val conversationsAndLocalUser by lazy { SingleLiveEvent<Pair<List<Conversation>, User>>() }
+    val conversationsAndLocalUser by lazy { SingleLiveEvent<Pair<List<Conversation>, User?>>() }
     val updatedConversation by lazy { SingleLiveEvent<Conversation>() }
     val acceptConversation by lazy { SingleLiveEvent<Conversation>() }
     val rejectConversation by lazy { SingleLiveEvent<Conversation>() }

@@ -1,7 +1,7 @@
 /*
  * 	Copyright (c) 2017. Toshi Inc
  *
- * 	This program is free software: you can redistribute it and/or modify
+ *  This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
@@ -15,19 +15,12 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.toshi.model.network;
+package com.toshi.model.network.user
 
-import java.util.List;
+import com.squareup.moshi.Json
 
-public class SearchResult<T> {
-    private List<T> results;
-    private String query;
-
-    public List<T> getResults() {
-        return this.results;
-    }
-
-    public String getQuery() {
-        return this.query;
-    }
+enum class UserType {
+    @Json(name = "user") USER,
+    @Json(name = "bot") BOT,
+    @Json(name = "group") GROUP
 }

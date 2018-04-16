@@ -11,7 +11,9 @@ import com.toshi.model.local.Group
 import com.toshi.model.local.Recipient
 import com.toshi.model.local.Report
 import com.toshi.model.local.User
+import com.toshi.model.network.SearchResult
 import com.toshi.model.network.ServerTime
+import com.toshi.model.network.user.UserV2
 import com.toshi.util.logging.LogUtil
 import com.toshi.view.BaseApplication
 import rx.Completable
@@ -26,6 +28,7 @@ class RecipientManager(
         private val groupStore: GroupStore = GroupStore(),
         private val userStore: UserStore = UserStore(),
         private val blockedUserStore: BlockedUserStore = BlockedUserStore(),
+        private val baseApplication: BaseApplication = BaseApplication.get(),
         private val scheduler: Scheduler = Schedulers.io()
 ) {
 
@@ -63,9 +66,11 @@ class RecipientManager(
     }
 
     private fun isUserFresh(user: User?): Boolean {
-        if (user == null) return false
-        return if (!BaseApplication.get().isConnected) true
-        else !user.needsRefresh()
+        return when {
+            user == null -> false
+            baseApplication.isConnected -> true
+            else -> !user.needsRefresh()
+        }
     }
 
     fun getUserFromPaymentAddress(paymentAddress: String): Single<User> {
@@ -157,6 +162,12 @@ class RecipientManager(
                 .flatMap { idService.reportUser(report, it.get()) }
                 .subscribeOn(scheduler)
                 .toCompletable()
+    }
+
+    fun searchForUsers(type: String, query: String): Single<SearchResult<UserV2>> {
+        return idService
+                .search(type, query)
+                .subscribeOn(scheduler)
     }
 
     fun getTimestamp(): Single<ServerTime> = idService.timestamp

@@ -15,7 +15,7 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.toshi.managers
+package com.toshi.managers.balanceManager
 
 import android.content.SharedPreferences
 import com.toshi.crypto.HDWallet
@@ -62,7 +62,7 @@ class BalanceManagerMocker(
                 balancePrefs = balancePrefs,
                 ethGcmRegistration = ethGcmRegistration,
                 baseApplication = baseApplication,
-                subscribeOnScheduler = Schedulers.trampoline()
+                scheduler = Schedulers.trampoline()
         )
 
         val wallet = mockWallet()

@@ -54,6 +54,10 @@ public class OnboardingManager {
     }
 
     private void sendInitMessage(final User sender, final User onboardingBot) {
+        if (sender == null) {
+            LogUtil.exception("Error during sending onboarding message to bot. Sender is null");
+            return;
+        }
         BaseApplication
                 .get()
                 .getSofaMessageManager()

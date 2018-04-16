@@ -15,19 +15,11 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.toshi.model.network;
+package com.toshi.util.sharedPrefs
 
-import java.util.List;
-
-public class SearchResult<T> {
-    private List<T> results;
-    private String query;
-
-    public List<T> getResults() {
-        return this.results;
-    }
-
-    public String getQuery() {
-        return this.query;
-    }
+interface UserPrefsInterface {
+    fun getOldUserId(): String?
+    fun getUserId(): String?
+    fun setUserId(userId: String)
+    fun clear()
 }

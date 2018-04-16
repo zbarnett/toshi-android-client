@@ -17,23 +17,22 @@
 
 package com.toshi.manager
 
-import android.content.Context
 import com.toshi.crypto.HDWallet
+import com.toshi.manager.network.IdInterface
 import com.toshi.manager.network.IdService
 import com.toshi.model.local.User
 import com.toshi.model.network.ServerTime
 import com.toshi.model.network.UserDetails
-import com.toshi.util.FileNames
-import com.toshi.util.FileUtil
-import com.toshi.util.sharedPrefs.AppPrefs
 import com.toshi.util.logging.LogUtil
+import com.toshi.util.sharedPrefs.AppPrefs
+import com.toshi.util.sharedPrefs.UserPrefs
+import com.toshi.util.sharedPrefs.UserPrefsInterface
+import com.toshi.util.uploader.FileUploader
 import com.toshi.view.BaseApplication
-import okhttp3.MediaType
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import retrofit2.HttpException
 import rx.Completable
 import rx.Observable
+import rx.Scheduler
 import rx.Single
 import rx.Subscription
 import rx.schedulers.Schedulers
@@ -42,22 +41,20 @@ import rx.subscriptions.CompositeSubscription
 import java.io.File
 import java.util.concurrent.TimeUnit
 
-class UserManager {
-
-    companion object {
-        private const val FORM_DATA_NAME = "Profile-Image-Upload"
-        private const val OLD_USER_ID = "uid"
-        private const val USER_ID = "uid_v2"
-    }
+class UserManager(
+        private val idService: IdInterface = IdService.getApi(),
+        private val fileUploader: FileUploader = FileUploader(idService),
+        private val userPrefs: UserPrefsInterface = UserPrefs(),
+        private val scheduler: Scheduler = Schedulers.io()
+) {
 
     private val recipientManager by lazy { BaseApplication.get().recipientManager }
     private val isConnectedSubject by lazy { BaseApplication.get().isConnectedSubject }
-    private val subscriptions by lazy { CompositeSubscription() }
 
+    private val subscriptions by lazy { CompositeSubscription() }
     private val userSubject by lazy { BehaviorSubject.create<User>() }
-    private val prefs by lazy { BaseApplication.get().getSharedPreferences(FileNames.USER_PREFS, Context.MODE_PRIVATE) }
     private var connectivitySub: Subscription? = null
-    private lateinit var wallet: HDWallet
+    private var wallet: HDWallet? = null
 
     fun init(wallet: HDWallet): Completable {
         this.wallet = wallet
@@ -80,7 +77,7 @@ class UserManager {
 
     private fun handleConnectivity(isConnected: Boolean) {
         if (isConnected) initUser()
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(scheduler)
                 .subscribe({}, {})
     }
 
@@ -94,16 +91,16 @@ class UserManager {
     }
 
     private fun userNeedsToRegister(): Boolean {
-        val oldUserId = prefs.getString(OLD_USER_ID, null)
-        val newUserId = prefs.getString(USER_ID, null)
-        val expectedAddress = wallet.ownerAddress
+        val oldUserId = userPrefs.getOldUserId()
+        val newUserId = userPrefs.getUserId()
+        val expectedAddress = wallet?.ownerAddress
         val userId = newUserId ?: oldUserId
         return userId == null || userId != expectedAddress
     }
 
     private fun userNeedsToMigrate(): Boolean {
-        val userId = prefs.getString(USER_ID, null)
-        val expectedAddress = wallet.ownerAddress
+        val userId = userPrefs.getUserId()
+        val expectedAddress = wallet?.ownerAddress
         return userId == null || userId != expectedAddress
     }
 
@@ -117,10 +114,10 @@ class UserManager {
     }
 
     private fun registerNewUserWithTimestamp(serverTime: ServerTime): Single<User> {
+        val wallet = wallet ?: return Single.error(IllegalStateException("Wallet is null while registerNewUserWithTimestamp"))
         val userDetails = UserDetails().setPaymentAddress(wallet.paymentAddress)
         AppPrefs.setForceUserUpdate(false)
-        return IdService.getApi()
-                .registerUser(userDetails, serverTime.get())
+        return idService.registerUser(userDetails, serverTime.get())
     }
 
     private fun handleUserRegistrationFailed(throwable: Throwable): Single<User> {
@@ -135,18 +132,14 @@ class UserManager {
 
     private fun forceFetchUserFromNetworkSingle(): Single<User> {
         return getWallet()
-                .flatMap { IdService
-                        .getApi()
-                        .forceGetUser(it.ownerAddress) }
+                .flatMap { idService.forceGetUser(it.ownerAddress) }
                 .doOnSuccess { updateCurrentUser(it) }
                 .doOnError { LogUtil.exception("Error while fetching user from network $it") }
     }
 
     private fun forceFetchUserFromNetwork() {
         val sub = getWallet()
-                .flatMap { IdService
-                        .getApi()
-                        .forceGetUser(it.ownerAddress) }
+                .flatMap { idService.forceGetUser(it.ownerAddress) }
                 .subscribe(
                         { updateCurrentUser(it) },
                         { LogUtil.exception("Error while fetching user from network $it") }
@@ -165,9 +158,7 @@ class UserManager {
     }
 
     private fun updateCurrentUser(user: User) {
-        prefs.edit()
-                .putString(USER_ID, user.toshiId)
-                .apply()
+        userPrefs.setUserId(user.toshiId)
         userSubject.onNext(user)
         recipientManager.cacheUser(user)
     }
@@ -178,8 +169,9 @@ class UserManager {
     }
 
     private fun forceUpdateUser(): Completable {
-        val ud = UserDetails().setPaymentAddress(wallet.paymentAddress)
-        return updateUser(ud)
+        return getWallet()
+                .map { UserDetails().setPaymentAddress(it.paymentAddress) }
+                .flatMap { updateUser(it) }
                 .doOnSuccess { AppPrefs.setForceUserUpdate(false) }
                 .doOnError { LogUtil.exception("Error while updating user while initiating $it") }
                 .toCompletable()
@@ -188,76 +180,61 @@ class UserManager {
 
     fun updateUser(userDetails: UserDetails): Single<User> {
         return getTimestamp()
-                .flatMap { serverTime -> updateUserWithTimestamp(userDetails, serverTime) }
-                .subscribeOn(Schedulers.io())
+                .flatMap { updateUserWithTimestamp(userDetails, it) }
+                .subscribeOn(scheduler)
     }
 
     private fun updateUserWithTimestamp(userDetails: UserDetails, serverTime: ServerTime): Single<User> {
         return getWallet()
-                .flatMap { IdService
-                        .getApi()
-                        .updateUser(it.ownerAddress, userDetails, serverTime.get()) }
-                .subscribeOn(Schedulers.io())
+                .flatMap { idService.updateUser(it.ownerAddress, userDetails, serverTime.get()) }
+                .subscribeOn(scheduler)
                 .doOnSuccess { updateCurrentUser(it) }
     }
 
     fun uploadAvatar(file: File): Single<User> {
-        val mimeType = FileUtil.getMimeTypeFromFilename(file.name) ?: return Single.error(IllegalArgumentException("Unable to determine file type from file."))
-        val mediaType = MediaType.parse(mimeType)
-        val requestFile = RequestBody.create(mediaType, file)
-        val body = MultipartBody.Part.createFormData(FORM_DATA_NAME, file.name, requestFile)
-
-        return getTimestamp()
-                .subscribeOn(Schedulers.io())
-                .flatMap { uploadFile(body, it) }
+        return fileUploader
+                .uploadAvatar(file)
+                .subscribeOn(scheduler)
                 .doOnSuccess { userSubject.onNext(it) }
     }
 
-    private fun uploadFile(body: MultipartBody.Part, time: ServerTime) = IdService.getApi().uploadFile(body, time.get())
-
-    private fun getTimestamp() = IdService.getApi().timestamp
+    private fun getTimestamp() = idService.timestamp
 
     fun webLogin(loginToken: String): Completable {
         return getTimestamp()
                 .flatMapCompletable { webLoginWithTimestamp(loginToken, it) }
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(scheduler)
     }
 
     private fun webLoginWithTimestamp(loginToken: String, serverTime: ServerTime?): Completable {
         if (serverTime == null) throw IllegalStateException("ServerTime was null")
-        return IdService
-                .getApi()
-                .webLogin(loginToken, serverTime.get())
-                .toCompletable()
+        return idService.webLogin(loginToken, serverTime.get())
     }
 
     fun getUserObservable(): Observable<User> = userSubject.asObservable()
 
-    fun getCurrentUser(): Single<User> {
+    fun getCurrentUser(): Single<User?> {
         return userSubject
                 .first()
                 .toSingle()
+                .timeout(20, TimeUnit.SECONDS)
                 .doOnError { LogUtil.exception("getCurrentUser $it") }
-                .onErrorReturn(null)
+                .onErrorReturn { null }
     }
 
     private fun getWallet(): Single<HDWallet> {
         return Single.fromCallable {
-            while (wallet == null) {
-                Thread.sleep(100)
-            }
-            wallet
+            while (wallet == null) Thread.sleep(100)
+            return@fromCallable wallet ?: throw IllegalStateException("Wallet is null UserManager::getWallet")
         }
-        .subscribeOn(Schedulers.io())
+        .subscribeOn(scheduler)
         .timeout(20, TimeUnit.SECONDS)
     }
 
     fun clear() {
         subscriptions.clear()
         clearConnectivitySubscription()
-        prefs.edit()
-                .putString(USER_ID, null)
-                .apply()
+        userPrefs.clear()
         userSubject.onNext(null)
     }
 

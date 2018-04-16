@@ -15,19 +15,26 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.toshi.model.network;
+package com.toshi.testSharedPrefs
 
-import java.util.List;
+import com.toshi.util.sharedPrefs.UserPrefsInterface
 
-public class SearchResult<T> {
-    private List<T> results;
-    private String query;
+class TestUserPrefs : UserPrefsInterface {
 
-    public List<T> getResults() {
-        return this.results;
+    companion object {
+        private const val OLD_USER_ID = "uid"
+        private const val USER_ID = "uid_v2"
     }
 
-    public String getQuery() {
-        return this.query;
+    private val map by lazy { HashMap<String, Any?>() }
+
+    override fun getOldUserId(): String? = map[OLD_USER_ID] as String?
+
+    override fun getUserId(): String? = map[USER_ID] as String?
+
+    override fun setUserId(userId: String) {
+        map[USER_ID] = userId
     }
+
+    override fun clear() = map.clear()
 }
