@@ -143,7 +143,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/margin_primary"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="@dimen/margin_three_quarters"
                 android:textSize="@dimen/text_size_subtitle"
                 android:textColor="@color/textColorPrimary"
                 android:textStyle="bold"

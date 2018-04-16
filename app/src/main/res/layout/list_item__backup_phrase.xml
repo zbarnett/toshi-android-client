@@ -21,6 +21,6 @@
     android:layout_width="wrap_content"
     android:layout_height="36dp"
     android:gravity="center"
-    android:paddingLeft="12dp"
-    android:paddingRight="12dp"
+    android:paddingLeft="@dimen/margin_three_quarters"
+    android:paddingRight="@dimen/margin_three_quarters"
     android:background="@drawable/backup_phrase_background"/>

@@ -38,7 +38,7 @@
         app:civ_border_color="@color/divider" />
 
     <android.support.v4.widget.Space
-        android:layout_width="12dp"
+        android:layout_width="@dimen/margin_three_quarters"
         android:layout_height="@dimen/space_unused_dimension" />
 
     <!-- ERC20 tokens -->

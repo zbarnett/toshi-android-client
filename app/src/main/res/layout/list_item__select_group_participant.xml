@@ -35,7 +35,7 @@
         app:civ_border_color="@color/divider"/>
 
     <android.support.v4.widget.Space
-        android:layout_width="12dp"
+        android:layout_width="@dimen/margin_three_quarters"
         android:layout_height="match_parent"/>
 
     <LinearLayout
@@ -66,15 +66,15 @@
     </LinearLayout>
 
     <android.support.v4.widget.Space
-        android:layout_width="12dp"
+        android:layout_width="@dimen/margin_three_quarters"
         android:layout_height="match_parent"/>
 
     <CheckBox
         android:id="@+id/checkbox"
         android:layout_width="22dp"
         android:layout_height="22dp"
-        android:layout_marginLeft="12dp"
-        android:layout_marginRight="12dp"
+        android:layout_marginLeft="@dimen/margin_three_quarters"
+        android:layout_marginRight="@dimen/margin_three_quarters"
         android:button="@drawable/checkbox"
         android:clickable="false"
         android:layout_gravity="right|center_vertical"/>

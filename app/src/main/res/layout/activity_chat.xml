@@ -63,7 +63,7 @@
                 tools:text="Contact Name"/>
 
             <android.support.v4.widget.Space
-                android:layout_width="12dp"
+                android:layout_width="@dimen/margin_three_quarters"
                 android:layout_height="match_parent"/>
 
             <de.hdodenhof.circleimageview.CircleImageView

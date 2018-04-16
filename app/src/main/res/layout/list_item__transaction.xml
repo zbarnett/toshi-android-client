@@ -40,7 +40,7 @@
             tools:src="@drawable/ic_done_green"/>
 
         <Space
-            android:layout_width="12dp"
+            android:layout_width="@dimen/margin_three_quarters"
             android:layout_height="match_parent"/>
 
         <TextView

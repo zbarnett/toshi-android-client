@@ -41,7 +41,7 @@
 
     <android.support.v4.widget.Space
         android:layout_width="@dimen/space_unused_dimension"
-        android:layout_height="12dp" />
+        android:layout_height="@dimen/margin_three_quarters" />
 
     <TextView
         android:id="@+id/message"
