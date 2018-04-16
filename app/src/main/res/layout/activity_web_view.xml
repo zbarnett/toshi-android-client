@@ -30,7 +30,7 @@
         android:orientation="horizontal"
         style="@style/WhiteToolbar"
         android:elevation="2dp"
-        app:contentInsetStart="0dp">
+        app:contentInsetStart="@dimen/content_inset_none">
 
         <com.toshi.view.custom.AddressBarInputView
             android:id="@+id/input"

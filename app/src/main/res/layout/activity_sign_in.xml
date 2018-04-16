@@ -36,7 +36,7 @@
                 android:layout_height="?attr/actionBarSize"
                 android:gravity="center_vertical"
                 style="@style/Toolbar"
-                app:contentInsetStart="0dp">
+                app:contentInsetStart="@dimen/content_inset_none">
 
                 <ImageButton
                     android:id="@+id/close_button"

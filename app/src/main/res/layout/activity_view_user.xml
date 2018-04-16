@@ -98,7 +98,7 @@
                 app:layout_anchor="@id/hero"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
                 app:layout_collapseMode="pin"
-                app:contentInsetStart="0dp">
+                app:contentInsetStart="@dimen/content_inset_none">
 
                 <ImageButton
                     android:id="@+id/closeButton"

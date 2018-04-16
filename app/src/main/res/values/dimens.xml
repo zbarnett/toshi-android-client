@@ -38,6 +38,8 @@
 
     <dimen name="border_size_default">1dp</dimen>
 
+    <dimen name="content_inset_none">0dp</dimen>
+
     <dimen name="corner_radius_default">8dp</dimen>
     <dimen name="corner_radius_small">6dp</dimen>
 
