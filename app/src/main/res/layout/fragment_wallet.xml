@@ -139,7 +139,7 @@
                                 android:textSize="@dimen/text_size_default"
                                 style="@style/ButtonAllCaps"
                                 android:textColor="@color/textColorPrimary"
-                                android:padding="0dp"
+                                android:padding="@dimen/margin_none"
                                 android:text="@string/copy"/>
 
                         </LinearLayout>
