@@ -79,7 +79,7 @@
             android:paddingRight="@dimen/margin_three_quarters"
             android:paddingTop="@dimen/margin_three_quarters"
             android:paddingBottom="@dimen/margin_three_quarters"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="@dimen/margin_quarter"
             android:background="@drawable/background__remote_message_last"
             android:autoLink="web"
             android:lineSpacingExtra="2dp"

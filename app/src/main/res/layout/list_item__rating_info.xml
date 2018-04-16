@@ -33,7 +33,7 @@
     <ImageView
         android:layout_width="11dp"
         android:layout_height="11dp"
-        android:layout_marginLeft="4dp"
+        android:layout_marginLeft="@dimen/margin_quarter"
         app:srcCompat="@drawable/star_grey"/>
 
     <com.toshi.view.custom.RatingBar

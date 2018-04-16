@@ -125,7 +125,7 @@
                         android:textSize="@dimen/text_size_default" />
 
                     <android.support.v4.widget.Space
-                        android:layout_width="4dp"
+                        android:layout_width="@dimen/margin_quarter"
                         android:layout_height="@dimen/space_unused_dimension" />
 
                     <TextView
@@ -138,7 +138,7 @@
                         android:text="@string/eth_currency_code"/>
 
                     <android.support.v4.widget.Space
-                        android:layout_width="4dp"
+                        android:layout_width="@dimen/margin_quarter"
                         android:layout_height="@dimen/space_unused_dimension" />
 
                 </LinearLayout>

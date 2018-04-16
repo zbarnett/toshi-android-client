@@ -76,7 +76,7 @@
             tools:text="0.0000"/>
 
         <Space
-            android:layout_width="4dp"
+            android:layout_width="@dimen/margin_quarter"
             android:layout_height="match_parent"/>
 
         <TextView
@@ -105,7 +105,7 @@
             tools:text="from"/>
 
         <Space
-            android:layout_width="4dp"
+            android:layout_width="@dimen/margin_quarter"
             android:layout_height="match_parent"/>
 
         <TextView
