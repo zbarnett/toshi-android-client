@@ -83,6 +83,8 @@
     <dimen name="chat_payment_width">261dp</dimen>
     <dimen name="chat_file_width">261dp</dimen>
     <dimen name="chat_bubble_vertical_padding">9dp</dimen>
+    <dimen name="chat_corner_radius_large">20dp</dimen>
+    <dimen name="chat_corner_radius_small">6dp</dimen>
 
     <dimen name="control_corner_radius">32dp</dimen>
 

@@ -18,8 +18,8 @@
 
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
     <solid android:color="@color/colorPrimary" />
-    <corners android:bottomLeftRadius="20dp"
-        android:topLeftRadius="20dp"
-        android:topRightRadius="20dp"
-        android:bottomRightRadius="6dp"/>
+    <corners android:bottomLeftRadius="@dimen/chat_corner_radius_large"
+        android:topLeftRadius="@dimen/chat_corner_radius_large"
+        android:topRightRadius="@dimen/chat_corner_radius_large"
+        android:bottomRightRadius="@dimen/chat_corner_radius_small"/>
 </shape>
