@@ -29,7 +29,7 @@ class UserViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     fun setUser(user: UserV2) {
         itemView.name.text = user.getDisplayName()
-        itemView.username.text = user.username
+        itemView.username.text = user.getUsernameWithPrefix()
         ImageUtil.load(user.avatar, itemView.avatar)
     }
 
