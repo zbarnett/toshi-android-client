@@ -26,3 +26,10 @@ fun String.isGroupId(): Boolean {
 }
 
 fun String.isWebUrl() = Patterns.WEB_URL.matcher(this.trim()).matches()
+
+fun String.findTypeParamValue(): String? {
+    val regexResult = Regex("type=([a-zA-Z]+)", RegexOption.IGNORE_CASE)
+            .find(this)
+    if (regexResult?.groups?.size != 2) return null
+    return regexResult.groups[1]?.value
+}

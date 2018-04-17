@@ -19,6 +19,7 @@ package com.toshi.viewModel
 
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
+import com.toshi.extensions.findTypeParamValue
 import com.toshi.manager.RecipientManager
 import com.toshi.model.network.SearchResult
 import com.toshi.model.network.user.UserType
@@ -74,10 +75,11 @@ class ChatSearchViewModel(
     private fun handleResponse(searchResult: SearchResult<UserV2>) {
         val searchQuery = searchResult.query
         val result = searchResult.results
+        val resultType = searchQuery.findTypeParamValue()
         when {
-            searchQuery.contains(UserType.USER.name.toLowerCase()) -> userSearchResults.value = result
-            searchQuery.contains(UserType.BOT.name.toLowerCase()) -> botsSearchResults.value = result
-            searchQuery.contains(UserType.GROUPBOT.name.toLowerCase()) -> groupSearchResults.value = result
+            resultType.equals(UserType.BOT.name, true) -> botsSearchResults.value = result
+            resultType.equals(UserType.GROUPBOT.name, true) -> groupSearchResults.value = result
+            resultType.equals(UserType.USER.name, true) -> userSearchResults.value = result
         }
     }
 
