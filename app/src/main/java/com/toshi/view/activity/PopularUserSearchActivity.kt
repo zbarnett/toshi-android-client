@@ -28,8 +28,8 @@ import com.toshi.extensions.startActivity
 import com.toshi.extensions.toast
 import com.toshi.model.network.user.UserType
 import com.toshi.model.network.user.UserV2
-import com.toshi.view.activity.ChatSearchActivity.Companion.CHAT
 import com.toshi.view.activity.ChatSearchActivity.Companion.TYPE
+import com.toshi.view.activity.ChatSearchActivity.Companion.VIEW_PROFILE
 import com.toshi.view.adapter.CompoundAdapter
 import com.toshi.view.adapter.ListSectionAdapter
 import com.toshi.view.adapter.PopularBotsAdapter
@@ -67,7 +67,7 @@ class PopularUserSearchActivity : AppCompatActivity() {
 
     private fun initClickListeners() {
         closeButton.setOnClickListener { finish() }
-        search.setOnClickListener { startActivity<ChatSearchActivity> { putExtra(TYPE, CHAT) } }
+        search.setOnClickListener { startActivity<ChatSearchActivity> { putExtra(TYPE, VIEW_PROFILE) } }
     }
 
     private fun initAdapter() {
