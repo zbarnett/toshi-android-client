@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  ~ 	Copyright (c) 2017. Toshi Inc
+  ~
+  ~ 	This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/list_item_height_with_description"
+    android:background="@color/windowBackground"
+    android:foreground="?android:attr/selectableItemBackground">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/avatar"
+        android:layout_width="@dimen/avatar_size_small"
+        android:layout_height="@dimen/avatar_size_small"
+        android:layout_marginLeft="@dimen/margin_primary"
+        android:layout_marginStart="@dimen/margin_primary"
+        app:civ_border_color="@color/divider"
+        app:civ_border_width="@dimen/border_size_default"
+        app:layout_constraintBottom_toTopOf="@+id/divider"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/textViews"
+        android:layout_width="@dimen/match_constraints"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/margin_three_quarters"
+        android:layout_marginStart="@dimen/margin_three_quarters"
+        android:layout_marginRight="@dimen/margin_primary"
+        android:layout_marginEnd="@dimen/margin_primary"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@id/divider"
+        app:layout_constraintLeft_toRightOf="@id/avatar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/avatar"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/name"
+            style="@style/MediumEllipsizeEndStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="@dimen/text_size_subtitle"
+            tools:text="Talky talky" />
+
+        <TextView
+            android:id="@+id/description"
+            style="@style/NormalEllipsizeEndStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="2"
+            android:textColor="@color/textColorSecondary"
+            android:textSize="@dimen/text_size_default"
+            tools:text="Talkytalky" />
+
+        <TextView
+            android:id="@+id/numberOfMembers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_default"
+            android:textColor="@color/textColorSecondary"
+            tools:text="140 members"
+            android:visibility="gone"/>
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/divider"
+        style="@style/Divider"
+        android:layout_width="@dimen/match_constraints"
+        android:layout_marginEnd="@dimen/margin_primary"
+        android:layout_marginLeft="@dimen/border_left_margin_with_small_avatar"
+        android:layout_marginRight="@dimen/margin_primary"
+        android:layout_marginStart="@dimen/border_left_margin_with_small_avatar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</android.support.constraint.ConstraintLayout>

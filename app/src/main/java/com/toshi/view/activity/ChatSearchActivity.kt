@@ -103,7 +103,7 @@ class ChatSearchActivity : AppCompatActivity() {
             }
             2 -> {
                 val groupSearchResult = viewModel.groupSearchResults.value ?: emptyList()
-                if (groupSearchResult.isNotEmpty()) addSearchResult(groupSearchResult, UserType.GROUP)
+                if (groupSearchResult.isNotEmpty()) addSearchResult(groupSearchResult, UserType.GROUPBOT)
             }
         }
     }
@@ -139,7 +139,7 @@ class ChatSearchActivity : AppCompatActivity() {
             if (it != null) addSearchResult(it, UserType.BOT)
         })
         viewModel.groupSearchResults.observe(this, Observer {
-            if (it != null) addSearchResult(it, UserType.GROUP)
+            if (it != null) addSearchResult(it, UserType.GROUPBOT)
         })
     }
 

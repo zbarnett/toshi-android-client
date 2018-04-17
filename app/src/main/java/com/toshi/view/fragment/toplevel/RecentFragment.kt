@@ -37,9 +37,9 @@ import com.toshi.extensions.startExternalActivity
 import com.toshi.model.local.Conversation
 import com.toshi.model.local.ConversationInfo
 import com.toshi.view.activity.ChatActivity
-import com.toshi.view.activity.ChatSearchActivity
 import com.toshi.view.activity.ConversationRequestActivity
 import com.toshi.view.activity.ConversationSetupActivity
+import com.toshi.view.activity.PopularUserSearchActivity
 import com.toshi.view.adapter.CompoundAdapter
 import com.toshi.view.adapter.ConversationAdapter
 import com.toshi.view.adapter.ConversationRequestsAdapter
@@ -104,7 +104,7 @@ class RecentFragment : TopLevelFragment() {
 
     private fun initCompoundAdapter() {
         val searchHeaderAdapter = SearchHeaderAdapter(
-                { startActivity<ChatSearchActivity> { putExtra(ChatSearchActivity.TYPE, ChatSearchActivity.VIEW_PROFILE) } }
+                { startActivity<PopularUserSearchActivity>() }
         )
         conversationRequestsAdapter = ConversationRequestsAdapter(
                 { startActivity<ConversationRequestActivity>() }

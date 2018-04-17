@@ -380,4 +380,8 @@
     <string name="users">Users</string>
     <string name="bots">Bots</string>
     <string name="groups">Groups</string>
+    <string name="error_fetching_users">Error while fetching users</string>
+    <string name="popular_bots">Popular Bots</string>
+    <string name="popular_groups">Popular Groups</string>
+    <string name="popular_users">Popular Users</string>
 </resources>

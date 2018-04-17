@@ -23,6 +23,7 @@ import com.toshi.model.local.User;
 import com.toshi.model.network.SearchResult;
 import com.toshi.model.network.ServerTime;
 import com.toshi.model.network.UserDetails;
+import com.toshi.model.network.UserSearchSections;
 import com.toshi.model.network.UserSearchResults;
 import com.toshi.model.network.user.UserV2;
 
@@ -104,5 +105,8 @@ public interface IdInterface {
             @Query("type") String type,
             @Query("query") String query
     );
+
+    @GET("/v2/search/")
+    Single<UserSearchSections> getPopularSearches();
 }
 

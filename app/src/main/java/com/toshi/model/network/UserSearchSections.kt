@@ -15,12 +15,8 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.toshi.model.network.user
+package com.toshi.model.network
 
-import com.squareup.moshi.Json
-
-enum class UserType {
-    @Json(name = "user") USER,
-    @Json(name = "bot") BOT,
-    @Json(name = "groupbot") GROUPBOT
-}
+data class UserSearchSections(
+        val sections: List<UserSection> = emptyList()
+)

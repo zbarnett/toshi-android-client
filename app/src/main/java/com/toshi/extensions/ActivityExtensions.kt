@@ -18,6 +18,7 @@
 package com.toshi.extensions
 
 import android.arch.lifecycle.ViewModel
+import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Build
@@ -92,4 +93,11 @@ fun AppCompatActivity.openWebView(address: String) {
 
 inline fun <reified T : ViewModel> AppCompatActivity.getViewModel(): T {
     return ViewModelProviders.of(this).get(T::class.java)
+}
+
+inline fun <reified T : ViewModel> AppCompatActivity.getViewModel(crossinline factory: () -> T): T {
+    val vmFactory = object : ViewModelProvider.Factory {
+        override fun <U : ViewModel> create(modelClass: Class<U>): U = factory() as U
+    }
+    return ViewModelProviders.of(this, vmFactory)[T::class.java]
 }

@@ -121,6 +121,8 @@
         <activity android:name=".view.activity.SendETHActivity" />
         <activity android:name=".view.activity.ViewAllDappsActivity" />
         <activity android:name=".view.activity.ChatSearchActivity" />
+        <activity android:name=".view.activity.PopularUserSearchActivity" />
+        <activity android:name=".view.activity.ViewPopularUsersActivity" />
 
         <meta-data
             android:name="io.fabric.ApiKey"

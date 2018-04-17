@@ -43,4 +43,6 @@ data class UserV2(
         return if (name?.isNotEmpty() == true) name
         else username
     }
+
+    fun getUsernameWithPrefix(): String = "@$username"
 }

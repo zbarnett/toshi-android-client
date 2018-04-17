@@ -77,7 +77,7 @@ class ChatSearchViewModel(
         when {
             searchQuery.contains(UserType.USER.name.toLowerCase()) -> userSearchResults.value = result
             searchQuery.contains(UserType.BOT.name.toLowerCase()) -> botsSearchResults.value = result
-            searchQuery.contains(UserType.GROUP.name.toLowerCase()) -> groupSearchResults.value = result
+            searchQuery.contains(UserType.GROUPBOT.name.toLowerCase()) -> groupSearchResults.value = result
         }
     }
 
@@ -92,7 +92,7 @@ class ChatSearchViewModel(
         return when (viewPosition) {
             0 -> UserType.USER
             1 -> UserType.BOT
-            else -> UserType.GROUP
+            else -> UserType.GROUPBOT
         }
     }
 

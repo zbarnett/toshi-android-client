@@ -15,12 +15,20 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.toshi.model.network.user
+package com.toshi.view.adapter.viewholder
 
-import com.squareup.moshi.Json
+import android.support.v7.widget.RecyclerView
+import android.view.View
+import kotlinx.android.synthetic.main.list_item__section.view.clickable
+import kotlinx.android.synthetic.main.list_item__section.view.title
 
-enum class UserType {
-    @Json(name = "user") USER,
-    @Json(name = "bot") BOT,
-    @Json(name = "groupbot") GROUPBOT
+class ListSectionViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
+    fun setTitle(title: String) {
+        itemView.title.text = title
+    }
+
+    fun setClickableView(name: String, listener: () -> Unit) {
+        itemView.clickable.text = name
+        itemView.clickable.setOnClickListener { listener() }
+    }
 }
