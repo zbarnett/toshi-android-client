@@ -42,6 +42,8 @@ class ViewPopularUsersActivity : AppCompatActivity() {
 
     companion object {
         const val TYPE = "type"
+        const val SEARCH_QUERY = "searchQuery"
+        const val TITLE = "title"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,8 +54,10 @@ class ViewPopularUsersActivity : AppCompatActivity() {
 
     private fun init() {
         val type = getViewType()
-        setTitle(type)
-        initViewModel(type)
+        val searchQuery = getSearchQuery()
+        val title = getToolbarTitle()
+        initViewModel(type, searchQuery)
+        setToolbarTitle(title)
         initClickListeners()
         initAdapter()
         initObservers()
@@ -61,17 +65,16 @@ class ViewPopularUsersActivity : AppCompatActivity() {
 
     private fun getViewType() = intent.getSerializableExtra(TYPE) as? UserType ?: UserType.USER
 
-    private fun setTitle(userType: UserType) {
-        val title = when (userType) {
-            UserType.BOT -> getString(R.string.popular_bots)
-            UserType.GROUPBOT -> getString(R.string.popular_groups)
-            UserType.USER -> getString(R.string.popular_users)
-        }
-        toolbarTitle.text = title
+    private fun getSearchQuery(): String? = intent.getStringExtra(SEARCH_QUERY)
+
+    private fun getToolbarTitle(): String? = intent.getStringExtra(TITLE)
+
+    private fun setToolbarTitle(title: String?) {
+        toolbarTitle.text = title.orEmpty()
     }
 
-    private fun initViewModel(userType: UserType) {
-        viewModel = getViewModel { ViewPopularUsersViewModel(userType) }
+    private fun initViewModel(userType: UserType, searchQuery: String?) {
+        viewModel = getViewModel { ViewPopularUsersViewModel(userType, searchQuery) }
     }
 
     private fun initClickListeners() {

@@ -33,3 +33,17 @@ fun String.findTypeParamValue(): String? {
     if (regexResult?.groups?.size != 2) return null
     return regexResult.groups[1]?.value
 }
+
+fun String.getQueryMap(): HashMap<String, String> {
+    val minLength = 3
+    if (this.length < minLength || !this.contains("=")) return HashMap()
+    val params = this.split("&")
+    val map = HashMap<String, String>()
+    for (param in params) {
+        val stringSplitter = param.split("=")
+        val name = stringSplitter[0]
+        val value = stringSplitter[1]
+        map[name] = value
+    }
+    return map
+}

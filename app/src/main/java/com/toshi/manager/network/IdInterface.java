@@ -27,6 +27,7 @@ import com.toshi.model.network.UserSearchResults;
 import com.toshi.model.network.UserSearchSections;
 
 import java.util.List;
+import java.util.Map;
 
 import okhttp3.MultipartBody;
 import retrofit2.http.Body;
@@ -38,6 +39,7 @@ import retrofit2.http.PUT;
 import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
+import retrofit2.http.QueryMap;
 import rx.Completable;
 import rx.Single;
 
@@ -115,6 +117,11 @@ public interface IdInterface {
     Single<SearchResult<User>> search(
             @Query("type") String type,
             @Query("query") String query
+    );
+
+    @GET("/v2/search")
+    Single<SearchResult<User>> search(
+            @QueryMap Map<String, String> query
     );
 
     @GET("/v2/search/")

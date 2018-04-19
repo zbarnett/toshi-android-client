@@ -30,6 +30,7 @@ import rx.subscriptions.CompositeSubscription
 
 class ViewPopularUsersViewModel(
         userType: UserType,
+        searchQuery: String?,
         private val recipientManager: RecipientManager = BaseApplication.get().recipientManager
 ) : ViewModel() {
 
@@ -40,12 +41,13 @@ class ViewPopularUsersViewModel(
     val isLoading by lazy { MutableLiveData<Boolean>() }
 
     init {
-        getPopularUsers(userType)
+        getPopularUsers(userType, searchQuery)
     }
 
-    private fun getPopularUsers(userType: UserType) {
-        val sub = recipientManager
-                .searchForUsers(userType.name.toLowerCase())
+    private fun getPopularUsers(userType: UserType, searchQuery: String?) {
+        val searchPopularUsers = if (searchQuery != null) recipientManager.searchForUsersWithQuery(searchQuery)
+        else recipientManager.searchForUsersWithType(userType.name.toLowerCase())
+        val sub = searchPopularUsers
                 .map { it.results }
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { isLoading.value = true }

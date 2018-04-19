@@ -20,8 +20,8 @@ package com.toshi.viewModel
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import com.toshi.R
+import com.toshi.extensions.findTypeParamValue
 import com.toshi.manager.RecipientManager
-import com.toshi.model.local.User
 import com.toshi.model.network.UserSection
 import com.toshi.model.network.user.UserType
 import com.toshi.util.SingleLiveEvent
@@ -35,9 +35,10 @@ class PopularSearchViewModel(
 
     private val subscriptions by lazy { CompositeSubscription() }
 
-    val popularBots by lazy { MutableLiveData<List<User>>() }
-    val popularGroups by lazy { MutableLiveData<List<User>>() }
-    val popularUsers by lazy { MutableLiveData<List<User>>() }
+    val groups by lazy { MutableLiveData<UserSection>() }
+    val bots by lazy { MutableLiveData<UserSection>() }
+    val users by lazy { MutableLiveData<UserSection>() }
+
     val error by lazy { SingleLiveEvent<Int>() }
     val isLoading by lazy { MutableLiveData<Boolean>() }
 
@@ -48,7 +49,6 @@ class PopularSearchViewModel(
     private fun getPopularSearches() {
         val sub = recipientManager
                 .getPopularSearches()
-                .map { breakResultIntoLists(it) }
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { isLoading.value = true }
                 .doAfterTerminate { isLoading.value = false }
@@ -60,28 +60,16 @@ class PopularSearchViewModel(
         subscriptions.add(sub)
     }
 
-    private fun handleResult(userLists: List<List<User>>) {
-        popularBots.value = userLists[0]
-        popularGroups.value = userLists[1]
-        popularUsers.value = userLists[2]
-    }
-
-    private fun breakResultIntoLists(sections: List<UserSection>): List<List<User>> {
-        val bots by lazy { mutableListOf<User>() }
-        val groups by lazy { mutableListOf<User>() }
-        val users by lazy { mutableListOf<User>() }
-
-        sections
-                .flatMap { it.results }
-                .forEach {
-                    when (it.type) {
-                        UserType.BOT -> bots.add(it)
-                        UserType.GROUPBOT -> groups.add(it)
-                        UserType.USER -> users.add(it)
-                    }
-                }
-
-        return listOf(bots, groups, users)
+    private fun handleResult(sections: List<UserSection>) {
+        sections.forEach {
+            val typeParam = it.query?.findTypeParamValue()
+            val userType = UserType.get(typeParam)
+            when (userType) {
+                UserType.GROUPBOT -> groups.value = it
+                UserType.BOT -> bots.value = it
+                UserType.USER -> users.value = it
+            }
+        }
     }
 
     override fun onCleared() {

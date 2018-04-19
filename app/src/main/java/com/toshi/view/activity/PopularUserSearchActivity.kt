@@ -27,9 +27,12 @@ import com.toshi.extensions.isVisible
 import com.toshi.extensions.startActivity
 import com.toshi.extensions.toast
 import com.toshi.model.local.User
+import com.toshi.model.network.UserSection
 import com.toshi.model.network.user.UserType
 import com.toshi.view.activity.ChatSearchActivity.Companion.TYPE
 import com.toshi.view.activity.ChatSearchActivity.Companion.VIEW_PROFILE
+import com.toshi.view.activity.ViewPopularUsersActivity.Companion.SEARCH_QUERY
+import com.toshi.view.activity.ViewPopularUsersActivity.Companion.TITLE
 import com.toshi.view.adapter.CompoundAdapter
 import com.toshi.view.adapter.ListSectionAdapter
 import com.toshi.view.adapter.PopularBotsAdapter
@@ -43,10 +46,16 @@ import kotlinx.android.synthetic.main.activity_view_popular_users.loadingSpinner
 class PopularUserSearchActivity : AppCompatActivity() {
 
     private lateinit var viewModel: PopularSearchViewModel
+
     private lateinit var compoundAdapter: CompoundAdapter
-    private lateinit var botsAdapter: PopularBotsAdapter
+
     private lateinit var groupsAdapter: PopularUsersAdapter
+    private lateinit var botsAdapter: PopularBotsAdapter
     private lateinit var usersAdapter: PopularUsersAdapter
+
+    private lateinit var groupSectionAdapter: ListSectionAdapter
+    private lateinit var botSectionAdapter: ListSectionAdapter
+    private lateinit var userSectionAdapter: ListSectionAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,24 +80,21 @@ class PopularUserSearchActivity : AppCompatActivity() {
     }
 
     private fun initAdapter() {
-        val botSection = ListSectionAdapter(
-                title = getString(R.string.popular_bots),
-                clickableString = getString(R.string.see_more),
-                onSectionClickedListener = { startViewPopularUsersActivity(UserType.BOT) }
-        )
-
-        botsAdapter = PopularBotsAdapter { startProfileActivity(it) }
-
-        val groupSection = ListSectionAdapter(
-                title = getString(R.string.popular_groups),
+        groupSectionAdapter = ListSectionAdapter(
                 clickableString = getString(R.string.see_more),
                 onSectionClickedListener = { startViewPopularUsersActivity(UserType.GROUPBOT) }
         )
 
         groupsAdapter = PopularUsersAdapter { startProfileActivity(it) }
 
-        val userSection = ListSectionAdapter(
-                title = getString(R.string.popular_users),
+        botSectionAdapter = ListSectionAdapter(
+                clickableString = getString(R.string.see_more),
+                onSectionClickedListener = { startViewPopularUsersActivity(UserType.BOT) }
+        )
+
+        botsAdapter = PopularBotsAdapter { startProfileActivity(it) }
+
+        userSectionAdapter = ListSectionAdapter(
                 clickableString = getString(R.string.see_more),
                 onSectionClickedListener = { startViewPopularUsersActivity(UserType.USER) }
         )
@@ -97,11 +103,11 @@ class PopularUserSearchActivity : AppCompatActivity() {
 
         compoundAdapter = CompoundAdapter(
                 listOf(
-                        botSection,
-                        botsAdapter,
-                        groupSection,
+                        groupSectionAdapter,
                         groupsAdapter,
-                        userSection,
+                        botSectionAdapter,
+                        botsAdapter,
+                        userSectionAdapter,
                         usersAdapter
                 )
         )
@@ -113,7 +119,29 @@ class PopularUserSearchActivity : AppCompatActivity() {
     }
 
     private fun startViewPopularUsersActivity(userType: UserType) {
-        startActivity<ViewPopularUsersActivity> { putExtra(ViewPopularUsersActivity.TYPE, userType) }
+        val searchQuery = getSearchQuery(userType)
+        val title = getTitle(userType)
+        startActivity<ViewPopularUsersActivity> {
+            putExtra(SEARCH_QUERY, searchQuery)
+            putExtra(TYPE, userType)
+            putExtra(TITLE, title)
+        }
+    }
+
+    private fun getSearchQuery(userType: UserType): String? {
+        return when (userType) {
+            UserType.GROUPBOT -> viewModel.groups.value?.query
+            UserType.BOT -> viewModel.bots.value?.query
+            UserType.USER -> viewModel.users.value?.query
+        }
+    }
+
+    private fun getTitle(userType: UserType): String? {
+        return when (userType) {
+            UserType.GROUPBOT -> viewModel.groups.value?.name
+            UserType.BOT -> viewModel.bots.value?.name
+            UserType.USER -> viewModel.users.value?.name
+        }
     }
 
     private fun startProfileActivity(user: User) {
@@ -121,20 +149,33 @@ class PopularUserSearchActivity : AppCompatActivity() {
     }
 
     private fun initObservers() {
-        viewModel.popularBots.observe(this, Observer {
-            if (it != null) botsAdapter.setItemList(it)
+        viewModel.groups.observe(this, Observer {
+            if (it != null) addSection(groupSectionAdapter, groupsAdapter, it)
         })
-        viewModel.popularGroups.observe(this, Observer {
-            if (it != null) groupsAdapter.setItemList(it)
+
+        viewModel.bots.observe(this, Observer {
+            if (it != null) addGroupSection(it)
         })
-        viewModel.popularUsers.observe(this, Observer {
-            if (it != null) usersAdapter.setItemList(it)
+
+        viewModel.users.observe(this, Observer {
+            if (it != null) addSection(userSectionAdapter, usersAdapter, it)
         })
+
         viewModel.error.observe(this, Observer {
             if (it != null) toast(it)
         })
         viewModel.isLoading.observe(this, Observer {
             if (it != null) loadingSpinner.isVisible(it)
         })
+    }
+
+    private fun addSection(sectionAdapter: ListSectionAdapter, adapter: PopularUsersAdapter, userSection: UserSection) {
+        sectionAdapter.setItemList(listOf(userSection.name.orEmpty()))
+        adapter.setItemList(userSection.results)
+    }
+
+    private fun addGroupSection(section: UserSection) {
+        botSectionAdapter.setItemList(listOf(section.name.orEmpty()))
+        botsAdapter.setItemList(section.results)
     }
 }

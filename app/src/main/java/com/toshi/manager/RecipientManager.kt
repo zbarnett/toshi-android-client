@@ -1,5 +1,6 @@
 package com.toshi.manager
 
+import com.toshi.extensions.getQueryMap
 import com.toshi.extensions.isGroupId
 import com.toshi.manager.network.IdInterface
 import com.toshi.manager.network.IdService
@@ -157,9 +158,16 @@ class RecipientManager(
                 .subscribeOn(scheduler)
     }
 
-    fun searchForUsers(type: String, query: String? = null): Single<SearchResult<User>> {
+    fun searchForUsersWithType(type: String, query: String? = null): Single<SearchResult<User>> {
         return idService
                 .search(type, query)
+                .subscribeOn(scheduler)
+    }
+
+    fun searchForUsersWithQuery(query: String): Single<SearchResult<User>> {
+        val queryMap = query.getQueryMap()
+        return idService
+                .search(queryMap)
                 .subscribeOn(scheduler)
     }
 

@@ -24,14 +24,9 @@ import com.toshi.R
 import com.toshi.view.adapter.viewholder.ListSectionViewHolder
 
 class ListSectionAdapter(
-        private val title: String,
         private val clickableString: String,
         private val onSectionClickedListener: () -> Unit
-) : BaseCompoundableAdapter<ListSectionViewHolder, Int>() {
-
-    init {
-        setItemList(listOf(1))
-    }
+) : BaseCompoundableAdapter<ListSectionViewHolder, String>() {
 
     override fun compoundableBindViewHolder(viewHolder: RecyclerView.ViewHolder, adapterIndex: Int) {
         val typedHolder = viewHolder as ListSectionViewHolder
@@ -39,8 +34,9 @@ class ListSectionAdapter(
     }
 
     override fun onBindViewHolder(holder: ListSectionViewHolder, position: Int) {
+        val title = safelyAt(position)
         holder.apply {
-            setTitle(title)
+            setTitle(title.orEmpty())
             setClickableView(clickableString, onSectionClickedListener)
         }
     }
