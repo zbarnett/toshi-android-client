@@ -59,6 +59,8 @@
                 android:paddingRight="@dimen/margin_primary"
                 android:background="@null"
                 android:textSize="16sp"
+                android:maxLines="1"
+                android:singleLine="true"
                 android:hint="@string/search_for_name_or_username"/>
 
         </android.support.v7.widget.Toolbar>
