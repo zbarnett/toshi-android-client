@@ -108,7 +108,7 @@ class RecipientManager(
 
     private fun fetchAndCacheFromNetworkByPaymentAddress(paymentAddress: String): Observable<User> {
         return idService
-                .searchBy(paymentAddress)
+                .searchByPaymentAddress(paymentAddress)
                 .toObservable()
                 .filter { it.results.size > 0 }
                 .map { it.results[0] }

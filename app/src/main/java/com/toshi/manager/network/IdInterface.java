@@ -93,6 +93,11 @@ public interface IdInterface {
             @Query("query") String query
     );
 
+    @GET("/v2/search")
+    Single<UserSearchResults> searchByPaymentAddress(
+            @Query("payment_address") String paymentAddress
+    );
+
     @Headers("Cache-control: no-store")
     @GET("/v1/login/{id}")
     Completable webLogin(
