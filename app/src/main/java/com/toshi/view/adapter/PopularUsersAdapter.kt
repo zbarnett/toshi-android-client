@@ -21,12 +21,12 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.toshi.R
-import com.toshi.model.network.user.UserV2
+import com.toshi.model.local.User
 import com.toshi.view.adapter.viewholder.PopularUserViewHolder
 
 class PopularUsersAdapter(
-        private val onItemClickedListener: (UserV2) -> Unit
-) : BaseCompoundableAdapter<PopularUserViewHolder, UserV2>() {
+        private val onItemClickedListener: (User) -> Unit
+) : BaseCompoundableAdapter<PopularUserViewHolder, User>() {
 
     override fun compoundableBindViewHolder(viewHolder: RecyclerView.ViewHolder, adapterIndex: Int) {
         val typedHolder = viewHolder as PopularUserViewHolder

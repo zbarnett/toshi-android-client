@@ -17,10 +17,23 @@
 
 package com.toshi.model.network.user
 
-import com.squareup.moshi.Json
+private const val GROUPBOT_ = "groupbot"
+private const val BOT_ = "bot"
+private const val USER_ = "user"
 
-enum class UserType {
-    @Json(name = "user") USER,
-    @Json(name = "bot") BOT,
-    @Json(name = "groupbot") GROUPBOT
+enum class UserType(val type: String) {
+    GROUPBOT(GROUPBOT_),
+    BOT(BOT_),
+    USER(USER_);
+
+    companion object {
+        fun get(type: String?): UserType {
+            return when (type) {
+                GROUPBOT_ -> UserType.GROUPBOT
+                BOT_ -> UserType.BOT
+                USER_ -> UserType.USER
+                else -> UserType.USER
+            }
+        }
+    }
 }

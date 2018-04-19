@@ -19,20 +19,20 @@ package com.toshi.view.adapter.viewholder
 
 import android.support.v7.widget.RecyclerView
 import android.view.View
-import com.toshi.model.network.user.UserV2
+import com.toshi.model.local.User
 import com.toshi.util.ImageUtil
 import kotlinx.android.synthetic.main.list_item__popular_user.view.avatar
 import kotlinx.android.synthetic.main.list_item__popular_user.view.description
 import kotlinx.android.synthetic.main.list_item__popular_user.view.name
 
 class PopularBotViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
-    fun setBot(user: UserV2) {
-        itemView.name.text = user.getDisplayName()
-        itemView.description.text = user.getUsernameWithPrefix()
+    fun setBot(user: User) {
+        itemView.name.text = user.displayName
+        itemView.description.text = user.username
         ImageUtil.loadImageOrPlaceholder(itemView.avatar, user.avatar)
     }
 
-    fun setOnItemClickedListener(user: UserV2, listener: (UserV2) -> Unit) {
+    fun setOnItemClickedListener(user: User, listener: (User) -> Unit) {
         itemView.setOnClickListener { listener(user) }
     }
 }

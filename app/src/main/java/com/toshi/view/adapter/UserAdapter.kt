@@ -21,16 +21,16 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.toshi.R
-import com.toshi.model.network.user.UserV2
+import com.toshi.model.local.User
 import com.toshi.view.adapter.viewholder.UserViewHolder
 
 class UserAdapter(
-        val onItemClickListener: (UserV2) -> Unit
+        val onItemClickListener: (User) -> Unit
 ) : RecyclerView.Adapter<UserViewHolder>() {
 
-    private val users by lazy { mutableListOf<UserV2>() }
+    private val users by lazy { mutableListOf<User>() }
 
-    fun setUsers(users: List<UserV2>) {
+    fun setUsers(users: List<User>) {
         this.users.clear()
         this.users.addAll(users)
         notifyDataSetChanged()

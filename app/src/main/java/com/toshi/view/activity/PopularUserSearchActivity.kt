@@ -26,8 +26,8 @@ import com.toshi.extensions.getViewModel
 import com.toshi.extensions.isVisible
 import com.toshi.extensions.startActivity
 import com.toshi.extensions.toast
+import com.toshi.model.local.User
 import com.toshi.model.network.user.UserType
-import com.toshi.model.network.user.UserV2
 import com.toshi.view.activity.ChatSearchActivity.Companion.TYPE
 import com.toshi.view.activity.ChatSearchActivity.Companion.VIEW_PROFILE
 import com.toshi.view.adapter.CompoundAdapter
@@ -116,7 +116,7 @@ class PopularUserSearchActivity : AppCompatActivity() {
         startActivity<ViewPopularUsersActivity> { putExtra(ViewPopularUsersActivity.TYPE, userType) }
     }
 
-    private fun startProfileActivity(user: UserV2) {
+    private fun startProfileActivity(user: User) {
         startActivity<ViewUserActivity> { putExtra(ViewUserActivity.EXTRA__USER_ADDRESS, user.toshiId) }
     }
 

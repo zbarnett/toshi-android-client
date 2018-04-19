@@ -20,6 +20,9 @@ package com.toshi.model.local;
 
 import com.squareup.moshi.Json;
 import com.toshi.manager.ToshiManager;
+import com.toshi.model.network.user.UserType;
+
+import org.jetbrains.annotations.NotNull;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -35,13 +38,14 @@ public class User extends RealmObject {
     private Double reputation_score;
     private Double average_rating;
     private int review_count;
+    @Json(name = "description")
     private String about;
     private String avatar;
     private String location;
     private String name;
-    private boolean is_app;
     @Json(name = "public")
     private boolean is_public;
+    private String type;
 
     // ctors
     public User() {
@@ -110,8 +114,14 @@ public class User extends RealmObject {
         return review_count;
     }
 
-    public boolean isApp() {
-        return is_app;
+    @NotNull
+    public UserType getType() {
+        return type != null ? UserType.Companion.get(type) : UserType.USER;
+    }
+
+    public boolean isBot() {
+        final UserType userType = UserType.Companion.get(type);
+        return userType == UserType.BOT;
     }
 
     public boolean isPublic() {

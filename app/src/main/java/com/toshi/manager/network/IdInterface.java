@@ -23,9 +23,8 @@ import com.toshi.model.local.User;
 import com.toshi.model.network.SearchResult;
 import com.toshi.model.network.ServerTime;
 import com.toshi.model.network.UserDetails;
-import com.toshi.model.network.UserSearchSections;
 import com.toshi.model.network.UserSearchResults;
-import com.toshi.model.network.user.UserV2;
+import com.toshi.model.network.UserSearchSections;
 
 import java.util.List;
 
@@ -49,59 +48,71 @@ public interface IdInterface {
     Single<ServerTime> getTimestamp();
 
     @Headers("Cache-control: no-store")
-    @POST("/v1/user")
-    Single<User> registerUser(@Body UserDetails details,
-                              @Query("timestamp") long timestamp);
+    @POST("/v2/user")
+    Single<User> registerUser(
+            @Body UserDetails details,
+            @Query("timestamp") long timestamp
+    );
 
     // Works for username or toshiId
-    @GET("/v1/user/{id}")
-    Single<User> getUser(@Path("id") String userId);
-
-    @GET("/v1/search/user")
-    Single<SearchResult<User>> getUsers(@Query("toshi_id") List<String> userIds);
+    @GET("/v2/user/{id}")
+    Single<User> getUser(
+            @Path("id") String userId
+    );
 
     // Works for username or toshiId
     @Headers("Cache-control: no-cache")
-    @GET("/v1/user/{id}")
-    Single<User> forceGetUser(@Path("id") String userId);
+    @GET("/v2/user/{id}")
+    Single<User> forceGetUser(
+            @Path("id") String userId
+    );
+
+    @GET("/v2/search")
+    Single<SearchResult<User>> getUsers(
+            @Query("toshi_id") List<String> userIds
+    );
 
     @Headers("Cache-control: no-store")
-    @PUT("/v1/user/{id}")
-    Single<User> updateUser(@Path("id") String userId,
-                            @Body UserDetails details,
-                            @Query("timestamp") long timestamp);
+    @PUT("/v2/user/{id}")
+    Single<User> updateUser(
+            @Path("id") String userId,
+            @Body UserDetails details,
+            @Query("timestamp") long timestamp
+    );
 
-    @GET("/v1/search/user")
-    Single<UserSearchResults> searchByUsername(@Query("query") String username);
+    @GET("/v2/search")
+    Single<UserSearchResults> searchBy(
+            @Query("query") String query
+    );
 
-    @GET("/v1/search/user?apps=false")
-    Single<UserSearchResults> searchOnlyUsersByUsername(@Query("query") String username);
-
-    @GET("/v1/search/user")
-    Single<UserSearchResults> searchByPaymentAddress(@Query("payment_address") String paymentAddress);
+    @GET("/v2/search")
+    Single<UserSearchResults> searchBy(
+            @Query("type") String type,
+            @Query("query") String query
+    );
 
     @Headers("Cache-control: no-store")
     @GET("/v1/login/{id}")
-    Completable webLogin(@Path("id") String loginToken,
-                         @Query("timestamp") long timestamp);
+    Completable webLogin(
+            @Path("id") String loginToken,
+            @Query("timestamp") long timestamp
+    );
 
     @Multipart
-    @PUT("v1/user")
-    Single<User> uploadFile(@Part MultipartBody.Part file,
-                            @Query("timestamp") long timestamp);
+    @PUT("v2/user")
+    Single<User> uploadFile(
+            @Part MultipartBody.Part file,
+            @Query("timestamp") long timestamp
+    );
 
     @POST("v1/report")
-    Single<Void> reportUser(@Body Report report,
-                            @Query("timestamp") long timestamp);
+    Completable reportUser(
+            @Body Report report,
+            @Query("timestamp") long timestamp
+    );
 
-    @GET("v1/search/user")
-    Single<UserSearchResults> getUsers(@Query("public") boolean isPublic,
-                                       @Query("top") boolean isTopRated,
-                                       @Query("recent") boolean isRecent,
-                                       @Query("limit") int limit);
-
-    @GET("/v2/search/")
-    Single<SearchResult<UserV2>> search(
+    @GET("/v2/search")
+    Single<SearchResult<User>> search(
             @Query("type") String type,
             @Query("query") String query
     );

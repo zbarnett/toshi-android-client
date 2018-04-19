@@ -17,10 +17,10 @@
 
 package com.toshi.model.network
 
-import com.toshi.model.network.user.UserV2
+import com.toshi.model.local.User
 
 data class UserSection(
         val name: String?,
         val query: String?,
-        val results: List<UserV2> = emptyList()
+        val results: List<User> = emptyList()
 )

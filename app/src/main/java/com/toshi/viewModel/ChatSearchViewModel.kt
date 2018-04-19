@@ -21,9 +21,9 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import com.toshi.extensions.findTypeParamValue
 import com.toshi.manager.RecipientManager
+import com.toshi.model.local.User
 import com.toshi.model.network.SearchResult
 import com.toshi.model.network.user.UserType
-import com.toshi.model.network.user.UserV2
 import com.toshi.util.logging.LogUtil
 import com.toshi.view.BaseApplication
 import rx.Scheduler
@@ -41,9 +41,9 @@ class ChatSearchViewModel(
     private val subscriptions by lazy { CompositeSubscription() }
     private val querySubject by lazy { PublishSubject.create<Pair<String, UserType>>() }
 
-    val userSearchResults by lazy { MutableLiveData<List<UserV2>>() }
-    val botsSearchResults by lazy { MutableLiveData<List<UserV2>>() }
-    val groupSearchResults by lazy { MutableLiveData<List<UserV2>>() }
+    val userSearchResults by lazy { MutableLiveData<List<User>>() }
+    val botsSearchResults by lazy { MutableLiveData<List<User>>() }
+    val groupSearchResults by lazy { MutableLiveData<List<User>>() }
 
     init {
         subscribeForQueryChanges()
@@ -72,7 +72,7 @@ class ChatSearchViewModel(
         subscriptions.add(searchSub)
     }
 
-    private fun handleResponse(searchResult: SearchResult<UserV2>) {
+    private fun handleResponse(searchResult: SearchResult<User>) {
         val searchQuery = searchResult.query
         val result = searchResult.results
         val resultType = searchQuery.findTypeParamValue()
@@ -83,7 +83,7 @@ class ChatSearchViewModel(
         }
     }
 
-    private fun searchForUsers(query: String, type: UserType): Single<SearchResult<UserV2>> {
+    private fun searchForUsers(query: String, type: UserType): Single<SearchResult<User>> {
         return recipientManager
                 .searchForUsers(type = type.name.toLowerCase(), query = query)
     }

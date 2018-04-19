@@ -23,8 +23,8 @@ import android.support.v7.app.AppCompatActivity
 import com.toshi.R
 import com.toshi.extensions.getViewModel
 import com.toshi.extensions.startActivity
+import com.toshi.model.local.User
 import com.toshi.model.network.user.UserType
-import com.toshi.model.network.user.UserV2
 import com.toshi.util.KeyboardUtil
 import com.toshi.view.adapter.ChatSearchTabAdapter
 import com.toshi.view.adapter.listeners.TextChangedListener
@@ -81,7 +81,7 @@ class ChatSearchActivity : AppCompatActivity() {
         tabLayout.setupWithViewPager(viewPager)
     }
 
-    private fun handleUserClicked(user: UserV2) {
+    private fun handleUserClicked(user: User) {
         val viewType = getViewType()
         when (viewType) {
             CHAT -> startActivity<ChatActivity> { putExtra(ChatActivity.EXTRA__THREAD_ID, user.toshiId) }
@@ -143,7 +143,7 @@ class ChatSearchActivity : AppCompatActivity() {
         })
     }
 
-    private fun addSearchResult(users: List<UserV2>, type: UserType) {
+    private fun addSearchResult(users: List<User>, type: UserType) {
         val positionOfView = viewModel.getPositionFromType(type)
         val view = viewPager.findViewById<ChatSearchView>(positionOfView)
         view?.setUsers(users)

@@ -332,6 +332,18 @@ public class DbMigration implements RealmMigration {
 
             oldVersion++;
         }
+
+        if (oldVersion == 21) {
+            final RealmObjectSchema userSchema = schema.get("User");
+            if (userSchema.hasField("is_app")) {
+                userSchema.removeField("is_app");
+            }
+
+            if (!schema.contains("type")) {
+                userSchema.addField("type", String.class);
+            }
+            oldVersion++;
+        }
     }
 
     @Override

@@ -30,7 +30,7 @@ class RatingHandler(
 
     fun showRatingDialog(user: User) {
         if (user.toshiId == null) return
-        rateDialog = RateDialog.newInstance(user.isApp).apply {
+        rateDialog = RateDialog.newInstance(user.isBot).apply {
             onRateClicked = RateDialog.OnRateDialogClickListener(
                     { rating, reviewText -> onRateClicked(Review(rating, user.toshiId, reviewText)) }
             )

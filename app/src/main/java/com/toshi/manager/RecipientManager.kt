@@ -14,7 +14,7 @@ import com.toshi.model.local.User
 import com.toshi.model.network.SearchResult
 import com.toshi.model.network.ServerTime
 import com.toshi.model.network.UserSection
-import com.toshi.model.network.user.UserV2
+import com.toshi.model.network.user.UserType
 import com.toshi.util.logging.LogUtil
 import com.toshi.view.BaseApplication
 import rx.Completable
@@ -107,7 +107,7 @@ class RecipientManager(
 
     private fun fetchAndCacheFromNetworkByPaymentAddress(paymentAddress: String): Observable<User> {
         return idService
-                .searchByPaymentAddress(paymentAddress)
+                .searchBy(paymentAddress)
                 .toObservable()
                 .filter { it.results.size > 0 }
                 .map { it.results[0] }
@@ -124,16 +124,9 @@ class RecipientManager(
                 )
     }
 
-    fun searchOnlineUsersAndApps(query: String): Single<List<User>> {
-        return idService
-                .searchByUsername(query)
-                .subscribeOn(scheduler)
-                .map { it.results }
-    }
-
     fun searchOnlineUsers(query: String): Single<List<User>> {
         return idService
-                .searchOnlyUsersByUsername(query)
+                .searchBy(UserType.USER.name.toLowerCase(), query)
                 .subscribeOn(scheduler)
                 .map { it.results }
     }
@@ -160,12 +153,11 @@ class RecipientManager(
 
     fun reportUser(report: Report): Completable {
         return getTimestamp()
-                .flatMap { idService.reportUser(report, it.get()) }
+                .flatMapCompletable { idService.reportUser(report, it.get()) }
                 .subscribeOn(scheduler)
-                .toCompletable()
     }
 
-    fun searchForUsers(type: String, query: String? = null): Single<SearchResult<UserV2>> {
+    fun searchForUsers(type: String, query: String? = null): Single<SearchResult<User>> {
         return idService
                 .search(type, query)
                 .subscribeOn(scheduler)

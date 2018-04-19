@@ -22,7 +22,7 @@ public class OnboardingManager {
         if (AppPrefs.INSTANCE.hasOnboarded()) return Completable.complete();
 
         return IdService.getApi()
-                .searchByUsername(getOnboardingBotName())
+                .searchBy(getOnboardingBotName())
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .map(UserSearchResults::getResults)

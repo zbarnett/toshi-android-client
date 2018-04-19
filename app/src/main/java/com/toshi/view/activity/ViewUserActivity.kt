@@ -168,8 +168,8 @@ class ViewUserActivity : AppCompatActivity() {
     }
 
     private fun updateUi(user: User) {
-        pay.isVisible(!user.isApp)
-        rate.text = getString(if (user.isApp) R.string.rate_bot else R.string.rate_this_user)
+        pay.isVisible(!user.isBot)
+        rate.text = getString(if (user.isBot) R.string.rate_bot else R.string.rate_this_user)
         toolbar.title = user.displayName
         username.text = user.username
         updateAboutText(user)
@@ -179,11 +179,11 @@ class ViewUserActivity : AppCompatActivity() {
 
     private fun updateAboutText(user: User) {
         location.text = user.location
-        val aboutView = if (user.isApp) aboutBot else aboutUser
+        val aboutView = if (user.isBot) aboutBot else aboutUser
         aboutView.text = user.about
         val hasAboutContent = (user.about?.length ?: -1) > 0
         val hasLocationContent = (user.location?.length ?: -1) > 0
-        setAboutViewVisibility(user.isApp, hasAboutContent, hasLocationContent)
+        setAboutViewVisibility(user.isBot, hasAboutContent, hasLocationContent)
     }
 
     private fun setAboutViewVisibility(isApp: Boolean, hasAbout: Boolean, hasLocation: Boolean) {

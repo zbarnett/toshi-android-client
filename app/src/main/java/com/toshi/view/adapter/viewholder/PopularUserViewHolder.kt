@@ -19,20 +19,20 @@ package com.toshi.view.adapter.viewholder
 
 import android.support.v7.widget.RecyclerView
 import android.view.View
-import com.toshi.model.network.user.UserV2
+import com.toshi.model.local.User
 import com.toshi.util.ImageUtil
 import kotlinx.android.synthetic.main.list_item__popular_user.view.avatar
 import kotlinx.android.synthetic.main.list_item__popular_user.view.description
 import kotlinx.android.synthetic.main.list_item__popular_user.view.name
 
 class PopularUserViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
-    fun setUser(user: UserV2) {
-        itemView.name.text = user.getDisplayName()
-        itemView.description.text = user.description
+    fun setUser(user: User) {
+        itemView.name.text = user.displayName
+        itemView.description.text = user.about
         ImageUtil.load(user.avatar, itemView.avatar)
     }
 
-    fun setOnItemClickListener(onItemClickListener: (UserV2) -> Unit, user: UserV2) {
+    fun setOnItemClickListener(onItemClickListener: (User) -> Unit, user: User) {
         itemView.setOnClickListener { onItemClickListener(user) }
     }
 }

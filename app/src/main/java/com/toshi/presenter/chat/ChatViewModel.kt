@@ -212,7 +212,7 @@ class ChatViewModel(private val threadId: String) : ViewModel() {
     }
 
     private fun tryInitAppConversation(recipient: Recipient) {
-        if (recipient.isGroup || !recipient.user.isApp) return
+        if (recipient.isGroup || !recipient.user.isBot) return
         val localUser = getCurrentLocalUser() ?: return
         sofaMessageManager.sendInitMessage(localUser, recipient)
     }

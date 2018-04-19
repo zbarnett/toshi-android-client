@@ -21,9 +21,9 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import com.toshi.R
 import com.toshi.manager.RecipientManager
+import com.toshi.model.local.User
 import com.toshi.model.network.UserSection
 import com.toshi.model.network.user.UserType
-import com.toshi.model.network.user.UserV2
 import com.toshi.util.SingleLiveEvent
 import com.toshi.view.BaseApplication
 import rx.android.schedulers.AndroidSchedulers
@@ -35,9 +35,9 @@ class PopularSearchViewModel(
 
     private val subscriptions by lazy { CompositeSubscription() }
 
-    val popularBots by lazy { MutableLiveData<List<UserV2>>() }
-    val popularGroups by lazy { MutableLiveData<List<UserV2>>() }
-    val popularUsers by lazy { MutableLiveData<List<UserV2>>() }
+    val popularBots by lazy { MutableLiveData<List<User>>() }
+    val popularGroups by lazy { MutableLiveData<List<User>>() }
+    val popularUsers by lazy { MutableLiveData<List<User>>() }
     val error by lazy { SingleLiveEvent<Int>() }
     val isLoading by lazy { MutableLiveData<Boolean>() }
 
@@ -60,16 +60,16 @@ class PopularSearchViewModel(
         subscriptions.add(sub)
     }
 
-    private fun handleResult(userLists: List<List<UserV2>>) {
+    private fun handleResult(userLists: List<List<User>>) {
         popularBots.value = userLists[0]
         popularGroups.value = userLists[1]
         popularUsers.value = userLists[2]
     }
 
-    private fun breakResultIntoLists(sections: List<UserSection>): List<List<UserV2>> {
-        val bots by lazy { mutableListOf<UserV2>() }
-        val groups by lazy { mutableListOf<UserV2>() }
-        val users by lazy { mutableListOf<UserV2>() }
+    private fun breakResultIntoLists(sections: List<UserSection>): List<List<User>> {
+        val bots by lazy { mutableListOf<User>() }
+        val groups by lazy { mutableListOf<User>() }
+        val users by lazy { mutableListOf<User>() }
 
         sections
                 .flatMap { it.results }

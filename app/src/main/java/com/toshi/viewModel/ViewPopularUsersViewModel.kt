@@ -21,8 +21,8 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import com.toshi.R
 import com.toshi.manager.RecipientManager
+import com.toshi.model.local.User
 import com.toshi.model.network.user.UserType
-import com.toshi.model.network.user.UserV2
 import com.toshi.util.SingleLiveEvent
 import com.toshi.view.BaseApplication
 import rx.android.schedulers.AndroidSchedulers
@@ -35,7 +35,7 @@ class ViewPopularUsersViewModel(
 
     private val subscriptions by lazy { CompositeSubscription() }
 
-    val popularUsers by lazy { MutableLiveData<List<UserV2>>() }
+    val popularUsers by lazy { MutableLiveData<List<User>>() }
     val error by lazy { SingleLiveEvent<Int>() }
     val isLoading by lazy { MutableLiveData<Boolean>() }
 
