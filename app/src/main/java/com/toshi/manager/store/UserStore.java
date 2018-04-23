@@ -21,6 +21,7 @@ package com.toshi.manager.store;
 import com.toshi.model.local.User;
 import com.toshi.view.BaseApplication;
 
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -44,6 +45,17 @@ public class UserStore {
     public Single<User> loadForUsername(final String username) {
         return loadWhere("username", username);
 
+    }
+
+    public Completable saveUsers(final List<User> users) {
+        return Completable.fromAction(() -> {
+            final Realm realm = BaseApplication.get().getRealm();
+            realm.beginTransaction();
+            realm.insertOrUpdate(users);
+            realm.commitTransaction();
+            realm.close();
+        })
+        .subscribeOn(Schedulers.from(dbThread));
     }
 
     public Completable save(final User user) {

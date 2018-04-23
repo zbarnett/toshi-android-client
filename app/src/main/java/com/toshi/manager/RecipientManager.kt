@@ -161,6 +161,7 @@ class RecipientManager(
     fun searchForUsersWithType(type: String, query: String? = null): Single<SearchResult<User>> {
         return idService
                 .search(type, query)
+                .doOnSuccess { cacheUsers(it.results) }
                 .subscribeOn(scheduler)
     }
 
@@ -168,6 +169,7 @@ class RecipientManager(
         val queryMap = query.getQueryMap()
         return idService
                 .search(queryMap)
+                .doOnSuccess { cacheUsers(it.results) }
                 .subscribeOn(scheduler)
     }
 
@@ -175,7 +177,16 @@ class RecipientManager(
         return idService
                 .getPopularSearches()
                 .map { it.sections }
+                .doOnSuccess { it.forEach { cacheUsers(it.results) } }
                 .subscribeOn(scheduler)
+    }
+
+    private fun cacheUsers(users: List<User>) {
+        userStore.saveUsers(users)
+                .subscribe(
+                        { },
+                        { LogUtil.exception("Error while saving users to db", it) }
+                )
     }
 
     fun getTimestamp(): Single<ServerTime> = idService.timestamp
