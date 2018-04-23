@@ -23,6 +23,7 @@ import com.toshi.manager.ToshiManager;
 import com.toshi.model.network.user.UserType;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -78,6 +79,7 @@ public class User extends RealmObject {
         return payment_address;
     }
 
+    @Nullable
     public String getAbout() {
         return this.about;
     }

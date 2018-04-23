@@ -35,7 +35,6 @@ import com.toshi.view.activity.ViewPopularUsersActivity.Companion.SEARCH_QUERY
 import com.toshi.view.activity.ViewPopularUsersActivity.Companion.TITLE
 import com.toshi.view.adapter.CompoundAdapter
 import com.toshi.view.adapter.ListSectionAdapter
-import com.toshi.view.adapter.PopularBotsAdapter
 import com.toshi.view.adapter.PopularUsersAdapter
 import com.toshi.viewModel.PopularSearchViewModel
 import kotlinx.android.synthetic.main.activity_popular_user_search.closeButton
@@ -50,7 +49,7 @@ class PopularUserSearchActivity : AppCompatActivity() {
     private lateinit var compoundAdapter: CompoundAdapter
 
     private lateinit var groupsAdapter: PopularUsersAdapter
-    private lateinit var botsAdapter: PopularBotsAdapter
+    private lateinit var botsAdapter: PopularUsersAdapter
     private lateinit var usersAdapter: PopularUsersAdapter
 
     private lateinit var groupSectionAdapter: ListSectionAdapter
@@ -92,7 +91,7 @@ class PopularUserSearchActivity : AppCompatActivity() {
                 onSectionClickedListener = { startViewPopularUsersActivity(UserType.BOT) }
         )
 
-        botsAdapter = PopularBotsAdapter { startProfileActivity(it) }
+        botsAdapter = PopularUsersAdapter { startProfileActivity(it) }
 
         userSectionAdapter = ListSectionAdapter(
                 clickableString = getString(R.string.see_more),
@@ -154,7 +153,7 @@ class PopularUserSearchActivity : AppCompatActivity() {
         })
 
         viewModel.bots.observe(this, Observer {
-            if (it != null) addGroupSection(it)
+            if (it != null) addSection(botSectionAdapter, botsAdapter, it)
         })
 
         viewModel.users.observe(this, Observer {
@@ -172,10 +171,5 @@ class PopularUserSearchActivity : AppCompatActivity() {
     private fun addSection(sectionAdapter: ListSectionAdapter, adapter: PopularUsersAdapter, userSection: UserSection) {
         sectionAdapter.setItemList(listOf(userSection.name.orEmpty()))
         adapter.setItemList(userSection.results)
-    }
-
-    private fun addGroupSection(section: UserSection) {
-        botSectionAdapter.setItemList(listOf(section.name.orEmpty()))
-        botsAdapter.setItemList(section.results)
     }
 }

@@ -32,7 +32,7 @@
         android:layout_width="@dimen/avatar_size_small"
         android:layout_height="@dimen/avatar_size_small"
         android:layout_marginLeft="@dimen/margin_primary"
-        android:layout_marginStart="@dimen/margin_three_quarters"
+        android:layout_marginStart="@dimen/margin_primary"
         app:layout_constraintBottom_toTopOf="@+id/divider"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
