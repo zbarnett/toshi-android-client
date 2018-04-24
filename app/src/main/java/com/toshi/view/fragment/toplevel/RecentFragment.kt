@@ -159,7 +159,7 @@ class RecentFragment : TopLevelFragment() {
 
     private fun handleAcceptedConversation(updatedConversation: Conversation) {
         conversationRequestsAdapter.removeConversation(updatedConversation)
-        conversationAdapter.addItem(updatedConversation)
+        conversationAdapter.addOrUpdateItem(updatedConversation)
     }
 
     private fun handleUpdatedUnacceptedConversation(updatedConversation: Conversation) {

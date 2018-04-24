@@ -86,6 +86,22 @@ abstract class BaseCompoundableAdapter<VH : RecyclerView.ViewHolder, T> : Recycl
         notifyDataSetChanged()
     }
 
+    fun addOrUpdateItem(item: T) {
+        mutateItems { addOrUpdateItem(it, item) }
+        parent?.notifyDataSetChanged(this)
+        notifyDataSetChanged()
+    }
+
+    private fun addOrUpdateItem(list: MutableList<T>, item: T) {
+        val containsItem = list.contains(item)
+        if (containsItem) {
+            val indexOfItem = list.indexOf(item)
+            list[indexOfItem] = item
+        } else {
+            list.add(item)
+        }
+    }
+
     fun insertItem(item: T, index: Int) {
         mutateItems { it.add(index, item) }
         parent?.notifyItemInserted(this, index)
