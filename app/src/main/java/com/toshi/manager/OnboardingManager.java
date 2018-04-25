@@ -21,7 +21,9 @@ public class OnboardingManager {
     public Completable tryTriggerOnboarding() {
         if (AppPrefs.INSTANCE.hasOnboarded()) return Completable.complete();
 
-        return IdService.getApi()
+        return IdService
+                .get()
+                .getApi()
                 .searchBy(getOnboardingBotName())
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())

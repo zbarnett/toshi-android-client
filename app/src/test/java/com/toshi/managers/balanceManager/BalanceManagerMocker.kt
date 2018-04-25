@@ -17,27 +17,27 @@
 
 package com.toshi.managers.balanceManager
 
-import android.content.SharedPreferences
-import com.toshi.crypto.HDWallet
 import com.toshi.manager.BalanceManager
 import com.toshi.manager.ethRegistration.EthGcmRegistration
 import com.toshi.manager.network.CurrencyInterface
 import com.toshi.manager.network.EthereumInterface
+import com.toshi.managers.baseApplication.BaseApplicationMocker
+import com.toshi.mockWallet
 import com.toshi.model.local.network.Network
 import com.toshi.model.local.network.Networks
 import com.toshi.model.network.ExchangeRate
 import com.toshi.util.sharedPrefs.AppPrefsInterface
 import com.toshi.util.sharedPrefs.BalancePrefsInterface
 import com.toshi.util.sharedPrefs.EthGcmPrefsInterface
-import com.toshi.view.BaseApplication
 import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers.anyString
 import org.mockito.Mockito
 import rx.Single
 import rx.schedulers.Schedulers
-import rx.subjects.BehaviorSubject
+import java.math.BigDecimal
 
 class BalanceManagerMocker(
-        val exchangeRate: ExchangeRate,
+        val exchangeRate: ExchangeRate = ExchangeRate("ETH", "USD", BigDecimal(500), 0),
         val testTokenBuilder: TestTokenBuilder = TestTokenBuilder(),
         val lastKnownBalance: String = "0x0",
         val localCurrency: String = "USD"
@@ -45,6 +45,16 @@ class BalanceManagerMocker(
 
     private val masterSeed = "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about"
     private val network = Network("116", "Toshi Internal Test Network", "https://ethereum.internal.service.toshi.org")
+
+    fun mockWithWalletInit(): BalanceManager {
+        val balanceManager = mock()
+        val wallet = mockWallet(masterSeed)
+                .existingWallet
+                .toBlocking()
+                .value()
+        balanceManager.init(wallet).await()
+        return balanceManager
+    }
 
     fun mock(): BalanceManager {
         val ethApi = createEthApiMock()
@@ -55,7 +65,7 @@ class BalanceManagerMocker(
         val ethGcmRegistration = createEthGcmRegistration(appPrefs, gcmPrefs, ethApi)
         val baseApplication = createMockBaseApplication()
 
-        val balanceManager = BalanceManager(
+        return BalanceManager(
                 ethService = ethApi,
                 currencyService = currencyApi,
                 appPrefs = appPrefs,
@@ -64,36 +74,21 @@ class BalanceManagerMocker(
                 baseApplication = baseApplication,
                 scheduler = Schedulers.trampoline()
         )
-
-        val wallet = mockWallet()
-        balanceManager.init(wallet).await()
-        return balanceManager
-    }
-
-    private fun mockWallet(): HDWallet {
-        val sharedPreferencesMock = Mockito.mock(SharedPreferences::class.java)
-        Mockito
-                .`when`(sharedPreferencesMock.getString(ArgumentMatchers.anyString(), ArgumentMatchers.any()))
-                .thenReturn(masterSeed)
-        return HDWallet(sharedPreferencesMock)
-                .getExistingWallet()
-                .toBlocking()
-                .value()
     }
 
     private fun createEthApiMock(): EthereumInterface {
         val ethApi = Mockito.mock(EthereumInterface::class.java)
         Mockito
-                .`when`(ethApi.getTokens(ArgumentMatchers.anyString()))
+                .`when`(ethApi.getTokens(anyString()))
                 .thenReturn(Single.just(testTokenBuilder.createERC20TokenList()))
         Mockito
-                .`when`(ethApi.getToken(ArgumentMatchers.anyString(), ArgumentMatchers.anyString()))
+                .`when`(ethApi.getToken(anyString(), anyString()))
                 .thenReturn(Single.just(testTokenBuilder.createERC20Token()))
         Mockito
-                .`when`(ethApi.getCollectibles(ArgumentMatchers.anyString()))
+                .`when`(ethApi.getCollectibles(anyString()))
                 .thenReturn(Single.just(testTokenBuilder.createERC721TokenList()))
         Mockito
-                .`when`(ethApi.getCollectible(ArgumentMatchers.anyString(), ArgumentMatchers.anyString()))
+                .`when`(ethApi.getCollectible(anyString(), anyString()))
                 .thenReturn(Single.just(testTokenBuilder.createERC721Token()))
         return ethApi
     }
@@ -140,14 +135,7 @@ class BalanceManagerMocker(
         )
     }
 
-    private fun createMockBaseApplication(): BaseApplication {
-        val baseApplication = Mockito.mock(BaseApplication::class.java)
-        val subject = BehaviorSubject.create<Boolean>()
-        subject.onNext(true)
-        Mockito.`when`(baseApplication.isConnectedSubject)
-                .thenReturn(subject)
-        return baseApplication
-    }
+    private fun createMockBaseApplication() = BaseApplicationMocker().mock()
 
     private fun createMockedNetworks(): Networks {
         val networks = Mockito.mock(Networks::class.java)

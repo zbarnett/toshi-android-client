@@ -18,6 +18,8 @@
 package com.toshi.manager.network;
 
 
+import android.content.Context;
+
 import com.squareup.moshi.Moshi;
 import com.toshi.manager.network.interceptor.LoggingInterceptor;
 import com.toshi.manager.network.interceptor.OfflineCacheInterceptor;
@@ -47,8 +49,8 @@ public class IdService {
     private final OkHttpClient.Builder client;
     private final Cache cache;
 
-    public static IdInterface getApi() {
-        return get().idInterface;
+    public IdInterface getApi() {
+        return idInterface;
     }
 
     public static IdService get() {
@@ -65,45 +67,55 @@ public class IdService {
         return instance;
     }
 
+    public IdService(final IdInterface idInterface, final Context context) {
+        this.cache = buildCache(context);
+        this.client = buildClient(cache);
+        this.idInterface = idInterface;
+    }
+
     private IdService() {
-        final RxJavaCallAdapterFactory rxAdapter = RxJavaCallAdapterFactory.createWithScheduler(Schedulers.io());
-        final File cachePath = new File(BaseApplication.get().getCacheDir(), "idCache");
-        this.cache = new Cache(cachePath, 1024 * 1024 * 2);
-        this.client = new OkHttpClient
+        this.cache = buildCache(BaseApplication.get());
+        this.client = buildClient(cache);
+        final Retrofit retrofit = buildRetrofit(client);
+        this.idInterface = retrofit.create(IdInterface.class);
+    }
+
+    private OkHttpClient.Builder buildClient(final Cache cache) {
+        final OkHttpClient.Builder clientBuilder = new OkHttpClient
                 .Builder()
-                .cache(this.cache)
+                .cache(cache)
                 .addNetworkInterceptor(new ReadFromCacheInterceptor())
-                .addInterceptor(new OfflineCacheInterceptor());
+                .addInterceptor(new OfflineCacheInterceptor())
+                .addInterceptor(new AppInfoUserAgentInterceptor())
+                .addInterceptor(new SigningInterceptor());
 
-        addUserAgentHeader();
-        addSigningInterceptor();
-        addLogging();
+        addLogging(clientBuilder);
+        return clientBuilder;
+    }
 
+    private Cache buildCache(final Context context) {
+        final File cachePath = new File(context.getCacheDir(), "idCache");
+        return new Cache(cachePath, 1024 * 1024 * 2);
+    }
+
+    private void addLogging(final OkHttpClient.Builder builder) {
+        final HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor(new LoggingInterceptor());
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        builder.addInterceptor(interceptor);
+    }
+
+    private Retrofit buildRetrofit(final OkHttpClient.Builder clientBuilder) {
         final Moshi moshi = new Moshi.Builder()
                 .add(new RealmListAdapter())
                 .build();
 
-        final Retrofit retrofit = new Retrofit.Builder()
+        final RxJavaCallAdapterFactory rxAdapter = RxJavaCallAdapterFactory.createWithScheduler(Schedulers.io());
+        return new Retrofit.Builder()
                 .baseUrl(BaseApplication.get().getResources().getString(R.string.id_url))
                 .addConverterFactory(MoshiConverterFactory.create(moshi))
                 .addCallAdapterFactory(rxAdapter)
-                .client(client.build())
+                .client(clientBuilder.build())
                 .build();
-        this.idInterface = retrofit.create(IdInterface.class);
-    }
-
-    private void addUserAgentHeader() {
-        this.client.addInterceptor(new AppInfoUserAgentInterceptor());
-    }
-
-    private void addSigningInterceptor() {
-        this.client.addInterceptor(new SigningInterceptor());
-    }
-
-    private void addLogging() {
-        final HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor(new LoggingInterceptor());
-        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-        this.client.addInterceptor(interceptor);
     }
 
     public void clearCache() throws IOException {

@@ -58,6 +58,6 @@ class EthereumSignedMessage(private val id: String, private val personalMessage:
         return BaseApplication
                 .get()
                 .toshiManager
-                .wallet
+                .getWallet()
     }
 }

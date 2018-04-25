@@ -18,39 +18,26 @@
 package com.toshi.managers.userManager
 
 import com.toshi.manager.UserManager
-import com.toshi.manager.network.IdInterface
-import com.toshi.model.network.ServerTime
+import com.toshi.managers.recipientManager.RecipientManagerMocker
 import com.toshi.testSharedPrefs.TestUserPrefs
-import com.toshi.util.sharedPrefs.UserPrefsInterface
 import junit.framework.Assert.assertNull
 import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Mockito
-import rx.Single
-import rx.schedulers.Schedulers
 
 class UserManagerTests {
 
-    private lateinit var userPrefs: UserPrefsInterface
+    private lateinit var userPrefs: TestUserPrefs
     private lateinit var userManager: UserManager
 
     @Before
     fun before() {
         userPrefs = TestUserPrefs()
-        userManager = UserManager(
-                idService = mockIdApi(),
+        userManager = UserManagerMocker().mock(
                 userPrefs = userPrefs,
-                scheduler = Schedulers.trampoline()
+                recipientManager = RecipientManagerMocker().mock()
         )
-    }
-
-    private fun mockIdApi(): IdInterface {
-        val userApi = Mockito.mock(IdInterface::class.java)
-        Mockito.`when`(userApi.timestamp)
-                .thenReturn(Single.just(ServerTime(1L)))
-        return userApi
     }
 
     @Test

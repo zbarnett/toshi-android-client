@@ -40,7 +40,7 @@ class WalletViewModel : ViewModel() {
 
     private fun getWalletAddress() {
         val sub = toshiManager
-                .wallet
+                .getWallet()
                 .toObservable()
                 .filter { wallet -> wallet != null }
                 .toSingle()

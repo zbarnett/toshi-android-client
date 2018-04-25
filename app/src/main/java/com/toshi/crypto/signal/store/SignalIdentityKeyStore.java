@@ -17,9 +17,9 @@
 
 package com.toshi.crypto.signal.store;
 
-import com.toshi.crypto.signal.SignalPreferences;
 import com.toshi.crypto.signal.model.SignalIdentity;
 import com.toshi.util.logging.LogUtil;
+import com.toshi.util.sharedPrefs.SignalPrefs;
 import com.toshi.view.BaseApplication;
 
 import org.whispersystems.libsignal.IdentityKey;
@@ -35,7 +35,7 @@ public class SignalIdentityKeyStore implements IdentityKeyStore {
     @Override
     public IdentityKeyPair getIdentityKeyPair() {
         try {
-            final byte[] serializedKey = SignalPreferences.getSerializedIdentityKeyPair();
+            final byte[] serializedKey = SignalPrefs.INSTANCE.getSerializedIdentityKeyPair();
             if (serializedKey == null) {
                 return null;
             }
@@ -48,7 +48,7 @@ public class SignalIdentityKeyStore implements IdentityKeyStore {
 
     @Override
     public int getLocalRegistrationId() {
-        return SignalPreferences.getLocalRegistrationId();
+        return SignalPrefs.INSTANCE.getLocalRegistrationId();
     }
 
     @Override

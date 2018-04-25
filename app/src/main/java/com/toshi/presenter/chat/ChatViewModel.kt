@@ -232,7 +232,7 @@ class ChatViewModel(private val threadId: String) : ViewModel() {
 
     fun sendPaymentRequestWithValue(value: String) {
         val sub = toshiManager
-                .wallet
+                .getWallet()
                 .flatMap { generateLocalPrice(value, it.paymentAddress) }
                 .subscribeOn(Schedulers.io())
                 .subscribe(

@@ -1,12 +1,11 @@
 package com.toshi.crypto
 
-import android.content.SharedPreferences
+import android.content.Context
+import com.toshi.testSharedPrefs.TestWalletPrefs
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
 import org.junit.Test
-import org.mockito.ArgumentMatchers.any
-import org.mockito.ArgumentMatchers.anyString
 import org.mockito.Mockito
 
 class HDWalletTest {
@@ -19,40 +18,40 @@ class HDWalletTest {
     private val expectedPaymentAddress = "0x9858effd232b4033e47d90003d41ec34ecaeda94"
 
     // Mocks
-    private lateinit var sharedPreferencesMock: SharedPreferences
+    private lateinit var walletPrefs: TestWalletPrefs
+    private lateinit var context: Context
 
     @Before
     fun setup() {
-        sharedPreferencesMock = Mockito.mock(SharedPreferences::class.java)
-        Mockito
-                .`when`(sharedPreferencesMock.getString(anyString(), any()))
-                .thenReturn(expectedMasterSeed)
+        walletPrefs = TestWalletPrefs()
+        walletPrefs.setMasterSeed(expectedMasterSeed)
+        context = Mockito.mock(Context::class.java)
     }
 
     @Test
     fun walletCreatedFromSeedUsesThatSeed() {
-        val wallet = HDWallet(sharedPreferencesMock)
+        val wallet = HDWallet(walletPrefs, context)
                 .existingWallet
                 .toBlocking()
                 .value()
-        assertThat<String>(wallet.masterSeed, `is`<String>(expectedMasterSeed))
+        assertThat(wallet.masterSeed, `is`(expectedMasterSeed))
     }
 
     @Test
     fun walletCreatedFromSeedDerivesCorrectOwnerAddress() {
-        val wallet = HDWallet(sharedPreferencesMock)
+        val wallet = HDWallet(walletPrefs, context)
                 .existingWallet
                 .toBlocking()
                 .value()
-        assertThat<String>(wallet.ownerAddress, `is`<String>(expectedOwnerAddress))
+        assertThat(wallet.ownerAddress, `is`(expectedOwnerAddress))
     }
 
     @Test
     fun walletCreatedFromSeedDerivesCorrectPaymentAddress() {
-        val wallet = HDWallet(sharedPreferencesMock)
+        val wallet = HDWallet(walletPrefs, context)
                 .existingWallet
                 .toBlocking()
                 .value()
-        assertThat<String>(wallet.paymentAddress, `is`<String>(expectedPaymentAddress))
+        assertThat(wallet.paymentAddress, `is`(expectedPaymentAddress))
     }
 }

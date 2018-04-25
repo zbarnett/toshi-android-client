@@ -27,6 +27,7 @@ import android.widget.Toast;
 import com.google.common.base.Joiner;
 import com.toshi.R;
 import com.toshi.crypto.HDWallet;
+import com.toshi.crypto.HdWalletBuilder;
 import com.toshi.util.KeyboardUtil;
 import com.toshi.util.logging.LogUtil;
 import com.toshi.util.sharedPrefs.AppPrefs;
@@ -151,7 +152,7 @@ public class SignInPresenter implements Presenter<SignInActivity> {
         startLoadingTask();
 
         final Subscription sub =
-                new HDWallet()
+                new HdWalletBuilder()
                 .createFromMasterSeed(masterSeed)
                 .flatMapCompletable(this::initWallet)
                 .subscribeOn(Schedulers.io())

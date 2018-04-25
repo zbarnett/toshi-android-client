@@ -163,7 +163,7 @@ class PaymentConfirmationViewModel : ViewModel() {
 
     private fun getPaymentTaskWithToshiId(toshiId: String, ethAmount: String) {
         val sub = Single.zip(
-                toshiManager.wallet,
+                toshiManager.getWallet(),
                 recipientManager.getUserFromToshiId(toshiId),
                 { wallet, recipient -> Pair(wallet, recipient) }
         )
@@ -185,7 +185,7 @@ class PaymentConfirmationViewModel : ViewModel() {
                                                tokenDecimals: Int,
                                                toPaymentAddress: String,
                                                ethAmount: String) {
-        val sub = toshiManager.wallet
+        val sub = toshiManager.getWallet()
                 .flatMap { getPaymentTask(it.paymentAddress, toPaymentAddress, ethAmount, tokenAddress, tokenSymbol, tokenDecimals) }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -199,7 +199,7 @@ class PaymentConfirmationViewModel : ViewModel() {
     }
 
     private fun getPaymentTaskWithPaymentAddress(toPaymentAddress: String, ethAmount: String) {
-        val sub = toshiManager.wallet
+        val sub = toshiManager.getWallet()
                 .flatMap { getPaymentTask(it.paymentAddress, toPaymentAddress, ethAmount, isSendingMaxAmount()) }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

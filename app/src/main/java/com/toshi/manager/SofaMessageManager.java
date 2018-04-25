@@ -22,7 +22,6 @@ import com.toshi.BuildConfig;
 import com.toshi.R;
 import com.toshi.crypto.HDWallet;
 import com.toshi.crypto.signal.ChatService;
-import com.toshi.crypto.signal.SignalPreferences;
 import com.toshi.crypto.signal.store.ProtocolStore;
 import com.toshi.crypto.signal.store.SignalTrustStore;
 import com.toshi.manager.chat.SofaMessageReceiver;
@@ -43,6 +42,7 @@ import com.toshi.model.sofa.SofaAdapters;
 import com.toshi.model.sofa.SofaMessage;
 import com.toshi.util.LocaleUtil;
 import com.toshi.util.logging.LogUtil;
+import com.toshi.util.sharedPrefs.SignalPrefs;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.notification.ChatNotificationManager;
 
@@ -178,7 +178,7 @@ public final class SofaMessageManager {
     }
 
     private boolean haveRegisteredWithServer() {
-        return SignalPreferences.getRegisteredWithServer();
+        return SignalPrefs.INSTANCE.getRegisteredWithServer();
     }
 
     public final void disconnect() {

@@ -2,7 +2,6 @@ package com.toshi.manager
 
 import com.toshi.extensions.getQueryMap
 import com.toshi.extensions.isGroupId
-import com.toshi.manager.network.IdInterface
 import com.toshi.manager.network.IdService
 import com.toshi.manager.store.BlockedUserStore
 import com.toshi.manager.store.GroupStore
@@ -26,7 +25,7 @@ import rx.schedulers.Schedulers
 import java.io.IOException
 
 class RecipientManager(
-        private val idService: IdInterface = IdService.getApi(),
+        private val idService: IdService = IdService.get(),
         private val groupStore: GroupStore = GroupStore(),
         private val userStore: UserStore = UserStore(),
         private val blockedUserStore: BlockedUserStore = BlockedUserStore(),
@@ -94,6 +93,7 @@ class RecipientManager(
 
     private fun fetchAndCacheFromNetworkByToshiId(userAddress: String): Single<User> {
         return idService
+                .api
                 .getUser(userAddress)
                 .subscribeOn(scheduler)
                 .doOnSuccess { cacheUser(it) }
@@ -101,6 +101,7 @@ class RecipientManager(
 
     fun fetchUsersFromToshiIds(userIds: List<String>): Single<List<User>> {
         return idService
+                .api
                 .getUsers(userIds)
                 .map { it.results }
                 .subscribeOn(scheduler)
@@ -108,6 +109,7 @@ class RecipientManager(
 
     private fun fetchAndCacheFromNetworkByPaymentAddress(paymentAddress: String): Observable<User> {
         return idService
+                .api
                 .searchByPaymentAddress(paymentAddress)
                 .toObservable()
                 .filter { it.results.size > 0 }
@@ -127,6 +129,7 @@ class RecipientManager(
 
     fun searchOnlineUsers(query: String): Single<List<User>> {
         return idService
+                .api
                 .searchBy(UserType.USER.name.toLowerCase(), query)
                 .subscribeOn(scheduler)
                 .map { it.results }
@@ -154,12 +157,13 @@ class RecipientManager(
 
     fun reportUser(report: Report): Completable {
         return getTimestamp()
-                .flatMapCompletable { idService.reportUser(report, it.get()) }
+                .flatMapCompletable { idService.api.reportUser(report, it.get()) }
                 .subscribeOn(scheduler)
     }
 
     fun searchForUsersWithType(type: String, query: String? = null): Single<SearchResult<User>> {
         return idService
+                .api
                 .search(type, query)
                 .doOnSuccess { cacheUsers(it.results) }
                 .subscribeOn(scheduler)
@@ -168,6 +172,7 @@ class RecipientManager(
     fun searchForUsersWithQuery(query: String): Single<SearchResult<User>> {
         val queryMap = query.getQueryMap()
         return idService
+                .api
                 .search(queryMap)
                 .doOnSuccess { cacheUsers(it.results) }
                 .subscribeOn(scheduler)
@@ -175,6 +180,7 @@ class RecipientManager(
 
     fun getPopularSearches(): Single<List<UserSection>> {
         return idService
+                .api
                 .getPopularSearches()
                 .map { it.sections }
                 .doOnSuccess { it.forEach { cacheUsers(it.results) } }
@@ -189,15 +195,13 @@ class RecipientManager(
                 )
     }
 
-    fun getTimestamp(): Single<ServerTime> = idService.timestamp
+    fun getTimestamp(): Single<ServerTime> = idService.api.timestamp
 
     fun clear() = clearCache()
 
     private fun clearCache() {
         try {
-            IdService
-                    .get()
-                    .clearCache()
+            idService.clearCache()
         } catch (e: IOException) {
             LogUtil.exception("Error while clearing network cache", e)
         }

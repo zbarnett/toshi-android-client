@@ -18,7 +18,6 @@
 package com.toshi.crypto;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 
 import com.toshi.crypto.hdshim.EthereumKeyChainGroup;
@@ -26,9 +25,8 @@ import com.toshi.crypto.keyStore.KeyStoreHandler;
 import com.toshi.crypto.util.TypeConverter;
 import com.toshi.exception.InvalidMasterSeedException;
 import com.toshi.exception.KeyStoreException;
-import com.toshi.util.FileNames;
 import com.toshi.util.logging.LogUtil;
-import com.toshi.view.BaseApplication;
+import com.toshi.util.sharedPrefs.WalletPrefsInterface;
 
 import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.crypto.DeterministicKey;
@@ -47,19 +45,16 @@ import static com.toshi.crypto.util.HashUtil.sha3;
 public class HDWallet {
 
     private static final String ALIAS = "MasterSeedAlias";
-    private static final String MASTER_SEED = "ms";
 
-    private SharedPreferences prefs;
+    private WalletPrefsInterface prefs;
     private ECKey identityKey;
     private ECKey paymentKey;
     private String masterSeed;
+    private Context context;
 
-    public HDWallet() {
-        this.prefs = BaseApplication.get().getSharedPreferences(FileNames.WALLET_PREFS, Context.MODE_PRIVATE);
-    }
-
-    public HDWallet(@NonNull final SharedPreferences preferences) {
-        this.prefs = preferences;
+    public HDWallet(final WalletPrefsInterface walletPrefs, final Context context) {
+        this.prefs = walletPrefs;
+        this.context = context;
     }
 
     public Single<HDWallet> getExistingWallet() {
@@ -256,7 +251,7 @@ public class HDWallet {
 
     private void saveMasterSeedToStorage(final String masterSeed) {
         try {
-            final KeyStoreHandler keyStoreHandler = new KeyStoreHandler(BaseApplication.get(), ALIAS);
+            final KeyStoreHandler keyStoreHandler = new KeyStoreHandler(context, ALIAS);
             final String encryptedMasterSeed = keyStoreHandler.encrypt(masterSeed);
             saveMasterSeed(encryptedMasterSeed);
             this.masterSeed = masterSeed;
@@ -267,15 +262,13 @@ public class HDWallet {
     }
 
     private void saveMasterSeed(final String masterSeed) {
-        this.prefs.edit()
-                .putString(MASTER_SEED, masterSeed)
-                .apply();
+        this.prefs.setMasterSeed(masterSeed);
     }
 
     private String readMasterSeedFromStorage() {
         try {
-            final KeyStoreHandler keyStoreHandler = new KeyStoreHandler(BaseApplication.get(), ALIAS);
-            final String encryptedMasterSeed = this.prefs.getString(MASTER_SEED, null);
+            final KeyStoreHandler keyStoreHandler = new KeyStoreHandler(context, ALIAS);
+            final String encryptedMasterSeed = this.prefs.getMasterSeed();
             if (encryptedMasterSeed == null) return null;
             return keyStoreHandler.decrypt(encryptedMasterSeed, this::saveMasterSeed);
         } catch (KeyStoreException e) {
@@ -285,10 +278,7 @@ public class HDWallet {
     }
 
     public void clear() {
-        this.prefs
-                .edit()
-                .clear()
-                .apply();
+        this.prefs.clear();
     }
 
     private String seedToString(final DeterministicSeed seed) {

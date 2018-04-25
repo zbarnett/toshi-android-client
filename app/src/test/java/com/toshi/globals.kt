@@ -19,14 +19,15 @@
 
 package com.toshi
 
-import android.content.SharedPreferences
+import android.content.Context
 import com.toshi.crypto.HDWallet
 import com.toshi.model.local.network.Network
 import com.toshi.model.local.network.Networks
-import org.mockito.ArgumentMatchers
+import com.toshi.testSharedPrefs.TestWalletPrefs
 import org.mockito.Mockito
 
 const val masterSeed = "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about"
+const val invalidMasterSeed = "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon øre"
 val network = Network("116", "Toshi Internal Test Network", "https://ethereum.internal.service.toshi.org")
 
 fun mockNetwork(network: Network): Networks {
@@ -45,12 +46,8 @@ fun mockNetwork(network: Network): Networks {
 }
 
 fun mockWallet(masterSeed: String): HDWallet {
-    val sharedPreferencesMock = Mockito.mock(SharedPreferences::class.java)
-    Mockito
-            .`when`(sharedPreferencesMock.getString(ArgumentMatchers.anyString(), ArgumentMatchers.any()))
-            .thenReturn(masterSeed)
-    return HDWallet(sharedPreferencesMock)
-            .getExistingWallet()
-            .toBlocking()
-            .value()
+    val prefs = TestWalletPrefs()
+    prefs.setMasterSeed(masterSeed)
+    val context = Mockito.mock(Context::class.java)
+    return HDWallet(prefs, context)
 }

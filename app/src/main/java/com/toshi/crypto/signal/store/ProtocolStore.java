@@ -18,9 +18,9 @@
 package com.toshi.crypto.signal.store;
 
 
-import com.toshi.crypto.signal.SignalPreferences;
 import com.toshi.crypto.signal.util.PreKeyUtil;
 import com.toshi.crypto.util.HashUtil;
+import com.toshi.util.sharedPrefs.SignalPrefs;
 import com.toshi.view.BaseApplication;
 
 import org.whispersystems.libsignal.IdentityKey;
@@ -64,7 +64,7 @@ public class ProtocolStore implements SignalProtocolStore {
     }
 
     public SignedPreKeyRecord getSignedPreKey() throws InvalidKeyIdException, InvalidKeyException {
-        final int signedPreKeyId = SignalPreferences.getSignedPreKeyId();
+        final int signedPreKeyId = SignalPrefs.INSTANCE.getSignedPreKeyId();
         if (signedPreKeyId == -1) {
             return generateSignedPreKey();
         }
@@ -78,7 +78,7 @@ public class ProtocolStore implements SignalProtocolStore {
 
     private SignedPreKeyRecord generateSignedPreKey() throws InvalidKeyException {
         final SignedPreKeyRecord pk = PreKeyUtil.generateSignedPreKey(BaseApplication.get(), getIdentityKeyPair(), true);
-        SignalPreferences.setSignedPreKeyId(pk.getId());
+        SignalPrefs.INSTANCE.setSignedPreKeyId(pk.getId());
         return pk;
     }
 
@@ -93,7 +93,7 @@ public class ProtocolStore implements SignalProtocolStore {
 
     private IdentityKeyPair generateIdentityKeyPair() {
         final IdentityKeyPair ikp = KeyHelper.generateIdentityKeyPair();
-        SignalPreferences.setSerializedIdentityKeyPair(ikp.serialize());
+        SignalPrefs.INSTANCE.setSerializedIdentityKeyPair(ikp.serialize());
         return ikp;
     }
 
@@ -108,12 +108,12 @@ public class ProtocolStore implements SignalProtocolStore {
 
     private int generateLocalRegistrationId() {
         final int rid = KeyHelper.generateRegistrationId(false);
-        SignalPreferences.setLocalRegistrationId(rid);
+        SignalPrefs.INSTANCE.setLocalRegistrationId(rid);
         return rid;
     }
 
     public String getSignalingKey() {
-        final String signallingKey = SignalPreferences.getSignalingKey();
+        final String signallingKey = SignalPrefs.INSTANCE.getSignalingKey();
         if (signallingKey == null) {
             return generateSignalingKey();
         }
@@ -122,7 +122,7 @@ public class ProtocolStore implements SignalProtocolStore {
 
     private String generateSignalingKey() {
         final String signallingKey = HashUtil.getSecret(52);
-        SignalPreferences.setSignalingKey(signallingKey);
+        SignalPrefs.INSTANCE.setSignalingKey(signallingKey);
         return signallingKey;
     }
 
@@ -153,7 +153,7 @@ public class ProtocolStore implements SignalProtocolStore {
     }
 
     public PreKeyRecord getLastResortKey() throws IOException {
-        final byte[] serializedLastResortKey = SignalPreferences.getSerializedLastResortKey();
+        final byte[] serializedLastResortKey = SignalPrefs.INSTANCE.getSerializedLastResortKey();
         if (serializedLastResortKey == null) {
             return generateLastResortKey();
         }
@@ -162,12 +162,12 @@ public class ProtocolStore implements SignalProtocolStore {
 
     private PreKeyRecord generateLastResortKey() {
         final PreKeyRecord lrk = PreKeyUtil.generateLastResortKey(BaseApplication.get());
-        SignalPreferences.setSerializedLastResortKey(lrk.serialize());
+        SignalPrefs.INSTANCE.setSerializedLastResortKey(lrk.serialize());
         return lrk;
     }
 
     public String getPassword() {
-        final String password = SignalPreferences.getPassword();
+        final String password = SignalPrefs.INSTANCE.getPassword();
         if (password == null) {
             return generatePassword();
         }
@@ -176,7 +176,7 @@ public class ProtocolStore implements SignalProtocolStore {
 
     private String generatePassword() {
         final String password = HashUtil.getSecret(18);
-        SignalPreferences.setPassword(password);
+        SignalPrefs.INSTANCE.setPassword(password);
         return password;
     }
 

@@ -68,7 +68,7 @@ class BalanceManagerTests {
                 lastKnownBalance = balance,
                 localCurrency = localCurrency
         )
-        balanceManager = balanceManagerMocker.mock()
+        balanceManager = balanceManagerMocker.mockWithWalletInit()
     }
 
     @Test

@@ -19,11 +19,11 @@ package com.toshi.manager.chat;
 
 
 import com.toshi.crypto.signal.ChatService;
-import com.toshi.crypto.signal.SignalPreferences;
 import com.toshi.crypto.signal.store.ProtocolStore;
 import com.toshi.manager.OnboardingManager;
 import com.toshi.util.gcm.GcmToken;
 import com.toshi.util.logging.LogUtil;
+import com.toshi.util.sharedPrefs.SignalPrefs;
 
 import org.whispersystems.libsignal.util.guava.Optional;
 
@@ -47,7 +47,7 @@ public class SofaMessageRegistration {
     }
 
     public Completable registerIfNeeded() {
-        if (!SignalPreferences.getRegisteredWithServer()) {
+        if (!SignalPrefs.INSTANCE.getRegisteredWithServer()) {
             return this.chatService
                     .registerKeys(this.protocolStore)
                     .andThen(setRegisteredWithServer())
@@ -60,7 +60,7 @@ public class SofaMessageRegistration {
     }
 
     public Completable registerIfNeededWithOnboarding() {
-        if (SignalPreferences.getRegisteredWithServer()) return Completable.complete();
+        if (SignalPrefs.INSTANCE.getRegisteredWithServer()) return Completable.complete();
         return this.chatService
                 .registerKeys(this.protocolStore)
                 .andThen(setRegisteredWithServer())
@@ -70,7 +70,7 @@ public class SofaMessageRegistration {
     }
 
     private Completable setRegisteredWithServer() {
-        return Completable.fromAction(SignalPreferences::setRegisteredWithServer);
+        return Completable.fromAction(SignalPrefs.INSTANCE::setRegisteredWithServer);
     }
 
     public Completable registerChatGcm() {

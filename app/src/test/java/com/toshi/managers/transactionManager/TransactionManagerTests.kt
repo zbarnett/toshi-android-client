@@ -20,53 +20,19 @@
 package com.toshi.managers.transactionManager
 
 import com.toshi.manager.TransactionManager
-import com.toshi.manager.network.EthereumInterface
-import com.toshi.manager.store.PendingTransactionStore
-import com.toshi.manager.transaction.IncomingTransactionManager
-import com.toshi.manager.transaction.OutgoingTransactionManager
-import com.toshi.manager.transaction.TransactionSigner
-import com.toshi.manager.transaction.UpdateTransactionManager
-import com.toshi.masterSeed
-import com.toshi.mockWallet
-import com.toshi.model.network.SentTransaction
-import com.toshi.model.network.ServerTime
-import com.toshi.model.network.SignedTransaction
 import junit.framework.Assert.assertNotNull
 import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Test
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito
-import rx.Single
-import rx.schedulers.Schedulers
 
 class TransactionManagerTests {
+
     private lateinit var transactionManager: TransactionManager
+    private val transactionManagerMocker by lazy { TransactionManagerMocker() }
 
     @Before
     fun before() {
         initTransactionManagerWithoutWallet()
-    }
-
-    private fun mockEthApi(): EthereumInterface {
-        val ethApi = Mockito.mock(EthereumInterface::class.java)
-        Mockito.`when`(ethApi.timestamp)
-                .thenReturn(Single.just(ServerTime(1L)))
-        Mockito.`when`(ethApi.sendSignedTransaction(any(Long::class.java), any(SignedTransaction::class.java)))
-                .thenReturn(Single.just(SentTransaction()))
-        return ethApi
-    }
-
-    private fun mockIncomingTransactionManager(): IncomingTransactionManager {
-        return Mockito.mock(IncomingTransactionManager::class.java)
-    }
-
-    private fun mockOutgoingTransactionManager(): OutgoingTransactionManager {
-        return Mockito.mock(OutgoingTransactionManager::class.java)
-    }
-
-    private fun mockUpdateTransactionManager(): UpdateTransactionManager {
-        return Mockito.mock(UpdateTransactionManager::class.java)
     }
 
     @Test
@@ -89,21 +55,11 @@ class TransactionManagerTests {
         assertNotNull(signedW3Transaction)
     }
 
-    private fun initTransactionManagerWithWallet() {
-        initTransactionManagerWithoutWallet()
-        transactionManager.init(mockWallet(masterSeed))
+    private fun initTransactionManagerWithoutWallet() {
+        transactionManager = transactionManagerMocker.initTransactionManagerWithoutWallet()
     }
 
-    private fun initTransactionManagerWithoutWallet() {
-        val ethApi = mockEthApi()
-        transactionManager = TransactionManager(
-                ethService = ethApi,
-                pendingTransactionStore = PendingTransactionStore(),
-                transactionSigner = TransactionSigner(ethApi),
-                incomingTransactionManager = mockIncomingTransactionManager(),
-                outgoingTransactionManager = mockOutgoingTransactionManager(),
-                updateTransactionManager = mockUpdateTransactionManager(),
-                scheduler = Schedulers.trampoline()
-        )
+    private fun initTransactionManagerWithWallet() {
+        transactionManager = transactionManagerMocker.initTransactionManagerWithWallet()
     }
 }

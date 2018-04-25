@@ -18,13 +18,13 @@
 package com.toshi.manager
 
 import com.toshi.crypto.HDWallet
-import com.toshi.manager.network.IdInterface
 import com.toshi.manager.network.IdService
 import com.toshi.model.local.User
 import com.toshi.model.network.ServerTime
 import com.toshi.model.network.UserDetails
 import com.toshi.util.logging.LogUtil
 import com.toshi.util.sharedPrefs.AppPrefs
+import com.toshi.util.sharedPrefs.AppPrefsInterface
 import com.toshi.util.sharedPrefs.UserPrefs
 import com.toshi.util.sharedPrefs.UserPrefsInterface
 import com.toshi.util.uploader.FileUploader
@@ -42,14 +42,16 @@ import java.io.File
 import java.util.concurrent.TimeUnit
 
 class UserManager(
-        private val idService: IdInterface = IdService.getApi(),
-        private val fileUploader: FileUploader = FileUploader(idService),
+        private val idService: IdService = IdService.get(),
+        private val fileUploader: FileUploader = FileUploader(idService.api),
         private val userPrefs: UserPrefsInterface = UserPrefs(),
+        private val appPrefs: AppPrefsInterface = AppPrefs,
+        private val recipientManager: RecipientManager,
+        private val baseApplication: BaseApplication = BaseApplication.get(),
         private val scheduler: Scheduler = Schedulers.io()
 ) {
 
-    private val recipientManager by lazy { BaseApplication.get().recipientManager }
-    private val isConnectedSubject by lazy { BaseApplication.get().isConnectedSubject }
+    private val isConnectedSubject by lazy { baseApplication.isConnectedSubject }
 
     private val subscriptions by lazy { CompositeSubscription() }
     private val userSubject by lazy { BehaviorSubject.create<User>() }
@@ -85,7 +87,7 @@ class UserManager(
         return when {
             userNeedsToRegister() -> registerNewUser()
             userNeedsToMigrate() -> migrateUser()
-            AppPrefs.shouldForceUserUpdate() -> forceUpdateUser()
+            appPrefs.shouldForceUserUpdate() -> forceUpdateUser()
             else -> fetchAndUpdateUser()
         }
     }
@@ -116,8 +118,8 @@ class UserManager(
     private fun registerNewUserWithTimestamp(serverTime: ServerTime): Single<User> {
         val wallet = wallet ?: return Single.error(IllegalStateException("Wallet is null while registerNewUserWithTimestamp"))
         val userDetails = UserDetails(payment_address = wallet.paymentAddress)
-        AppPrefs.setForceUserUpdate(false)
-        return idService.registerUser(userDetails, serverTime.get())
+        appPrefs.setForceUserUpdate(false)
+        return idService.api.registerUser(userDetails, serverTime.get())
     }
 
     private fun handleUserRegistrationFailed(throwable: Throwable): Single<User> {
@@ -132,14 +134,14 @@ class UserManager(
 
     private fun forceFetchUserFromNetworkSingle(): Single<User> {
         return getWallet()
-                .flatMap { idService.forceGetUser(it.ownerAddress) }
+                .flatMap { idService.api.forceGetUser(it.ownerAddress) }
                 .doOnSuccess { updateCurrentUser(it) }
                 .doOnError { LogUtil.exception("Error while fetching user from network $it") }
     }
 
     private fun forceFetchUserFromNetwork() {
         val sub = getWallet()
-                .flatMap { idService.forceGetUser(it.ownerAddress) }
+                .flatMap { idService.api.forceGetUser(it.ownerAddress) }
                 .subscribe(
                         { updateCurrentUser(it) },
                         { LogUtil.exception("Error while fetching user from network $it") }
@@ -164,7 +166,7 @@ class UserManager(
     }
 
     private fun migrateUser(): Completable {
-        AppPrefs.setWasMigrated(true)
+        appPrefs.setWasMigrated(true)
         return forceUpdateUser()
     }
 
@@ -186,7 +188,7 @@ class UserManager(
 
     private fun updateUserWithTimestamp(userDetails: UserDetails, serverTime: ServerTime): Single<User> {
         return getWallet()
-                .flatMap { idService.updateUser(it.ownerAddress, userDetails, serverTime.get()) }
+                .flatMap { idService.api.updateUser(it.ownerAddress, userDetails, serverTime.get()) }
                 .subscribeOn(scheduler)
                 .doOnSuccess { updateCurrentUser(it) }
     }
@@ -198,7 +200,7 @@ class UserManager(
                 .doOnSuccess { userSubject.onNext(it) }
     }
 
-    private fun getTimestamp() = idService.timestamp
+    private fun getTimestamp() = idService.api.timestamp
 
     fun webLogin(loginToken: String): Completable {
         return getTimestamp()
@@ -208,7 +210,7 @@ class UserManager(
 
     private fun webLoginWithTimestamp(loginToken: String, serverTime: ServerTime?): Completable {
         if (serverTime == null) throw IllegalStateException("ServerTime was null")
-        return idService.webLogin(loginToken, serverTime.get())
+        return idService.api.webLogin(loginToken, serverTime.get())
     }
 
     fun getUserObservable(): Observable<User> = userSubject.asObservable()

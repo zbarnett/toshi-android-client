@@ -19,7 +19,6 @@ package com.toshi.model.local;
 
 
 import com.squareup.moshi.Json;
-import com.toshi.manager.ToshiManager;
 import com.toshi.model.network.user.UserType;
 
 import org.jetbrains.annotations.NotNull;
@@ -29,6 +28,8 @@ import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
 public class User extends RealmObject {
+
+    private final static int CACHE_TIMEOUT = 1000 * 60 * 5;
 
     @PrimaryKey
     @Json(name = "toshi_id")
@@ -51,6 +52,10 @@ public class User extends RealmObject {
     // ctors
     public User() {
         this.cacheTimestamp = System.currentTimeMillis();
+    }
+
+    public User(final String toshiId) {
+        this.owner_address = toshiId;
     }
 
     // Getters
@@ -99,7 +104,7 @@ public class User extends RealmObject {
     }
 
     public boolean needsRefresh() {
-        return System.currentTimeMillis() - cacheTimestamp > ToshiManager.CACHE_TIMEOUT;
+        return System.currentTimeMillis() - cacheTimestamp > CACHE_TIMEOUT;
     }
 
     public Double getReputationScore() {

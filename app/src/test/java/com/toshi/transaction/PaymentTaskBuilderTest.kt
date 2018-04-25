@@ -145,7 +145,7 @@ class PaymentTaskBuilderTest {
     }
 
     private fun mockBalanceManager() {
-        balanceManager = BalanceManagerMocker(exchangeRate = exchangeRate).mock()
+        balanceManager = BalanceManagerMocker(exchangeRate = exchangeRate).mockWithWalletInit()
     }
 
     private fun createPaymentTaskBuilder() {
