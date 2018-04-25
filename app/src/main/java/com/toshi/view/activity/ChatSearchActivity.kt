@@ -27,6 +27,7 @@ import com.toshi.model.local.User
 import com.toshi.model.network.user.UserType
 import com.toshi.util.KeyboardUtil
 import com.toshi.view.adapter.ChatSearchTabAdapter
+import com.toshi.view.adapter.listeners.OnPageScrolledListener
 import com.toshi.view.adapter.listeners.TextChangedListener
 import com.toshi.view.custom.ChatSearchView
 import com.toshi.viewModel.ChatSearchViewModel
@@ -55,6 +56,7 @@ class ChatSearchActivity : AppCompatActivity() {
     private fun init() {
         initViewModel()
         initAdapter()
+        initViewPagerListener()
         initClickListeners()
         initTextListener()
         initObservers()
@@ -79,6 +81,15 @@ class ChatSearchActivity : AppCompatActivity() {
         viewPager.adapter = tabAdapter
         viewPager.offscreenPageLimit = 3
         tabLayout.setupWithViewPager(viewPager)
+    }
+
+    private fun initViewPagerListener() {
+        viewPager.addOnPageChangeListener(object : OnPageScrolledListener() {
+            override fun onPageSelected(position: Int) {
+                val searchInput = search.text.toString()
+                if (searchInput.isNotEmpty()) search(searchInput, position)
+            }
+        })
     }
 
     private fun handleUserClicked(user: User) {
@@ -120,13 +131,12 @@ class ChatSearchActivity : AppCompatActivity() {
     private fun initTextListener() {
         search.addTextChangedListener(object : TextChangedListener() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                handleSearchQuery(s.toString())
+                search(s.toString(), viewPager.currentItem)
             }
         })
     }
 
-    private fun handleSearchQuery(query: String) {
-        val currentViewPosition = viewPager.currentItem
+    private fun search(query: String, currentViewPosition: Int) {
         val type = viewModel.getTypeFromPosition(currentViewPosition)
         viewModel.search(query, type)
     }
