@@ -19,6 +19,7 @@ package com.toshi.viewModel
 
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
+import android.graphics.Bitmap
 import com.toshi.R
 import com.toshi.util.SingleLiveEvent
 import com.toshi.view.BaseApplication
@@ -26,11 +27,21 @@ import java.net.URI
 
 class WebViewViewModel(startUrl: String) : ViewModel() {
 
+    val addressBarUrl by lazy { MutableLiveData<String>() }
+    val favicon by lazy { SingleLiveEvent<Bitmap>() }
+    val title by lazy { SingleLiveEvent<String>() }
     val toolbarUpdate by lazy { SingleLiveEvent<Unit>() }
     val url by lazy { MutableLiveData<String>() }
+    val mainFrameProgress by lazy { MutableLiveData<Int>() }
 
     init {
+        setAddressBarUrl(startUrl) // AddressBar should contain url before loading starts
         url.value = startUrl
+    }
+
+    fun setAddressBarUrl(url: String) {
+        if (url.startsWith("data:")) return
+        addressBarUrl.value = url
     }
 
     fun tryGetAddress(): String {
@@ -44,9 +55,13 @@ class WebViewViewModel(startUrl: String) : ViewModel() {
     @Throws(IllegalArgumentException::class)
     private fun getAddress(): String {
         val value = url.value ?: throw IllegalArgumentException()
-        val prefixedValue = if (value.startsWith("http")) value else "http://$value"
+        val prefixedValue = prependScheme(value)
         val uri = URI.create(prefixedValue)
         return uri.toASCIIString()
+    }
+
+    private fun prependScheme(value: String): String {
+        return if (value.startsWith("http")) value else "http://$value"
     }
 
     fun updateToolbar() = toolbarUpdate.postValue(Unit)

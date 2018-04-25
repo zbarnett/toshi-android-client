@@ -63,13 +63,17 @@ public class SofaHostWrapper implements SofaHostListener {
     private final SOFAHost sofaHost;
     private final HDWallet wallet;
     private final CompositeSubscription subscriptions;
-    private String url;
+    public Bitmap favicon;
+    public String url;
+    public String title;
 
-    public  SofaHostWrapper(final AppCompatActivity activity, final WebView webView, final String url) {
+    public SofaHostWrapper(
+            final AppCompatActivity activity,
+            final WebView webView
+    ) {
         this.activity = activity;
         this.subscriptions = new CompositeSubscription();
         this.webView = webView;
-        this.url = url;
         this.sofaHost = new SOFAHost(this);
         this.wallet = getWallet();
     }
@@ -119,7 +123,7 @@ public class SofaHostWrapper implements SofaHostListener {
     @Override
     public void signTransaction(final String id, final String unsignedTransaction) {
         final Subscription sub =
-                getWebViewInfo(this.webView)
+                getWebViewInfo()
                 .subscribe(
                         pair -> signTransaction(id, unsignedTransaction, url, pair.first, pair.second),
                         throwable -> LogUtil.w("Error while retrieving web view info " + throwable)
@@ -129,13 +133,9 @@ public class SofaHostWrapper implements SofaHostListener {
     }
 
     @MainThread
-    private Single<Pair<String, Bitmap>> getWebViewInfo(final WebView webView) {
-        return Single.fromCallable(() -> {
-            final String title = webView.getTitle();
-            final Bitmap favicon = webView.getFavicon();
-            return new Pair<>(title, favicon);
-        })
-        .subscribeOn(AndroidSchedulers.mainThread());
+    private Single<Pair<String, Bitmap>> getWebViewInfo() {
+        return Single.fromCallable(() -> new Pair<>(title, favicon))
+            .subscribeOn(AndroidSchedulers.mainThread());
     }
 
     private void signTransaction(final String id,
@@ -375,10 +375,6 @@ public class SofaHostWrapper implements SofaHostListener {
 
     private String createErrorMessage(final String errorMessage) {
         return String.format("{\\\"error\\\":\\\"%s\\\"}", errorMessage);
-    }
-
-    public void updateUrl(final String url) {
-        this.url = url;
     }
 
     public void clear() {

@@ -28,13 +28,20 @@ import android.webkit.WebViewClient
 import com.toshi.R
 import com.toshi.util.webView.WebViewCookieJar
 import com.toshi.view.BaseApplication
+import okhttp3.Interceptor.Chain
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
+import okhttp3.ResponseBody
+import rx.Single
+import rx.android.schedulers.AndroidSchedulers
+import rx.schedulers.Schedulers
+import rx.subscriptions.CompositeSubscription
 import java.io.BufferedReader
 import java.io.ByteArrayInputStream
 import java.io.InputStreamReader
 import java.net.ConnectException
+import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import javax.net.ssl.SSLPeerUnverifiedException
 
@@ -42,64 +49,75 @@ class ToshiWebClient(
         private val context: Context
 ) : WebViewClient() {
 
+    private val subscriptions by lazy { CompositeSubscription() }
+    private var temporaryResponse: WebResourceResponse? = null
+
     var onHistoryUpdatedListener: (() -> Unit)? = null
     var onUrlUpdatedListener: ((String) -> Unit)? = null
     var onPageLoadingStartedListener: (() -> Unit)? = null
     var onPageLoadedListener: ((String?) -> Unit)? = null
+    var onOverrideWebViewAddressListener: ((String) -> Unit)? = null
+    var onMainFrameProgressChangedListener: ((Int) -> Unit)? = null
 
     private val toshiManager by lazy { BaseApplication.get().toshiManager }
-    private val httpClient by lazy { OkHttpClient.Builder().cookieJar(WebViewCookieJar()).build() }
+    private val httpClient by lazy { initOkHttpClient() }
+
+    private fun initOkHttpClient(): OkHttpClient {
+        return OkHttpClient.Builder()
+                .cookieJar(WebViewCookieJar())
+                .followRedirects(true)
+                .followSslRedirects(true)
+                .addNetworkInterceptor { interceptOkHttpRequest(it) }
+                .build()
+    }
+
+    private fun interceptOkHttpRequest(chain: Chain): Response? {
+        val response = chain.proceed(chain.request())
+        val responseBody = response.body()
+        return if (responseBody == null) {
+            null
+        } else {
+            buildProgressResponseInterceptor(response, responseBody)
+        }
+    }
+
+    private fun buildProgressResponseInterceptor(response: Response, responseBody: ResponseBody): Response? {
+        return response.newBuilder()
+                .body(ProgressResponseBody(responseBody, {
+                    onMainFrameProgressChangedListener?.invoke(it)
+                }))
+                .build()
+    }
 
     override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
         super.onPageStarted(view, url, favicon)
         onPageLoadingStartedListener?.invoke()
     }
 
-    override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
-        if (request == null || view == null) return false
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-
-            /*
-            * In order to follow redirects properly, we return null in interceptRequest().
-            * Doing this breaks the web3 injection on the resulting page, so we have to reload to
-            * make sure web3 is available.
-            * */
-
-            if (request.isForMainFrame && request.isRedirect) {
-                view.loadUrl(request.url.toString())
-                return true
-            }
-        }
-
-        /*
-         * API < 24: See handleRedirectOnOldApiVersions in interceptRequest().
-         * */
-
-        return super.shouldOverrideUrlLoading(view, request)
-    }
-
-    override fun shouldInterceptRequest(view: WebView?, url: String?): WebResourceResponse? {
-        return null
-    }
-
     @TargetApi(21)
     override fun shouldInterceptRequest(view: WebView?, webRequest: WebResourceRequest?): WebResourceResponse? {
-        if (webRequest?.method != "GET") return null
-        if (!webRequest.isForMainFrame) return null
-        return interceptRequest(webRequest)
+        return when {
+            webRequest?.method != "GET" || !webRequest.isForMainFrame -> null
+            else -> interceptRequest(webRequest)
+        }
     }
 
     @TargetApi(21)
     private fun interceptRequest(webRequest: WebResourceRequest): WebResourceResponse? {
-        val request = buildRequest(webRequest) ?: return null
+        val request = buildRequest(webRequest)
+        val address = webRequest.url.toString()
+        if (address.startsWith("data:")) return null
+        if (request == null) return null
         return try {
-            val response = httpClient.newCall(request).execute()
-            if (response.priorResponse()?.isRedirect == true) {
-                handleRedirectOnOldApiVersions(response)
-                null
+            if (temporaryResponse != null) {
+                val response = temporaryResponse
+                temporaryResponse = null
+                response
             } else {
-                buildWebResponse(response)
+                val response = httpClient.newCall(request).execute()
+                val body = response.body()?.string() ?: ""
+                val injectedBody = injectBody(body)
+                buildWebResponse(response, injectedBody)
             }
         } catch (e: SSLPeerUnverifiedException) {
             null
@@ -107,13 +125,8 @@ class ToshiWebClient(
             null
         } catch (e: ConnectException) {
             null
-        }
-    }
-
-    private fun handleRedirectOnOldApiVersions(response: Response) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-            val url = response.networkResponse()?.request()?.url()?.toString()
-            if (url != null) onUrlUpdatedListener?.invoke(url)
+        } catch (e: SocketTimeoutException) {
+            null
         }
     }
 
@@ -132,16 +145,18 @@ class ToshiWebClient(
         }
     }
 
-    private fun buildWebResponse(response: Response): WebResourceResponse? {
-        val body = response.body()?.string() ?: ""
-        val script = loadInjections()
-        val injectedBody = injectScripts(body, script)
-        val byteStream = ByteArrayInputStream(injectedBody.toByteArray())
+    private fun buildWebResponse(response: Response, body: String): WebResourceResponse? {
+        val byteStream = ByteArrayInputStream(body.toByteArray())
         val headerParser = HeaderParser()
         val contentType = headerParser.getContentTypeHeader(response)
         val charset = headerParser.getCharset(contentType)
         val mimeType = headerParser.getMimeType(contentType)
         return WebResourceResponse(mimeType, charset, byteStream)
+    }
+
+    private fun injectBody(body: String): String {
+        val script = loadInjections()
+        return injectScripts(body, script)
     }
 
     private fun loadInjections(): String {
@@ -195,11 +210,71 @@ class ToshiWebClient(
 
     override fun onPageCommitVisible(view: WebView?, url: String?) {
         super.onPageCommitVisible(view, url)
-        onPageLoadedListener?.invoke(url)
+        onPageLoadedListener?.invoke(url) // Build.VERSION.SDK_INT >= 23
+    }
+
+    override fun onPageFinished(view: WebView?, url: String?) {
+        if (Build.VERSION.SDK_INT < 23) onPageLoadedListener?.invoke(url)
     }
 
     override fun doUpdateVisitedHistory(view: WebView?, url: String?, isReload: Boolean) {
         super.doUpdateVisitedHistory(view, url, isReload)
         if (!isReload) onHistoryUpdatedListener?.invoke()
     }
+
+    fun loadUrl(address: String, webview: WebView?) {
+        if (webview == null) return
+        val subscription = loadAndInject(address, webview.url ?: "")
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        { handlePreloadedResponse(webview, it.first, it.second) },
+                        { webview.loadUrl(address) }
+                )
+        subscriptions.add(subscription)
+    }
+
+    private fun loadAndInject(address: String, currentUrl: String): Single<Pair<String, String?>> {
+        return Single.fromCallable { sendRequest(address) }
+                .map { handleResponse(it, currentUrl) }
+                .subscribeOn(Schedulers.io())
+    }
+
+    private fun sendRequest(url: String?): Response {
+        val requestBuilder = Request.Builder()
+                .get()
+                .url(url)
+        val request = requestBuilder.build()
+        return httpClient.newCall(request).execute()
+    }
+
+    private fun handleResponse(response: Response, currentUrl: String): Pair<String, String?> {
+        val finalUrl = response.request()?.url()?.toString() ?: "about:blank"
+        val body = response.body()?.string() ?: ""
+        val injectedBody = injectBody(body)
+        val returnedBody = if (currentUrl == finalUrl) {
+            injectedBody
+        } else {
+            temporaryResponse = buildWebResponse(response, injectedBody)
+            null
+        }
+        return Pair(finalUrl, returnedBody)
+    }
+
+    private fun handlePreloadedResponse(webView: WebView, url: String, body: String?) {
+        if (body == null) webView.loadUrl(url)
+        else setWebViewContent(body, webView, url)
+    }
+
+    private fun setWebViewContent(body: String, webView: WebView, finalAddress: String) {
+        onOverrideWebViewAddressListener?.invoke(finalAddress)
+        webView.loadDataWithBaseURL(
+                finalAddress,
+                body,
+                null,
+                null,
+                finalAddress
+        )
+    }
+
+    fun destroy() = subscriptions.clear()
 }

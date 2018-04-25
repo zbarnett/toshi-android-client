@@ -30,7 +30,6 @@ import android.provider.MediaStore
 import android.support.v4.content.FileProvider
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import android.view.View
 import android.webkit.ValueCallback
 import android.webkit.WebSettings
 import android.webkit.WebView
@@ -87,7 +86,6 @@ class LollipopWebViewActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_web_view)
         initWebClient()
-        load()
         initSearchAdapter()
     }
 
@@ -101,7 +99,6 @@ class LollipopWebViewActivity : AppCompatActivity() {
 
     private fun initViewModel() {
         val url = intent.getStringExtra(EXTRA__ADDRESS).orEmpty()
-        input.url = url
         webViewModel = ViewModelProviders.of(
                 this,
                 WebViewViewModelFactory(url)
@@ -132,6 +129,8 @@ class LollipopWebViewActivity : AppCompatActivity() {
     private fun onGoClicked(it: String) {
         webViewModel.url.postValue(it)
         clearAddressBarFocus()
+        updateToolbar()
+        hideOldWebViewContent()
     }
 
     private fun clearAddressBarFocus() = input.clearFocus()
@@ -194,36 +193,54 @@ class LollipopWebViewActivity : AppCompatActivity() {
     }
 
     private fun initWebView() {
-        val address = webViewModel.tryGetAddress()
-        sofaHostWrapper = SofaHostWrapper(this, webview, address)
+        sofaHostWrapper = SofaHostWrapper(this, webview)
         webview.addJavascriptInterface(sofaHostWrapper.sofaHost, "SOFAHost")
         webview.webViewClient = ToshiWebClient(this)
                 .apply {
                     onHistoryUpdatedListener = webViewModel::updateToolbar
                     onUrlUpdatedListener = { webViewModel.url.postValue(it) }
-                    onPageLoadingStartedListener = { handlePageLoading() }
+                    onPageLoadingStartedListener = { onStartPageLoad() }
                     onPageLoadedListener = { onPageLoaded(it) }
+                    onOverrideWebViewAddressListener = { webViewModel.setAddressBarUrl(it) }
+                    onMainFrameProgressChangedListener = { webViewModel.mainFrameProgress.postValue(it) }
                 }
-        val chromeWebClient = ToshiChromeWebViewClient(this::handleFileChooserCallback)
-        chromeWebClient.progressListener = { progressBar.setProgress(it) }
-        webview.webChromeClient = chromeWebClient
+        webview.webChromeClient = ToshiChromeWebViewClient()
+                .apply {
+                    onProgressChangedListener = { progressBar.setProgress(it) }
+                    onOpenFilePickerListener = { handleFileChooserCallback(it) }
+                    onTitleReceivedListener = { webViewModel.title.value = it }
+                    onIconReceivedListener = { webViewModel.favicon.value = it }
+                }
+        webview.onReloadListener = { load() }
     }
 
-    private fun handlePageLoading() {
-        webview.isVisible(true)
+    private fun onStartPageLoad() {
+        webViewModel.favicon.value = null
+        webViewModel.title.value = ""
+        hideOldWebViewContent()
         progressBar.alpha = 1.0f
     }
 
+    private fun hideOldWebViewContent() {
+        if (Build.VERSION.SDK_INT >= 23) webview.isVisible(false)
+    }
+
     private fun onPageLoaded(url: String?) {
-        if (url != null) input.url = url
+        webview.isVisible(true)
+        webViewModel.setAddressBarUrl(url.orEmpty())
         updateToolbarNavigation()
         swipeToRefresh.isRefreshing = false
-        webview.visibility = View.VISIBLE
     }
 
     private fun initObservers() {
+        webViewModel.addressBarUrl.observe(this, Observer { onUrlChanged(it.orEmpty()) })
+        webViewModel.title.observe(this, Observer { sofaHostWrapper.title = it })
+        webViewModel.favicon.observe(this, Observer { sofaHostWrapper.favicon = it })
         webViewModel.toolbarUpdate.observe(this, Observer { updateToolbar() })
         webViewModel.url.observe(this, Observer { load() })
+        webViewModel.mainFrameProgress.observe(this, Observer {
+            progressBar.setProgress(webViewModel.mainFrameProgress.value ?: -1)
+        })
         dappSearchViewModel.searchResult.observe(this, Observer {
             if (it != null && input.url.isNotEmpty()) setSearchResult(it.results.dapps)
         })
@@ -232,13 +249,18 @@ class LollipopWebViewActivity : AppCompatActivity() {
         })
     }
 
+    private fun onUrlChanged(url: String) {
+        input.url = url
+        sofaHostWrapper.url = url
+    }
+
     private fun setSearchResult(dapps: List<Dapp>) {
         val dappsCategory = DappCategory(getString(R.string.dapps), -1)
         searchDappAdapter.setDapps(dapps, dappsCategory)
     }
 
     private fun updateToolbar() {
-        input.url = webview.url
+        webViewModel.setAddressBarUrl(webview.url)
         title = webview.title
         updateToolbarNavigation()
     }
@@ -248,13 +270,16 @@ class LollipopWebViewActivity : AppCompatActivity() {
         forwardButton.alpha = if (webview.canGoForward()) ALPHA_ENABLED else ALPHA_DISABLED
     }
 
-    private fun load() = webview.loadUrl(webViewModel.tryGetAddress())
+    private fun load() {
+        val address = webViewModel.tryGetAddress()
+        webview.toshiWebClient?.loadUrl(address, webview)
+    }
 
     private fun initSearchAdapter() {
         searchDappAdapter = SearchDappAdapter().apply {
             onSearchClickListener = { openBrowserAndSearchGoogle(it) }
             onGoToClickListener = { goToUrl(it) }
-            onItemClickedListener = { goToDappUrl(it) }
+            onItemClickedListener = { goToUrl(it.url.orEmpty()) }
         }
         searchDapps.apply {
             adapter = searchDappAdapter
@@ -264,14 +289,10 @@ class LollipopWebViewActivity : AppCompatActivity() {
         }
     }
 
-    private fun goToDappUrl(it: Dapp) {
-        webViewModel.url.value = it.url
-        clearAddressBarFocus()
-    }
-
     private fun goToUrl(it: String) {
         webViewModel.url.value = it
         clearAddressBarFocus()
+        updateToolbar()
     }
 
     private fun openBrowserAndSearchGoogle(searchValue: String) {

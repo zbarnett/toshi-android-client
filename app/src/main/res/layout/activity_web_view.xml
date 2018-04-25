@@ -48,7 +48,7 @@
             android:id="@+id/swipeToRefresh"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            <WebView
+            <com.toshi.view.activity.webView.ToshiWebView
                 android:id="@+id/webview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />

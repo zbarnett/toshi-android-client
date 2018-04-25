@@ -17,6 +17,7 @@
 
 package com.toshi.presenter.webview
 
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.webkit.ConsoleMessage
@@ -26,18 +27,22 @@ import android.webkit.WebView
 import com.toshi.BuildConfig
 import com.toshi.util.logging.LogUtil
 
-class ToshiChromeWebViewClient(
-        private val fileCallback: (ValueCallback<Array<Uri>>?) -> Boolean
-) : WebChromeClient() {
+class ToshiChromeWebViewClient : WebChromeClient() {
 
-    var progressListener: ((Int) -> Unit)? = null
+    var onOpenFilePickerListener: ((ValueCallback<Array<Uri>>?) -> Boolean)? = null
+    var onProgressChangedListener: ((Int) -> Unit)? = null
+    var onTitleReceivedListener: ((String) -> Unit)? = null
+    var onIconReceivedListener: ((Bitmap) -> Unit)? = null
 
-    override fun onShowFileChooser(webView: WebView?, filePathCallback: ValueCallback<Array<Uri>>?, fileChooserParams: FileChooserParams?): Boolean {
-        return fileCallback(filePathCallback)
+    override fun onShowFileChooser(
+            webView: WebView?,
+            filePathCallback: ValueCallback<Array<Uri>>?,
+            fileChooserParams: FileChooserParams?): Boolean {
+        return onOpenFilePickerListener?.invoke(filePathCallback) ?: false
     }
 
     override fun onProgressChanged(view: WebView?, newProgress: Int) {
-        progressListener?.invoke(newProgress)
+        onProgressChangedListener?.invoke(newProgress)
     }
 
     override fun onConsoleMessage(consoleMessage: ConsoleMessage?): Boolean {
@@ -45,5 +50,13 @@ class ToshiChromeWebViewClient(
             LogUtil.d("WebView Console: ${consoleMessage?.message()}")
         }
         return super.onConsoleMessage(consoleMessage)
+    }
+
+    override fun onReceivedTitle(view: WebView?, title: String?) {
+        if (title != null) onTitleReceivedListener?.invoke(title)
+    }
+
+    override fun onReceivedIcon(view: WebView?, icon: Bitmap?) {
+        if (icon != null) onIconReceivedListener?.invoke(icon)
     }
 }
