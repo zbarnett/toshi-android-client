@@ -20,7 +20,6 @@ package com.toshi.view.activity
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.graphics.Color
-import android.os.Build
 import android.os.Bundle
 import android.support.v4.graphics.ColorUtils
 import android.support.v4.widget.NestedScrollView
@@ -71,7 +70,6 @@ class ViewDappActivity : AppCompatActivity() {
     }
 
     private fun setStatusBarColor() {
-        if (Build.VERSION.SDK_INT < 21) return
         window.statusBarColor = Color.TRANSPARENT
     }
 
@@ -101,7 +99,6 @@ class ViewDappActivity : AppCompatActivity() {
     }
 
     private fun setStatusBarAlpha(percentage: Float) {
-        if (Build.VERSION.SDK_INT < 21) return
         val maxAlpha = 26 // 15%
         val alpha = maxAlpha * (1 - percentage)
         val safeAlpha = if (alpha < 0) 0 else if (alpha > 255) 255 else alpha.toInt()

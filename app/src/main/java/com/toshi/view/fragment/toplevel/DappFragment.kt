@@ -20,7 +20,6 @@ package com.toshi.view.fragment.toplevel
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.FragmentActivity
 import android.support.v7.widget.LinearLayoutManager
@@ -87,7 +86,6 @@ class DappFragment : BackableTopLevelFragment() {
     }
 
     private fun setStatusBarColor(activity: FragmentActivity) {
-        if (Build.VERSION.SDK_INT < 21) return
         activity.window.statusBarColor = getColorById(R.color.colorPrimaryDarkTransparent) ?: 0
     }
 
@@ -162,7 +160,6 @@ class DappFragment : BackableTopLevelFragment() {
     }
 
     private fun setOnApplyWindowInsetsListener() {
-        if (Build.VERSION.SDK_INT < 21) return
         container.setOnApplyWindowInsetsListener { v, insets ->
             v.header.onApplyWindowInsets(insets)
             insets.consumeSystemWindowInsets()

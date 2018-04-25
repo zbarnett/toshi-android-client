@@ -18,7 +18,6 @@
 package com.toshi.view.custom
 
 import android.content.Context
-import android.os.Build
 import android.support.design.widget.AppBarLayout
 import android.support.v4.graphics.ColorUtils
 import android.util.AttributeSet
@@ -171,7 +170,6 @@ class CollapsingToshiView : AppBarLayout {
     }
 
     private fun updateElevation(percentage: Float) {
-        if (Build.VERSION.SDK_INT < 21) return
         val newElevation = (inputElevation * (1 - percentage))
         val newZ = (inputZ * (1 - percentage))
         inputWrapper.elevation = newElevation

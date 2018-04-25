@@ -20,7 +20,6 @@ package com.toshi.util;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
@@ -32,7 +31,6 @@ import com.toshi.view.activity.AttachmentConfirmationActivity;
 import com.toshi.view.activity.FullscreenImageActivity;
 import com.toshi.view.activity.GroupInfoActivity;
 import com.toshi.view.activity.ViewUserActivity;
-import com.toshi.view.activity.webView.JellyBeanWebViewActivity;
 import com.toshi.view.activity.webView.LollipopWebViewActivity;
 
 import java.io.File;
@@ -108,14 +106,8 @@ public class ChatNavigation {
 
     public void startWebViewActivity(final AppCompatActivity activity,
                                      final String actionUrl) {
-        final Intent intent;
-        if (Build.VERSION.SDK_INT >= 21) {
-            intent = new Intent(activity, LollipopWebViewActivity.class)
-                    .putExtra(LollipopWebViewActivity.EXTRA__ADDRESS, actionUrl);
-        } else {
-            intent = new Intent(activity, JellyBeanWebViewActivity.class)
-                    .putExtra(JellyBeanWebViewActivity.EXTRA__ADDRESS, actionUrl);
-        }
+        final Intent intent = new Intent(activity, LollipopWebViewActivity.class)
+                .putExtra(LollipopWebViewActivity.EXTRA__ADDRESS, actionUrl);
         activity.startActivity(intent);
     }
 

@@ -18,14 +18,12 @@
 package com.toshi.extensions
 
 import android.content.Intent
-import android.os.Build
 import android.support.annotation.ColorRes
 import android.support.annotation.DimenRes
 import android.support.annotation.StringRes
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.widget.Toast
-import com.toshi.view.activity.webView.JellyBeanWebViewActivity
 import com.toshi.view.activity.webView.LollipopWebViewActivity
 
 inline fun <reified T> Fragment.startActivity(func: Intent.() -> Intent) = startActivity(Intent(activity, T::class.java).func())
@@ -53,26 +51,14 @@ fun Fragment.toast(@StringRes id: Int, duration: Int = Toast.LENGTH_SHORT) = Toa
 fun Fragment.getColor(@ColorRes id: Int) = context?.let { ContextCompat.getColor(it, id) }
 
 fun Fragment.openWebView(address: String) {
-    if (Build.VERSION.SDK_INT >= 21) {
-        startActivity<LollipopWebViewActivity> {
-            putExtra(LollipopWebViewActivity.EXTRA__ADDRESS, address)
-        }
-    } else {
-        startActivity<JellyBeanWebViewActivity> {
-            putExtra(JellyBeanWebViewActivity.EXTRA__ADDRESS, address)
-        }
+    startActivity<LollipopWebViewActivity> {
+        putExtra(LollipopWebViewActivity.EXTRA__ADDRESS, address)
     }
 }
 
 fun Fragment.openWebViewForResult(requestCode: Int, address: String) {
-    if (Build.VERSION.SDK_INT >= 21) {
-        startActivityForResult<LollipopWebViewActivity>(requestCode) {
-            putExtra(LollipopWebViewActivity.EXTRA__ADDRESS, address)
-            putExtra(LollipopWebViewActivity.EXIT_ACTION, true)
-        }
-    } else {
-        startActivity<JellyBeanWebViewActivity> {
-            putExtra(JellyBeanWebViewActivity.EXTRA__ADDRESS, address)
-        }
+    startActivityForResult<LollipopWebViewActivity>(requestCode) {
+        putExtra(LollipopWebViewActivity.EXTRA__ADDRESS, address)
+        putExtra(LollipopWebViewActivity.EXIT_ACTION, true)
     }
 }

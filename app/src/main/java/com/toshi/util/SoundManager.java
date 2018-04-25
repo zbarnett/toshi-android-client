@@ -18,12 +18,10 @@
 package com.toshi.util;
 
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.SoundPool;
-import android.os.Build;
 import android.support.annotation.IntDef;
 import android.util.SparseIntArray;
 
@@ -81,22 +79,16 @@ public class SoundManager {
         soundPoolMap.put(SCAN_ERROR, soundPool.load(context, R.raw.error, 1));
     }
 
-    @SuppressWarnings("deprecation")
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private SoundPool buildSoundPool() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            AudioAttributes audioAttributes = new AudioAttributes.Builder()
-                    .setUsage(AudioAttributes.USAGE_ASSISTANCE_SONIFICATION)
-                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                    .build();
+        final AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_ASSISTANCE_SONIFICATION)
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .build();
 
-            return new SoundPool.Builder()
-                    .setMaxStreams(MAX_STREAMS)
-                    .setAudioAttributes(audioAttributes)
-                    .build();
-        }
-
-        return new SoundPool(MAX_STREAMS, AudioManager.STREAM_MUSIC, 0);
+        return new SoundPool.Builder()
+                .setMaxStreams(MAX_STREAMS)
+                .setAudioAttributes(audioAttributes)
+                .build();
     }
 
     public void playSound(final @Sound int index) {

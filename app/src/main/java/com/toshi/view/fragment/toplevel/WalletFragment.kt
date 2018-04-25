@@ -22,7 +22,6 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
-import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.FragmentActivity
 import android.view.LayoutInflater
@@ -69,7 +68,6 @@ class WalletFragment : TopLevelFragment() {
     }
 
     private fun setStatusBarColor(activity: FragmentActivity) {
-        if (Build.VERSION.SDK_INT < 21) return
         activity.window.statusBarColor = getColorById(R.color.colorPrimaryDark) ?: 0
     }
 

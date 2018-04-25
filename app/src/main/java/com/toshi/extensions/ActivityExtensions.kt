@@ -21,7 +21,6 @@ import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
-import android.os.Build
 import android.support.annotation.ColorRes
 import android.support.annotation.DimenRes
 import android.support.annotation.DrawableRes
@@ -32,7 +31,6 @@ import android.support.v7.content.res.AppCompatResources
 import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
-import com.toshi.view.activity.webView.JellyBeanWebViewActivity
 import com.toshi.view.activity.webView.LollipopWebViewActivity
 
 fun AppCompatActivity.getColorById(@ColorRes id: Int) = ContextCompat.getColor(this, id)
@@ -80,14 +78,8 @@ fun getAbsoluteY(view: View): Int {
 }
 
 fun AppCompatActivity.openWebView(address: String) {
-    if (Build.VERSION.SDK_INT >= 21) {
-        startActivity<LollipopWebViewActivity> {
-            putExtra(LollipopWebViewActivity.EXTRA__ADDRESS, address)
-        }
-    } else {
-        startActivity<JellyBeanWebViewActivity> {
-            putExtra(JellyBeanWebViewActivity.EXTRA__ADDRESS, address)
-        }
+    startActivity<LollipopWebViewActivity> {
+        putExtra(LollipopWebViewActivity.EXTRA__ADDRESS, address)
     }
 }
 
