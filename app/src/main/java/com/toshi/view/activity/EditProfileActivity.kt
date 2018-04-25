@@ -87,12 +87,13 @@ class EditProfileActivity : AppCompatActivity() {
 
     private val saveClickListener = object : OnSingleClickListener() {
         override fun onSingleClick(v: View?) {
-            val userDetails = UserDetails()
-                    .setDisplayName(inputName.text.toString().trim())
-                    .setUsername(inputUsername.text.toString().trim())
-                    .setAbout(inputAbout.text.toString().trim())
-                    .setLocation(inputLocation.text.toString().trim())
-                    .setIsPublic(publicSwitch.isChecked)
+            val userDetails = UserDetails(
+                    name = inputName.text.toString().trim(),
+                    username = inputUsername.text.toString().trim(),
+                    description = inputAbout.text.toString().trim(),
+                    location = inputLocation.text.toString().trim(),
+                    public = publicSwitch.isChecked
+            )
 
             viewModel.updateUser(userDetails)
         }

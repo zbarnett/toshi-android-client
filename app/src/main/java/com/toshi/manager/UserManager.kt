@@ -115,7 +115,7 @@ class UserManager(
 
     private fun registerNewUserWithTimestamp(serverTime: ServerTime): Single<User> {
         val wallet = wallet ?: return Single.error(IllegalStateException("Wallet is null while registerNewUserWithTimestamp"))
-        val userDetails = UserDetails().setPaymentAddress(wallet.paymentAddress)
+        val userDetails = UserDetails(payment_address = wallet.paymentAddress)
         AppPrefs.setForceUserUpdate(false)
         return idService.registerUser(userDetails, serverTime.get())
     }
@@ -170,7 +170,7 @@ class UserManager(
 
     private fun forceUpdateUser(): Completable {
         return getWallet()
-                .map { UserDetails().setPaymentAddress(it.paymentAddress) }
+                .map { UserDetails(payment_address = it.paymentAddress) }
                 .flatMap { updateUser(it) }
                 .doOnSuccess { AppPrefs.setForceUserUpdate(false) }
                 .doOnError { LogUtil.exception("Error while updating user while initiating $it") }
