@@ -47,10 +47,22 @@ import com.toshi.view.activity.LicenseListActivity
 import com.toshi.view.activity.ScannerActivity
 import com.toshi.view.activity.SignOutActivity
 import com.toshi.view.activity.ViewProfileActivity
+import com.toshi.view.activity.WalletsActivity
 import com.toshi.view.adapter.MeAdapter
 import com.toshi.view.adapter.listeners.OnItemClickListener
 import com.toshi.viewModel.MeViewModel
-import kotlinx.android.synthetic.main.fragment_me.*
+import kotlinx.android.synthetic.main.fragment_me.avatar
+import kotlinx.android.synthetic.main.fragment_me.backupPhrase
+import kotlinx.android.synthetic.main.fragment_me.checkboxBackupPhrase
+import kotlinx.android.synthetic.main.fragment_me.currentNetwork
+import kotlinx.android.synthetic.main.fragment_me.myProfileCard
+import kotlinx.android.synthetic.main.fragment_me.name
+import kotlinx.android.synthetic.main.fragment_me.network
+import kotlinx.android.synthetic.main.fragment_me.securityStatus
+import kotlinx.android.synthetic.main.fragment_me.settings
+import kotlinx.android.synthetic.main.fragment_me.username
+import kotlinx.android.synthetic.main.fragment_me.version
+import kotlinx.android.synthetic.main.fragment_me.walletContainer
 import java.math.BigInteger
 
 class MeFragment : TopLevelFragment() {
@@ -122,6 +134,7 @@ class MeFragment : TopLevelFragment() {
         if (scannerCounter % 10 == 0) startActivityForResult<ScannerActivity>(SCAN_REQUEST_CODE) {
             putExtra(ScannerActivity.SCANNER_RESULT_TYPE, ScannerResultType.NO_ACTION)
         }
+        walletContainer.setOnClickListener { startActivity<WalletsActivity>() }
     }
 
     private fun initRecyclerView() {
