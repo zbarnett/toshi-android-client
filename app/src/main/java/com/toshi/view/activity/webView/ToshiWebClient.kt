@@ -46,8 +46,13 @@ import java.net.UnknownHostException
 import javax.net.ssl.SSLPeerUnverifiedException
 
 class ToshiWebClient(
-        private val context: Context
+        private val context: Context,
+        private val userAgentString: String
 ) : WebViewClient() {
+
+    companion object {
+        const val HEADER_USER_AGENT = "User-Agent"
+    }
 
     private val subscriptions by lazy { CompositeSubscription() }
     private var temporaryResponse: WebResourceResponse? = null
@@ -134,6 +139,7 @@ class ToshiWebClient(
     private fun buildRequest(webRequest: WebResourceRequest): Request? {
         return try {
             val requestBuilder = Request.Builder()
+                    .header(HEADER_USER_AGENT, userAgentString)
                     .get()
                     .url(webRequest.url.toString())
             webRequest.requestHeaders.forEach {
@@ -241,6 +247,7 @@ class ToshiWebClient(
 
     private fun sendRequest(url: String?): Response {
         val requestBuilder = Request.Builder()
+                .header(HEADER_USER_AGENT, userAgentString)
                 .get()
                 .url(url)
         val request = requestBuilder.build()

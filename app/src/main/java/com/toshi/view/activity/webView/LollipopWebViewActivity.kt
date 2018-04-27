@@ -195,7 +195,7 @@ class LollipopWebViewActivity : AppCompatActivity() {
     private fun initWebView() {
         sofaHostWrapper = SofaHostWrapper(this, webview)
         webview.addJavascriptInterface(sofaHostWrapper.sofaHost, "SOFAHost")
-        webview.webViewClient = ToshiWebClient(this)
+        webview.webViewClient = ToshiWebClient(this, webview.settings.userAgentString)
                 .apply {
                     onHistoryUpdatedListener = webViewModel::updateToolbar
                     onUrlUpdatedListener = { webViewModel.url.postValue(it) }
