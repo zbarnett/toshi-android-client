@@ -19,17 +19,19 @@ package com.toshi.presenter;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.util.Pair;
 
 import com.toshi.model.local.ActivityResultHolder;
 import com.toshi.model.network.Balance;
-import com.toshi.util.logging.LogUtil;
 import com.toshi.util.PaymentType;
+import com.toshi.util.logging.LogUtil;
 import com.toshi.view.BaseApplication;
 import com.toshi.view.activity.AmountActivity;
 import com.toshi.view.activity.BalanceActivity;
 import com.toshi.view.activity.DepositActivity;
 import com.toshi.view.activity.SendActivity;
 
+import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.subscriptions.CompositeSubscription;
@@ -129,23 +131,26 @@ public class BalancePresenter implements Presenter<BalanceActivity> {
                 .getBalanceObservable()
                 .observeOn(AndroidSchedulers.mainThread())
                 .filter(balance -> balance != null)
-                .doOnNext(this::renderBalance)
-                .flatMap(balance -> balance.getFormattedLocalBalance().toObservable())
+                .flatMap(this::mapBalance)
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        this::renderFormattedBalance,
+                        balancePair -> renderFormattedBalance(balancePair.first, balancePair.second),
                         ex -> LogUtil.exception("Error during fetching balance", ex)
                 );
 
         this.subscriptions.add(sub);
     }
 
-    private void renderBalance(final Balance balance) {
-        if (this.activity == null) return;
-        this.activity.getBinding().ethBalance.setText(balance.getFormattedUnconfirmedBalance());
+    private Observable<Pair<Balance, String>> mapBalance(final Balance balance) {
+        return balance
+                .getFormattedLocalBalance()
+                .toObservable()
+                .map(formattedBalance -> new Pair<>(balance, formattedBalance));
     }
 
-    private void renderFormattedBalance(final String formattedBalance) {
+    private void renderFormattedBalance(final Balance balance, final String formattedBalance) {
         if (this.activity == null) return;
+        this.activity.getBinding().ethBalance.setText(balance.getFormattedUnconfirmedBalance());
         this.activity.getBinding().localCurrencyBalance.setText(formattedBalance);
     }
 
