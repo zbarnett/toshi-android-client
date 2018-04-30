@@ -47,6 +47,7 @@ public class SofaError extends RealmObject {
     }
 
     public String getUserReadableErrorMessage(final Context context) {
+        if (this.id == null) return context.getString(R.string.not_delivered);
         switch (this.id) {
             case INSUFFUCIENT_FUNDS: {
                 return context.getString(R.string.insufficient_funds);
