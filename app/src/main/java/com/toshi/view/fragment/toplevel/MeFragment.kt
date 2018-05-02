@@ -39,27 +39,19 @@ import com.toshi.util.ImageUtil
 import com.toshi.util.sharedPrefs.AppPrefs
 import com.toshi.view.activity.AdvancedSettingsActivity
 import com.toshi.view.activity.BackupPhraseInfoActivity
-import com.toshi.view.activity.BalanceActivity
 import com.toshi.view.activity.CurrencyActivity
-import com.toshi.view.activity.QrCodeActivity
 import com.toshi.view.activity.SignOutActivity
-import com.toshi.view.activity.TrustedFriendsActivity
 import com.toshi.view.activity.ViewProfileActivity
 import com.toshi.view.adapter.MeAdapter
 import com.toshi.view.adapter.listeners.OnItemClickListener
 import com.toshi.viewModel.MeViewModel
 import kotlinx.android.synthetic.main.fragment_me.avatar
 import kotlinx.android.synthetic.main.fragment_me.backupPhrase
-import kotlinx.android.synthetic.main.fragment_me.balanceContainer
 import kotlinx.android.synthetic.main.fragment_me.checkboxBackupPhrase
-import kotlinx.android.synthetic.main.fragment_me.ethBalance
-import kotlinx.android.synthetic.main.fragment_me.localCurrencyBalance
 import kotlinx.android.synthetic.main.fragment_me.myProfileCard
-import kotlinx.android.synthetic.main.fragment_me.myQrCode
 import kotlinx.android.synthetic.main.fragment_me.name
 import kotlinx.android.synthetic.main.fragment_me.securityStatus
 import kotlinx.android.synthetic.main.fragment_me.settings
-import kotlinx.android.synthetic.main.fragment_me.trustedFriends
 import kotlinx.android.synthetic.main.fragment_me.username
 import java.math.BigInteger
 
@@ -107,10 +99,7 @@ class MeFragment : TopLevelFragment() {
 
     private fun initClickListeners() {
         myProfileCard.setOnClickListener { startActivity<ViewProfileActivity>() }
-        trustedFriends.setOnClickListener { startActivity<TrustedFriendsActivity>() }
         backupPhrase.setOnClickListener { startActivity<BackupPhraseInfoActivity>() }
-        myQrCode.setOnClickListener { startActivity<QrCodeActivity>() }
-        balanceContainer.setOnClickListener { startActivity<BalanceActivity>() }
     }
 
     private fun initRecyclerView() {
@@ -136,12 +125,6 @@ class MeFragment : TopLevelFragment() {
     private fun initObservers() {
         viewModel.user.observe(this, Observer {
             user -> user?.let { updateUi(it) } ?: handleNoUser()
-        })
-        viewModel.balance.observe(this, Observer {
-            balance -> balance?.let { ethBalance.text = balance.formattedUnconfirmedBalance }
-        })
-        viewModel.formattedBalance.observe(this, Observer {
-            formattedBalance -> formattedBalance?.let { localCurrencyBalance.text = it }
         })
         viewModel.singelBalance.observe(this, Observer {
             balance -> balance?.let { showDialog(it) }
@@ -206,11 +189,8 @@ class MeFragment : TopLevelFragment() {
 
     override fun onStart() {
         super.onStart()
-        updateBalance()
+        updateMeAdapter()
     }
 
-    private fun updateBalance() {
-        viewModel.balance.value?.let { viewModel.getFormattedBalance(it) }
-        meAdapter.notifyDataSetChanged()
-    }
+    private fun updateMeAdapter() = meAdapter.notifyDataSetChanged()
 }

@@ -84,17 +84,14 @@
                   android:theme="@style/FullScreenTheme"/>
         <activity android:name="com.toshi.view.activity.LicenseListActivity" />
         <activity android:name="com.toshi.view.activity.LicenseActivity" />
-        <activity android:name="com.toshi.view.activity.TrustedFriendsActivity" />
         <activity android:name="com.toshi.view.activity.BackupPhraseInfoActivity" />
         <activity android:name="com.toshi.view.activity.BackupPhraseActivity" />
         <activity android:name="com.toshi.view.activity.BackupPhraseVerifyActivity" />
-        <activity android:name="com.toshi.view.activity.DepositActivity" />
         <activity android:name="com.toshi.view.activity.FullscreenImageActivity"/>
         <activity android:name="com.toshi.view.activity.AttachmentConfirmationActivity" />
         <activity android:name="com.toshi.view.activity.SignInActivity" />
         <activity android:name="com.toshi.view.activity.SignOutActivity"
                   android:theme="@style/SplashTheme" />
-        <activity android:name="com.toshi.view.activity.QrCodeActivity"/>
         <activity android:name="com.toshi.view.activity.QrCodeHandlerActivity" />
         <activity android:name="com.toshi.view.activity.ImageCropActivity"
                   android:theme="@style/DarkTheme"/>
@@ -102,9 +99,6 @@
         <activity android:name="com.toshi.view.activity.LandingActivity"
                   android:theme="@style/DarkTheme"/>
         <activity android:name="com.toshi.view.activity.AdvancedSettingsActivity"/>
-        <activity android:name="com.toshi.view.activity.BalanceActivity"/>
-        <activity android:name="com.toshi.view.activity.SendActivity"
-                  android:windowSoftInputMode="adjustResize"/>
         <activity android:name="com.toshi.view.activity.SignInInfoActivity"/>
         <activity android:name="com.toshi.view.activity.ConversationRequestActivity" />
         <activity android:name=".view.activity.AddGroupParticipantsActivity" />

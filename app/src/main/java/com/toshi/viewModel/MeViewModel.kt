@@ -31,19 +31,18 @@ import rx.subscriptions.CompositeSubscription
 class MeViewModel : ViewModel() {
 
     private val subscriptions by lazy { CompositeSubscription() }
+    private val userManager by lazy { BaseApplication.get().userManager }
+    private val balanceManager by lazy { BaseApplication.get().balanceManager }
 
     val user by lazy { MutableLiveData<User>() }
-    val balance by lazy { MutableLiveData<Balance>() }
     val singelBalance by lazy { SingleLiveEvent<Balance>() }
-    val formattedBalance by lazy { MutableLiveData<String>() }
 
     init {
         fetchUser()
-        attachBalanceSubscriber()
     }
 
     private fun fetchUser() {
-        val sub = getUserManager()
+        val sub = userManager
                 .getCurrentUserObservable()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -55,36 +54,8 @@ class MeViewModel : ViewModel() {
         subscriptions.add(sub)
     }
 
-    private fun getUserManager() = BaseApplication.get().userManager
-
-    private fun attachBalanceSubscriber() {
-        val sub = getBalanceManager()
-                .balanceObservable
-                .observeOn(AndroidSchedulers.mainThread())
-                .filter { balance -> balance != null }
-                .doOnNext { getFormattedBalance(it) }
-                .subscribe(
-                        { balance.value = it },
-                        { LogUtil.exception("Error during fetching balance $it") }
-                )
-
-        this.subscriptions.add(sub)
-    }
-
-    fun getFormattedBalance(balance: Balance) {
-        val sub = balance
-                .formattedLocalBalance
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        { formattedBalance.value = it },
-                        { LogUtil.exception("Error fetching formated balance $it") }
-                )
-
-        this.subscriptions.add(sub)
-    }
-
     fun getBalance() {
-        val sub = getBalanceManager()
+        val sub = balanceManager
                 .balanceObservable
                 .first()
                 .toSingle()
@@ -95,10 +66,8 @@ class MeViewModel : ViewModel() {
                         { LogUtil.exception("Error showing dialog $it") }
                 )
 
-        this.subscriptions.add(sub)
+        subscriptions.add(sub)
     }
-
-    private fun getBalanceManager() = BaseApplication.get().balanceManager
 
     override fun onCleared() {
         super.onCleared()
