@@ -19,6 +19,7 @@
 
 package com.toshi.managers.dappManager
 
+import android.content.Context
 import com.toshi.manager.DappManager
 import com.toshi.manager.network.DirectoryInterface
 import org.mockito.Mockito
@@ -28,6 +29,7 @@ class DappManagerMocker {
     fun mock(): DappManager {
         return DappManager(
                 directoryService = mockDirectoryApi(),
+                context = mockContext(),
                 scheduler = Schedulers.trampoline()
         )
     }
@@ -35,5 +37,9 @@ class DappManagerMocker {
     private fun mockDirectoryApi(): DirectoryInterface {
         val directoryApi = Mockito.mock(DirectoryInterface::class.java)
         return directoryApi
+    }
+
+    private fun mockContext(): Context {
+        return Mockito.mock(Context::class.java)
     }
 }
