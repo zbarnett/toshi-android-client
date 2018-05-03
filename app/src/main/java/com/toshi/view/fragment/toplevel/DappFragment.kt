@@ -79,6 +79,7 @@ class DappFragment : BackableTopLevelFragment() {
         val activity = activity ?: return
         setStatusBarColor(activity)
         initViewModel(activity)
+        initNetworkView()
         initAdapters()
         setRecyclerViewVisibility()
         initListeners()
@@ -92,6 +93,8 @@ class DappFragment : BackableTopLevelFragment() {
     private fun initViewModel(activity: FragmentActivity) {
         viewModel = ViewModelProviders.of(activity).get(DappViewModel::class.java)
     }
+
+    private fun initNetworkView() = getMainActivity()?.showNetworkStatusView()
 
     private fun initAdapters() {
         initBrowseAdapter()

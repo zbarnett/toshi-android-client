@@ -35,6 +35,7 @@ import com.toshi.viewModel.LoadingState
 import com.toshi.viewModel.PagingState
 import com.toshi.viewModel.ViewAllDappsViewModel
 import com.toshi.viewModel.ViewModelFactory.ViewAllDappsViewModelFactory
+import kotlinx.android.synthetic.main.activity_settings_advanced.networkStatusView
 import kotlinx.android.synthetic.main.activity_view_dapps.closeButton
 import kotlinx.android.synthetic.main.activity_view_dapps.dapps
 import kotlinx.android.synthetic.main.activity_view_dapps.toolbarTitle
@@ -63,6 +64,7 @@ class ViewAllDappsActivity : AppCompatActivity() {
 
     private fun init() {
         initViewModel()
+        initNetworkView()
         initClickListeners()
         initAdapter()
         initScrollListener()
@@ -74,6 +76,10 @@ class ViewAllDappsActivity : AppCompatActivity() {
                 this,
                 ViewAllDappsViewModelFactory(intent)
         ).get(ViewAllDappsViewModel::class.java)
+    }
+
+    private fun initNetworkView() {
+        networkStatusView.setNetworkVisibility(viewModel.getNetworks())
     }
 
     private fun initClickListeners() {

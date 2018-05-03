@@ -212,7 +212,10 @@ class MeFragment : TopLevelFragment() {
     override fun onStart() {
         super.onStart()
         updateMeAdapter()
+        updateNetworkView()
     }
 
     private fun updateMeAdapter() = meAdapter.notifyDataSetChanged()
+
+    private fun updateNetworkView() = getMainActivity()?.showNetworkStatusView()
 }

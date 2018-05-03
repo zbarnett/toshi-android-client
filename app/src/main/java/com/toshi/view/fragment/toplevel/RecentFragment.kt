@@ -76,6 +76,7 @@ class RecentFragment : TopLevelFragment() {
         val activity = activity ?: return
         setStatusBarColor(activity)
         initViewModel(activity)
+        initNetworkView()
         initClickListeners()
         restoreScrollPosition(inState)
         initCompoundAdapter()
@@ -89,6 +90,8 @@ class RecentFragment : TopLevelFragment() {
     private fun initViewModel(activity: FragmentActivity) {
         viewModel = ViewModelProviders.of(activity).get(RecentViewModel::class.java)
     }
+
+    private fun initNetworkView() = getMainActivity()?.hideNetworkStatusView()
 
     private fun initClickListeners() {
         add.setOnClickListener { startActivity<ConversationSetupActivity>() }

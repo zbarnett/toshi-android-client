@@ -18,7 +18,9 @@
 package com.toshi.view.fragment.toplevel
 
 import android.support.v4.app.Fragment
+import com.toshi.view.activity.MainActivity
 
 abstract class TopLevelFragment : Fragment() {
     abstract fun getFragmentTag(): String
+    fun getMainActivity(): MainActivity? = activity as? MainActivity
 }

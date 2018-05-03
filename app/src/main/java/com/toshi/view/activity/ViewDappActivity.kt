@@ -39,6 +39,7 @@ import kotlinx.android.synthetic.main.activity_view_dapp.dappAvatar
 import kotlinx.android.synthetic.main.activity_view_dapp.description
 import kotlinx.android.synthetic.main.activity_view_dapp.header
 import kotlinx.android.synthetic.main.activity_view_dapp.name
+import kotlinx.android.synthetic.main.activity_view_dapp.networkStatusView
 import kotlinx.android.synthetic.main.activity_view_dapp.openBtn
 import kotlinx.android.synthetic.main.activity_view_dapp.scrollView
 import kotlinx.android.synthetic.main.activity_view_dapp.url
@@ -65,6 +66,7 @@ class ViewDappActivity : AppCompatActivity() {
     private fun init() {
         setStatusBarColor()
         initViewModel()
+        initNetworkView()
         initListeners()
         initObservers()
     }
@@ -78,6 +80,10 @@ class ViewDappActivity : AppCompatActivity() {
                 this,
                 ViewDappViewModelFactory(intent)
         ).get(ViewDappViewModel::class.java)
+    }
+
+    private fun initNetworkView() {
+        networkStatusView.setNetworkVisibility(viewModel.getNetworks())
     }
 
     private fun initListeners() {

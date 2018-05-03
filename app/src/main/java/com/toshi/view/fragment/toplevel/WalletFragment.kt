@@ -31,8 +31,8 @@ import com.toshi.R
 import com.toshi.extensions.getColorById
 import com.toshi.extensions.toast
 import com.toshi.view.adapter.WalletPagerAdapter
-import com.toshi.view.fragment.dialogFragment.ShareWalletAddressDialog
 import com.toshi.view.fragment.RefreshFragment
+import com.toshi.view.fragment.dialogFragment.ShareWalletAddressDialog
 import com.toshi.viewModel.WalletViewModel
 import kotlinx.android.synthetic.main.fragment_wallet.copy
 import kotlinx.android.synthetic.main.fragment_wallet.refreshLayout
@@ -61,6 +61,7 @@ class WalletFragment : TopLevelFragment() {
         val activity = activity ?: return
         setStatusBarColor(activity)
         initViewModel(activity)
+        initNetworkView()
         initClickListeners()
         initAdapter()
         initRefreshListener()
@@ -74,6 +75,8 @@ class WalletFragment : TopLevelFragment() {
     private fun initViewModel(activity: FragmentActivity) {
         viewModel = ViewModelProviders.of(activity).get(WalletViewModel::class.java)
     }
+
+    private fun initNetworkView() = getMainActivity()?.showNetworkStatusView()
 
     private fun initClickListeners() {
         copy.setOnClickListener { handleCopyToClipboardClicked() }

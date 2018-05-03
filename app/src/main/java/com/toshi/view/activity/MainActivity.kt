@@ -10,6 +10,7 @@ import com.aurelhubert.ahbottomnavigation.AHBottomNavigation
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationAdapter
 import com.toshi.R
 import com.toshi.extensions.getColorById
+import com.toshi.extensions.isVisible
 import com.toshi.util.SoundManager
 import com.toshi.util.sharedPrefs.AppPrefs
 import com.toshi.view.adapter.NavigationAdapter
@@ -19,6 +20,7 @@ import com.toshi.view.fragment.toplevel.TopLevelFragment
 import com.toshi.viewModel.MainViewModel
 import kotlinx.android.synthetic.main.activity_main.fragmentContainer
 import kotlinx.android.synthetic.main.activity_main.navBar
+import kotlinx.android.synthetic.main.activity_main.networkStatusView
 
 class MainActivity : AppCompatActivity() {
 
@@ -150,6 +152,10 @@ class MainActivity : AppCompatActivity() {
         builder.create().show()
         AppPrefs.setHasLoadedApp()
     }
+
+    fun showNetworkStatusView() = networkStatusView.setNetworkVisibility(viewModel.getNetworks())
+
+    fun hideNetworkStatusView() = networkStatusView.isVisible(false)
 
     override fun onSaveInstanceState(outState: Bundle?) {
         outState?.putInt(CURRENT_ITEM, navBar.currentItem)
