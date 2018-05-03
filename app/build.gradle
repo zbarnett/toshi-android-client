@@ -56,15 +56,6 @@ android {
             minifyEnabled false
             buildConfigField "boolean", webDebugEnabled, "true"
         }
-        developer {
-            applicationIdSuffix ".developer"
-            multiDexEnabled true
-            minifyEnabled true
-            shrinkResources true
-            debuggable false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            buildConfigField "boolean", webDebugEnabled, "true"
-        }
         release {
             multiDexEnabled true
             minifyEnabled true

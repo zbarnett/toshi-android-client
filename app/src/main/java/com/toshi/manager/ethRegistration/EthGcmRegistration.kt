@@ -18,8 +18,7 @@
 package com.toshi.manager.ethRegistration
 
 import com.toshi.crypto.HDWallet
-import com.toshi.manager.network.EthereumInterface
-import com.toshi.manager.network.EthereumService
+import com.toshi.manager.network.EthereumServiceInterface
 import com.toshi.model.local.network.Network
 import com.toshi.model.local.network.Networks
 import com.toshi.model.network.GcmDeregistration
@@ -28,7 +27,6 @@ import com.toshi.model.network.ServerTime
 import com.toshi.util.gcm.GcmToken
 import com.toshi.util.gcm.GcmTokenInterface
 import com.toshi.util.logging.LogUtil
-import com.toshi.util.sharedPrefs.AppPrefsInterface
 import com.toshi.util.sharedPrefs.EthGcmPrefs
 import com.toshi.util.sharedPrefs.EthGcmPrefsInterface
 import rx.Completable
@@ -37,11 +35,10 @@ import rx.schedulers.Schedulers
 
 class EthGcmRegistration(
         private val networks: Networks = Networks.getInstance(),
-        private val appPrefs: AppPrefsInterface,
-        private val ethService: EthereumInterface,
+        private val ethService: EthereumServiceInterface,
         private val gcmPrefs: EthGcmPrefsInterface = EthGcmPrefs(),
         private val gcmToken: GcmTokenInterface = GcmToken(),
-        private val subscribeOnScheduler: Scheduler = Schedulers.io()
+        private val scheduler: Scheduler = Schedulers.io()
 ) {
 
     private lateinit var wallet: HDWallet
@@ -53,61 +50,55 @@ class EthGcmRegistration(
     //Don't unregister the default network
     fun changeNetwork(network: Network): Completable {
         return if (networks.onDefaultNetwork()) {
-            changeEthBaseUrl(network)
-                    .andThen(registerEthGcm())
-                    .subscribeOn(subscribeOnScheduler)
-                    .doOnCompleted { appPrefs.setCurrentNetwork(network) }
+            Completable
+                    .fromAction { changeEthBaseUrl(network) }
+                    .andThen(registerEthGcm(network))
+                    .doOnCompleted { updateCurrentNetwork(network) }
+                    .subscribeOn(scheduler)
         } else gcmToken
                 .get()
                 .flatMapCompletable { unregisterFromEthGcm(it) }
-                .andThen(changeEthBaseUrl(network))
-                .andThen(registerEthGcm())
-                .subscribeOn(subscribeOnScheduler)
-                .doOnCompleted { appPrefs.setCurrentNetwork(network) }
+                .andThen(Completable.fromAction { changeEthBaseUrl(network) })
+                .andThen(registerEthGcm(network))
+                .doOnCompleted { updateCurrentNetwork(network) }
+                .subscribeOn(scheduler)
     }
 
     fun unregisterFromEthGcm(token: String?): Completable {
         val currentNetworkId = networks.currentNetwork.id
         return ethService
+                .get()
                 .timestamp
-                .subscribeOn(subscribeOnScheduler)
                 .flatMapCompletable { unregisterEthGcmWithTimestamp(token, it) }
                 .doOnCompleted { gcmPrefs.setEthGcmTokenSentToServer(currentNetworkId, false) }
-    }
-
-    private fun changeEthBaseUrl(network: Network): Completable {
-        return Completable.fromAction { EthereumService.get().changeBaseUrl(network.url) }
+                .subscribeOn(scheduler)
     }
 
     fun forceRegisterEthGcm(): Completable {
         if (!::wallet.isInitialized) {
             return Completable.error(IllegalStateException("Unable to register GCM as class hasn't been initialised yet"))
         }
-        val currentNetworkId = networks.currentNetwork.id
-        gcmPrefs.setEthGcmTokenSentToServer(currentNetworkId, false)
-        return registerEthGcm()
+        val currentNetwork = networks.currentNetwork
+        gcmPrefs.setEthGcmTokenSentToServer(currentNetwork.id, false)
+        changeEthBaseUrl(currentNetwork)
+        return registerEthGcm(currentNetwork)
+                .doOnCompleted { updateCurrentNetwork(currentNetwork) }
+                .subscribeOn(scheduler)
     }
 
-    private fun registerEthGcm(): Completable {
-        val currentNetworkId = networks.currentNetwork.id
-        return if (gcmPrefs.isEthGcmTokenSentToServer(currentNetworkId)) Completable.complete()
+    private fun registerEthGcm(network: Network): Completable {
+        return if (gcmPrefs.isEthGcmTokenSentToServer(network.id)) Completable.complete()
         else gcmToken
                 .get()
                 .flatMapCompletable { registerEthGcmToken(it) }
+                .doOnError { handleGcmRegisterError(it, network) }
     }
 
     private fun registerEthGcmToken(token: String?): Completable {
         return ethService
+                .get()
                 .timestamp
-                .subscribeOn(subscribeOnScheduler)
                 .flatMapCompletable { registerEthGcmWithTimestamp(token, it) }
-                .doOnCompleted { setEthGcmTokenSentToServer() }
-                .doOnError { handleGcmRegisterError(it) }
-    }
-
-    private fun setEthGcmTokenSentToServer() {
-        val currentNetworkId = networks.currentNetwork.id
-        gcmPrefs.setEthGcmTokenSentToServer(currentNetworkId, true)
     }
 
     @Throws(IllegalStateException::class)
@@ -115,21 +106,28 @@ class EthGcmRegistration(
         return when {
             serverTime == null -> throw IllegalStateException("ServerTime was null")
             token == null -> throw IllegalStateException("token was null")
-            else -> ethService.registerGcm(serverTime.get(), GcmRegistration(token, wallet.paymentAddress))
+            else -> ethService.get().registerGcm(serverTime.get(), GcmRegistration(token, wallet.paymentAddress))
         }
     }
 
-    private fun handleGcmRegisterError(throwable: Throwable) {
-        LogUtil.exception("Error during registering of GCM", throwable)
-        val currentNetworkId = networks.currentNetwork.id
-        gcmPrefs.setEthGcmTokenSentToServer(currentNetworkId, false)
+    private fun updateCurrentNetwork(network: Network) {
+        networks.currentNetwork = network
+        gcmPrefs.setEthGcmTokenSentToServer(network.id, true)
     }
+
+    private fun handleGcmRegisterError(throwable: Throwable, network: Network) {
+        LogUtil.exception("Error during registering of GCM", throwable)
+        gcmPrefs.setEthGcmTokenSentToServer(network.id, false)
+        changeEthBaseUrl(networks.currentNetwork)
+    }
+
+    private fun changeEthBaseUrl(network: Network) = ethService.changeBaseUrl(network.url)
 
     private fun unregisterEthGcmWithTimestamp(token: String?, serverTime: ServerTime?): Completable {
         return when {
             serverTime == null -> throw IllegalStateException("Unable to fetch server time")
             token == null -> throw IllegalStateException("token was null")
-            else -> ethService.unregisterGcm(serverTime.get(), GcmDeregistration(token))
+            else -> ethService.get().unregisterGcm(serverTime.get(), GcmDeregistration(token))
         }
     }
 

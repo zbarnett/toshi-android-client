@@ -18,6 +18,7 @@
 package com.toshi.viewModel
 
 import android.arch.lifecycle.ViewModel
+import com.toshi.model.local.network.Networks
 import com.toshi.util.SingleLiveEvent
 import com.toshi.view.BaseApplication
 import rx.android.schedulers.AndroidSchedulers
@@ -42,6 +43,8 @@ class AmountViewModel : ViewModel() {
 
         subscriptions.add(sub)
     }
+
+    fun getNetworks() = Networks.getInstance()
 
     override fun onCleared() {
         super.onCleared()

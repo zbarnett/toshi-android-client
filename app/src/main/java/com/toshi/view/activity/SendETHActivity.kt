@@ -39,7 +39,20 @@ import com.toshi.util.ScannerResultType
 import com.toshi.view.adapter.listeners.TextChangedListener
 import com.toshi.view.fragment.PaymentConfirmationFragment
 import com.toshi.viewModel.SendEtherViewModel
-import kotlinx.android.synthetic.main.activity_send_erc20_token.*
+import kotlinx.android.synthetic.main.activity_send_erc20_token.addressError
+import kotlinx.android.synthetic.main.activity_send_erc20_token.amountError
+import kotlinx.android.synthetic.main.activity_send_erc20_token.balance
+import kotlinx.android.synthetic.main.activity_send_erc20_token.closeButton
+import kotlinx.android.synthetic.main.activity_send_erc20_token.continueBtn
+import kotlinx.android.synthetic.main.activity_send_erc20_token.currencySwitcher
+import kotlinx.android.synthetic.main.activity_send_erc20_token.max
+import kotlinx.android.synthetic.main.activity_send_erc20_token.networkStatusView
+import kotlinx.android.synthetic.main.activity_send_erc20_token.paste
+import kotlinx.android.synthetic.main.activity_send_erc20_token.qrCodeBtn
+import kotlinx.android.synthetic.main.activity_send_erc20_token.toAddress
+import kotlinx.android.synthetic.main.activity_send_erc20_token.toAmount
+import kotlinx.android.synthetic.main.activity_send_erc20_token.toAmountConverted
+import kotlinx.android.synthetic.main.activity_send_erc20_token.toolbarTitle
 
 class SendETHActivity : AppCompatActivity() {
     companion object {
@@ -56,6 +69,7 @@ class SendETHActivity : AppCompatActivity() {
 
     private fun init() {
         initViewModel()
+        initNetworkView()
         initClickListeners()
         updateUi()
         initObservers()
@@ -64,6 +78,10 @@ class SendETHActivity : AppCompatActivity() {
 
     private fun initViewModel() {
         viewModel = ViewModelProviders.of(this).get(SendEtherViewModel::class.java)
+    }
+
+    private fun initNetworkView() {
+        networkStatusView.setNetworkVisibility(viewModel.getNetworks())
     }
 
     private fun initClickListeners() {

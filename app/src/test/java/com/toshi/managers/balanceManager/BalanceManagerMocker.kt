@@ -20,7 +20,7 @@ package com.toshi.managers.balanceManager
 import com.toshi.manager.BalanceManager
 import com.toshi.manager.ethRegistration.EthGcmRegistration
 import com.toshi.manager.network.CurrencyInterface
-import com.toshi.manager.network.EthereumInterface
+import com.toshi.manager.network.EthereumServiceInterface
 import com.toshi.managers.baseApplication.BaseApplicationMocker
 import com.toshi.mockWallet
 import com.toshi.model.local.network.Network
@@ -30,7 +30,6 @@ import com.toshi.util.sharedPrefs.AppPrefsInterface
 import com.toshi.util.sharedPrefs.BalancePrefsInterface
 import com.toshi.util.sharedPrefs.EthGcmPrefsInterface
 import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchers.anyString
 import org.mockito.Mockito
 import rx.Single
 import rx.schedulers.Schedulers
@@ -57,16 +56,16 @@ class BalanceManagerMocker(
     }
 
     fun mock(): BalanceManager {
-        val ethApi = createEthApiMock()
+        val ethService = createEthApiMock()
         val appPrefs = createAppPrefsMock()
         val currencyApi = createCurrencyApiMock()
         val balancePrefs = createBalancePrefsMock()
         val gcmPrefs = createGcmPrefsMock()
-        val ethGcmRegistration = createEthGcmRegistration(appPrefs, gcmPrefs, ethApi)
+        val ethGcmRegistration = createEthGcmRegistration(gcmPrefs, ethService)
         val baseApplication = createMockBaseApplication()
 
         return BalanceManager(
-                ethService = ethApi,
+                ethService = ethService,
                 currencyService = currencyApi,
                 appPrefs = appPrefs,
                 balancePrefs = balancePrefs,
@@ -76,21 +75,8 @@ class BalanceManagerMocker(
         )
     }
 
-    private fun createEthApiMock(): EthereumInterface {
-        val ethApi = Mockito.mock(EthereumInterface::class.java)
-        Mockito
-                .`when`(ethApi.getTokens(anyString()))
-                .thenReturn(Single.just(testTokenBuilder.createERC20TokenList()))
-        Mockito
-                .`when`(ethApi.getToken(anyString(), anyString()))
-                .thenReturn(Single.just(testTokenBuilder.createERC20Token()))
-        Mockito
-                .`when`(ethApi.getCollectibles(anyString()))
-                .thenReturn(Single.just(testTokenBuilder.createERC721TokenList()))
-        Mockito
-                .`when`(ethApi.getCollectible(anyString(), anyString()))
-                .thenReturn(Single.just(testTokenBuilder.createERC721Token()))
-        return ethApi
+    private fun createEthApiMock(): EthereumServiceInterface {
+        return EthereumServiceMocker().mock(testTokenBuilder)
     }
 
     private fun createCurrencyApiMock(): CurrencyInterface {
@@ -122,16 +108,14 @@ class BalanceManagerMocker(
         return balancePrefs
     }
 
-    private fun createEthGcmRegistration(appPrefs: AppPrefsInterface,
-                                         gcmPrefs: EthGcmPrefsInterface,
-                                         ethApi: EthereumInterface): EthGcmRegistration {
+    private fun createEthGcmRegistration(gcmPrefs: EthGcmPrefsInterface,
+                                         ethApi: EthereumServiceInterface): EthGcmRegistration {
         val networks = createMockedNetworks()
         return EthGcmRegistration(
                 networks = networks,
-                appPrefs = appPrefs,
                 gcmPrefs = gcmPrefs,
                 ethService = ethApi,
-                subscribeOnScheduler = Schedulers.trampoline()
+                scheduler = Schedulers.trampoline()
         )
     }
 

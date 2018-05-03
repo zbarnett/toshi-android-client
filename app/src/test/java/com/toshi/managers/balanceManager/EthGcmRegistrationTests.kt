@@ -19,13 +19,10 @@ package com.toshi.managers.balanceManager
 
 import com.toshi.crypto.HDWallet
 import com.toshi.manager.ethRegistration.EthGcmRegistration
-import com.toshi.manager.network.EthereumInterface
+import com.toshi.manager.network.EthereumServiceInterface
 import com.toshi.masterSeed
 import com.toshi.mockNetwork
 import com.toshi.mockWallet
-import com.toshi.model.network.GcmDeregistration
-import com.toshi.model.network.GcmRegistration
-import com.toshi.model.network.ServerTime
 import com.toshi.network
 import com.toshi.testSharedPrefs.TestAppPrefs
 import com.toshi.testSharedPrefs.TestEthGcmPrefs
@@ -37,10 +34,6 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito
-import rx.Completable
-import rx.Single
 import rx.schedulers.Schedulers
 
 class EthGcmRegistrationTests {
@@ -49,7 +42,7 @@ class EthGcmRegistrationTests {
     private lateinit var ethGcmRegistration: EthGcmRegistration
     private lateinit var appPrefs: AppPrefsInterface
     private lateinit var gcmPrefs: EthGcmPrefsInterface
-    private lateinit var ethApi: EthereumInterface
+    private lateinit var ethService: EthereumServiceInterface
     private lateinit var gcmToken: GcmTokenInterface
 
     @Before
@@ -58,36 +51,27 @@ class EthGcmRegistrationTests {
     }
 
     private fun mock() {
-        ethApi = mockEthApi()
+        ethService = mockEthService()
         appPrefs = TestAppPrefs()
         gcmPrefs = TestEthGcmPrefs()
         gcmToken = TestGcmToken()
         wallet = mockWallet(masterSeed)
     }
 
-    private fun mockEthApi(): EthereumInterface {
-        val ethApi = Mockito.mock(EthereumInterface::class.java)
-        Mockito.`when`(ethApi.timestamp)
-                .thenReturn(Single.just(ServerTime(1L)))
-        Mockito.`when`(ethApi.registerGcm(any(Long::class.java), any(GcmRegistration::class.java)))
-                .thenReturn(Completable.complete())
-        Mockito.`when`(ethApi.unregisterGcm(any(Long::class.java), any(GcmDeregistration::class.java)))
-                .thenReturn(Completable.complete())
-        return ethApi
+    private fun mockEthService(): EthereumServiceInterface {
+        return EthereumServiceMocker().mock()
     }
 
-    private fun createEthGcmRegistration(appPrefs: AppPrefsInterface,
-                                         gcmPrefs: EthGcmPrefsInterface,
-                                         ethApi: EthereumInterface,
+    private fun createEthGcmRegistration(gcmPrefs: EthGcmPrefsInterface,
+                                         ethService: EthereumServiceInterface,
                                          gcmToken: GcmTokenInterface): EthGcmRegistration {
         val networks = mockNetwork(network)
         return EthGcmRegistration(
                 networks = networks,
-                appPrefs = appPrefs,
                 gcmPrefs = gcmPrefs,
-                ethService = ethApi,
+                ethService = ethService,
                 gcmToken = gcmToken,
-                subscribeOnScheduler = Schedulers.trampoline()
+                scheduler = Schedulers.trampoline()
         )
     }
 
@@ -149,6 +133,6 @@ class EthGcmRegistrationTests {
     private fun initEthGcmRegistration() {
         appPrefs.clear()
         gcmPrefs.clear()
-        ethGcmRegistration = createEthGcmRegistration(appPrefs, gcmPrefs, ethApi, gcmToken)
+        ethGcmRegistration = createEthGcmRegistration(gcmPrefs, ethService, gcmToken)
     }
 }

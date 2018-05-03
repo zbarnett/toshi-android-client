@@ -19,6 +19,7 @@ package com.toshi.viewModel
 
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
+import com.toshi.model.local.network.Networks
 import com.toshi.model.network.token.ERCToken
 import com.toshi.model.network.token.Token
 import com.toshi.util.logging.LogUtil
@@ -58,6 +59,8 @@ class ViewTokenViewModel(token: Token) : ViewModel() {
     private fun getERC20Token(contractAddress: String): Single<ERCToken> {
         return balanceManager.getERC20Token(contractAddress)
     }
+
+    fun getNetworks() = Networks.getInstance()
 
     override fun onCleared() {
         super.onCleared()

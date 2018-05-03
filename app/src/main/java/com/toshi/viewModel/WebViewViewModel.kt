@@ -21,6 +21,7 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import android.graphics.Bitmap
 import com.toshi.R
+import com.toshi.model.local.network.Networks
 import com.toshi.util.SingleLiveEvent
 import com.toshi.view.BaseApplication
 import java.net.URI
@@ -65,4 +66,6 @@ class WebViewViewModel(startUrl: String) : ViewModel() {
     }
 
     fun updateToolbar() = toolbarUpdate.postValue(Unit)
+
+    fun getNetworks() = Networks.getInstance()
 }

@@ -22,8 +22,8 @@ import com.toshi.crypto.util.TypeConverter
 import com.toshi.manager.ethRegistration.EthGcmRegistration
 import com.toshi.manager.network.CurrencyInterface
 import com.toshi.manager.network.CurrencyService
-import com.toshi.manager.network.EthereumInterface
 import com.toshi.manager.network.EthereumService
+import com.toshi.manager.network.EthereumServiceInterface
 import com.toshi.model.local.network.Network
 import com.toshi.model.network.Balance
 import com.toshi.model.network.Currencies
@@ -53,11 +53,11 @@ import java.math.RoundingMode
 import java.util.concurrent.TimeUnit
 
 class BalanceManager(
-        private val ethService: EthereumInterface = EthereumService.getApi(),
+        private val ethService: EthereumServiceInterface = EthereumService,
         private val currencyService: CurrencyInterface = CurrencyService.getApi(),
         private val balancePrefs: BalancePrefsInterface = BalancePrefs(),
         private val appPrefs: AppPrefsInterface = AppPrefs,
-        private val ethGcmRegistration: EthGcmRegistration = EthGcmRegistration(appPrefs = appPrefs, ethService = ethService),
+        private val ethGcmRegistration: EthGcmRegistration = EthGcmRegistration(ethService = ethService),
         private val baseApplication: BaseApplication = BaseApplication.get(),
         private val scheduler: Scheduler = Schedulers.io()
 ) {
@@ -120,31 +120,31 @@ class BalanceManager(
 
     private fun getBalance(): Single<Balance> {
         return getWallet()
-                .flatMap { ethService.getBalance(it.paymentAddress) }
+                .flatMap { ethService.get().getBalance(it.paymentAddress) }
                 .subscribeOn(scheduler)
     }
 
     fun getERC20Tokens(): Single<ERC20Tokens> {
         return getWallet()
-                .flatMap { ethService.getTokens(it.paymentAddress) }
+                .flatMap { ethService.get().getTokens(it.paymentAddress) }
                 .subscribeOn(scheduler)
     }
 
     fun getERC20Token(contractAddress: String): Single<ERCToken> {
         return getWallet()
-                .flatMap { ethService.getToken(it.paymentAddress, contractAddress) }
+                .flatMap { ethService.get().getToken(it.paymentAddress, contractAddress) }
                 .subscribeOn(scheduler)
     }
 
     fun getERC721Tokens(): Single<ERC721Tokens> {
         return getWallet()
-                .flatMap { ethService.getCollectibles(it.paymentAddress) }
+                .flatMap { ethService.get().getCollectibles(it.paymentAddress) }
                 .subscribeOn(scheduler)
     }
 
     fun getERC721Token(contactAddress: String): Single<ERC721TokenWrapper> {
         return getWallet()
-                .flatMap { ethService.getCollectible(it.paymentAddress, contactAddress) }
+                .flatMap { ethService.get().getCollectible(it.paymentAddress, contactAddress) }
                 .subscribeOn(scheduler)
     }
 
@@ -226,9 +226,7 @@ class BalanceManager(
     }
 
     fun getTransactionStatus(transactionHash: String): Single<Payment> {
-        return EthereumService
-                .get()
-                .getStatusOfTransaction(transactionHash)
+        return EthereumService.getStatusOfTransaction(transactionHash)
     }
 
     private fun readLastKnownBalance(): String = balancePrefs.readLastKnownBalance()

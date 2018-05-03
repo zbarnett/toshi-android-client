@@ -18,6 +18,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:gravity="center_horizontal"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -55,98 +56,101 @@
             tools:text="0x"/>
     </LinearLayout>
 
+    <android.support.v4.widget.Space
+        android:layout_width="@dimen/space_unused_dimension"
+        android:layout_height="@dimen/margin_two_and_a_half" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/avatar"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@color/placeholder"
+        app:civ_border_width="@dimen/border_size_default"
+        app:civ_border_color="@color/divider" />
+
+    <android.support.v4.widget.Space
+        android:layout_width="@dimen/space_unused_dimension"
+        android:layout_height="@dimen/margin_three_quarters" />
+
+    <TextView
+        android:id="@+id/amount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/textColorPrimary"
+        android:textSize="22sp"
+        tools:text="0.044545 0x"/>
+
+    <android.support.v4.widget.Space
+        android:layout_width="@dimen/space_unused_dimension"
+        android:layout_height="@dimen/margin_quarter" />
+
+    <TextView
+        android:id="@+id/fiat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/textColorSecondary"
+        android:textSize="@dimen/text_size_subtitle"
+        tools:text="$1.4 USD"
+        android:visibility="gone"/>
+
+    <android.support.v4.widget.Space
+        android:layout_width="@dimen/space_unused_dimension"
+        android:layout_height="@dimen/margin_two_and_a_half" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center_horizontal">
+        android:layout_marginLeft="@dimen/margin_primary"
+        android:layout_marginRight="@dimen/margin_primary"
+        android:weightSum="2">
+
+        <Button
+            android:id="@+id/send"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/button_height_large"
+            android:layout_weight="1"
+            style="@style/FlatButton"
+            android:textSize="@dimen/text_size_default"
+            android:textAllCaps="true"
+            android:background="@drawable/background_with_radius_primary_color"
+            android:textColor="#FFFFFF"
+            android:text="@string/send"/>
 
         <android.support.v4.widget.Space
-            android:layout_width="@dimen/space_unused_dimension"
-            android:layout_height="@dimen/margin_two_and_a_half" />
+            android:layout_width="@dimen/margin_half"
+            android:layout_height="@dimen/space_unused_dimension" />
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/avatar"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:src="@color/placeholder"
-            app:civ_border_width="@dimen/border_size_default"
-            app:civ_border_color="@color/divider" />
-
-        <android.support.v4.widget.Space
-            android:layout_width="@dimen/space_unused_dimension"
-            android:layout_height="@dimen/margin_three_quarters" />
-
-        <TextView
-            android:id="@+id/amount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/textColorPrimary"
-            android:textSize="22sp"
-            tools:text="0.044545 0x"/>
-
-        <android.support.v4.widget.Space
-            android:layout_width="@dimen/space_unused_dimension"
-            android:layout_height="5dp" />
-
-        <TextView
-            android:id="@+id/fiat"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/textColorSecondary"
-            android:textSize="@dimen/text_size_subtitle"
-            tools:text="$1.4 USD"
-            android:visibility="gone"/>
-
-        <android.support.v4.widget.Space
-            android:layout_width="@dimen/space_unused_dimension"
-            android:layout_height="@dimen/margin_two_and_a_half" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/margin_primary"
-            android:layout_marginRight="@dimen/margin_primary"
-            android:weightSum="2">
-
-            <Button
-                android:id="@+id/send"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/button_height_large"
-                android:layout_weight="1"
-                style="@style/FlatButton"
-                android:textSize="@dimen/text_size_default"
-                android:textAllCaps="true"
-                android:background="@drawable/background_with_radius_primary_color"
-                android:textColor="#FFFFFF"
-                android:text="@string/send"/>
-
-            <android.support.v4.widget.Space
-                android:layout_width="@dimen/margin_half"
-                android:layout_height="@dimen/space_unused_dimension" />
-
-            <Button
-                android:id="@+id/receive"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/button_height_large"
-                android:layout_weight="1"
-                style="@style/FlatButton"
-                android:textSize="@dimen/text_size_default"
-                android:textAllCaps="true"
-                android:background="@drawable/background_with_radius_primary_color"
-                android:textColor="#FFFFFF"
-                android:text="@string/receive"/>
-            
-        </LinearLayout>
-
-        <android.support.v4.widget.Space
-            android:layout_width="@dimen/space_unused_dimension"
-            android:layout_height="@dimen/margin_one_and_a_quarter" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/border_size_default"
-            android:background="@color/divider" />
+        <Button
+            android:id="@+id/receive"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/button_height_large"
+            android:layout_weight="1"
+            style="@style/FlatButton"
+            android:textSize="@dimen/text_size_default"
+            android:textAllCaps="true"
+            android:background="@drawable/background_with_radius_primary_color"
+            android:textColor="#FFFFFF"
+            android:text="@string/receive"/>
 
     </LinearLayout>
+
+    <android.support.v4.widget.Space
+        android:layout_width="@dimen/space_unused_dimension"
+        android:layout_height="@dimen/margin_one_and_a_quarter" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/border_size_default"
+        android:background="@color/divider" />
+
+    <Space
+        android:layout_width="@dimen/space_unused_dimension"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+    <com.toshi.view.custom.NetworkStatusView
+        android:id="@+id/networkStatusView"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/network_status_height" />
+
 </LinearLayout>

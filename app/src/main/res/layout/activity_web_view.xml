@@ -48,10 +48,25 @@
             android:id="@+id/swipeToRefresh"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            <com.toshi.view.activity.webView.ToshiWebView
-                android:id="@+id/webview"
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <com.toshi.view.activity.webView.ToshiWebView
+                    android:id="@+id/webview"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"/>
+
+                <com.toshi.view.custom.NetworkStatusView
+                    android:id="@+id/networkStatusView"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/network_status_height" />
+
+            </LinearLayout>
+
         </android.support.v4.widget.SwipeRefreshLayout>
 
         <View

@@ -30,6 +30,7 @@ import android.provider.MediaStore
 import android.support.v4.content.FileProvider
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.view.View
 import android.webkit.ValueCallback
 import android.webkit.WebSettings
 import android.webkit.WebView
@@ -46,15 +47,16 @@ import com.toshi.util.FileUtil
 import com.toshi.util.KeyboardUtil
 import com.toshi.util.PermissionUtil
 import com.toshi.view.adapter.SearchDappAdapter
-import com.toshi.view.fragment.DialogFragment.ChooserDialog
+import com.toshi.view.fragment.dialogFragment.ChooserDialog
 import com.toshi.viewModel.DappViewModel
 import com.toshi.viewModel.ViewModelFactory.WebViewViewModelFactory
 import com.toshi.viewModel.WebViewViewModel
 import kotlinx.android.synthetic.main.activity_web_view.input
+import kotlinx.android.synthetic.main.activity_web_view.networkStatusView
 import kotlinx.android.synthetic.main.activity_web_view.progressBar
-import kotlinx.android.synthetic.main.activity_web_view.webview
 import kotlinx.android.synthetic.main.activity_web_view.searchDapps
 import kotlinx.android.synthetic.main.activity_web_view.swipeToRefresh
+import kotlinx.android.synthetic.main.activity_web_view.webview
 import kotlinx.android.synthetic.main.view_address_bar_input.backButton
 import kotlinx.android.synthetic.main.view_address_bar_input.forwardButton
 import kotlinx.android.synthetic.main.view_address_bar_input.view.userInput
@@ -92,6 +94,7 @@ class LollipopWebViewActivity : AppCompatActivity() {
     private fun initWebClient() {
         initViewModel()
         initListeners()
+        initNetworkView()
         initWebSettings()
         initWebView()
         initObservers()
@@ -177,6 +180,10 @@ class LollipopWebViewActivity : AppCompatActivity() {
         }
     }
 
+    private fun initNetworkView() {
+        networkStatusView.setNetworkVisibility(webViewModel.getNetworks())
+    }
+
     private fun initWebSettings() {
         val webSettings = webview.settings
         webSettings.javaScriptEnabled = true
@@ -222,7 +229,7 @@ class LollipopWebViewActivity : AppCompatActivity() {
     }
 
     private fun hideOldWebViewContent() {
-        if (Build.VERSION.SDK_INT >= 23) webview.isVisible(false)
+        if (Build.VERSION.SDK_INT >= 23) webview.isVisible(false, View.INVISIBLE)
     }
 
     private fun onPageLoaded(url: String?) {

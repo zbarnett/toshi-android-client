@@ -15,13 +15,15 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.toshi.presenter.factory;
+package com.toshi.view.fragment.dialogFragment;
 
-import com.toshi.presenter.AdvancedSettingsPresenter;
 
-public class AdvancedSettingsPresenterFactory implements PresenterFactory<AdvancedSettingsPresenter> {
-    @Override
-    public AdvancedSettingsPresenter create() {
-        return new AdvancedSettingsPresenter();
-    }
+import android.support.annotation.IntDef;
+
+public final class PaymentConfirmationType {
+    @IntDef({TOSHI, EXTERNAL, WEB})
+    public @interface Type {}
+    public static final int TOSHI = 1;
+    public static final int EXTERNAL = 2;
+    public static final int WEB = 3;
 }

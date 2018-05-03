@@ -20,7 +20,7 @@ package com.toshi.manager.transaction
 import android.util.Pair
 import com.toshi.crypto.HDWallet
 import com.toshi.manager.model.W3PaymentTask
-import com.toshi.manager.network.EthereumInterface
+import com.toshi.manager.network.EthereumServiceInterface
 import com.toshi.model.network.SentTransaction
 import com.toshi.model.network.ServerTime
 import com.toshi.model.network.SignedTransaction
@@ -29,7 +29,7 @@ import com.toshi.util.logging.LogUtil
 import rx.Single
 
 class TransactionSigner(
-        private val ethereumService: EthereumInterface
+        private val ethereumService: EthereumServiceInterface
 ) {
 
     var wallet: HDWallet? = null
@@ -63,8 +63,10 @@ class TransactionSigner(
 
     private fun sendSignedTransaction(signedTransaction: SignedTransaction, serverTime: ServerTime): Single<SentTransaction> {
         val timestamp = serverTime.get()
-        return ethereumService.sendSignedTransaction(timestamp, signedTransaction)
+        return ethereumService
+                .get()
+                .sendSignedTransaction(timestamp, signedTransaction)
     }
 
-    private fun getServerTime() = ethereumService.timestamp
+    private fun getServerTime() = ethereumService.get().timestamp
 }

@@ -1,7 +1,7 @@
 /*
  * 	Copyright (c) 2017. Toshi Inc
  *
- * 	This program is free software: you can redistribute it and/or modify
+ *  This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
@@ -15,15 +15,13 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.toshi.view.fragment.DialogFragment;
+package com.toshi.manager.network
 
+import com.toshi.model.sofa.payment.Payment
+import rx.Single
 
-import android.support.annotation.IntDef;
-
-public final class PaymentConfirmationType {
-    @IntDef({TOSHI, EXTERNAL, WEB})
-    public @interface Type {}
-    public static final int TOSHI = 1;
-    public static final int EXTERNAL = 2;
-    public static final int WEB = 3;
+interface EthereumServiceInterface {
+    fun getStatusOfTransaction(transactionHash: String): Single<Payment>
+    fun get(): EthereumInterface
+    fun changeBaseUrl(baseUrl: String)
 }

@@ -41,10 +41,6 @@ public class BalanceBar extends LinearLayout {
     private BigInteger previousWeiBalance;
     private CompositeSubscription subscriptions;
 
-    public void setOnBalanceClicked(final OnClickListener listener) {
-        findViewById(R.id.balanceWrapper).setOnClickListener(listener);
-    }
-
     public void setOnPayClicked(final OnClickListener listener) {
         findViewById(R.id.pay_button).setOnClickListener(listener);
         findViewById(R.id.pay_button).setVisibility(VISIBLE);

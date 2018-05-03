@@ -20,6 +20,19 @@ package com.toshi.util.sharedPrefs
 import com.toshi.model.local.network.Network
 
 interface AppPrefsInterface {
+
+    companion object {
+        const val HAS_ONBOARDED = "hasOnboarded"
+        const val HAS_SIGNED_OUT = "hasSignedIn"
+        const val HAS_BACKED_UP_PHRASE = "hasBackedUpPhrase"
+        const val HAS_LOADED_APP_FIRST_TIME = "hasLoadedAppFirstTime"
+        const val LOCAL_CURRENCY_CODE = "localCurrencyCode"
+        const val WAS_MIGRATED = "wasMigrated"
+        const val FORCE_USER_UPDATE = "forceUserUpdate_2"
+        const val CURRENT_NETWORK = "currentNetwork"
+        const val HAS_CLEARED_NOTIFICATION_CHANNELS = "hasClearedNotificationChannels"
+    }
+
     fun hasOnboarded(): Boolean
     fun setHasOnboarded(hasOnboarded: Boolean)
     fun hasLoadedApp(): Boolean

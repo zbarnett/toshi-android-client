@@ -31,6 +31,7 @@ import com.toshi.manager.model.W3PaymentTask
 import com.toshi.model.local.CurrencyMode
 import com.toshi.model.local.OutgoingPaymentResult
 import com.toshi.model.local.UnsignedW3Transaction
+import com.toshi.model.local.network.Networks
 import com.toshi.model.network.Balance
 import com.toshi.model.sofa.SofaAdapters
 import com.toshi.util.EthUtil
@@ -324,6 +325,8 @@ class PaymentConfirmationViewModel : ViewModel() {
 
         subscriptions.add(sub)
     }
+
+    fun getNetworks() = Networks.getInstance()
 
     override fun onCleared() {
         super.onCleared()

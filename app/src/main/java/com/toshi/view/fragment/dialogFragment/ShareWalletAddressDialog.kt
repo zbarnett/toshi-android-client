@@ -15,7 +15,7 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.toshi.view.fragment.DialogFragment
+package com.toshi.view.fragment.dialogFragment
 
 import android.app.Dialog
 import android.arch.lifecycle.Observer
@@ -36,6 +36,7 @@ import com.toshi.extensions.toast
 import com.toshi.viewModel.ShareWalletAddressViewModel
 import kotlinx.android.synthetic.main.fragment_share_wallet_address.closeButton
 import kotlinx.android.synthetic.main.fragment_share_wallet_address.copyBtn
+import kotlinx.android.synthetic.main.fragment_share_wallet_address.networkStatusView
 import kotlinx.android.synthetic.main.fragment_share_wallet_address.qrCodeView
 import kotlinx.android.synthetic.main.fragment_share_wallet_address.shareBtn
 import kotlinx.android.synthetic.main.fragment_share_wallet_address.walletAddress
@@ -69,12 +70,17 @@ class ShareWalletAddressDialog : DialogFragment() {
 
     private fun init() {
         initViewModel()
+        initNetworkView()
         initClickListeners()
         initObservers()
     }
 
     private fun initViewModel() {
         viewModel = ViewModelProviders.of(this).get(ShareWalletAddressViewModel::class.java)
+    }
+
+    private fun initNetworkView() {
+        networkStatusView.setNetworkVisibility(viewModel.getNetworks())
     }
 
     private fun initClickListeners() {

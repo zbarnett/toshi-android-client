@@ -21,20 +21,17 @@ import com.toshi.exception.CurrencyException
 import com.toshi.model.local.network.Network
 import com.toshi.util.CurrencyUtil
 import com.toshi.util.sharedPrefs.AppPrefsInterface
+import com.toshi.util.sharedPrefs.AppPrefsInterface.Companion.CURRENT_NETWORK
+import com.toshi.util.sharedPrefs.AppPrefsInterface.Companion.FORCE_USER_UPDATE
+import com.toshi.util.sharedPrefs.AppPrefsInterface.Companion.HAS_BACKED_UP_PHRASE
+import com.toshi.util.sharedPrefs.AppPrefsInterface.Companion.HAS_CLEARED_NOTIFICATION_CHANNELS
+import com.toshi.util.sharedPrefs.AppPrefsInterface.Companion.HAS_LOADED_APP_FIRST_TIME
+import com.toshi.util.sharedPrefs.AppPrefsInterface.Companion.HAS_ONBOARDED
+import com.toshi.util.sharedPrefs.AppPrefsInterface.Companion.HAS_SIGNED_OUT
+import com.toshi.util.sharedPrefs.AppPrefsInterface.Companion.LOCAL_CURRENCY_CODE
+import com.toshi.util.sharedPrefs.AppPrefsInterface.Companion.WAS_MIGRATED
 
 class TestAppPrefs : AppPrefsInterface {
-
-    companion object {
-        private const val HAS_ONBOARDED = "hasOnboarded"
-        private const val HAS_SIGNED_OUT = "hasSignedIn"
-        private const val HAS_BACKED_UP_PHRASE = "hasBackedUpPhrase"
-        private const val HAS_LOADED_APP_FIRST_TIME = "hasLoadedAppFirstTime"
-        private const val LOCAL_CURRENCY_CODE = "localCurrencyCode"
-        private const val WAS_MIGRATED = "wasMigrated"
-        private const val FORCE_USER_UPDATE = "forceUserUpdate_2"
-        private const val CURRENT_NETWORK = "currentNetwork"
-        private const val HAS_CLEARED_NOTIFICATION_CHANNELS = "hasClearedNotificationChannels"
-    }
 
     private val map by lazy { HashMap<String, Any?>() }
 
@@ -127,5 +124,6 @@ class TestAppPrefs : AppPrefsInterface {
         map[LOCAL_CURRENCY_CODE] = null
         map[WAS_MIGRATED] = false
         map[HAS_ONBOARDED] = false
+        map[CURRENT_NETWORK] = null
     }
 }

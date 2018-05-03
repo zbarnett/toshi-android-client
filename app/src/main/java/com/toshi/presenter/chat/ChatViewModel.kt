@@ -29,6 +29,7 @@ import com.toshi.model.local.Conversation
 import com.toshi.model.local.Group
 import com.toshi.model.local.Recipient
 import com.toshi.model.local.User
+import com.toshi.model.local.network.Networks
 import com.toshi.model.sofa.Control
 import com.toshi.model.sofa.PaymentRequest
 import com.toshi.model.sofa.SofaMessage
@@ -427,6 +428,8 @@ class ChatViewModel(private val threadId: String) : ViewModel() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
     }
+
+    fun getNetworks() = Networks.getInstance()
 
     override fun onCleared() {
         super.onCleared()

@@ -24,8 +24,8 @@ import com.toshi.manager.model.PaymentTask
 import com.toshi.manager.model.ResendToshiPaymentTask
 import com.toshi.manager.model.ToshiPaymentTask
 import com.toshi.manager.model.W3PaymentTask
-import com.toshi.manager.network.EthereumInterface
 import com.toshi.manager.network.EthereumService
+import com.toshi.manager.network.EthereumServiceInterface
 import com.toshi.manager.store.PendingTransactionStore
 import com.toshi.manager.transaction.IncomingTransactionManager
 import com.toshi.manager.transaction.OutgoingTransactionManager
@@ -55,7 +55,7 @@ import rx.subjects.PublishSubject
 import rx.subscriptions.CompositeSubscription
 
 class TransactionManager(
-        private val ethService: EthereumInterface = EthereumService.getApi(),
+        private val ethService: EthereumServiceInterface = EthereumService,
         private val pendingTransactionStore: PendingTransactionStore = PendingTransactionStore(),
         private val transactionSigner: TransactionSigner = TransactionSigner(ethService),
         private val incomingTransactionManager: IncomingTransactionManager = IncomingTransactionManager(pendingTransactionStore),
@@ -176,6 +176,7 @@ class TransactionManager(
 
     fun createTransaction(transactionRequest: TransactionRequest): Single<UnsignedTransaction> {
         return ethService
+                .get()
                 .createTransaction(transactionRequest)
                 .subscribeOn(scheduler)
                 .doOnError { LogUtil.exception("Error while creating transaction", it) }

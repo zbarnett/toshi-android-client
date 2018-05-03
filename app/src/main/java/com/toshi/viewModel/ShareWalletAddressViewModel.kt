@@ -22,6 +22,7 @@ import android.arch.lifecycle.ViewModel
 import android.graphics.Bitmap
 import com.toshi.R
 import com.toshi.crypto.HDWallet
+import com.toshi.model.local.network.Networks
 import com.toshi.util.QrCode
 import com.toshi.util.SingleLiveEvent
 import com.toshi.view.BaseApplication
@@ -66,6 +67,8 @@ class ShareWalletAddressViewModel : ViewModel() {
 
         subscriptions.add(sub)
     }
+
+    fun getNetworks() = Networks.getInstance()
 
     override fun onCleared() {
         super.onCleared()

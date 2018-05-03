@@ -23,15 +23,11 @@ import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
-import com.toshi.BuildConfig
 import com.toshi.R
 import com.toshi.crypto.util.TypeConverter
 import com.toshi.exception.CurrencyException
-import com.toshi.extensions.isVisible
 import com.toshi.extensions.setActivityResultAndFinish
 import com.toshi.extensions.toast
-import com.toshi.model.local.network.Networks
-import com.toshi.util.BuildTypes
 import com.toshi.util.CurrencyUtil
 import com.toshi.util.EthUtil
 import com.toshi.util.LocaleUtil
@@ -47,7 +43,7 @@ import kotlinx.android.synthetic.main.activity_amount.ethValue
 import kotlinx.android.synthetic.main.activity_amount.localCurrencyCode
 import kotlinx.android.synthetic.main.activity_amount.localCurrencySymbol
 import kotlinx.android.synthetic.main.activity_amount.localValueView
-import kotlinx.android.synthetic.main.activity_amount.networkView
+import kotlinx.android.synthetic.main.activity_amount.networkStatusView
 import kotlinx.android.synthetic.main.activity_amount.toolbarTitle
 import java.math.BigDecimal
 
@@ -130,13 +126,7 @@ class AmountActivity : AppCompatActivity() {
     }
 
     private fun initNetworkView() {
-        val showCurrentNetwork = BuildConfig.BUILD_TYPE == BuildTypes.DEBUG
-        networkView.isVisible(showCurrentNetwork)
-
-        if (showCurrentNetwork) {
-            val network = Networks.getInstance().currentNetwork
-            networkView.text = network.name
-        }
+        networkStatusView.setNetworkVisibility(viewModel.getNetworks())
     }
 
     private fun getLocalValueAsBigDecimal(): BigDecimal {

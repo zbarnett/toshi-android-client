@@ -138,4 +138,10 @@
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
+
+    <com.toshi.view.custom.NetworkStatusView
+        android:id="@+id/networkStatusView"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/network_status_height" />
+
 </LinearLayout>

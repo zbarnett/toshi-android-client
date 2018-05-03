@@ -172,18 +172,10 @@
             android:layout_height="wrap_content"
             android:background="@color/windowBackground"/>
 
-        <TextView
-            android:id="@+id/networkView"
+        <com.toshi.view.custom.NetworkStatusView
+            android:id="@+id/networkStatusView"
             android:layout_width="match_parent"
-            android:layout_height="24dp"
-            android:visibility="gone"
-            tools:visibility="visible"
-            android:gravity="center"
-            android:background="@color/file_avatar_background"
-            style="@style/TextStyleMedium"
-            android:textSize="@dimen/text_size_default"
-            android:textColor="@color/textColorContrast"
-            tools:text="Active network: Mainnet"/>
+            android:layout_height="@dimen/network_status_height" />
 
     </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>

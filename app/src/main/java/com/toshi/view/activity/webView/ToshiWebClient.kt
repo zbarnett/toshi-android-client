@@ -26,6 +26,7 @@ import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import com.toshi.R
+import com.toshi.model.local.network.Networks
 import com.toshi.util.webView.WebViewCookieJar
 import com.toshi.view.BaseApplication
 import okhttp3.Interceptor.Chain
@@ -175,8 +176,9 @@ class ToshiWebClient(
 
     private fun loadSofaScript(): String {
         val sb = StringBuilder()
+        val networkId = Networks.getInstance().currentNetwork.id
         val rcpUrl = "window.SOFA = {" +
-                "config: {netVersion: \"${context.getString(R.string.net_version)}\", " +
+                "config: {netVersion: \"$networkId\", " +
                 "accounts: [\"${getWallet().paymentAddress}\"]," +
                 "rcpUrl: \"${context.getString(R.string.rcp_url)}\"}" +
                 "};"

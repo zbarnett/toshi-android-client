@@ -20,20 +20,16 @@
 package com.toshi.managers.transactionManager
 
 import com.toshi.manager.TransactionManager
-import com.toshi.manager.network.EthereumInterface
+import com.toshi.manager.network.EthereumServiceInterface
 import com.toshi.manager.store.PendingTransactionStore
 import com.toshi.manager.transaction.IncomingTransactionManager
 import com.toshi.manager.transaction.OutgoingTransactionManager
 import com.toshi.manager.transaction.TransactionSigner
 import com.toshi.manager.transaction.UpdateTransactionManager
+import com.toshi.managers.balanceManager.EthereumServiceMocker
 import com.toshi.masterSeed
 import com.toshi.mockWallet
-import com.toshi.model.network.SentTransaction
-import com.toshi.model.network.ServerTime
-import com.toshi.model.network.SignedTransaction
-import org.mockito.ArgumentMatchers
 import org.mockito.Mockito
-import rx.Single
 import rx.schedulers.Schedulers
 
 class TransactionManagerMocker {
@@ -45,11 +41,11 @@ class TransactionManagerMocker {
     }
 
     fun initTransactionManagerWithoutWallet(): TransactionManager {
-        val ethApi = mockEthApi()
+        val ethService = mockEthService()
         return TransactionManager(
-                ethService = ethApi,
+                ethService = ethService,
                 pendingTransactionStore = PendingTransactionStore(),
-                transactionSigner = TransactionSigner(ethApi),
+                transactionSigner = TransactionSigner(ethService),
                 incomingTransactionManager = mockIncomingTransactionManager(),
                 outgoingTransactionManager = mockOutgoingTransactionManager(),
                 updateTransactionManager = mockUpdateTransactionManager(),
@@ -57,13 +53,8 @@ class TransactionManagerMocker {
         )
     }
 
-    private fun mockEthApi(): EthereumInterface {
-        val ethApi = Mockito.mock(EthereumInterface::class.java)
-        Mockito.`when`(ethApi.timestamp)
-                .thenReturn(Single.just(ServerTime(1L)))
-        Mockito.`when`(ethApi.sendSignedTransaction(ArgumentMatchers.any(Long::class.java), ArgumentMatchers.any(SignedTransaction::class.java)))
-                .thenReturn(Single.just(SentTransaction()))
-        return ethApi
+    private fun mockEthService(): EthereumServiceInterface {
+        return EthereumServiceMocker().mock()
     }
 
     private fun mockIncomingTransactionManager(): IncomingTransactionManager {

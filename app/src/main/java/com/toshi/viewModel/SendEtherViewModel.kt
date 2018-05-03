@@ -24,12 +24,13 @@ import com.toshi.crypto.util.TypeConverter
 import com.toshi.extensions.createSafeBigDecimal
 import com.toshi.extensions.isValidDecimal
 import com.toshi.model.local.CurrencyMode
+import com.toshi.model.local.network.Networks
 import com.toshi.model.network.Balance
 import com.toshi.model.network.ExchangeRate
 import com.toshi.util.CurrencyUtil
 import com.toshi.util.EthUtil
-import com.toshi.util.sharedPrefs.AppPrefs
 import com.toshi.util.logging.LogUtil
+import com.toshi.util.sharedPrefs.AppPrefs
 import com.toshi.view.BaseApplication
 import rx.android.schedulers.AndroidSchedulers
 import rx.subscriptions.CompositeSubscription
@@ -193,6 +194,8 @@ class SendEtherViewModel : ViewModel() {
     }
 
     fun getTotalEthAmount(balance: Balance): String = EthUtil.weiAmountToUserVisibleString(balance.unconfirmedBalance)
+
+    fun getNetworks() = Networks.getInstance()
 
     override fun onCleared() {
         super.onCleared()

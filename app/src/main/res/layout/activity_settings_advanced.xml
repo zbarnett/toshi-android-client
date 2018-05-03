@@ -16,13 +16,49 @@
   ~     along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/windowBackgroundSecondary">
 
-    <FrameLayout
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            style="@style/Toolbar">
+
+            <ImageButton
+                android:id="@+id/closeButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scaleType="fitCenter"
+                android:tint="@color/textColorContrast"
+                app:srcCompat="@drawable/ic_arrow_back"
+                style="@style/closeButtonStyle"/>
+
+            <android.support.v4.widget.Space
+                android:layout_width="@dimen/margin_primary"
+                android:layout_height="@dimen/space_unused_dimension" />
+
+            <TextView
+                android:id="@+id/toolbarTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/Toolbar.TitleText"
+                android:text="@string/advanced_title"/>
+
+        </LinearLayout>
 
         <ScrollView
             android:layout_width="match_parent"
@@ -34,118 +70,34 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <LinearLayout
-                    android:id="@+id/toolbar"
+                <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    style="@style/Toolbar">
+                    android:layout_height="@dimen/sub_title_list_height"
+                    style="@style/listSubTitleStyle"
+                    android:text="@string/change_network"/>
 
-                    <ImageButton
-                        android:id="@+id/close_button"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:scaleType="fitCenter"
-                        android:tint="@color/textColorContrast"
-                        app:srcCompat="@drawable/ic_arrow_back"
-                        style="@style/closeButtonStyle"/>
-
-                    <android.support.v4.widget.Space
-                        android:layout_width="@dimen/margin_primary"
-                        android:layout_height="@dimen/space_unused_dimension" />
-
-                    <TextView
-                        android:id="@+id/title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        style="@style/Toolbar.TitleText"
-                        android:text="@string/advanced_title"/>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/networkSwitcherWrapper"
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/networks"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:background="@color/windowBackground"/>
 
-                    <LinearLayout
-                        android:id="@+id/currentNetworkWrapper"
-                        android:layout_width="match_parent"
-                        android:layout_height="72dp"
-                        android:orientation="vertical"
-                        android:background="?android:selectableItemBackground"
-                        android:paddingLeft="@dimen/margin_primary"
-                        android:paddingRight="@dimen/margin_primary"
-                        android:gravity="center_vertical">
+                <Space
+                    android:layout_width="@dimen/space_unused_dimension"
+                    android:layout_height="18dp" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textSize="@dimen/text_size_subtitle"
-                            android:textColor="@color/textColorPrimary"
-                            android:text="@string/network"/>
-
-                        <TextView
-                            android:id="@+id/currentNetwork"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textSize="@dimen/text_size_default"
-                            android:textColor="@color/textColorSecondaryTransparent"
-                            tools:text="Ropsten Revival Testnet"/>
-
-                    </LinearLayout>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/border_size_default"
-                        android:layout_marginLeft="@dimen/margin_primary"
-                        android:layout_marginRight="@dimen/margin_primary"
-                        android:background="@color/divider"/>
-
-                    <android.support.v4.widget.Space
-                        android:layout_width="@dimen/space_unused_dimension"
-                        android:layout_height="@dimen/margin_primary" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="@dimen/margin_primary"
-                        android:layout_marginLeft="@dimen/margin_primary"
-                        android:textSize="@dimen/text_size_default"
-                        android:textColor="@color/textColorBody"
-                        android:text="@string/develop_message"/>
-
-                    <android.support.v4.widget.Space
-                        android:layout_width="@dimen/space_unused_dimension"
-                        android:layout_height="29dp" />
-
-                </LinearLayout>
-
-                <FrameLayout
-                    android:id="@+id/open_source_licenses"
+                <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="54dp"
+                    android:layout_height="wrap_content"
                     android:paddingLeft="@dimen/margin_primary"
                     android:paddingRight="@dimen/margin_primary"
-                    android:background="?android:selectableItemBackground">
+                    android:textSize="@dimen/text_size_default"
+                    android:textColor="@color/textColorSecondaryTransparent"
+                    android:text="@string/develop_message"/>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:textSize="@dimen/text_size_subtitle"
-                        android:textColor="@color/textColorPrimary"
-                        android:text="@string/about__licenses" />
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="right|center_vertical"
-                        app:srcCompat="@drawable/ic_chevron_right" />
-
-                </FrameLayout>
+                <Space
+                    android:layout_width="@dimen/space_unused_dimension"
+                    android:layout_height="18dp" />
 
                 <TextView
                     android:id="@+id/version"
@@ -157,24 +109,32 @@
                     android:textSize="@dimen/text_size_subtitle"
                     tools:text="VersionName"/>
 
+                <Space
+                    android:layout_width="@dimen/space_unused_dimension"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"/>
+
+                <com.toshi.view.custom.NetworkStatusView
+                    android:id="@+id/networkStatusView"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/network_status_height" />
+
             </LinearLayout>
-
         </ScrollView>
+    </LinearLayout>
 
-        <FrameLayout
-            android:id="@+id/loading_spinner"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone"
-            android:background="@color/semi_transparent_overlay">
+    <FrameLayout
+        android:id="@+id/loadingSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:background="@color/semi_transparent_overlay">
 
-            <ProgressBar
-                android:layout_gravity="center"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:indeterminate="true"/>
+        <ProgressBar
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"/>
 
-        </FrameLayout>
     </FrameLayout>
-
-</layout>
+</FrameLayout>

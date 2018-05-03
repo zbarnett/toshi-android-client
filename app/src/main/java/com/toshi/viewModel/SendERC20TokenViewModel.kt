@@ -22,6 +22,7 @@ import android.arch.lifecycle.ViewModel
 import com.toshi.crypto.util.TypeConverter
 import com.toshi.extensions.createSafeBigDecimal
 import com.toshi.extensions.isValidDecimal
+import com.toshi.model.local.network.Networks
 import com.toshi.model.network.token.ERCToken
 import com.toshi.util.EthUtil
 import com.toshi.util.logging.LogUtil
@@ -92,6 +93,8 @@ class SendERC20TokenViewModel(val token: ERCToken) : ViewModel() {
         return if (token != null) token.symbol ?: ""
         else ""
     }
+
+    fun getNetworks() = Networks.getInstance()
 
     override fun onCleared() {
         super.onCleared()

@@ -21,6 +21,7 @@ import android.support.annotation.Nullable;
 
 import com.toshi.R;
 import com.toshi.util.sharedPrefs.AppPrefs;
+import com.toshi.util.sharedPrefs.AppPrefsInterface;
 import com.toshi.view.BaseApplication;
 
 import java.util.ArrayList;
@@ -30,16 +31,30 @@ public class Networks {
     private static final String MAINNET_ID = "1";
     private static Networks instance;
     private List<Network> networks;
+    private AppPrefsInterface appPrefs;
 
     public static Networks getInstance() {
         if (instance == null) {
-            instance = new Networks();
+            instance = new Networks(AppPrefs.INSTANCE);
         }
         return instance;
     }
 
-    private Networks() {
+    public static Networks getInstance(final List<Network> networks, final AppPrefsInterface appPrefs) {
+        if (instance == null) {
+            instance = new Networks(networks, appPrefs);
+        }
+        return instance;
+    }
+
+    private Networks(final AppPrefsInterface appPrefs) {
         this.networks = loadNetworkList();
+        this.appPrefs = appPrefs;
+    }
+
+    private Networks(final List<Network> networks, final AppPrefsInterface appPrefs) {
+        this.networks = networks;
+        this.appPrefs = appPrefs;
     }
 
     private List<Network> loadNetworkList() {
@@ -107,6 +122,14 @@ public class Networks {
         }
     }
 
+    /**
+     * Set the current Ethereum network
+     * @param network
+     */
+    public void setCurrentNetwork(final Network network) {
+        appPrefs.setCurrentNetwork(network);
+    }
+
     private Network getNetworkById(final @Nullable String id) throws NullPointerException {
         for (final Network network : this.networks) {
             if (network.getId().equals(id)) return network;
@@ -116,6 +139,6 @@ public class Networks {
 
     @Nullable
     public String getCurrentNetworkId() {
-        return AppPrefs.INSTANCE.getCurrentNetworkId();
+        return appPrefs.getCurrentNetworkId();
     }
 }

@@ -44,7 +44,7 @@ import com.toshi.util.EthUtil
 import com.toshi.util.ImageUtil
 import com.toshi.util.PaymentType
 import com.toshi.util.logging.LogUtil
-import com.toshi.view.fragment.DialogFragment.PaymentConfirmationType
+import com.toshi.view.fragment.dialogFragment.PaymentConfirmationType
 import com.toshi.viewModel.PaymentConfirmationViewModel
 import kotlinx.android.synthetic.main.fragment_payment_confirmation.ERC20Amount
 import kotlinx.android.synthetic.main.fragment_payment_confirmation.ERC20GasPrice
@@ -67,6 +67,7 @@ import kotlinx.android.synthetic.main.fragment_payment_confirmation.externalWrap
 import kotlinx.android.synthetic.main.fragment_payment_confirmation.gasPrice
 import kotlinx.android.synthetic.main.fragment_payment_confirmation.loadingOverlay
 import kotlinx.android.synthetic.main.fragment_payment_confirmation.loadingSpinner
+import kotlinx.android.synthetic.main.fragment_payment_confirmation.networkStatusView
 import kotlinx.android.synthetic.main.fragment_payment_confirmation.pay
 import kotlinx.android.synthetic.main.fragment_payment_confirmation.recipientWrapper
 import kotlinx.android.synthetic.main.fragment_payment_confirmation.statusMessage
@@ -110,6 +111,7 @@ class PaymentConfirmationFragment : BottomSheetDialogFragment() {
 
     private fun init() {
         initViewModel()
+        initNetworkView()
         initClickListeners()
         setTitle()
         initObservers()
@@ -118,6 +120,10 @@ class PaymentConfirmationFragment : BottomSheetDialogFragment() {
     private fun initViewModel() {
         viewModel = ViewModelProviders.of(this).get(PaymentConfirmationViewModel::class.java)
         viewModel.init(arguments)
+    }
+
+    private fun initNetworkView() {
+        networkStatusView.setNetworkVisibility(viewModel.getNetworks())
     }
 
     private fun initClickListeners() {

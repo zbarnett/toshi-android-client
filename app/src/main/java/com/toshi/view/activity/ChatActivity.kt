@@ -27,7 +27,6 @@ import android.support.v7.app.AppCompatActivity
 import android.text.TextUtils
 import android.view.View
 import android.view.animation.AnimationUtils
-import com.toshi.BuildConfig
 import com.toshi.R
 import com.toshi.exception.PermissionException
 import com.toshi.extensions.getPxSize
@@ -37,7 +36,6 @@ import com.toshi.extensions.openWebView
 import com.toshi.extensions.toast
 import com.toshi.model.local.Conversation
 import com.toshi.model.local.Recipient
-import com.toshi.model.local.network.Networks
 import com.toshi.model.sofa.Control
 import com.toshi.model.sofa.PaymentRequest
 import com.toshi.model.sofa.SofaAdapters
@@ -46,7 +44,6 @@ import com.toshi.presenter.chat.ChatViewModel
 import com.toshi.presenter.chat.ChatViewModelFactory
 import com.toshi.presenter.chat.ConfirmPaymentInfo
 import com.toshi.presenter.chat.ResendPaymentInfo
-import com.toshi.util.BuildTypes
 import com.toshi.util.ChatNavigation
 import com.toshi.util.ChatPaymentHandler
 import com.toshi.util.FileUtil
@@ -72,7 +69,7 @@ import kotlinx.android.synthetic.main.activity_chat.emptyStateSwitcher
 import kotlinx.android.synthetic.main.activity_chat.loadingView
 import kotlinx.android.synthetic.main.activity_chat.loadingViewContainer
 import kotlinx.android.synthetic.main.activity_chat.messagesList
-import kotlinx.android.synthetic.main.activity_chat.networkView
+import kotlinx.android.synthetic.main.activity_chat.networkStatusView
 import kotlinx.android.synthetic.main.activity_chat.toolbarTitle
 import java.io.File
 import java.io.IOException
@@ -150,12 +147,7 @@ class ChatActivity : AppCompatActivity() {
     }
 
     private fun initNetworkView() {
-        val showNetwork = BuildConfig.BUILD_TYPE == BuildTypes.DEBUG
-        networkView.isVisible(showNetwork)
-        if (showNetwork) {
-            val network = Networks.getInstance().currentNetwork
-            networkView.text = network.name
-        }
+        networkStatusView.setNetworkVisibility(viewModel.getNetworks())
     }
 
     private fun initRecyclerView() {
@@ -294,7 +286,8 @@ class ChatActivity : AppCompatActivity() {
         toolbarTitle.text = recipient.displayName
         avatar.setOnClickListener { viewModel.viewRecipientProfile() }
         recipient.loadAvatarInto(avatar)
-        if (recipient.isUser) {
+        val isOnDefaultNetwork = viewModel.getNetworks().onDefaultNetwork()
+        if (recipient.isUser && isOnDefaultNetwork) {
             balanceBar.setOnRequestClicked(requestButtonClicked)
             balanceBar.setOnPayClicked(payButtonClicked)
         }

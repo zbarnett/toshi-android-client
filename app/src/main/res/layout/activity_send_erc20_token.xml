@@ -294,6 +294,11 @@
                 android:layout_width="@dimen/space_unused_dimension"
                 android:layout_height="@dimen/margin_primary" />
 
+            <com.toshi.view.custom.NetworkStatusView
+                android:id="@+id/networkStatusView"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/network_status_height" />
+
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

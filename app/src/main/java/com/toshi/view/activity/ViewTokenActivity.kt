@@ -31,10 +31,17 @@ import com.toshi.model.network.token.EtherToken
 import com.toshi.model.network.token.Token
 import com.toshi.util.EthUtil
 import com.toshi.util.ImageUtil
-import com.toshi.view.fragment.DialogFragment.ShareWalletAddressDialog
+import com.toshi.view.fragment.dialogFragment.ShareWalletAddressDialog
 import com.toshi.viewModel.ViewModelFactory.ViewTokenViewModelFactory
 import com.toshi.viewModel.ViewTokenViewModel
-import kotlinx.android.synthetic.main.activity_view_erc20.*
+import kotlinx.android.synthetic.main.activity_view_erc20.amount
+import kotlinx.android.synthetic.main.activity_view_erc20.avatar
+import kotlinx.android.synthetic.main.activity_view_erc20.closeButton
+import kotlinx.android.synthetic.main.activity_view_erc20.fiat
+import kotlinx.android.synthetic.main.activity_view_erc20.networkStatusView
+import kotlinx.android.synthetic.main.activity_view_erc20.receive
+import kotlinx.android.synthetic.main.activity_view_erc20.send
+import kotlinx.android.synthetic.main.activity_view_erc20.toolbarTitle
 
 class ViewTokenActivity : AppCompatActivity() {
 
@@ -65,6 +72,7 @@ class ViewTokenActivity : AppCompatActivity() {
             return
         }
         initViewModel(token)
+        initNetworkView()
         initObservers()
         initClickListeners()
     }
@@ -74,6 +82,10 @@ class ViewTokenActivity : AppCompatActivity() {
                 this,
                 ViewTokenViewModelFactory(token)
         ).get(ViewTokenViewModel::class.java)
+    }
+
+    private fun initNetworkView() {
+        networkStatusView.setNetworkVisibility(viewModel.getNetworks())
     }
 
     private fun initClickListeners() {

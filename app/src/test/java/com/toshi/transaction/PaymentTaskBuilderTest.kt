@@ -26,12 +26,12 @@ import com.toshi.manager.model.ERC20TokenPaymentTask
 import com.toshi.manager.model.PaymentTask
 import com.toshi.manager.model.ToshiPaymentTask
 import com.toshi.manager.model.W3PaymentTask
-import com.toshi.manager.network.EthereumInterface
+import com.toshi.manager.network.EthereumServiceInterface
 import com.toshi.managers.balanceManager.BalanceManagerMocker
+import com.toshi.managers.balanceManager.EthereumServiceMocker
 import com.toshi.model.local.UnsignedW3Transaction
 import com.toshi.model.local.User
 import com.toshi.model.network.ExchangeRate
-import com.toshi.model.network.TransactionRequest
 import com.toshi.model.network.UnsignedTransaction
 import com.toshi.util.EthUtil
 import com.toshi.util.paymentTask.PaymentTaskBuilder
@@ -41,7 +41,6 @@ import org.hamcrest.Matchers.instanceOf
 import org.hamcrest.Matchers.notNullValue
 import org.junit.Before
 import org.junit.Test
-import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito
 import rx.Single
 import rx.schedulers.Schedulers
@@ -126,15 +125,14 @@ class PaymentTaskBuilderTest {
     }
 
     private fun mockTransactionManager() {
-        val ethApi = Mockito.mock(EthereumInterface::class.java)
-        Mockito
-                .`when`(ethApi.createTransaction(any(TransactionRequest::class.java)))
-                .thenReturn(Single.just(unsignedTransaction))
-
         transactionManager = TransactionManager(
-                ethService = ethApi,
+                ethService = mockEthereumService(),
                 scheduler = Schedulers.trampoline()
         )
+    }
+
+    private fun mockEthereumService(): EthereumServiceInterface {
+        return EthereumServiceMocker().mockCreateTransaction(unsignedTransaction)
     }
 
     private fun mockRecipientManager() {
