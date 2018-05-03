@@ -21,33 +21,24 @@ import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import com.toshi.BuildConfig
 import com.toshi.R
 import com.toshi.extensions.addHorizontalLineDivider
 import com.toshi.extensions.getPxSize
 import com.toshi.extensions.getViewModel
 import com.toshi.extensions.isVisible
-import com.toshi.extensions.startActivityForResult
 import com.toshi.extensions.toast
 import com.toshi.model.local.network.Network
-import com.toshi.util.ScannerResultType
 import com.toshi.view.adapter.NetworkAdapter
-import com.toshi.viewModel.AdvancedSettingsViewModel
+import com.toshi.viewModel.NetworkSwitcherViewModel
 import kotlinx.android.synthetic.main.activity_settings_advanced.closeButton
 import kotlinx.android.synthetic.main.activity_settings_advanced.loadingSpinner
 import kotlinx.android.synthetic.main.activity_settings_advanced.networkStatusView
 import kotlinx.android.synthetic.main.activity_settings_advanced.networks
-import kotlinx.android.synthetic.main.activity_settings_advanced.version
 
-class AdvancedSettingsActivity : AppCompatActivity() {
+class NetworkSwitcherActivity : AppCompatActivity() {
 
-    companion object {
-        private const val SCAN_REQUEST_CODE = 200
-    }
-
-    private lateinit var viewModel: AdvancedSettingsViewModel
+    private lateinit var viewModel: NetworkSwitcherViewModel
     private lateinit var networkAdapter: NetworkAdapter
-    private var scannerCounter = 0
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,7 +51,6 @@ class AdvancedSettingsActivity : AppCompatActivity() {
         initNetworkView()
         initAdapter()
         initClickListeners()
-        setVersionName()
         initObservers()
     }
 
@@ -83,25 +73,7 @@ class AdvancedSettingsActivity : AppCompatActivity() {
     }
 
     private fun initClickListeners() {
-        version.setOnClickListener { handleVersionClicked() }
         closeButton.setOnClickListener { finish() }
-    }
-
-    private fun handleVersionClicked() {
-        scannerCounter++
-        if (scannerCounter % 10 == 0) startScannerActivity()
-    }
-
-    private fun startScannerActivity() {
-        startActivityForResult<ScannerActivity>(SCAN_REQUEST_CODE) {
-            putExtra(ScannerActivity.SCANNER_RESULT_TYPE, ScannerResultType.NO_ACTION)
-        }
-    }
-
-    private fun setVersionName() {
-        val versionName = BuildConfig.VERSION_NAME
-        val appVersion = getString(R.string.app_version, versionName)
-        version.text = appVersion
     }
 
     private fun initObservers() {

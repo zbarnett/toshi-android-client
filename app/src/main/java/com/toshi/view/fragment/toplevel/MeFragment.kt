@@ -26,46 +26,46 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.toshi.BuildConfig
 import com.toshi.R
 import com.toshi.extensions.addHorizontalLineDivider
 import com.toshi.extensions.getColorById
 import com.toshi.extensions.getPxSize
 import com.toshi.extensions.startActivity
 import com.toshi.extensions.startActivityAndFinish
+import com.toshi.extensions.startActivityForResult
 import com.toshi.extensions.toast
 import com.toshi.model.local.User
 import com.toshi.model.network.Balance
 import com.toshi.util.ImageUtil
+import com.toshi.util.ScannerResultType
 import com.toshi.util.sharedPrefs.AppPrefs
-import com.toshi.view.activity.AdvancedSettingsActivity
+import com.toshi.view.activity.NetworkSwitcherActivity
 import com.toshi.view.activity.BackupPhraseInfoActivity
 import com.toshi.view.activity.CurrencyActivity
 import com.toshi.view.activity.LicenseListActivity
+import com.toshi.view.activity.ScannerActivity
 import com.toshi.view.activity.SignOutActivity
 import com.toshi.view.activity.ViewProfileActivity
 import com.toshi.view.adapter.MeAdapter
 import com.toshi.view.adapter.listeners.OnItemClickListener
 import com.toshi.viewModel.MeViewModel
-import kotlinx.android.synthetic.main.fragment_me.avatar
-import kotlinx.android.synthetic.main.fragment_me.backupPhrase
-import kotlinx.android.synthetic.main.fragment_me.checkboxBackupPhrase
-import kotlinx.android.synthetic.main.fragment_me.myProfileCard
-import kotlinx.android.synthetic.main.fragment_me.name
-import kotlinx.android.synthetic.main.fragment_me.securityStatus
-import kotlinx.android.synthetic.main.fragment_me.settings
-import kotlinx.android.synthetic.main.fragment_me.username
+import kotlinx.android.synthetic.main.fragment_me.*
 import java.math.BigInteger
 
 class MeFragment : TopLevelFragment() {
 
     companion object {
         private const val TAG = "MeFragment"
+        private const val SCAN_REQUEST_CODE = 200
     }
 
     override fun getFragmentTag() = TAG
 
     private lateinit var meAdapter: MeAdapter
     private lateinit var viewModel: MeViewModel
+
+    private var scannerCounter = 0
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, inState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_me, container, false)
@@ -77,6 +77,8 @@ class MeFragment : TopLevelFragment() {
         val activity = activity ?: return
         setStatusBarColor(activity)
         initViewModel(activity)
+        setCurrentNetwork()
+        setVersionName()
         setSecurityState()
         initClickListeners()
         initRecyclerView()
@@ -91,6 +93,16 @@ class MeFragment : TopLevelFragment() {
         viewModel = ViewModelProviders.of(activity).get(MeViewModel::class.java)
     }
 
+    private fun setCurrentNetwork() {
+        currentNetwork.text = viewModel.getCurrentNetworkName()
+    }
+
+    private fun setVersionName() {
+        val versionName = BuildConfig.VERSION_NAME
+        val appVersion = getString(R.string.app_version, versionName)
+        version.text = appVersion
+    }
+
     private fun setSecurityState() {
         if (AppPrefs.hasBackedUpPhrase()) {
             checkboxBackupPhrase.isChecked = true
@@ -101,6 +113,15 @@ class MeFragment : TopLevelFragment() {
     private fun initClickListeners() {
         myProfileCard.setOnClickListener { startActivity<ViewProfileActivity>() }
         backupPhrase.setOnClickListener { startActivity<BackupPhraseInfoActivity>() }
+        network.setOnClickListener { startActivity<NetworkSwitcherActivity>() }
+        version.setOnClickListener { handleVersionClicked() }
+    }
+
+    private fun handleVersionClicked() {
+        scannerCounter++
+        if (scannerCounter % 10 == 0) startActivityForResult<ScannerActivity>(SCAN_REQUEST_CODE) {
+            putExtra(ScannerActivity.SCANNER_RESULT_TYPE, ScannerResultType.NO_ACTION)
+        }
     }
 
     private fun initRecyclerView() {
@@ -118,7 +139,6 @@ class MeFragment : TopLevelFragment() {
         when (option) {
             MeAdapter.LOCAL_CURRENCY -> startActivity<CurrencyActivity>()
             MeAdapter.LEGAL_AND_PRIVACY -> startActivity<LicenseListActivity>()
-            MeAdapter.ADVANCED -> startActivity<AdvancedSettingsActivity>()
             MeAdapter.SIGN_OUT -> viewModel.getBalance()
             else -> toast(R.string.option_not_supported)
         }

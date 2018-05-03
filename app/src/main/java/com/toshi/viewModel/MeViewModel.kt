@@ -20,6 +20,7 @@ package com.toshi.viewModel
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import com.toshi.model.local.User
+import com.toshi.model.local.network.Networks
 import com.toshi.model.network.Balance
 import com.toshi.util.SingleLiveEvent
 import com.toshi.util.logging.LogUtil
@@ -68,6 +69,8 @@ class MeViewModel : ViewModel() {
 
         subscriptions.add(sub)
     }
+
+    fun getCurrentNetworkName(): String = Networks.getInstance().currentNetwork.name
 
     override fun onCleared() {
         super.onCleared()

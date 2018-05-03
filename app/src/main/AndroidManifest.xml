@@ -98,7 +98,7 @@
         <activity android:name="com.toshi.view.activity.CurrencyActivity" />
         <activity android:name="com.toshi.view.activity.LandingActivity"
                   android:theme="@style/DarkTheme"/>
-        <activity android:name="com.toshi.view.activity.AdvancedSettingsActivity"/>
+        <activity android:name="com.toshi.view.activity.NetworkSwitcherActivity"/>
         <activity android:name="com.toshi.view.activity.SignInInfoActivity"/>
         <activity android:name="com.toshi.view.activity.ConversationRequestActivity" />
         <activity android:name=".view.activity.AddGroupParticipantsActivity" />

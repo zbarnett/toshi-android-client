@@ -32,7 +32,7 @@ import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import rx.subscriptions.CompositeSubscription
 
-class AdvancedSettingsViewModel(
+class NetworkSwitcherViewModel(
         private val balanceManager: BalanceManager = BaseApplication.get().balanceManager,
         private val subscribeScheduler: Scheduler = Schedulers.io(),
         private val observerScheduler: Scheduler = AndroidSchedulers.mainThread()

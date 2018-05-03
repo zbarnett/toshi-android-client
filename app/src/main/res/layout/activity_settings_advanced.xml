@@ -97,20 +97,6 @@
 
                 <Space
                     android:layout_width="@dimen/space_unused_dimension"
-                    android:layout_height="18dp" />
-
-                <TextView
-                    android:id="@+id/version"
-                    android:layout_width="match_parent"
-                    android:layout_height="54dp"
-                    android:gravity="center_vertical"
-                    android:paddingLeft="@dimen/margin_primary"
-                    android:textColor="@color/textColorBody"
-                    android:textSize="@dimen/text_size_subtitle"
-                    tools:text="VersionName"/>
-
-                <Space
-                    android:layout_width="@dimen/space_unused_dimension"
                     android:layout_height="0dp"
                     android:layout_weight="1"/>
 

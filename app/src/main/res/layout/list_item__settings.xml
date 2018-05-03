@@ -22,7 +22,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/wrapper"
     android:layout_width="match_parent"
-    android:layout_height="54dp"
+    android:layout_height="wrap_content"
+    android:paddingTop="@dimen/list_item_vertical_margin"
+    android:paddingBottom="@dimen/list_item_vertical_margin"
     android:paddingLeft="@dimen/margin_primary"
     android:paddingRight="@dimen/margin_primary"
     android:background="?android:selectableItemBackground">
@@ -32,7 +34,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:textSize="17sp"
+        android:textSize="@dimen/text_size_subtitle"
         android:textColor="@color/textColorPrimary"
         tools:text="Local currency"/>
 

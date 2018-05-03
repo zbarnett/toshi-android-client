@@ -389,4 +389,6 @@
     <string name="delete_message_error">Unable to delete message</string>
     <string name="change_network">Change network</string>
     <string name="network_name">You are on %s</string>
+    <string name="active_network">Active network</string>
+    <string name="active_wallet">Active wallet</string>
 </resources>
