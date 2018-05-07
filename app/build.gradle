@@ -122,7 +122,7 @@ dependencies {
             'com.android.support:multidex:1.0.0',
             'com.google.android:flexbox:0.3.2',
             // Push notifications
-            'com.google.firebase:firebase-messaging:12.0.0',
+            'com.google.firebase:firebase-messaging:11.6.0',
             // Networking
             "com.squareup.retrofit2:retrofit:${retrofitVersion}",
             "com.squareup.retrofit2:converter-moshi:${retrofitVersion}",
