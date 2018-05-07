@@ -35,7 +35,7 @@ public class MeAdapter extends RecyclerView.Adapter<MeAdapter.ViewHolder> {
 
     public static final int LOCAL_CURRENCY = 0;
     public static final int LEGAL_AND_PRIVACY = 1;
-    public static final int SIGN_OUT = 3;
+    public static final int SIGN_OUT = 2;
 
     private final String[] settings;
     public OnItemClickListener<Integer> onItemClickListener;
