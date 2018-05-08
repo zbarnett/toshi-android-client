@@ -20,13 +20,16 @@ package com.toshi.view.activity.webView
 import android.annotation.TargetApi
 import android.content.Context
 import android.graphics.Bitmap
+import android.net.http.SslError
 import android.os.Build
+import android.webkit.SslErrorHandler
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import com.toshi.R
 import com.toshi.model.local.network.Networks
+import com.toshi.util.logging.LogUtil
 import com.toshi.util.webView.WebViewCookieJar
 import com.toshi.view.BaseApplication
 import okhttp3.Interceptor.Chain
@@ -44,6 +47,7 @@ import java.io.InputStreamReader
 import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
+import java.security.cert.CertificateException
 import javax.net.ssl.SSLPeerUnverifiedException
 
 class ToshiWebClient(
@@ -132,6 +136,12 @@ class ToshiWebClient(
         } catch (e: ConnectException) {
             null
         } catch (e: SocketTimeoutException) {
+            null
+        } catch (e: CertificateException) {
+            null
+        } catch (e: Exception) {
+            // The activity should not crash if something is wrong with the response.
+            LogUtil.exception("Error while injecting web3", e)
             null
         }
     }
@@ -283,6 +293,12 @@ class ToshiWebClient(
                 null,
                 finalAddress
         )
+    }
+
+    override fun onReceivedSslError(view: WebView?, handler: SslErrorHandler?, error: SslError?) {
+        val errorMessage = context.getString(R.string.ssl_error)
+        view?.loadData(errorMessage, "text/html", "utf-8")
+        super.onReceivedSslError(view, handler, error)
     }
 
     fun destroy() = subscriptions.clear()
