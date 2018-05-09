@@ -19,6 +19,7 @@ package com.toshi.view.adapter.viewholder;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
@@ -59,19 +60,20 @@ public final class PaymentRequestViewHolder extends RecyclerView.ViewHolder {
     private User remoteUser;
     private @SendState.State int sendState;
     private SofaError sofaError;
+    private boolean arePaymentButtonsEnabled;
 
     public PaymentRequestViewHolder(final View v) {
         super(v);
-        this.title = (TextView) v.findViewById(R.id.title);
-        this.ethereumAmount = (TextView) v.findViewById(R.id.eth_amount);
-        this.body = (TextView) v.findViewById(R.id.body);
-        this.buttonWrapper = (LinearLayout) v.findViewById(R.id.button_wrapper);
-        this.acceptButton = (Button) v.findViewById(R.id.approve_button);
-        this.declineButton = (Button) v.findViewById(R.id.reject_button);
-        this.avatar = (ImageView) v.findViewById(R.id.avatar);
-        this.remotePaymentStatus = (TextView) v.findViewById(R.id.remote_payment_status);
-        this.sentStatus = (ImageView) v.findViewById(R.id.sent_status);
-        this.errorMessage = (TextView) v.findViewById(R.id.error_message);
+        this.title = v.findViewById(R.id.title);
+        this.ethereumAmount = v.findViewById(R.id.eth_amount);
+        this.body = v.findViewById(R.id.body);
+        this.buttonWrapper = v.findViewById(R.id.button_wrapper);
+        this.acceptButton = v.findViewById(R.id.approve_button);
+        this.declineButton = v.findViewById(R.id.reject_button);
+        this.avatar = v.findViewById(R.id.avatar);
+        this.remotePaymentStatus = v.findViewById(R.id.remote_payment_status);
+        this.sentStatus = v.findViewById(R.id.sent_status);
+        this.errorMessage = v.findViewById(R.id.error_message);
     }
 
     public PaymentRequestViewHolder setPaymentRequest(final PaymentRequest request) {
@@ -117,12 +119,18 @@ public final class PaymentRequestViewHolder extends RecyclerView.ViewHolder {
         return this;
     }
 
+    public PaymentRequestViewHolder setArePaymentButtonsEnabled(final boolean isPaymentButtonsEnabled) {
+        this.arePaymentButtonsEnabled = isPaymentButtonsEnabled;
+        return this;
+    }
+
     public void draw() {
         renderAmounts();
         renderBody();
         renderAvatar();
         renderStatus();
         renderSendState();
+        setPaymentButtons();
     }
 
     private void renderAmounts() {
@@ -209,5 +217,29 @@ public final class PaymentRequestViewHolder extends RecyclerView.ViewHolder {
         this.sentStatus.setVisibility(visibility);
         this.errorMessage.setVisibility(visibility);
         if (this.sofaError != null) this.errorMessage.setText(this.sofaError.getMessage());
+    }
+
+    private void setPaymentButtons() {
+        if (this.acceptButton == null || this.declineButton == null) return;
+        if (this.arePaymentButtonsEnabled) enablePaymentButtons();
+        else disablePaymentButtons();
+    }
+
+    private void enablePaymentButtons() {
+        if (this.acceptButton == null || this.declineButton == null) return;
+        this.acceptButton.setClickable(true);
+        this.declineButton.setClickable(true);
+        final int textColor = ContextCompat.getColor(this.acceptButton.getContext(), R.color.colorPrimary);
+        this.acceptButton.setTextColor(textColor);
+        this.declineButton.setTextColor(textColor);
+    }
+
+    private void disablePaymentButtons() {
+        if (this.acceptButton == null || this.declineButton == null) return;
+        this.acceptButton.setClickable(false);
+        this.declineButton.setClickable(false);
+        final int textColor = ContextCompat.getColor(this.acceptButton.getContext(), R.color.colorPrimaryDisabled);
+        this.acceptButton.setTextColor(textColor);
+        this.declineButton.setTextColor(textColor);
     }
 }

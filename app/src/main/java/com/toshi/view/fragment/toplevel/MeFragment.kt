@@ -40,17 +40,27 @@ import com.toshi.model.network.Balance
 import com.toshi.util.ImageUtil
 import com.toshi.util.ScannerResultType
 import com.toshi.util.sharedPrefs.AppPrefs
-import com.toshi.view.activity.NetworkSwitcherActivity
 import com.toshi.view.activity.BackupPhraseInfoActivity
 import com.toshi.view.activity.CurrencyActivity
 import com.toshi.view.activity.LicenseListActivity
+import com.toshi.view.activity.NetworkSwitcherActivity
 import com.toshi.view.activity.ScannerActivity
 import com.toshi.view.activity.SignOutActivity
 import com.toshi.view.activity.ViewProfileActivity
 import com.toshi.view.adapter.MeAdapter
 import com.toshi.view.adapter.listeners.OnItemClickListener
 import com.toshi.viewModel.MeViewModel
-import kotlinx.android.synthetic.main.fragment_me.*
+import kotlinx.android.synthetic.main.fragment_me.avatar
+import kotlinx.android.synthetic.main.fragment_me.backupPhrase
+import kotlinx.android.synthetic.main.fragment_me.checkboxBackupPhrase
+import kotlinx.android.synthetic.main.fragment_me.currentNetwork
+import kotlinx.android.synthetic.main.fragment_me.myProfileCard
+import kotlinx.android.synthetic.main.fragment_me.name
+import kotlinx.android.synthetic.main.fragment_me.network
+import kotlinx.android.synthetic.main.fragment_me.securityStatus
+import kotlinx.android.synthetic.main.fragment_me.settings
+import kotlinx.android.synthetic.main.fragment_me.username
+import kotlinx.android.synthetic.main.fragment_me.version
 import java.math.BigInteger
 
 class MeFragment : TopLevelFragment() {
@@ -77,7 +87,6 @@ class MeFragment : TopLevelFragment() {
         val activity = activity ?: return
         setStatusBarColor(activity)
         initViewModel(activity)
-        setCurrentNetwork()
         setVersionName()
         setSecurityState()
         initClickListeners()
@@ -91,10 +100,6 @@ class MeFragment : TopLevelFragment() {
 
     private fun initViewModel(activity: FragmentActivity) {
         viewModel = ViewModelProviders.of(activity).get(MeViewModel::class.java)
-    }
-
-    private fun setCurrentNetwork() {
-        currentNetwork.text = viewModel.getCurrentNetworkName()
     }
 
     private fun setVersionName() {
@@ -151,6 +156,9 @@ class MeFragment : TopLevelFragment() {
         viewModel.singelBalance.observe(this, Observer {
             balance -> balance?.let { showDialog(it) }
         })
+        viewModel.currentNetwork.observe(this, Observer {
+            if (it != network) currentNetwork.text = it?.name
+        })
     }
 
     private fun updateUi(user: User) {
@@ -168,11 +176,8 @@ class MeFragment : TopLevelFragment() {
     private fun showDialog(balance: Balance) {
         val isWalletEmpty = balance.unconfirmedBalance.compareTo(BigInteger.ZERO) == 0
         val shouldCancelSignOut = !AppPrefs.hasBackedUpPhrase() && !isWalletEmpty
-        if (shouldCancelSignOut) {
-            showSignOutCancelledDialog()
-        } else {
-            showSignOutWarning()
-        }
+        if (shouldCancelSignOut) showSignOutCancelledDialog()
+        else showSignOutWarning()
     }
 
     private fun showSignOutCancelledDialog() {

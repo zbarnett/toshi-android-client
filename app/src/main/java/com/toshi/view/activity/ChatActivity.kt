@@ -151,15 +151,16 @@ class ChatActivity : AppCompatActivity() {
     }
 
     private fun initRecyclerView() {
-        messageAdapter = initMessageAdapter()
+        val isOnDefaultNetwork = viewModel.getNetworks().onDefaultNetwork()
+        messageAdapter = initMessageAdapter(isOnDefaultNetwork)
         layoutManager = SpeedyLinearLayoutManager(this)
         messagesList.adapter = messageAdapter
         messagesList.layoutManager = layoutManager
         messagesList.isScrollContainer = true
     }
 
-    private fun initMessageAdapter(): MessageAdapter {
-        return MessageAdapter()
+    private fun initMessageAdapter(arePaymentButtonsEnabled: Boolean): MessageAdapter {
+        return MessageAdapter(arePaymentButtonsEnabled)
                 .addOnPaymentRequestApproveListener { showPaymentRequestConfirmationDialog(it) }
                 .addOnPaymentRequestRejectListener { viewModel.updatePaymentRequestState(it, PaymentRequest.REJECTED) }
                 .addOnUsernameClickListener { chatNavigation.startProfileActivityWithUsername(this, it) }

@@ -27,14 +27,11 @@ import com.toshi.util.SingleLiveEvent
 import com.toshi.util.logging.LogUtil
 import com.toshi.view.BaseApplication
 import rx.Scheduler
-import rx.Single
 import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
 import rx.subscriptions.CompositeSubscription
 
 class NetworkSwitcherViewModel(
         private val balanceManager: BalanceManager = BaseApplication.get().balanceManager,
-        private val subscribeScheduler: Scheduler = Schedulers.io(),
         private val observerScheduler: Scheduler = AndroidSchedulers.mainThread()
 ) : ViewModel() {
 
@@ -50,16 +47,10 @@ class NetworkSwitcherViewModel(
     }
 
     private fun getNetworks() {
-        val sub = Single.fromCallable { Networks.getInstance() }
-                .map { Pair(it.currentNetwork, it.networks) }
-                .subscribeOn(subscribeScheduler)
-                .observeOn(observerScheduler)
-                .subscribe(
-                        { networks.value = it },
-                        {}
-                )
-
-        subscriptions.add(sub)
+        val networks = Networks.getInstance()
+        val currentNetwork = networks.currentNetwork
+        val networkList = networks.networks
+        this.networks.value = Pair(currentNetwork, networkList)
     }
 
     fun changeNetwork(network: Network) {

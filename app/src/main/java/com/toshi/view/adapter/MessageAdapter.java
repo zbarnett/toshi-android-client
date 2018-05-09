@@ -61,6 +61,8 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
     private final static int SENDER_MASK = 0x1000;
 
     private final List<SofaMessage> sofaMessages;
+    private final boolean arePaymentButtonsEnabled;
+
     private OnItemClickListener<SofaMessage> onPaymentRequestApproveListener;
     private OnItemClickListener<SofaMessage> onPaymentRequestRejectListener;
     private OnItemClickListener<String> onUsernameClickListener;
@@ -71,8 +73,9 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
     private OnItemClickListener<SofaMessage> onResendPaymentListener;
     private Recipient recipient;
 
-    public MessageAdapter() {
+    public MessageAdapter(final boolean arePaymentButtonsEnabled) {
         this.sofaMessages = new ArrayList<>();
+        this.arePaymentButtonsEnabled = arePaymentButtonsEnabled;
     }
 
     public final MessageAdapter addOnPaymentRequestApproveListener(final OnItemClickListener<SofaMessage> listener) {
@@ -337,6 +340,7 @@ public final class MessageAdapter extends RecyclerView.Adapter<RecyclerView.View
                   .setOnRejectListener(this.handleOnPaymentRequestRejected)
                   .setOnResendListener(this.onResendListener, sofaMessage)
                   .setErrorMessage(sofaMessage.getErrorMessage())
+                  .setArePaymentButtonsEnabled(arePaymentButtonsEnabled)
                   .draw();
                 break;
             }

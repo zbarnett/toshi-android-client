@@ -27,20 +27,25 @@ import com.toshi.view.BaseApplication;
 import java.util.ArrayList;
 import java.util.List;
 
+import rx.Observable;
+import rx.subjects.BehaviorSubject;
+
 public class Networks {
     private static final String MAINNET_ID = "1";
     private static Networks instance;
     private List<Network> networks;
     private AppPrefsInterface appPrefs;
 
-    public static Networks getInstance() {
+    private BehaviorSubject<Network> networkSubject;
+
+    public static synchronized Networks getInstance() {
         if (instance == null) {
             instance = new Networks(AppPrefs.INSTANCE);
         }
         return instance;
     }
 
-    public static Networks getInstance(final List<Network> networks, final AppPrefsInterface appPrefs) {
+    public static synchronized Networks getInstance(final List<Network> networks, final AppPrefsInterface appPrefs) {
         if (instance == null) {
             instance = new Networks(networks, appPrefs);
         }
@@ -50,11 +55,20 @@ public class Networks {
     private Networks(final AppPrefsInterface appPrefs) {
         this.networks = loadNetworkList();
         this.appPrefs = appPrefs;
+        this.networkSubject = BehaviorSubject.create();
+        publishCurrentNetwork();
     }
 
     private Networks(final List<Network> networks, final AppPrefsInterface appPrefs) {
         this.networks = networks;
         this.appPrefs = appPrefs;
+        this.networkSubject = BehaviorSubject.create();
+        publishCurrentNetwork();
+    }
+
+    private void publishCurrentNetwork() {
+        final Network currentNetwork = getCurrentNetwork();
+        this.networkSubject.onNext(currentNetwork);
     }
 
     private List<Network> loadNetworkList() {
@@ -128,6 +142,7 @@ public class Networks {
      */
     public void setCurrentNetwork(final Network network) {
         appPrefs.setCurrentNetwork(network);
+        networkSubject.onNext(network);
     }
 
     private Network getNetworkById(final @Nullable String id) throws NullPointerException {
@@ -140,5 +155,9 @@ public class Networks {
     @Nullable
     public String getCurrentNetworkId() {
         return appPrefs.getCurrentNetworkId();
+    }
+
+    public Observable<Network> getNetworkObservable() {
+        return networkSubject.asObservable();
     }
 }
