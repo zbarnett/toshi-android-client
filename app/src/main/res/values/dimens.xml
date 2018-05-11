@@ -46,6 +46,7 @@
 
     <dimen name="corner_radius_default">8dp</dimen>
     <dimen name="corner_radius_small">6dp</dimen>
+    <dimen name="corner_radius_keyboard">6dp</dimen>
 
     <dimen name="elevation_default">2dp</dimen>
     <dimen name="elevation_none">0dp</dimen>
@@ -97,6 +98,10 @@
 
     <dimen name="hitbox_padding">5dp</dimen>
 
+    <dimen name="keyboard_key_width">30dp</dimen>
+    <dimen name="keyboard_key_height">44dp</dimen>
+    <dimen name="keyboard_backspace_width">42dp</dimen>
+
     <dimen name="network_status_height">40dp</dimen>
 
     <dimen name="qr_code_size">170dp</dimen>
@@ -121,5 +126,6 @@
     <dimen name="text_size_instruction">18sp</dimen>
     <dimen name="text_size_title">20sp</dimen>
     <dimen name="text_size_emoji">50sp</dimen>
+    <dimen name="text_size_keyboard">22sp</dimen>
 
 </resources>

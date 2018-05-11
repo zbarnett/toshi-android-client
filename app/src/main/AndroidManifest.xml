@@ -89,7 +89,9 @@
         <activity android:name="com.toshi.view.activity.BackupPhraseVerifyActivity" />
         <activity android:name="com.toshi.view.activity.FullscreenImageActivity"/>
         <activity android:name="com.toshi.view.activity.AttachmentConfirmationActivity" />
-        <activity android:name="com.toshi.view.activity.SignInActivity" />
+        <activity android:name="com.toshi.view.activity.SignInActivity"
+            android:windowSoftInputMode="stateAlwaysHidden"
+            android:screenOrientation="portrait"/>
         <activity android:name="com.toshi.view.activity.SignOutActivity"
                   android:theme="@style/SplashTheme" />
         <activity android:name="com.toshi.view.activity.QrCodeHandlerActivity" />

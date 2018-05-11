@@ -26,10 +26,12 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 
 import com.toshi.R;
+import com.toshi.view.adapter.listeners.OnItemClickListener;
 
 public class SuggestionInputView extends FrameLayout {
 
     private String word;
+    private OnItemClickListener<EditText> inputClickedListener;
 
     public SuggestionInputView(@NonNull Context context) {
         super(context);
@@ -46,8 +48,26 @@ public class SuggestionInputView extends FrameLayout {
         init();
     }
 
+    public void setOnInputClickedListener(final OnItemClickListener<EditText> listener) {
+        this.inputClickedListener = listener;
+    }
+
     private void init() {
         inflate(getContext(), R.layout.view_suggestion_input, this);
+        initTouchEventListeners();
+    }
+
+    private void initTouchEventListeners() {
+        findViewById(R.id.suggestion).setOnTouchListener((v, event) -> {
+            if (!(v instanceof EditText)) return false;
+            inputClickedListener.onItemClick((EditText) v);
+            return true;
+        });
+        findViewById(R.id.word).setOnTouchListener((v, event) -> {
+            if (!(v instanceof EditText)) return false;
+            inputClickedListener.onItemClick((EditText) v);
+            return true;
+        });
     }
 
     public void setWordSuggestion(final String suggestion) {

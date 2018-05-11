@@ -45,4 +45,8 @@
         <attr name="paddingButtonText" format="string"/>
         <attr name="paddingButtonImage" format="integer"/>
     </declare-styleable>
+
+    <declare-styleable name="ForegroundImageView">
+        <attr name="android:foreground"/>
+    </declare-styleable>
 </resources>

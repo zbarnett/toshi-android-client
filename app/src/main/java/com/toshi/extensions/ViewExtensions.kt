@@ -19,8 +19,10 @@ package com.toshi.extensions
 
 import android.support.annotation.ColorRes
 import android.support.annotation.DimenRes
+import android.support.annotation.DrawableRes
 import android.support.annotation.StringRes
 import android.support.v4.content.ContextCompat
+import android.support.v7.content.res.AppCompatResources
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import com.toshi.R
@@ -28,6 +30,10 @@ import com.toshi.view.custom.HorizontalLineDivider
 
 fun View.isVisible(bool: Boolean?, nonVisibleState: Int = View.GONE) {
     visibility = if (bool == true) View.VISIBLE else nonVisibleState
+}
+
+fun View.isVisible(): Boolean {
+    return visibility == View.VISIBLE
 }
 
 fun RecyclerView.addHorizontalLineDivider(
@@ -61,3 +67,5 @@ fun View.getString(@StringRes resId: Int, vararg formatArgs: Any): String {
 fun View.addPadding(left: Int = 0, top: Int = 0, right: Int, bottom: Int = 0) {
     setPadding(left, top, right, bottom)
 }
+
+fun View.getDrawableById(@DrawableRes id: Int) = AppCompatResources.getDrawable(context, id)

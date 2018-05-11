@@ -1,7 +1,7 @@
 /*
- * 	Copyright (c) 2017. Toshi Inc
+ * Copyright (c) 2017. Toshi Inc
  *
- * 	This program is free software: you can redistribute it and/or modify
+ *  This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
@@ -15,7 +15,7 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.toshi.view.custom;
+package com.toshi.view.custom.passphrase;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -37,14 +37,16 @@ import android.widget.TextView;
 import com.google.android.flexbox.FlexboxLayout;
 import com.jakewharton.rxbinding.widget.RxTextView;
 import com.toshi.R;
-import com.toshi.util.KeyboardUtil;
-import com.toshi.util.logging.LogUtil;
 import com.toshi.util.SearchUtil;
+import com.toshi.util.logging.LogUtil;
+import com.toshi.view.custom.SuggestionInputView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 import rx.Observable;
 import rx.Single;
 import rx.Subscription;
@@ -69,6 +71,7 @@ public class PassphraseInputView extends FrameLayout {
     private CompositeSubscription subscriptions;
     private OnPassphraseFinishListener onPassphraseFinishedListener;
     private OnPassphraseUpdateListener onPassphraseUpdateListener;
+    private Function1<EditText, Unit> keyboardListener;
 
     public interface OnPassphraseFinishListener {
         void onPassphraseFinished(final List<String> passphrase);
@@ -91,6 +94,11 @@ public class PassphraseInputView extends FrameLayout {
     public PassphraseInputView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
+    }
+
+    public PassphraseInputView setOnKeyboardListener(final Function1<EditText, Unit> listener) {
+        this.keyboardListener = listener;
+        return this;
     }
 
     private void init() {
@@ -213,6 +221,7 @@ public class PassphraseInputView extends FrameLayout {
             final SuggestionInputView inputView = (SuggestionInputView) wrapper.getChildAt(i);
             inputView.setOnClickListener(this::handleCellClicked);
             inputView.getWordView().setOnFocusChangeListener(this::handleCellFocusChanged);
+            inputView.setOnInputClickedListener(v -> keyboardListener.invoke(v));
         }
     }
 
@@ -359,7 +368,7 @@ public class PassphraseInputView extends FrameLayout {
         cell.setVisibility(VISIBLE);
         setCursorAtEnd(cell.getWordView());
         cell.getWordView().requestFocus();
-        KeyboardUtil.showKeyboard(cell.getWordView());
+        keyboardListener.invoke(cell.getWordView());
         hideErrorMessage();
     }
 

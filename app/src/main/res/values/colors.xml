@@ -52,6 +52,7 @@
     <color name="colorPrimaryDisabled">#6601C236</color>
 
     <color name="input_bg">#FFFFFF</color>
+    <color name="input_bg_pressed">#b7b7b7</color>
     <color name="balance_bar__bg">#FFFFFF</color>
     <color name="divider">#E7E9EA</color>
     <color name="semiTransparentDivider">#80E7E9EA</color>
@@ -74,6 +75,10 @@
     <color name="icon_tint_dark">#9B9DA4</color>
     <color name="sectioned_recyclerview_background">#F2F3F4</color>
 
+    <color name="keyboard_background_default">#FFF</color>
+    <color name="keyboard_background_action">#E5E7EB</color>
+    <color name="keyboard_text_color">#222A35</color>
+    <color name="keyboard_tex_color_disabled">#979BA2</color>
 
     <color name="web_view_progress_foreground">#03671E</color>
     <color name="web_view_progress_background">#99E6AE</color>

@@ -1,7 +1,7 @@
 /*
- * 	Copyright (c) 2017. Toshi Inc
+ * Copyright (c) 2017. Toshi Inc
  *
- * 	This program is free software: you can redistribute it and/or modify
+ *  This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
@@ -15,13 +15,11 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.toshi.presenter.factory;
+package com.toshi.extensions
 
-import com.toshi.presenter.SignInPresenter;
-
-public class SignInPresenterFactory implements PresenterFactory<SignInPresenter> {
-    @Override
-    public SignInPresenter create() {
-        return new SignInPresenter();
-    }
+inline fun <reified T : Enum<T>> T.next(): T {
+    val allValues = enumValues<T>()
+    val currentIndex = allValues.indexOf(this)
+    val nextIndex = if (currentIndex + 1 >= allValues.size) 0 else currentIndex + 1
+    return allValues[nextIndex]
 }
