@@ -19,6 +19,6 @@
 <resources>
     <string-array name="networks">
         <item>https://ethereum.internal.service.toshi.org|Toshi Internal Test Network|116</item>
-        <item>https://ethereum.development.service.toshi.org|Ropsten Test Network|3</item>
+        <item>https://toshi-eth-internal-ropsten.herokuapp.com/|Ropsten Test Network|3</item>
     </string-array>
 </resources>
