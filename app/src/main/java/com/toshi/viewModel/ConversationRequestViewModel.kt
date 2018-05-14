@@ -18,6 +18,8 @@
 package com.toshi.viewModel
 
 import android.arch.lifecycle.ViewModel
+import com.toshi.manager.ChatManager
+import com.toshi.manager.UserManager
 import com.toshi.model.local.Conversation
 import com.toshi.model.local.User
 import com.toshi.util.SingleLiveEvent
@@ -28,7 +30,11 @@ import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import rx.subscriptions.CompositeSubscription
 
-class ConversationRequestViewModel : ViewModel() {
+class ConversationRequestViewModel(
+        private val baseApplication: BaseApplication = BaseApplication.get(),
+        private val chatManager: ChatManager = baseApplication.chatManager,
+        private val userManager: UserManager = baseApplication.userManager
+) : ViewModel() {
 
     private val subscriptions by lazy { CompositeSubscription() }
 
@@ -42,7 +48,7 @@ class ConversationRequestViewModel : ViewModel() {
     }
 
     private fun attachSubscriber() {
-        val sub = getChatManager()
+        val sub = chatManager
                 .registerForAllConversationChanges()
                 .filter { !it.conversationStatus.isAccepted }
                 .observeOn(AndroidSchedulers.mainThread())
@@ -57,8 +63,8 @@ class ConversationRequestViewModel : ViewModel() {
     fun getUnacceptedConversationsAndLocalUser() {
         val sub =
                 Single.zip(
-                        getChatManager().loadAllUnacceptedConversations(),
-                        getUserManager().getCurrentUser(),
+                        chatManager.loadAllUnacceptedConversations(),
+                        userManager.getCurrentUser(),
                         { conversations, localUser -> Pair(conversations, localUser) }
                 )
                 .subscribeOn(Schedulers.io())
@@ -72,7 +78,7 @@ class ConversationRequestViewModel : ViewModel() {
     }
 
     fun acceptConversation(conversation: Conversation) {
-        val sub = getChatManager()
+        val sub = chatManager
                 .acceptConversation(conversation)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -84,7 +90,7 @@ class ConversationRequestViewModel : ViewModel() {
     }
 
     fun rejectConversation(conversation: Conversation) {
-        val sub = getChatManager()
+        val sub = chatManager
                 .rejectConversation(conversation)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -94,10 +100,6 @@ class ConversationRequestViewModel : ViewModel() {
 
         subscriptions.add(sub)
     }
-
-    private fun getChatManager() = BaseApplication.get().chatManager
-
-    private fun getUserManager() = BaseApplication.get().userManager
 
     override fun onCleared() {
         super.onCleared()

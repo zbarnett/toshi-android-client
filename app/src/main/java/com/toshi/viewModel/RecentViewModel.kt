@@ -18,8 +18,12 @@
 package com.toshi.viewModel
 
 import android.arch.lifecycle.ViewModel
+import com.toshi.manager.ChatManager
+import com.toshi.manager.RecipientManager
+import com.toshi.manager.UserManager
 import com.toshi.model.local.Conversation
 import com.toshi.model.local.ConversationInfo
+import com.toshi.model.local.User
 import com.toshi.util.SingleLiveEvent
 import com.toshi.util.logging.LogUtil
 import com.toshi.view.BaseApplication
@@ -29,11 +33,16 @@ import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import rx.subscriptions.CompositeSubscription
 
-class RecentViewModel : ViewModel() {
+class RecentViewModel(
+        private val baseApplication: BaseApplication = BaseApplication.get(),
+        private val recipientManager: RecipientManager = baseApplication.recipientManager,
+        private val chatManager: ChatManager = baseApplication.chatManager,
+        private val userManager: UserManager = baseApplication.userManager
+) : ViewModel() {
 
     private val subscriptions by lazy { CompositeSubscription() }
 
-    val acceptedAndUnacceptedConversations by lazy { SingleLiveEvent<Pair<List<Conversation>, List<Conversation>>>() }
+    val acceptedAndUnacceptedConversations by lazy { SingleLiveEvent<UserConversations>() }
     val updatedConversation by lazy { SingleLiveEvent<Conversation>() }
     val updatedUnacceptedConversation by lazy { SingleLiveEvent<Conversation>() }
     val conversationInfo by lazy { SingleLiveEvent<ConversationInfo>() }
@@ -44,7 +53,7 @@ class RecentViewModel : ViewModel() {
     }
 
     private fun attachSubscriber() {
-        val sub = getChatManager()
+        val sub = chatManager
                 .registerForAllConversationChanges()
                 .filter { it.allMessages.size > 0 }
                 .observeOn(AndroidSchedulers.mainThread())
@@ -53,7 +62,7 @@ class RecentViewModel : ViewModel() {
                         { LogUtil.w("Error fetching acceptedConversations $it") }
                 )
 
-        this.subscriptions.add(sub)
+        subscriptions.add(sub)
     }
 
     private fun handleUpdatedConversation(conversation: Conversation) {
@@ -63,9 +72,10 @@ class RecentViewModel : ViewModel() {
 
     fun getAcceptedAndUnAcceptedConversations() {
         val sub = Single.zip(
-                getChatManager().loadAllAcceptedConversations(),
-                getChatManager().loadAllUnacceptedConversations(),
-                { t1, t2 -> Pair(t1, t2) }
+                chatManager.loadAllAcceptedConversations(),
+                chatManager.loadAllUnacceptedConversations(),
+                userManager.getCurrentUser(),
+                { t1, t2, t3 -> UserConversations(t1, t2, t3) }
         )
         .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -73,7 +83,7 @@ class RecentViewModel : ViewModel() {
                         { LogUtil.w("Error fetching conversations $it") }
                 )
 
-        this.subscriptions.add(sub)
+        subscriptions.add(sub)
     }
 
     fun showConversationOptionsDialog(threadId: String) {
@@ -90,14 +100,14 @@ class RecentViewModel : ViewModel() {
                 { LogUtil.w("Error: $it") }
         )
 
-        this.subscriptions.add(sub)
+        subscriptions.add(sub)
     }
 
-    private fun getConversation(threadId: String) = getChatManager().loadConversation(threadId)
+    private fun getConversation(threadId: String) = chatManager.loadConversation(threadId)
 
-    private fun isBlocked(threadId: String) = getRecipientManager().isUserBlocked(threadId)
+    private fun isBlocked(threadId: String) = recipientManager.isUserBlocked(threadId)
 
-    private fun isMuted(threadId: String) = getChatManager().isConversationMuted(threadId)
+    private fun isMuted(threadId: String) = chatManager.isConversationMuted(threadId)
 
     fun handleSelectedOption(conversation: Conversation, option: Option) {
         when (option) {
@@ -111,8 +121,8 @@ class RecentViewModel : ViewModel() {
 
     private fun setMute(conversation: Conversation, mute: Boolean) {
         val muteAction =
-                if (mute) getChatManager().muteConversation(conversation)
-                else getChatManager().unmuteConversation(conversation)
+                if (mute) chatManager.muteConversation(conversation)
+                else chatManager.unmuteConversation(conversation)
 
         val sub = muteAction
                 .observeOn(AndroidSchedulers.mainThread())
@@ -121,13 +131,13 @@ class RecentViewModel : ViewModel() {
                         { LogUtil.w("Error while unmuting conversation $it") }
                 )
 
-        this.subscriptions.add(sub)
+        subscriptions.add(sub)
     }
 
     private fun setBlock(conversation: Conversation, block: Boolean) {
         val muteAction =
-                if (block) getRecipientManager().blockUser(conversation.threadId)
-                else getRecipientManager().unblockUser(conversation.threadId)
+                if (block) recipientManager.blockUser(conversation.threadId)
+                else recipientManager.unblockUser(conversation.threadId)
 
         val sub = muteAction
                 .observeOn(AndroidSchedulers.mainThread())
@@ -136,15 +146,28 @@ class RecentViewModel : ViewModel() {
                         { LogUtil.w("Error while blocking user $it") }
                 )
 
-        this.subscriptions.add(sub)
+        subscriptions.add(sub)
     }
 
-    private fun getChatManager() = BaseApplication.get().chatManager
+    fun deleteConversation(conversation: Conversation) {
+        val sub = chatManager
+                .deleteConversation(conversation)
+                .subscribe(
+                        {},
+                        { LogUtil.exception("Unable to delete conversation $it") }
+                )
 
-    private fun getRecipientManager() = BaseApplication.get().recipientManager
+        subscriptions.add(sub)
+    }
 
     override fun onCleared() {
         super.onCleared()
         subscriptions.clear()
     }
 }
+
+data class UserConversations(
+        val acceptedConversations: List<Conversation>,
+        val unacceptedConversations: List<Conversation>,
+        val localUser: User?
+)

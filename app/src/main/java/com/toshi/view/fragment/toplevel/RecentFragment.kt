@@ -35,6 +35,7 @@ import com.toshi.extensions.startActivity
 import com.toshi.extensions.startExternalActivity
 import com.toshi.model.local.Conversation
 import com.toshi.model.local.ConversationInfo
+import com.toshi.model.local.User
 import com.toshi.view.activity.ChatActivity
 import com.toshi.view.activity.ConversationRequestActivity
 import com.toshi.view.activity.ConversationSetupActivity
@@ -112,7 +113,8 @@ class RecentFragment : TopLevelFragment() {
         )
         conversationAdapter = ConversationAdapter(
                 { conversation -> startActivity<ChatActivity> { putExtra(ChatActivity.EXTRA__THREAD_ID, conversation.threadId) } },
-                { conversation -> viewModel.showConversationOptionsDialog(conversation.threadId) }
+                { conversation -> viewModel.showConversationOptionsDialog(conversation.threadId) },
+                { conversation -> viewModel.deleteConversation(conversation) }
         )
         val inviteAdapter = InviteFriendAdapter(
                 { handleInviteFriends() }
@@ -137,7 +139,7 @@ class RecentFragment : TopLevelFragment() {
 
     private fun initObservers() {
         viewModel.acceptedAndUnacceptedConversations.observe(this, Observer {
-            conversations -> conversations?.let { handleConversations(it.first, it.second) }
+            if (it != null) handleConversations(it.acceptedConversations, it.unacceptedConversations, it.localUser)
         })
         viewModel.updatedConversation.observe(this, Observer {
             conversation -> conversation?.let { handleAcceptedConversation(it) }
@@ -153,9 +155,11 @@ class RecentFragment : TopLevelFragment() {
         })
     }
 
-    private fun handleConversations(acceptedConversations: List<Conversation>, unacceptedConversation: List<Conversation>) {
+    private fun handleConversations(acceptedConversations: List<Conversation>,
+                                    unacceptedConversation: List<Conversation>,
+                                    localUser: User?) {
         conversationRequestsAdapter.setUnacceptedConversations(unacceptedConversation)
-        conversationAdapter.setItemList(acceptedConversations)
+        conversationAdapter.setItemList(localUser, acceptedConversations)
     }
 
     private fun handleAcceptedConversation(updatedConversation: Conversation) {

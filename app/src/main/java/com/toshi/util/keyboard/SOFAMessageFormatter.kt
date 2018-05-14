@@ -22,30 +22,14 @@ import com.toshi.model.sofa.SofaAdapters
 import com.toshi.model.sofa.SofaMessage
 import com.toshi.model.sofa.SofaType
 import com.toshi.util.logging.LogUtil
-import com.toshi.view.BaseApplication
 import java.io.IOException
 
 /**
  * Convenience class for formatting SOFA messages in a single place with the current local user.
  */
-class SOFAMessageFormatter() {
-
-    private var localUser = BaseApplication
-                .get()
-                .userManager
-                .getCurrentUser()
-                .toBlocking()
-                .value()
-
-    /**
-     * Constructor for tests so an arbitrary local user can be passed in
-     *
-     * @param user: The user to treat as the local user
-     */
-    constructor(user: User) : this() {
-        this.localUser = user
-    }
-
+class SOFAMessageFormatter(
+        private val localUser: User?
+) {
     fun formatMessage(sofaMessage: SofaMessage?): String {
         if (sofaMessage == null) return ""
         val sentByLocal = sofaMessage.isSentBy(localUser)

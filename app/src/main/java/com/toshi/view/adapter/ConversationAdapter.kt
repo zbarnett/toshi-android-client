@@ -21,28 +21,34 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.toshi.R
-import com.toshi.view.adapter.viewholder.ThreadViewHolder
 import com.toshi.model.local.Conversation
+import com.toshi.model.local.User
 import com.toshi.util.keyboard.SOFAMessageFormatter
-import com.toshi.util.logging.LogUtil
-import com.toshi.view.BaseApplication
+import com.toshi.view.adapter.viewholder.ThreadViewHolder
 
 class ConversationAdapter(
         private val onItemClickListener: (Conversation) -> Unit,
-        private val onItemLongClickListener: (Conversation) -> Unit
-    ) : BaseCompoundableAdapter<ThreadViewHolder, Conversation>() {
+        private val onItemLongClickListener: (Conversation) -> Unit,
+        private val onItemDeleted: (Conversation) -> Unit
+) : BaseCompoundableAdapter<ThreadViewHolder, Conversation>() {
 
-    private val messageFormatter: SOFAMessageFormatter by lazy { SOFAMessageFormatter() }
+    private var messageFormatter: SOFAMessageFormatter? = null
+
+    fun setItemList(localUser: User?, items: List<Conversation>) {
+        initMessageFormatter(localUser)
+        val filteredItems = items.filter { !it.isRecipientInvalid } // Don't show conversations with invalid recipients.
+        setItemList(filteredItems)
+    }
+
+    private fun initMessageFormatter(localUser: User?) {
+        if (messageFormatter != null) return
+        messageFormatter = SOFAMessageFormatter(localUser)
+    }
 
     override fun compoundableBindViewHolder(viewHolder: RecyclerView.ViewHolder, adapterIndex: Int) {
         val typedHolder = viewHolder as? ThreadViewHolder
                 ?: throw AssertionError("This is not the right type!")
         onBindViewHolder(typedHolder, adapterIndex)
-    }
-
-    override fun setItemList(items: List<Conversation>) {
-        // Don't show conversations with invalid recipients.
-        super.setItemList(items.filter { !it.isRecipientInvalid })
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ThreadViewHolder {
@@ -54,21 +60,17 @@ class ConversationAdapter(
         val conversation = safelyAt(position)
                 ?: throw AssertionError("No conversation at $position")
         holder.setThread(conversation)
-
-        val formattedLatestMessage = messageFormatter.formatMessage(conversation.latestMessage)
-
+        val formattedLatestMessage = formatLatestMessage(conversation)
         holder.setLatestMessage(formattedLatestMessage)
         holder.setOnItemClickListener(conversation, onItemClickListener)
         holder.setOnItemLongClickListener(conversation, onItemLongClickListener)
     }
 
-    override fun deleteItem(item: Conversation) {
-        BaseApplication
-                .get()
-                .chatManager
-                .deleteConversation(item)
-                .subscribe(
-                        { }
-                ) { _ -> LogUtil.w("Unable to delete conversation") }
+    private fun formatLatestMessage(conversation: Conversation): String {
+        return if (conversation.latestMessage != null) {
+            messageFormatter?.formatMessage(conversation.latestMessage) ?: ""
+        } else ""
     }
+
+    override fun deleteItem(item: Conversation) = onItemDeleted(item)
 }

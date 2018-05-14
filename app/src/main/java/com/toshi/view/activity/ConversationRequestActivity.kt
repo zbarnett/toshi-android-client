@@ -27,9 +27,11 @@ import com.toshi.extensions.addHorizontalLineDivider
 import com.toshi.extensions.isEmpty
 import com.toshi.extensions.startActivityAndFinish
 import com.toshi.model.local.Conversation
+import com.toshi.model.local.User
 import com.toshi.view.adapter.ConversationRequestAdapter
 import com.toshi.viewModel.ConversationRequestViewModel
-import kotlinx.android.synthetic.main.activity_conversation_request.*
+import kotlinx.android.synthetic.main.activity_conversation_request.closeButton
+import kotlinx.android.synthetic.main.activity_conversation_request.requests
 
 class ConversationRequestActivity : AppCompatActivity() {
 
@@ -72,7 +74,7 @@ class ConversationRequestActivity : AppCompatActivity() {
 
     private fun initObservers() {
         viewModel.conversationsAndLocalUser.observe(this, Observer {
-            conversationsAndUser -> conversationsAndUser?.let { handleConversations(it.first) }
+            conversationsAndUser -> conversationsAndUser?.let { handleConversations(it.first, it.second) }
         })
         viewModel.updatedConversation.observe(this, Observer {
             updatedConversation -> updatedConversation?.let { requestAdapter.addConversation(it) }
@@ -85,9 +87,9 @@ class ConversationRequestActivity : AppCompatActivity() {
         })
     }
 
-    private fun handleConversations(conversations: List<Conversation>) {
+    private fun handleConversations(conversations: List<Conversation>, localUser: User?) {
         if (conversations.isEmpty()) finish()
-        requestAdapter.setConversations(conversations)
+        requestAdapter.setConversations(localUser, conversations)
     }
 
     private fun getConversationsAndLocalUser() = viewModel.getUnacceptedConversationsAndLocalUser()

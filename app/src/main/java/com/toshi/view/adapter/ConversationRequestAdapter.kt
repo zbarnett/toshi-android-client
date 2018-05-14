@@ -22,6 +22,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.toshi.R
 import com.toshi.model.local.Conversation
+import com.toshi.model.local.User
 import com.toshi.util.keyboard.SOFAMessageFormatter
 import com.toshi.view.adapter.viewholder.ConversationRequestViewHolder
 
@@ -31,13 +32,19 @@ class ConversationRequestAdapter(
         private val onRejectClickListener: (Conversation) -> Unit
 ) : RecyclerView.Adapter<ConversationRequestViewHolder>() {
 
-    private val messageFormatter by lazy { SOFAMessageFormatter() }
     private val conversations = mutableListOf<Conversation>()
+    private var messageFormatter: SOFAMessageFormatter? = null
 
-    fun setConversations(conversations: List<Conversation>) {
+    fun setConversations(localUser: User?, conversations: List<Conversation>) {
+        initMessageFormatter(localUser)
         this.conversations.clear()
         this.conversations.addAll(conversations)
         notifyDataSetChanged()
+    }
+
+    private fun initMessageFormatter(localUser: User?) {
+        if (messageFormatter != null) return
+        messageFormatter = SOFAMessageFormatter(localUser)
     }
 
     fun addConversation(conversation: Conversation) {
@@ -65,13 +72,19 @@ class ConversationRequestAdapter(
 
     override fun onBindViewHolder(holder: ConversationRequestViewHolder, position: Int) {
         val conversation = conversations[position]
-        val formattedLatestMessage = conversation.latestMessage?.let { messageFormatter.formatMessage(it) } ?: ""
+        val formattedLatestMessage = formatLatestMessage(conversation)
         holder
                 .setConversation(conversation)
                 .setLatestMessage(formattedLatestMessage)
                 .setOnItemClickListener(conversation, onItemCLickListener)
                 .setOnAcceptClickListener(conversation, onAcceptClickListener)
                 .setOnRejectClickListener(conversation, onRejectClickListener)
+    }
+
+    private fun formatLatestMessage(conversation: Conversation): String {
+        return if (conversation.latestMessage != null) {
+            messageFormatter?.formatMessage(conversation.latestMessage) ?: ""
+        } else ""
     }
 
     override fun getItemCount() = conversations.size
