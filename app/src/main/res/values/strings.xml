@@ -393,4 +393,12 @@
     <string name="active_wallet">Active wallet</string>
     <string name="ssl_error">Invalid SSL-certificate</string>
     <string name="return_key">Return</string>
+    <string name="contract_address">Contract address</string>
+    <string name="name">Name</string>
+    <string name="symbol">Symbol</string>
+    <string name="decimals">Decimals</string>
+    <string name="add_token">Add token</string>
+    <string name="add_custom_token">Add Custom Token</string>
+    <string name="add_custom_token_error">Unable to add custom token</string>
+    <string name="add_custom_token_success">Successfully added custom token</string>
 </resources>

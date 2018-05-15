@@ -33,7 +33,7 @@ class TestTokenBuilder {
                 ERCToken(
                         symbol = "OMG",
                         name = "OMGCoin",
-                        value = "1",
+                        balance = "1",
                         decimals = 18,
                         contractAddress = contractAddress,
                         icon = null
@@ -41,7 +41,7 @@ class TestTokenBuilder {
                 ERCToken(
                         symbol = "LOL",
                         name = "LOLCoin",
-                        value = "10",
+                        balance = "10",
                         decimals = 18,
                         contractAddress = contractAddress,
                         icon = null
@@ -55,7 +55,7 @@ class TestTokenBuilder {
                 ERCToken(
                         symbol = null,
                         name = "CryptoKitties",
-                        value = "10",
+                        balance = "10",
                         decimals = 0,
                         contractAddress = contractAddress,
                         icon = null
@@ -63,7 +63,7 @@ class TestTokenBuilder {
                 ERCToken(
                         symbol = null,
                         name = "CryptoPunks",
-                        value = "11",
+                        balance = "11",
                         decimals = 0,
                         contractAddress = contractAddress,
                         icon = null

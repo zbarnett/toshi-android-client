@@ -71,20 +71,20 @@ class SendERC20TokenViewModel(val token: ERCToken) : ViewModel() {
         val token = ERCToken.value
         val inputAmount = createSafeBigDecimal(amount)
         val balanceAmount = if (token != null) {
-            BigDecimal(TypeConverter.formatHexString(token.value, token.decimals ?: 0, null))
+            BigDecimal(TypeConverter.formatHexString(token.balance, token.decimals ?: 0, null))
         } else BigDecimal(0)
         return inputAmount.compareTo(balanceAmount) == 0 || inputAmount.compareTo(balanceAmount) == -1
     }
 
     fun getMaxAmount(): String {
         val token = ERCToken.value
-        return if (token != null) TypeConverter.formatHexString(token.value, token.decimals ?: 0, null)
+        return if (token != null) TypeConverter.formatHexString(token.balance, token.decimals ?: 0, null)
         else TypeConverter.formatNumber(0, EthUtil.ETH_FORMAT)
     }
 
     fun getBalanceAmount(): String {
         val token = ERCToken.value
-        return if (token != null) TypeConverter.formatHexString(token.value, token.decimals ?: 0, EthUtil.ETH_FORMAT)
+        return if (token != null) TypeConverter.formatHexString(token.balance, token.decimals ?: 0, EthUtil.ETH_FORMAT)
         else TypeConverter.formatNumber(0, EthUtil.ETH_FORMAT)
     }
 

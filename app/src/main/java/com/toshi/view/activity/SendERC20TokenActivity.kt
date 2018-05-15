@@ -178,7 +178,7 @@ class SendERC20TokenActivity : AppCompatActivity() {
     }
 
     private fun renderERC20TokenBalance(ERCToken: ERCToken) {
-        val tokenValue = TypeConverter.formatHexString(ERCToken.value, ERCToken.decimals ?: 0, EthUtil.ETH_FORMAT)
+        val tokenValue = TypeConverter.formatHexString(ERCToken.balance, ERCToken.decimals ?: 0, EthUtil.ETH_FORMAT)
         balance.text = getString(R.string.erc20_balance, ERCToken.symbol, tokenValue, ERCToken.symbol)
     }
 

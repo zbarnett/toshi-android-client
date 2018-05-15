@@ -29,6 +29,7 @@ import com.toshi.model.network.Balance
 import com.toshi.model.network.Currencies
 import com.toshi.model.network.ERC721TokenWrapper
 import com.toshi.model.network.ExchangeRate
+import com.toshi.model.network.token.CustomERCToken
 import com.toshi.model.network.token.ERC20Tokens
 import com.toshi.model.network.token.ERC721Tokens
 import com.toshi.model.network.token.ERCToken
@@ -145,6 +146,14 @@ class BalanceManager(
     fun getERC721Token(contactAddress: String): Single<ERC721TokenWrapper> {
         return getWallet()
                 .flatMap { ethService.get().getCollectible(it.paymentAddress, contactAddress) }
+                .subscribeOn(scheduler)
+    }
+
+    fun addCustomToken(customERCToken: CustomERCToken): Completable {
+        return ethService
+                .get()
+                .timestamp
+                .flatMapCompletable { ethService.get().addCustomToken(it.get(), customERCToken) }
                 .subscribeOn(scheduler)
     }
 

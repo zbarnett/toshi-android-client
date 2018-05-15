@@ -47,3 +47,12 @@ fun String.getQueryMap(): HashMap<String, String> {
     }
     return map
 }
+
+fun String.safeToInt(): Int {
+    return try {
+        this.toInt()
+    } catch (e: NumberFormatException) {
+        return 0
+    }
+}
+

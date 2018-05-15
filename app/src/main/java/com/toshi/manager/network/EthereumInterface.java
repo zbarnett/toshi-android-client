@@ -26,6 +26,7 @@ import com.toshi.model.network.ServerTime;
 import com.toshi.model.network.SignedTransaction;
 import com.toshi.model.network.TransactionRequest;
 import com.toshi.model.network.UnsignedTransaction;
+import com.toshi.model.network.token.CustomERCToken;
 import com.toshi.model.network.token.ERC20Tokens;
 import com.toshi.model.network.token.ERC721Tokens;
 import com.toshi.model.network.token.ERCToken;
@@ -58,12 +59,14 @@ public interface EthereumInterface {
     @POST("/v1/gcm/register")
     Completable registerGcm(
             @Query("timestamp") long timestamp,
-            @Body GcmRegistration gcmRegistration);
+            @Body GcmRegistration gcmRegistration
+    );
 
     @POST("/v1/gcm/deregister")
     Completable unregisterGcm(
             @Query("timestamp") long timestamp,
-            @Body GcmDeregistration gcmDeregistration);
+            @Body GcmDeregistration gcmDeregistration
+    );
 
     @GET("/v1/tokens/{wallet_address}")
     Single<ERC20Tokens> getTokens(@Path("wallet_address") String walletAddress);
@@ -81,5 +84,11 @@ public interface EthereumInterface {
     Single<ERC721TokenWrapper> getCollectible(
             @Path("wallet_address") String walletAddress,
             @Path("contract_address") String contactAddress
+    );
+
+    @POST("/v1/token")
+    Completable addCustomToken(
+            @Query("timestamp") long timestamp,
+            @Body CustomERCToken customERCToken
     );
 }

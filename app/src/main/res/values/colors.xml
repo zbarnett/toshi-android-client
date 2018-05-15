@@ -45,7 +45,7 @@
     <color name="textColorBody">#B31A1B1C</color>
     <color name="contrastBackgroundColor">#F9F8F8</color>
     <color name="shadowColorPassphrase">#B6B9B9</color>
-    <color name="input_underline">#E0E0E0</color>
+    <color name="input_underline">#1C000000</color>
     <color name="subTitleBackgroundColor">#B3EEEFF0</color>
     <color name="categoryTextColor">#79797C</color>
     <color name="colorPrimarySemiTransparent">#9901C236</color>

@@ -29,7 +29,14 @@ import com.toshi.model.network.token.EtherToken
 import com.toshi.model.network.token.Token
 import com.toshi.util.EthUtil
 import com.toshi.util.ImageUtil
-import kotlinx.android.synthetic.main.list_item__token.view.*
+import kotlinx.android.synthetic.main.list_item__token.view.avatar
+import kotlinx.android.synthetic.main.list_item__token.view.erc20Abbreviation
+import kotlinx.android.synthetic.main.list_item__token.view.erc20Name
+import kotlinx.android.synthetic.main.list_item__token.view.erc20Wrapper
+import kotlinx.android.synthetic.main.list_item__token.view.erc721Name
+import kotlinx.android.synthetic.main.list_item__token.view.erc721Wrapper
+import kotlinx.android.synthetic.main.list_item__token.view.fiatValue
+import kotlinx.android.synthetic.main.list_item__token.view.value
 
 class TokensViewHolder(private val tokenType: TokenType, itemView: View?) : RecyclerView.ViewHolder(itemView) {
 
@@ -73,7 +80,7 @@ class TokensViewHolder(private val tokenType: TokenType, itemView: View?) : Recy
         itemView.erc721Wrapper.visibility = View.GONE
         itemView.erc20Name.text = ERCToken.name
         itemView.erc20Abbreviation.text = ERCToken.symbol
-        itemView.value.text = TypeConverter.formatHexString(ERCToken.value, ERCToken.decimals ?: 0, EthUtil.ETH_FORMAT)
+        itemView.value.text = TypeConverter.formatHexString(ERCToken.balance, ERCToken.decimals ?: 0, EthUtil.ETH_FORMAT)
         itemView.fiatValue.isVisible(false)
         itemView.value.setTextColor(itemView.getColorById(R.color.textColorPrimary))
         loadImage(ERCToken.icon, itemView.avatar)
@@ -84,7 +91,7 @@ class TokensViewHolder(private val tokenType: TokenType, itemView: View?) : Recy
         itemView.erc721Wrapper.visibility = View.VISIBLE
         itemView.erc20Wrapper.visibility = View.GONE
         itemView.erc721Name.text = ERCToken.name
-        itemView.value.text = TypeConverter.formatHexString(ERCToken.value, ERCToken.decimals ?: 0, "0")
+        itemView.value.text = TypeConverter.formatHexString(ERCToken.balance, ERCToken.decimals ?: 0, "0")
         itemView.value.setTextColor(itemView.getColorById(R.color.textColorSecondary))
         loadImage(ERCToken.icon, itemView.avatar)
         itemView.setOnClickListener { tokenListener?.invoke(ERCToken) }

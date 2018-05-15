@@ -133,7 +133,7 @@ class ViewTokenActivity : AppCompatActivity() {
     private fun renderERCTokenUi(ERCToken: ERCToken) {
         toolbarTitle.text = ERCToken.name
         ImageUtil.load(ERCToken.icon, avatar)
-        val tokenAmount = TypeConverter.formatHexString(ERCToken.value, ERCToken.decimals ?: 0, EthUtil.ETH_FORMAT)
+        val tokenAmount = TypeConverter.formatHexString(ERCToken.balance, ERCToken.decimals ?: 0, EthUtil.ETH_FORMAT)
         amount.text = "$tokenAmount ${ERCToken.symbol}"
     }
 }

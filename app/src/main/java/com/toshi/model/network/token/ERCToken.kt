@@ -24,7 +24,7 @@ import com.toshi.view.activity.ViewTokenActivity
 data class ERCToken(
         val symbol: String?,
         val name: String?,
-        val value: String?,
+        val balance: String?,
         val decimals: Int?,
         @Json(name = "contract_address")
         val contractAddress: String?,
@@ -35,7 +35,7 @@ data class ERCToken(
         private const val SYMBOL = "symbol"
         private const val NAME = "name"
         private const val DECIMALS = "decimals"
-        private const val VALUE = "value"
+        private const val BALANCE = "value"
         private const val CONTRACT_ADDRESS = "contract_address"
         private const val ICON = "icon"
 
@@ -43,7 +43,7 @@ data class ERCToken(
             return intent.apply {
                 putExtra(SYMBOL, ERCToken.symbol)
                 putExtra(NAME, ERCToken.name)
-                putExtra(VALUE, ERCToken.value)
+                putExtra(BALANCE, ERCToken.balance)
                 putExtra(DECIMALS, ERCToken.decimals)
                 putExtra(CONTRACT_ADDRESS, ERCToken.contractAddress)
                 putExtra(ICON, ERCToken.icon)
@@ -56,7 +56,7 @@ data class ERCToken(
             return ERCToken(
                     intent.getStringExtra(SYMBOL),
                     intent.getStringExtra(NAME),
-                    intent.getStringExtra(VALUE),
+                    intent.getStringExtra(BALANCE),
                     intent.getIntExtra(DECIMALS, 0),
                     intent.getStringExtra(CONTRACT_ADDRESS),
                     intent.getStringExtra(ICON)
@@ -65,7 +65,7 @@ data class ERCToken(
 
         private fun hasAllExtras(intent: Intent): Boolean {
             return intent.hasExtra(SYMBOL) && intent.hasExtra(NAME)
-                    && intent.hasExtra(DECIMALS) && intent.hasExtra(VALUE)
+                    && intent.hasExtra(DECIMALS) && intent.hasExtra(BALANCE)
                     && intent.hasExtra(CONTRACT_ADDRESS) && intent.hasExtra(ICON)
         }
     }
