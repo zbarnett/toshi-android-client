@@ -20,9 +20,9 @@ package com.toshi.managers.userManager
 import com.toshi.manager.UserManager
 import com.toshi.managers.recipientManager.RecipientManagerMocker
 import com.toshi.testSharedPrefs.TestUserPrefs
-import junit.framework.Assert.assertNull
 import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers
+import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
 

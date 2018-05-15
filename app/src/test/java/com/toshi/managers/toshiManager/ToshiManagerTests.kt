@@ -38,9 +38,9 @@ import com.toshi.managers.userManager.UserManagerMocker
 import com.toshi.masterSeed
 import com.toshi.testSharedPrefs.TestAppPrefs
 import com.toshi.testSharedPrefs.TestWalletPrefs
-import junit.framework.Assert.assertEquals
-import junit.framework.Assert.assertTrue
-import junit.framework.Assert.fail
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
+import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito

@@ -20,7 +20,7 @@
 package com.toshi.managers.transactionManager
 
 import com.toshi.manager.TransactionManager
-import junit.framework.Assert.assertNotNull
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Test
