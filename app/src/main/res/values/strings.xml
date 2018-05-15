@@ -393,4 +393,6 @@
     <string name="active_wallet">Active wallet</string>
     <string name="ssl_error">Invalid SSL-certificate</string>
     <string name="return_key">Return</string>
+    <string name="fingerprint_description">Confirm fingerprint to continue</string>
+    <string name="fingerprint_hint">Touch sensor</string>
 </resources>
