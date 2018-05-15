@@ -18,6 +18,6 @@
 
 <resources>
     <string-array name="networks">
-        <item>https://ethereum.development.service.toshi.org|Ropsten Test Network|3</item>
+        <item>https://ethereum.development.service.toshi.org|Ropsten Test Network|3|https://node.service.toshi.org/ropsten</item>
     </string-array>
 </resources>

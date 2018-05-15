@@ -18,9 +18,9 @@
 
 <resources>
     <string-array name="networks">
-        <item>https://ethereum.service.toshi.org|Ethereum Main Network|1</item>
-        <item>https://toshi-eth-service-ropsten.herokuapp.com|Ropsten Test Network|3</item>
-        <item>https://toshi-eth-service-rinkeby.herokuapp.com|Rinkeby Test Network|4</item>
-        <item>https://toshi-eth-service-kovan.herokuapp.com|Kovan Test Network|42</item>
+        <item>https://ethereum.service.toshi.org|Ethereum Main Network|1|https://mainnet.infura.io</item>
+        <item>https://toshi-eth-service-ropsten.herokuapp.com|Ropsten Test Network|3|https://ropsten.ethereum.service.toshi.org.herokudns.com</item>
+        <item>https://toshi-eth-service-rinkeby.herokuapp.com|Rinkeby Test Network|4|https://rinkeby.ethereum.service.toshi.org.herokudns.com</item>
+        <item>https://toshi-eth-service-kovan.herokuapp.com|Kovan Test Network|42|https://kovan.ethereum.service.toshi.org.herokudns.com</item>
     </string-array>
 </resources>

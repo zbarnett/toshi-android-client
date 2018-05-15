@@ -34,8 +34,8 @@ import rx.schedulers.Schedulers
 class NetworkSwitchingTests {
 
     private val networkList = listOf(
-            Network("1", "Mainnet", "https://www.mainnet.org"),
-            Network("3", "Ropsten", "https://www.ropsten.org")
+            Network("1", "Mainnet", "https://www.mainnet.org", "rpcUrl"),
+            Network("3", "Ropsten", "https://www.ropsten.org", "rpcUrl")
     )
     private val mainnet = networkList[0]
     private val ropsten = networkList[1]

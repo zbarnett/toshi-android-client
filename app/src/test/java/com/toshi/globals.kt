@@ -28,7 +28,7 @@ import org.mockito.Mockito
 
 const val masterSeed = "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about"
 const val invalidMasterSeed = "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon øre"
-val network = Network("116", "Toshi Internal Test Network", "https://ethereum.internal.service.toshi.org")
+val network = Network("116", "Toshi Internal Test Network", "https://ethereum.internal.service.toshi.org", "rpcUrl")
 
 fun mockNetwork(network: Network): Networks {
     val networks = Mockito.mock(Networks::class.java)

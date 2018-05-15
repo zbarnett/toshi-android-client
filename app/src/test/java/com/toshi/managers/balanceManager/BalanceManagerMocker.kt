@@ -43,7 +43,7 @@ class BalanceManagerMocker(
 ) {
 
     private val masterSeed = "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about"
-    private val network = Network("116", "Toshi Internal Test Network", "https://ethereum.internal.service.toshi.org")
+    private val network = Network("116", "Toshi Internal Test Network", "https://ethereum.internal.service.toshi.org", "rpcUrl")
 
     fun mockWithWalletInit(): BalanceManager {
         val balanceManager = mock()

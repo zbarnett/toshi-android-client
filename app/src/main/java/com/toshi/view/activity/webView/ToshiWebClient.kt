@@ -186,11 +186,11 @@ class ToshiWebClient(
 
     private fun loadSofaScript(): String {
         val sb = StringBuilder()
-        val networkId = Networks.getInstance().currentNetwork.id
+        val currentNetwork = Networks.getInstance().currentNetwork
         val rcpUrl = "window.SOFA = {" +
-                "config: {netVersion: \"$networkId\", " +
+                "config: {netVersion: \"${currentNetwork.id}\", " +
                 "accounts: [\"${getWallet().paymentAddress}\"]," +
-                "rcpUrl: \"${context.getString(R.string.rcp_url)}\"}" +
+                "rcpUrl: \"${currentNetwork.rpcUrl}\"}" +
                 "};"
         sb.append(rcpUrl)
         val stream = context.resources.openRawResource(R.raw.sofa)

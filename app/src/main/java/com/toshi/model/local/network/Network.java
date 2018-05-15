@@ -21,21 +21,22 @@ public class Network {
     private final String id;
     private final String name;
     private final String url;
+    private final String rpcUrl;
 
     public Network(final String networkDescription) {
         final String[] splitString = networkDescription.split("\\|");
-
-        if (splitString.length != 3) throw new IllegalArgumentException("Unexpected network format");
-
+        if (splitString.length != 4) throw new IllegalArgumentException("Unexpected network format");
         this.url = splitString[0];
         this.name = splitString[1];
         this.id = splitString[2];
+        this.rpcUrl = splitString[3];
     }
 
-    public Network(final String id, final String name, final String url) {
+    public Network(final String id, final String name, final String url, final String rpcUrl) {
         this.id = id;
         this.name = name;
         this.url = url;
+        this.rpcUrl = rpcUrl;
     }
 
     public String getId() {
@@ -48,5 +49,9 @@ public class Network {
 
     public String getUrl() {
         return url;
+    }
+
+    public String getRpcUrl() {
+        return rpcUrl;
     }
 }
