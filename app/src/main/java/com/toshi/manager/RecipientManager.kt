@@ -69,7 +69,7 @@ class RecipientManager(
     private fun isUserFresh(user: User?): Boolean {
         return when {
             user == null -> false
-            baseApplication.isConnected -> true
+            !baseApplication.isConnected -> true
             else -> !user.needsRefresh()
         }
     }
