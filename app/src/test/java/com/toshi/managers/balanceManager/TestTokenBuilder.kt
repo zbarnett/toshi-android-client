@@ -17,9 +17,9 @@
 
 package com.toshi.managers.balanceManager
 
-import com.toshi.model.network.token.ERC721TokenWrapper
+import com.toshi.model.local.token.ERC721TokenWrapperView
 import com.toshi.model.network.token.ERC20Tokens
-import com.toshi.model.network.token.ERC721Tokens
+import com.toshi.model.local.token.ERC721TokensView
 import com.toshi.model.local.token.ERCTokenView
 
 class TestTokenBuilder {
@@ -50,7 +50,7 @@ class TestTokenBuilder {
         return ERC20Tokens(listOfERC20Tokens)
     }
 
-    fun createERC721TokenList(): ERC721Tokens {
+    fun createERC721TokenList(): ERC721TokensView {
         val listOfERC721Tokens = listOf(
                 ERCTokenView(
                         symbol = null,
@@ -69,16 +69,16 @@ class TestTokenBuilder {
                         icon = null
                 )
         )
-        return ERC721Tokens(listOfERC721Tokens)
+        return ERC721TokensView(listOfERC721Tokens)
     }
 
-    fun createERC721Token(): ERC721TokenWrapper {
-        return ERC721TokenWrapper(
+    fun createERC721Token(): ERC721TokenWrapperView {
+        return ERC721TokenWrapperView(
                 name = "CryptoKitties",
                 value = "10",
                 contractAddress = contractAddress,
                 icon = null,
-                tokenViews = null,
+                tokens = null,
                 type = null,
                 url = null
         )

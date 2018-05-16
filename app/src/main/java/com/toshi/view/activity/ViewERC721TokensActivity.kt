@@ -27,7 +27,7 @@ import com.toshi.extensions.getPxSize
 import com.toshi.extensions.getViewModel
 import com.toshi.extensions.isVisible
 import com.toshi.extensions.toast
-import com.toshi.model.network.token.ERC721TokenWrapper
+import com.toshi.model.local.token.ERC721TokenWrapperView
 import com.toshi.view.adapter.CollectibleAdapter
 import com.toshi.viewModel.ViewERC721TokensViewModel
 import kotlinx.android.synthetic.main.activity_erc721_token_activity.closeButton
@@ -96,9 +96,9 @@ class ViewERC721TokensActivity : AppCompatActivity() {
         })
     }
 
-    private fun handleCollectible(collectible: ERC721TokenWrapper) {
+    private fun handleCollectible(collectible: ERC721TokenWrapperView) {
         if (collectible.name != null) toolbarTitle.text = collectible.name
         if (collectible.url != null) toolbarUrl.text = collectible.url else toolbarUrl.isVisible(false)
-        if (collectible.tokenViews != null) collectibleAdapter.setCollectibles(collectible.tokenViews)
+        if (collectible.tokens != null) collectibleAdapter.setCollectibles(collectible.tokens)
     }
 }

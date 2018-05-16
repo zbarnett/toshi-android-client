@@ -17,6 +17,8 @@
 
 package com.toshi.model.network.token
 
+import com.toshi.model.local.token.ERCTokenView
+
 data class ERCToken(
         val symbol: String?,
         val name: String?,
@@ -24,4 +26,15 @@ data class ERCToken(
         val decimals: Int?,
         val contractAddress: String?,
         val icon: String?
-)
+) {
+    fun mapToViewModel(): ERCTokenView {
+        return ERCTokenView(
+                symbol = this.symbol,
+                name = this.name,
+                balance = this.balance,
+                decimals = this.decimals,
+                contractAddress = this.contractAddress,
+                icon = this.icon
+        )
+    }
+}

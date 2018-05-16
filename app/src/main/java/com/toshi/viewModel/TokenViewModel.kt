@@ -115,11 +115,12 @@ class TokenViewModel(
     private fun firstFetchERC721Tokens() {
         val sub = tokenManager
                 .getERC721Tokens()
+                .map { it.mapToViewModel() }
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { isERC721Loading.value = true }
                 .doAfterTerminate { isERC721Loading.value = false }
                 .subscribe(
-                        { erc721Tokens.value = it.collectibles },
+                        { erc721Tokens.value = it },
                         { erc721error.value = R.string.error_fetching_tokens }
                 )
 
@@ -205,9 +206,10 @@ class TokenViewModel(
     fun fetchERC721Tokens() {
         val sub = tokenManager
                 .getERC721Tokens()
+                .map { it.mapToViewModel() }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        { erc721Tokens.value = it.collectibles },
+                        { erc721Tokens.value = it },
                         { erc721error.value = R.string.error_fetching_tokens }
                 )
 
