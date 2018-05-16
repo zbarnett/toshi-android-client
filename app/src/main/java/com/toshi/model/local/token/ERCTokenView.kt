@@ -1,0 +1,84 @@
+/*
+ * Copyright (c) 2017. Toshi Inc
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+package com.toshi.model.local.token
+
+import android.content.Intent
+import com.squareup.moshi.Json
+import com.toshi.model.network.token.ERC20Token
+import com.toshi.view.activity.ViewTokenActivity
+
+data class ERCTokenView(
+        val symbol: String?,
+        val name: String?,
+        val balance: String?,
+        val decimals: Int?,
+        @Json(name = "contract_address")
+        val contractAddress: String?,
+        val icon: String?
+) : Token() {
+
+    companion object {
+        private const val SYMBOL = "symbol"
+        private const val NAME = "name"
+        private const val DECIMALS = "decimals"
+        private const val BALANCE = "value"
+        private const val CONTRACT_ADDRESS = "contract_address"
+        private const val ICON = "icon"
+
+        fun buildIntent(intent: Intent, ERCTokenView: ERCTokenView): Intent {
+            return intent.apply {
+                putExtra(SYMBOL, ERCTokenView.symbol)
+                putExtra(NAME, ERCTokenView.name)
+                putExtra(BALANCE, ERCTokenView.balance)
+                putExtra(DECIMALS, ERCTokenView.decimals)
+                putExtra(CONTRACT_ADDRESS, ERCTokenView.contractAddress)
+                putExtra(ICON, ERCTokenView.icon)
+                putExtra(ViewTokenActivity.TOKEN_TYPE, ViewTokenActivity.ERC20_TOKEN)
+            }
+        }
+
+        fun getTokenFromIntent(intent: Intent): ERCTokenView? {
+            if (!hasAllExtras(intent)) return null
+            return ERCTokenView(
+                    intent.getStringExtra(SYMBOL),
+                    intent.getStringExtra(NAME),
+                    intent.getStringExtra(BALANCE),
+                    intent.getIntExtra(DECIMALS, 0),
+                    intent.getStringExtra(CONTRACT_ADDRESS),
+                    intent.getStringExtra(ICON)
+            )
+        }
+
+        private fun hasAllExtras(intent: Intent): Boolean {
+            return intent.hasExtra(SYMBOL) && intent.hasExtra(NAME)
+                    && intent.hasExtra(DECIMALS) && intent.hasExtra(BALANCE)
+                    && intent.hasExtra(CONTRACT_ADDRESS) && intent.hasExtra(ICON)
+        }
+
+        fun map(ERCToken: ERC20Token): ERCTokenView {
+            return ERCTokenView(
+                    symbol = ERCToken.symbol,
+                    name = ERCToken.name,
+                    balance = ERCToken.balance,
+                    decimals = ERCToken.decimals,
+                    contractAddress = ERCToken.contractAddress,
+                    icon = ERCToken.icon
+            )
+        }
+    }
+}
