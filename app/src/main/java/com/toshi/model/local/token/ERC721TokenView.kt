@@ -25,4 +25,4 @@ data class ERC721TokenView(
         val image: String?,
         val description: String?,
         val misc: String?
-)
+) : Token()

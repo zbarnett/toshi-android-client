@@ -25,6 +25,7 @@ import com.toshi.crypto.util.TypeConverter
 import com.toshi.extensions.getColorById
 import com.toshi.extensions.isVisible
 import com.toshi.model.local.token.ERC20TokenView
+import com.toshi.model.local.token.ERC721TokenInfoView
 import com.toshi.model.local.token.EtherToken
 import com.toshi.model.local.token.Token
 import com.toshi.util.EthUtil
@@ -40,10 +41,10 @@ import kotlinx.android.synthetic.main.list_item__token.view.value
 
 class TokensViewHolder(private val tokenType: TokenType, itemView: View?) : RecyclerView.ViewHolder(itemView) {
 
-    fun setToken(token: Token, ERC20Listener: ((Token) -> Unit)?, ERC721Listener: ((ERC20TokenView) -> Unit)?) {
+    fun setToken(token: Token, ERC20Listener: ((Token) -> Unit)?, ERC721Listener: ((ERC721TokenInfoView) -> Unit)?) {
         when (tokenType) {
             is TokenType.ERC20Token -> showToken(token, ERC20Listener)
-            is TokenType.ERC721Token -> showERC721View(token, ERC721Listener)
+            is TokenType.ERC721Token -> showERC721InfoView(token, ERC721Listener)
         }
     }
 
@@ -55,9 +56,9 @@ class TokensViewHolder(private val tokenType: TokenType, itemView: View?) : Recy
         }
     }
 
-    private fun showERC721View(token: Token, tokenListener: ((ERC20TokenView) -> Unit)?) {
+    private fun showERC721InfoView(token: Token, tokenListener: ((ERC721TokenInfoView) -> Unit)?) {
         when (token) {
-            is ERC20TokenView -> showERC721View(token, tokenListener)
+            is ERC721TokenInfoView -> showERC721InfoView(token, tokenListener)
             else -> throw IllegalStateException(Throwable("Invalid token type in this context"))
         }
     }
@@ -87,11 +88,11 @@ class TokensViewHolder(private val tokenType: TokenType, itemView: View?) : Recy
         itemView.setOnClickListener { tokenListener?.invoke(ERCToken) }
     }
 
-    private fun showERC721View(ERCToken: ERC20TokenView, tokenListener: ((ERC20TokenView) -> Unit)?) {
+    private fun showERC721InfoView(ERCToken: ERC721TokenInfoView, tokenListener: ((ERC721TokenInfoView) -> Unit)?) {
         itemView.erc721Wrapper.visibility = View.VISIBLE
         itemView.erc20Wrapper.visibility = View.GONE
         itemView.erc721Name.text = ERCToken.name
-        itemView.value.text = TypeConverter.formatHexString(ERCToken.balance, ERCToken.decimals ?: 0, "0")
+        itemView.value.text = TypeConverter.fromHexToDecimal(ERCToken.balance ?: "0x0")
         itemView.value.setTextColor(itemView.getColorById(R.color.textColorSecondary))
         loadImage(ERCToken.icon, itemView.avatar)
         itemView.setOnClickListener { tokenListener?.invoke(ERCToken) }

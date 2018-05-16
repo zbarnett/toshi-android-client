@@ -17,22 +17,22 @@
 
 package com.toshi.model.network.token
 
-import com.toshi.model.local.token.ERC20TokenView
+import com.squareup.moshi.Json
+import com.toshi.model.local.token.ERC721TokenInfoView
 
-data class ERCToken(
+data class ERC721TokenInfo(
         val symbol: String?,
         val name: String?,
         val balance: String?,
-        val decimals: Int?,
+        @Json(name = "contract_address")
         val contractAddress: String?,
         val icon: String?
 ) {
-    fun mapToViewModel(): ERC20TokenView {
-        return ERC20TokenView(
+    fun mapToViewModel(): ERC721TokenInfoView {
+        return ERC721TokenInfoView(
                 symbol = this.symbol,
                 name = this.name,
                 balance = this.balance,
-                decimals = this.decimals,
                 contractAddress = this.contractAddress,
                 icon = this.icon
         )

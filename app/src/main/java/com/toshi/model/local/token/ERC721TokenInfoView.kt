@@ -15,14 +15,12 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.toshi.model.network.token
+package com.toshi.model.local.token
 
-import com.toshi.model.local.token.ERC721TokenInfoView
-
-data class ERC721Tokens(
-        val collectibles: List<ERC721TokenInfo>
-) {
-    fun mapToViewModel(): List<ERC721TokenInfoView> {
-        return collectibles.map { it.mapToViewModel() }
-    }
-}
+data class ERC721TokenInfoView(
+        val symbol: String?,
+        val name: String?,
+        val balance: String?,
+        val contractAddress: String?,
+        val icon: String?
+) : Token()

@@ -19,9 +19,9 @@ package com.toshi.managers.balanceManager
 
 import com.toshi.model.network.token.ERC20Token
 import com.toshi.model.network.token.ERC20Tokens
+import com.toshi.model.network.token.ERC721TokenInfo
 import com.toshi.model.network.token.ERC721TokenWrapper
 import com.toshi.model.network.token.ERC721Tokens
-import com.toshi.model.network.token.ERCToken
 
 class TestTokenBuilder {
 
@@ -54,19 +54,17 @@ class TestTokenBuilder {
 
     fun createERC721TokenList(): ERC721Tokens {
         val listOfERC721Tokens = listOf(
-                ERCToken(
+                ERC721TokenInfo(
                         symbol = null,
                         name = "CryptoKitties",
                         balance = "10",
-                        decimals = 0,
                         contractAddress = CryptoKittiesTokenContractAddress,
                         icon = null
                 ),
-                ERCToken(
+                ERC721TokenInfo(
                         symbol = null,
                         name = "CryptoPunks",
                         balance = "11",
-                        decimals = 0,
                         contractAddress = CryptoPunksTokenContractAddress,
                         icon = null
                 )
