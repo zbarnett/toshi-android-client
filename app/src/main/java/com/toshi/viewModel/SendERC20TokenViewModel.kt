@@ -25,7 +25,7 @@ import com.toshi.extensions.isValidDecimal
 import com.toshi.manager.TransactionManager
 import com.toshi.manager.token.TokenManager
 import com.toshi.model.local.network.Networks
-import com.toshi.model.local.token.ERCTokenView
+import com.toshi.model.local.token.ERC20TokenView
 import com.toshi.util.EthUtil
 import com.toshi.util.logging.LogUtil
 import com.toshi.view.BaseApplication
@@ -36,14 +36,14 @@ import rx.subscriptions.CompositeSubscription
 import java.math.BigDecimal
 
 class SendERC20TokenViewModel(
-        val token: ERCTokenView,
+        val token: ERC20TokenView,
         private val baseApplication: BaseApplication = BaseApplication.get(),
         private val transactionManager: TransactionManager = baseApplication.transactionManager,
         private val tokenManager: TokenManager = baseApplication.tokenManager
 ) : ViewModel() {
 
     private val subscriptions by lazy { CompositeSubscription() }
-    val ERCToken by lazy { MutableLiveData<ERCTokenView>() }
+    val ERCToken by lazy { MutableLiveData<ERC20TokenView>() }
     val isSendingMaxAmount by lazy { MutableLiveData<Boolean>() }
 
     init {
@@ -66,10 +66,10 @@ class SendERC20TokenViewModel(
         subscriptions.add(sub)
     }
 
-    private fun getERC20Token(contractAddress: String): Single<ERCTokenView> {
+    private fun getERC20Token(contractAddress: String): Single<ERC20TokenView> {
         return tokenManager
                 .getERC20Token(contractAddress)
-                .map { ERCTokenView.map(it) }
+                .map { ERC20TokenView.map(it) }
     }
 
     fun isAmountValid(inputAmount: String) = inputAmount.isNotEmpty() && isValidDecimal(inputAmount)

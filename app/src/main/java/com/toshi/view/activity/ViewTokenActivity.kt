@@ -26,7 +26,7 @@ import com.toshi.extensions.getViewModel
 import com.toshi.extensions.isVisible
 import com.toshi.extensions.startActivity
 import com.toshi.extensions.toast
-import com.toshi.model.local.token.ERCTokenView
+import com.toshi.model.local.token.ERC20TokenView
 import com.toshi.model.local.token.EtherToken
 import com.toshi.model.local.token.Token
 import com.toshi.util.EthUtil
@@ -62,7 +62,7 @@ class ViewTokenActivity : AppCompatActivity() {
         val tokenType = intent.getStringExtra(TOKEN_TYPE)
         val token = when (tokenType) {
             ETHER_TOKEN -> EtherToken.getTokenFromIntent(intent)
-            ERC20_TOKEN -> ERCTokenView.getTokenFromIntent(intent)
+            ERC20_TOKEN -> ERC20TokenView.getTokenFromIntent(intent)
             else -> null
         }
         if (token == null) {
@@ -94,7 +94,7 @@ class ViewTokenActivity : AppCompatActivity() {
         val token = viewModel.token.value
         when (token) {
             is EtherToken -> startActivity<SendETHActivity> { EtherToken.buildIntent(this, token) }
-            is ERCTokenView -> startActivity<SendERC20TokenActivity> { ERCTokenView.buildIntent(this, token) }
+            is ERC20TokenView -> startActivity<SendERC20TokenActivity> { ERC20TokenView.buildIntent(this, token) }
             else -> throw IllegalStateException(Throwable("Invalid token in this context"))
         }
     }
@@ -114,7 +114,7 @@ class ViewTokenActivity : AppCompatActivity() {
     private fun updateUi(token: Token) {
         when (token) {
             is EtherToken -> renderEtherTokenUi(token)
-            is ERCTokenView -> renderERCTokenUi(token)
+            is ERC20TokenView -> renderERCTokenUi(token)
         }
     }
 
@@ -126,7 +126,7 @@ class ViewTokenActivity : AppCompatActivity() {
         avatar.setImageResource(etherToken.icon)
     }
 
-    private fun renderERCTokenUi(ERCToken: ERCTokenView) {
+    private fun renderERCTokenUi(ERCToken: ERC20TokenView) {
         toolbarTitle.text = ERCToken.name
         ImageUtil.load(ERCToken.icon, avatar)
         val tokenAmount = TypeConverter.formatHexString(ERCToken.balance, ERCToken.decimals ?: 0, EthUtil.ETH_FORMAT)

@@ -22,7 +22,7 @@ import android.arch.lifecycle.ViewModel
 import com.toshi.manager.TransactionManager
 import com.toshi.manager.token.TokenManager
 import com.toshi.model.local.network.Networks
-import com.toshi.model.local.token.ERCTokenView
+import com.toshi.model.local.token.ERC20TokenView
 import com.toshi.model.local.token.Token
 import com.toshi.util.logging.LogUtil
 import com.toshi.view.BaseApplication
@@ -43,10 +43,10 @@ class ViewTokenViewModel(
 
     init {
         this.token.value = token
-        if (token is ERCTokenView) listenForNewIncomingTokenPayments(token)
+        if (token is ERC20TokenView) listenForNewIncomingTokenPayments(token)
     }
 
-    private fun listenForNewIncomingTokenPayments(ERCToken: ERCTokenView) {
+    private fun listenForNewIncomingTokenPayments(ERCToken: ERC20TokenView) {
         val sub = transactionManager
                 .listenForNewIncomingTokenPayments()
                 .filter { it.contractAddress == ERCToken.contractAddress }
@@ -61,10 +61,10 @@ class ViewTokenViewModel(
         subscriptions.add(sub)
     }
 
-    private fun getERC20Token(contractAddress: String): Single<ERCTokenView> {
+    private fun getERC20Token(contractAddress: String): Single<ERC20TokenView> {
         return tokenManager
                 .getERC20Token(contractAddress)
-                .map { ERCTokenView.map(it) }
+                .map { ERC20TokenView.map(it) }
     }
 
     fun getNetworks() = Networks.getInstance()

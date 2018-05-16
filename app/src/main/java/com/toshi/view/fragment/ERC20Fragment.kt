@@ -30,7 +30,7 @@ import com.toshi.extensions.addHorizontalLineDivider
 import com.toshi.extensions.isVisible
 import com.toshi.extensions.startActivity
 import com.toshi.extensions.toast
-import com.toshi.model.local.token.ERCTokenView
+import com.toshi.model.local.token.ERC20TokenView
 import com.toshi.model.local.token.EtherToken
 import com.toshi.model.local.token.Token
 import com.toshi.view.activity.AddCustomTokenActivity
@@ -96,7 +96,7 @@ class ERC20Fragment : RefreshFragment() {
     private fun startViewTokenActivity(token: Token) {
         when (token) {
             is EtherToken -> startActivity<ViewTokenActivity> { EtherToken.buildIntent(this, token) }
-            is ERCTokenView -> startActivity<ViewTokenActivity> { ERCTokenView.buildIntent(this, token) }
+            is ERC20TokenView -> startActivity<ViewTokenActivity> { ERC20TokenView.buildIntent(this, token) }
             else -> throw IllegalStateException(Throwable("Invalid token in this context"))
         }
     }

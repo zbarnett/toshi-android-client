@@ -17,12 +17,12 @@
 
 package com.toshi.model.network.token
 
-import com.toshi.model.local.token.ERCTokenView
+import com.toshi.model.local.token.ERC20TokenView
 
 data class ERC721Tokens(
         val collectibles: List<ERCToken>
 ) {
-    fun mapToViewModel(): List<ERCTokenView> {
+    fun mapToViewModel(): List<ERC20TokenView> {
         return collectibles.map { it.mapToViewModel() }
     }
 }

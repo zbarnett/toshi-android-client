@@ -21,7 +21,7 @@ import android.content.Intent
 import com.toshi.model.network.token.ERC20Token
 import com.toshi.view.activity.ViewTokenActivity
 
-data class ERCTokenView(
+data class ERC20TokenView(
         val symbol: String?,
         val name: String?,
         val balance: String?,
@@ -38,7 +38,7 @@ data class ERCTokenView(
         private const val CONTRACT_ADDRESS = "contract_address"
         private const val ICON = "icon"
 
-        fun buildIntent(intent: Intent, ERCToken: ERCTokenView): Intent {
+        fun buildIntent(intent: Intent, ERCToken: ERC20TokenView): Intent {
             return intent.apply {
                 putExtra(SYMBOL, ERCToken.symbol)
                 putExtra(NAME, ERCToken.name)
@@ -50,9 +50,9 @@ data class ERCTokenView(
             }
         }
 
-        fun getTokenFromIntent(intent: Intent): ERCTokenView? {
+        fun getTokenFromIntent(intent: Intent): ERC20TokenView? {
             if (!hasAllExtras(intent)) return null
-            return ERCTokenView(
+            return ERC20TokenView(
                     intent.getStringExtra(SYMBOL),
                     intent.getStringExtra(NAME),
                     intent.getStringExtra(BALANCE),
@@ -68,8 +68,8 @@ data class ERCTokenView(
                     && intent.hasExtra(CONTRACT_ADDRESS) && intent.hasExtra(ICON)
         }
 
-        fun map(ERCToken: ERC20Token): ERCTokenView {
-            return ERCTokenView(
+        fun map(ERCToken: ERC20Token): ERC20TokenView {
+            return ERC20TokenView(
                     symbol = ERCToken.symbol,
                     name = ERCToken.name,
                     balance = ERCToken.balance,

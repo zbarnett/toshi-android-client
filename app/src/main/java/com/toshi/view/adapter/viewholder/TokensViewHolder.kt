@@ -24,7 +24,7 @@ import com.toshi.R
 import com.toshi.crypto.util.TypeConverter
 import com.toshi.extensions.getColorById
 import com.toshi.extensions.isVisible
-import com.toshi.model.local.token.ERCTokenView
+import com.toshi.model.local.token.ERC20TokenView
 import com.toshi.model.local.token.EtherToken
 import com.toshi.model.local.token.Token
 import com.toshi.util.EthUtil
@@ -40,7 +40,7 @@ import kotlinx.android.synthetic.main.list_item__token.view.value
 
 class TokensViewHolder(private val tokenType: TokenType, itemView: View?) : RecyclerView.ViewHolder(itemView) {
 
-    fun setToken(token: Token, ERC20Listener: ((Token) -> Unit)?, ERC721Listener: ((ERCTokenView) -> Unit)?) {
+    fun setToken(token: Token, ERC20Listener: ((Token) -> Unit)?, ERC721Listener: ((ERC20TokenView) -> Unit)?) {
         when (tokenType) {
             is TokenType.ERC20Token -> showToken(token, ERC20Listener)
             is TokenType.ERC721Token -> showERC721View(token, ERC721Listener)
@@ -50,14 +50,14 @@ class TokensViewHolder(private val tokenType: TokenType, itemView: View?) : Recy
     private fun showToken(token: Token, tokenListener: ((Token) -> Unit)?) {
         when (token) {
             is EtherToken -> showEtherToken(token, tokenListener)
-            is ERCTokenView -> showERC20View(token, tokenListener)
+            is ERC20TokenView -> showERC20View(token, tokenListener)
             else -> throw IllegalStateException(Throwable("Invalid token type in this context"))
         }
     }
 
-    private fun showERC721View(token: Token, tokenListener: ((ERCTokenView) -> Unit)?) {
+    private fun showERC721View(token: Token, tokenListener: ((ERC20TokenView) -> Unit)?) {
         when (token) {
-            is ERCTokenView -> showERC721View(token, tokenListener)
+            is ERC20TokenView -> showERC721View(token, tokenListener)
             else -> throw IllegalStateException(Throwable("Invalid token type in this context"))
         }
     }
@@ -75,7 +75,7 @@ class TokensViewHolder(private val tokenType: TokenType, itemView: View?) : Recy
         itemView.avatar.setImageResource(etherToken.icon)
     }
 
-    private fun showERC20View(ERCToken: ERCTokenView, tokenListener: ((ERCTokenView) -> Unit)?) {
+    private fun showERC20View(ERCToken: ERC20TokenView, tokenListener: ((ERC20TokenView) -> Unit)?) {
         itemView.erc20Wrapper.visibility = View.VISIBLE
         itemView.erc721Wrapper.visibility = View.GONE
         itemView.erc20Name.text = ERCToken.name
@@ -87,7 +87,7 @@ class TokensViewHolder(private val tokenType: TokenType, itemView: View?) : Recy
         itemView.setOnClickListener { tokenListener?.invoke(ERCToken) }
     }
 
-    private fun showERC721View(ERCToken: ERCTokenView, tokenListener: ((ERCTokenView) -> Unit)?) {
+    private fun showERC721View(ERCToken: ERC20TokenView, tokenListener: ((ERC20TokenView) -> Unit)?) {
         itemView.erc721Wrapper.visibility = View.VISIBLE
         itemView.erc20Wrapper.visibility = View.GONE
         itemView.erc721Name.text = ERCToken.name

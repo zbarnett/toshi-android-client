@@ -23,7 +23,7 @@ import com.toshi.R
 import com.toshi.manager.BalanceManager
 import com.toshi.manager.TransactionManager
 import com.toshi.manager.token.TokenManager
-import com.toshi.model.local.token.ERCTokenView
+import com.toshi.model.local.token.ERC20TokenView
 import com.toshi.model.local.token.EtherToken
 import com.toshi.model.local.token.Token
 import com.toshi.model.network.Balance
@@ -136,7 +136,7 @@ class TokenViewModel(
         .map { addEtherTokenToTokenList(it.first, it.second) }
     }
 
-    private fun getERC20TokensFromNetwork(): Single<List<ERCTokenView>> {
+    private fun getERC20TokensFromNetwork(): Single<List<ERC20TokenView>> {
         return tokenManager
                 .getERC20TokensFromNetwork()
                 .onErrorReturn { ERC20Tokens().tokens }
@@ -163,16 +163,16 @@ class TokenViewModel(
         .map { addEtherTokenToTokenList(it.first, it.second) }
     }
 
-    private fun getERC20Tokens(): Single<List<ERCTokenView>> {
+    private fun getERC20Tokens(): Single<List<ERC20TokenView>> {
         return tokenManager
                 .getERC20Tokens()
                 .onErrorReturn { ERC20Tokens().tokens }
                 .map { mapERC20Tokens(it) }
     }
 
-    private fun mapERC20Tokens(ERC20Tokens: List<ERC20Token>): List<ERCTokenView> {
+    private fun mapERC20Tokens(ERC20Tokens: List<ERC20Token>): List<ERC20TokenView> {
         return ERC20Tokens.map {
-            ERCTokenView(
+            ERC20TokenView(
                     symbol = it.symbol,
                     name = it.name,
                     balance = it.balance,
@@ -183,7 +183,7 @@ class TokenViewModel(
         }
     }
 
-    private fun addEtherTokenToTokenList(tokens: List<ERCTokenView>, etherToken: EtherToken): List<Token> {
+    private fun addEtherTokenToTokenList(tokens: List<ERC20TokenView>, etherToken: EtherToken): List<Token> {
         val tokenList = mutableListOf<Token>()
         tokenList.add(etherToken)
         tokenList.addAll(tokens)

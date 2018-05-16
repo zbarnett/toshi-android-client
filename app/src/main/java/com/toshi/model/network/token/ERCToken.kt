@@ -17,7 +17,7 @@
 
 package com.toshi.model.network.token
 
-import com.toshi.model.local.token.ERCTokenView
+import com.toshi.model.local.token.ERC20TokenView
 
 data class ERCToken(
         val symbol: String?,
@@ -27,8 +27,8 @@ data class ERCToken(
         val contractAddress: String?,
         val icon: String?
 ) {
-    fun mapToViewModel(): ERCTokenView {
-        return ERCTokenView(
+    fun mapToViewModel(): ERC20TokenView {
+        return ERC20TokenView(
                 symbol = this.symbol,
                 name = this.name,
                 balance = this.balance,

@@ -31,7 +31,7 @@ import com.toshi.extensions.getViewModel
 import com.toshi.extensions.isVisible
 import com.toshi.extensions.startActivityForResult
 import com.toshi.extensions.toast
-import com.toshi.model.local.token.ERCTokenView
+import com.toshi.model.local.token.ERC20TokenView
 import com.toshi.util.EthUtil
 import com.toshi.util.PaymentType
 import com.toshi.util.QrCodeHandler
@@ -76,7 +76,7 @@ class SendERC20TokenActivity : AppCompatActivity() {
     }
 
     private fun initViewModel() {
-        val token = ERCTokenView.getTokenFromIntent(intent)
+        val token = ERC20TokenView.getTokenFromIntent(intent)
         if (token == null) {
             toast(R.string.invalid_token)
             finish()
@@ -133,7 +133,7 @@ class SendERC20TokenActivity : AppCompatActivity() {
         } else toast(R.string.invalid_token)
     }
 
-    private fun showPaymentConfirmation(ERCToken: ERCTokenView, value: String, toAddress: String) {
+    private fun showPaymentConfirmation(ERCToken: ERC20TokenView, value: String, toAddress: String) {
         if (ERCToken.contractAddress != null && ERCToken.symbol != null && ERCToken.decimals != null) {
             val dialog = PaymentConfirmationFragment.newInstanceERC20TokenPayment(
                     toAddress = toAddress,
@@ -157,9 +157,9 @@ class SendERC20TokenActivity : AppCompatActivity() {
         setAmountSuffix(token)
     }
 
-    private fun setAmountSuffix(ERCToken: ERCTokenView) = toAmount.setSuffix(ERCToken.symbol ?: "")
+    private fun setAmountSuffix(ERCToken: ERC20TokenView) = toAmount.setSuffix(ERCToken.symbol ?: "")
 
-    private fun renderToolbar(ERCToken: ERCTokenView) {
+    private fun renderToolbar(ERCToken: ERC20TokenView) {
         toolbarTitle.text = getString(R.string.send_token, ERCToken.symbol)
     }
 
@@ -172,7 +172,7 @@ class SendERC20TokenActivity : AppCompatActivity() {
         })
     }
 
-    private fun renderERC20TokenBalance(ERCToken: ERCTokenView) {
+    private fun renderERC20TokenBalance(ERCToken: ERC20TokenView) {
         val tokenValue = TypeConverter.formatHexString(ERCToken.balance, ERCToken.decimals ?: 0, EthUtil.ETH_FORMAT)
         balance.text = getString(R.string.erc20_balance, ERCToken.symbol, tokenValue, ERCToken.symbol)
     }
