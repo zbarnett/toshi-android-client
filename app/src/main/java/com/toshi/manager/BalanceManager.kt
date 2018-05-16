@@ -110,20 +110,18 @@ class BalanceManager(
         getBalance()
                 .observeOn(scheduler)
                 .flatMapCompletable { handleNewBalance(it) }
-                .doOnError { updateBalanceWithLastKnownBalance() }
+                .onErrorResumeNext { updateBalanceWithLastKnownBalance() }
                 .subscribe(
                         {},
                         { LogUtil.exception("Error while fetching balance", it) }
                 )
     }
 
-    private fun updateBalanceWithLastKnownBalance() {
-        readLastKnownBalance()
+    private fun updateBalanceWithLastKnownBalance(): Completable {
+        return readLastKnownBalance()
                 .map { Balance(it) }
-                .subscribe(
-                        { balanceObservable.onNext(it) },
-                        { LogUtil.exception("Error while updating balance with last known balance", it) }
-                )
+                .doOnSuccess { balanceObservable.onNext(it) }
+                .toCompletable()
     }
 
     private fun getBalance(): Single<Balance> {

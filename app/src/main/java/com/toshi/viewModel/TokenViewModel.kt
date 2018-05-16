@@ -191,7 +191,8 @@ class TokenViewModel(
     }
 
     private fun createEtherToken(): Single<EtherToken> {
-        return balanceManager.balanceObservable
+        return balanceManager
+                .balanceObservable
                 .first()
                 .toSingle()
                 .flatMap { it.getBalanceWithLocalBalance() }

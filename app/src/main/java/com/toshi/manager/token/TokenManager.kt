@@ -51,7 +51,7 @@ class TokenManager(
 
     private fun getERC20Tokens(walletIndex: Int, networkId: String): Single<List<ERC20Token>> {
         return Single.concat(
-                tokenStore.getAllTokens(networkId = networkId, walletIndex = walletIndex),
+                getAllTokensFromStore(networkId, walletIndex),
                 getERC20TokensFromNetwork()
         )
         .first { areTokensFresh(it) }
@@ -65,9 +65,16 @@ class TokenManager(
     }
 
     private fun fetchAndSaveERC20Tokens(wallet: HDWallet): Single<List<ERC20Token>> {
-        return ethService.get().getTokens(wallet.paymentAddress)
+        return ethService
+                .get()
+                .getTokens(wallet.paymentAddress)
                 .map { it.tokens }
                 .flatMap { saveERC20Tokens(it, wallet) }
+                .onErrorResumeNext { getAllTokensFromStore(networks.currentNetwork.id, wallet.getCurrentWalletIndex()) }
+    }
+
+    private fun getAllTokensFromStore(networkId: String, walletIndex: Int): Single<List<ERC20Token>> {
+        return tokenStore.getAllTokens(networkId = networkId, walletIndex = walletIndex)
     }
 
     private fun saveERC20Tokens(ERC20Tokens: List<ERC20Token>, wallet: HDWallet): Single<List<ERC20Token>> {

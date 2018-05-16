@@ -29,8 +29,8 @@ class TokenStore(
         private val scheduler: Scheduler = Schedulers.from(Executors.newSingleThreadExecutor())
 ) : TokenStoreInterface {
 
-    override fun saveAllTokens(token: List<ERC20Token>, networkId: String, walletIndex: Int): Single<List<ERC20Token>> {
-        return Single.fromCallable { save(token, networkId, walletIndex) }
+    override fun saveAllTokens(tokens: List<ERC20Token>, networkId: String, walletIndex: Int): Single<List<ERC20Token>> {
+        return Single.fromCallable { save(tokens, networkId, walletIndex) }
                 .subscribeOn(scheduler)
     }
 
@@ -57,7 +57,9 @@ class TokenStore(
                 .and()
                 .equalTo("walletIndex", walletIndex)
                 .findAll()
-        val tokens = realm.copyFromRealm(result)
+
+        val isEmptyResult = result != null && result.isNotEmpty()
+        val tokens = if (isEmptyResult) realm.copyFromRealm(result) else emptyList()
         realm.close()
         return tokens
     }
