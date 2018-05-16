@@ -133,7 +133,7 @@ class ERC20Fragment : RefreshFragment() {
         emptyStateTitle.text = getString(R.string.empty_state_tokens)
     }
 
-    override fun refresh() = viewModel.fetchERC20Tokens()
+    override fun refresh() = viewModel.refreshERC20Tokens()
 
     override fun stopRefreshing() {
         if (parentFragment is WalletFragment) {

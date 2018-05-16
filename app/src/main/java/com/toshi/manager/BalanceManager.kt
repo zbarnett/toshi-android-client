@@ -148,13 +148,13 @@ class BalanceManager(
     private fun getERC20Tokens(walletIndex: Int, networkId: String): Single<List<ERC20Token>> {
         return Single.concat(
                 tokenStore.getAllTokens(networkId = networkId, walletIndex = walletIndex),
-                fetchERC20TokensFromNetwork()
+                getERC20TokensFromNetwork()
         )
         .first { isTokensFresh(it) }
         .toSingle()
     }
 
-    private fun fetchERC20TokensFromNetwork(): Single<List<ERC20Token>> {
+    fun getERC20TokensFromNetwork(): Single<List<ERC20Token>> {
         return getWallet()
                 .flatMap { ethService.get().getTokens(it.paymentAddress) }
                 .map { it.tokens }

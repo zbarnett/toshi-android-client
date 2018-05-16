@@ -73,10 +73,16 @@ class TokenViewModel : ViewModel() {
         subscriptions.add(sub)
     }
 
+    private fun fetchERC20TokensAndAddEther(etherToken: EtherToken): Single<List<Token>> {
+        return getERC20Tokens()
+                .map { Pair(it, etherToken) }
+                .map { addEtherTokenToTokenList(it.first, it.second) }
+    }
+
     private fun listenForNewIncomingTokenPayments() {
         val sub = transactionManager
                 .listenForNewIncomingTokenPayments()
-                .flatMap { fetchERC20TokensAndAddEther().toObservable() }
+                .flatMap { fetchERC20TokensFromNetworkAndAddEther().toObservable() }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -100,8 +106,38 @@ class TokenViewModel : ViewModel() {
         subscriptions.add(sub)
     }
 
-    fun fetchERC20Tokens() {
-        val sub = fetchERC20TokensAndAddEther()
+    private fun firstFetchERC721Tokens() {
+        val sub = balanceManager
+                .getERC721Tokens()
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe { isERC721Loading.value = true }
+                .doAfterTerminate { isERC721Loading.value = false }
+                .subscribe(
+                        { erc721Tokens.value = it.collectibles },
+                        { erc721error.value = R.string.error_fetching_tokens }
+                )
+
+        subscriptions.add(sub)
+    }
+
+    private fun fetchERC20TokensFromNetworkAndAddEther(): Single<List<Token>> {
+        return Single.zip(
+                getERC20TokensFromNetwork(),
+                createEtherToken(),
+                { tokens, etherToken -> Pair(tokens, etherToken) }
+        )
+        .map { addEtherTokenToTokenList(it.first, it.second) }
+    }
+
+    private fun getERC20TokensFromNetwork(): Single<List<ERCTokenView>> {
+        return balanceManager
+                .getERC20TokensFromNetwork()
+                .onErrorReturn { ERC20Tokens().tokens }
+                .map { mapERC20Tokens(it) }
+    }
+
+    fun refreshERC20Tokens() {
+        val sub = fetchERC20TokensFromNetworkAndAddEther()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { erc20Tokens.value = it },
@@ -118,12 +154,6 @@ class TokenViewModel : ViewModel() {
                 { tokens, etherToken -> Pair(tokens, etherToken) }
         )
         .map { addEtherTokenToTokenList(it.first, it.second) }
-    }
-
-    private fun fetchERC20TokensAndAddEther(etherToken: EtherToken): Single<List<Token>> {
-        return getERC20Tokens()
-                .map { Pair(it, etherToken) }
-                .map { addEtherTokenToTokenList(it.first, it.second) }
     }
 
     private fun getERC20Tokens(): Single<List<ERCTokenView>> {
@@ -164,20 +194,6 @@ class TokenViewModel : ViewModel() {
     private fun mapBalance(balance: Balance): EtherToken {
         val ethAmount = EthUtil.weiAmountToUserVisibleString(balance.unconfirmedBalance)
         return EtherToken.create(etherValue = ethAmount, fiatValue = balance.localBalance ?: "0.00")
-    }
-
-    private fun firstFetchERC721Tokens() {
-        val sub = balanceManager
-                .getERC721Tokens()
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe { isERC721Loading.value = true }
-                .doAfterTerminate { isERC721Loading.value = false }
-                .subscribe(
-                        { erc721Tokens.value = it.collectibles },
-                        { erc721error.value = R.string.error_fetching_tokens }
-                )
-
-        subscriptions.add(sub)
     }
 
     fun fetchERC721Tokens() {
