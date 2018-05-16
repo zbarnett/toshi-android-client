@@ -204,7 +204,7 @@ class TokenViewModel(
         return EtherToken.create(etherValue = ethAmount, fiatValue = balance.localBalance ?: "0.00")
     }
 
-    fun fetchERC721Tokens() {
+    fun refreshERC721Tokens() {
         val sub = tokenManager
                 .getERC721Tokens()
                 .map { it.mapToViewModel() }

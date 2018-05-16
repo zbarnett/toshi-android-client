@@ -111,7 +111,7 @@ class ERC721Fragment : RefreshFragment() {
         emptyStateTitle.text = getString(R.string.empty_state_collectibles)
     }
 
-    override fun refresh() = viewModel.fetchERC721Tokens()
+    override fun refresh() = viewModel.refreshERC721Tokens()
 
     override fun stopRefreshing() {
         if (parentFragment is WalletFragment) {
