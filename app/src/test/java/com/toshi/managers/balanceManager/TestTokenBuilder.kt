@@ -25,7 +25,10 @@ import com.toshi.model.network.token.ERCToken
 
 class TestTokenBuilder {
 
-    val tokenContractAddress = "0xd26114cd6EE289AccF82350c8d8487fedB8A0C07"
+    val OMGTokenContractAddress = "0xd26114cd6EE289AccF82350c8d8487fedB8A0C01"
+    val LOLTokenContractAddress = "0xd26114cd6EE289AccF82350c8d8487fedB8A0C02"
+    val CryptoKittiesTokenContractAddress = "0xd26114cd6EE289AccF82350c8d8487fedB8A0C03"
+    val CryptoPunksTokenContractAddress = "0xd26114cd6EE289AccF82350c8d8487fedB8A0C04"
 
     fun createERC20Token(): ERC20Token = createERC20TokenList().tokens.first()
 
@@ -36,14 +39,14 @@ class TestTokenBuilder {
                     name = "OMGCoin"
                     balance = "1"
                     decimals = 18
-                    contractAddress = tokenContractAddress
+                    contractAddress = OMGTokenContractAddress
                 },
                 ERC20Token().apply {
                     symbol = "LOL"
                     name = "LOLCoin"
                     balance = "10"
                     decimals = 18
-                    contractAddress = tokenContractAddress
+                    contractAddress = LOLTokenContractAddress
                 }
         )
         return ERC20Tokens(listOfERC20Tokens)
@@ -56,7 +59,7 @@ class TestTokenBuilder {
                         name = "CryptoKitties",
                         balance = "10",
                         decimals = 0,
-                        contractAddress = tokenContractAddress,
+                        contractAddress = CryptoKittiesTokenContractAddress,
                         icon = null
                 ),
                 ERCToken(
@@ -64,7 +67,7 @@ class TestTokenBuilder {
                         name = "CryptoPunks",
                         balance = "11",
                         decimals = 0,
-                        contractAddress = tokenContractAddress,
+                        contractAddress = CryptoPunksTokenContractAddress,
                         icon = null
                 )
         )
@@ -75,7 +78,7 @@ class TestTokenBuilder {
         return ERC721TokenWrapper(
                 name = "CryptoKitties",
                 value = "10",
-                contractAddress = tokenContractAddress,
+                contractAddress = CryptoKittiesTokenContractAddress,
                 icon = null,
                 type = null,
                 url = null

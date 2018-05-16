@@ -27,6 +27,7 @@ import com.toshi.mockWalletSubject
 import com.toshi.model.local.network.Network
 import com.toshi.model.local.network.Networks
 import com.toshi.testSharedPrefs.TestAppPrefs
+import com.toshi.testStores.TestTokenStore
 import rx.Observable
 import rx.schedulers.Schedulers
 import rx.subjects.BehaviorSubject
@@ -35,6 +36,7 @@ class TokenManagerMocker {
 
     fun mock(): TokenManager {
         return TokenManager(
+                tokenStore = TestTokenStore(),
                 networks = mockNetworks(),
                 ethService = mockEthService(),
                 walletObservable = mockWalletObservable(),

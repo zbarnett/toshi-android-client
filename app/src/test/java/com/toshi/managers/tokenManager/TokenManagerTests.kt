@@ -19,6 +19,7 @@ package com.toshi.managers.tokenManager
 
 import com.toshi.managers.balanceManager.TestTokenBuilder
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class TokenManagerTests {
@@ -27,25 +28,38 @@ class TokenManagerTests {
     private val testTokenBuilder by lazy { TestTokenBuilder() }
 
     @Test
-    fun testGetERC20Tokens() {
+    fun `check ERC20Tokens Size`() {
         val erc20Tokens = tokenManager
                 .getERC20Tokens()
                 .toBlocking()
                 .value()
 
-        val expectedTokenList = testTokenBuilder.createERC20TokenList()
-        assertEquals(erc20Tokens, expectedTokenList)
+        assertEquals(2, erc20Tokens.size)
+    }
+
+    @Test
+    fun `check if walletId, networkId and primaryKey is set for all ERC20 tokens`() {
+        val erc20Tokens = tokenManager
+                .getERC20Tokens()
+                .toBlocking()
+                .value()
+
+        erc20Tokens.forEach {
+            assertTrue(it.primaryKey != null)
+            assertTrue(it.walletIndex != null)
+            assertTrue(it.networkId != null)
+        }
     }
 
     @Test
     fun testGetERC20Token() {
         val erc20Token = tokenManager
-                .getERC20Token(testTokenBuilder.tokenContractAddress)
+                .getERC20Token(testTokenBuilder.OMGTokenContractAddress)
                 .toBlocking()
                 .value()
 
         val expectedERC20Token = testTokenBuilder.createERC20Token()
-        assertEquals(erc20Token, expectedERC20Token)
+        assertEquals(erc20Token.contractAddress, expectedERC20Token.contractAddress)
     }
 
     @Test
@@ -55,18 +69,17 @@ class TokenManagerTests {
                 .toBlocking()
                 .value()
 
-        val expectedERC721Tokens = testTokenBuilder.createERC721TokenList()
-        assertEquals(erc721Tokens, expectedERC721Tokens)
+        assertEquals(2, erc721Tokens.collectibles.size)
     }
 
     @Test
-    fun testGetERC721Token() {
+    fun testGetERC721TokenSize() {
         val erc721Token = tokenManager
-                .getERC721Token(testTokenBuilder.tokenContractAddress)
+                .getERC721Token(testTokenBuilder.CryptoKittiesTokenContractAddress)
                 .toBlocking()
                 .value()
 
         val expectedERC721Token = testTokenBuilder.createERC721Token()
-        assertEquals(erc721Token, expectedERC721Token)
+        assertEquals(erc721Token.contractAddress, expectedERC721Token.contractAddress)
     }
 }

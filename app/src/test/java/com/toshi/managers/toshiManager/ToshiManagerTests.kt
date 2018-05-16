@@ -30,10 +30,12 @@ import com.toshi.manager.ToshiManager
 import com.toshi.manager.TransactionManager
 import com.toshi.manager.UserManager
 import com.toshi.manager.chat.SofaMessageManager
+import com.toshi.manager.token.TokenManager
 import com.toshi.managers.balanceManager.BalanceManagerMocker
 import com.toshi.managers.baseApplication.BaseApplicationMocker
 import com.toshi.managers.dappManager.DappManagerMocker
 import com.toshi.managers.recipientManager.RecipientManagerMocker
+import com.toshi.managers.tokenManager.TokenManagerMocker
 import com.toshi.managers.transactionManager.TransactionManagerMocker
 import com.toshi.managers.userManager.UserManagerMocker
 import com.toshi.masterSeed
@@ -71,6 +73,7 @@ class ToshiManagerTests {
         appPrefs = TestAppPrefs()
 
         toshiManager = ToshiManager(
+                baseApplication = baseApplication,
                 balanceManager = mockBalanceManager(),
                 transactionManager = mockTransactionManager(wallet),
                 recipientManager = recipientManager,
@@ -83,9 +86,9 @@ class ToshiManagerTests {
                 ),
                 reputationManager = mockReputationManager(),
                 dappManager = mockDappManager(),
+                tokenManager = mockTokenManager(),
                 walletBuilder = hdWalletBuilder,
                 appPrefs = appPrefs,
-                baseApplication = baseApplication,
                 scheduler = Schedulers.trampoline()
         )
     }
@@ -127,6 +130,8 @@ class ToshiManagerTests {
                 .thenReturn(Completable.complete())
         return sofaMessageManager
     }
+
+    private fun mockTokenManager(): TokenManager = TokenManagerMocker().mock()
 
     private fun mockWalletObservable(wallet: HDWallet): Observable<HDWallet> = mockWalletSubject(wallet)
 

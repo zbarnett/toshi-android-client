@@ -21,7 +21,8 @@ import com.toshi.crypto.HDWallet
 import com.toshi.extensions.getTimeoutSingle
 import com.toshi.manager.network.EthereumService
 import com.toshi.manager.network.EthereumServiceInterface
-import com.toshi.manager.store.TokenStore
+import com.toshi.manager.store.token.TokenStore
+import com.toshi.manager.store.token.TokenStoreInterface
 import com.toshi.model.local.network.Networks
 import com.toshi.model.network.token.CustomERCToken
 import com.toshi.model.network.token.ERC20Token
@@ -36,7 +37,7 @@ import rx.schedulers.Schedulers
 import rx.subjects.BehaviorSubject
 
 class TokenManager(
-        private val tokenStore: TokenStore = TokenStore(BaseApplication.get()),
+        private val tokenStore: TokenStoreInterface = TokenStore(BaseApplication.get()),
         private val networks: Networks = Networks.getInstance(),
         private val ethService: EthereumServiceInterface = EthereumService,
         private val walletObservable: Observable<HDWallet>,
