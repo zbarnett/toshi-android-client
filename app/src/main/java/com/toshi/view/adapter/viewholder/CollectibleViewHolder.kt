@@ -22,12 +22,12 @@ import android.view.View
 import android.widget.ImageView
 import com.toshi.R
 import com.toshi.crypto.util.TypeConverter
-import com.toshi.model.network.token.ERC721Token
+import com.toshi.model.local.token.ERC721TokenView
 import com.toshi.util.ImageUtil
 import kotlinx.android.synthetic.main.list_item__collectible.view.*
 
 class CollectibleViewHolder(private val collectibleName: String?, itemView: View?) : RecyclerView.ViewHolder(itemView) {
-    fun setCollectible(collectible: ERC721Token) {
+    fun setCollectible(collectible: ERC721TokenView) {
         val name = getName(collectible)
         itemView.name.text = name ?: ""
         itemView.description.text = collectible.description ?: ""
@@ -39,7 +39,7 @@ class CollectibleViewHolder(private val collectibleName: String?, itemView: View
         else ImageUtil.load(url, imageView)
     }
 
-    private fun getName(collectible: ERC721Token): String? {
+    private fun getName(collectible: ERC721TokenView): String? {
         val collectibleName = this.collectibleName ?: ""
         val tokenId = TypeConverter.fromHexToDecimal(collectible.tokenId ?: "0x0")
         return collectible.name ?: "$collectibleName #$tokenId"

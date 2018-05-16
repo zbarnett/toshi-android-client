@@ -99,6 +99,6 @@ class ViewERC721TokensActivity : AppCompatActivity() {
     private fun handleCollectible(collectible: ERC721TokenWrapper) {
         if (collectible.name != null) toolbarTitle.text = collectible.name
         if (collectible.url != null) toolbarUrl.text = collectible.url else toolbarUrl.isVisible(false)
-        if (collectible.tokens != null) collectibleAdapter.setCollectibles(collectible.tokens)
+        if (collectible.tokenViews != null) collectibleAdapter.setCollectibles(collectible.tokenViews)
     }
 }

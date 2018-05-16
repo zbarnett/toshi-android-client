@@ -21,14 +21,14 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.toshi.R
-import com.toshi.model.network.token.ERC721Token
+import com.toshi.model.local.token.ERC721TokenView
 import com.toshi.view.adapter.viewholder.CollectibleViewHolder
 
 class CollectibleAdapter(private val collectibleName: String?) : RecyclerView.Adapter<CollectibleViewHolder>() {
 
-    private var collectibles: MutableList<ERC721Token> = mutableListOf()
+    private var collectibles: MutableList<ERC721TokenView> = mutableListOf()
 
-    fun setCollectibles(collectibles: List<ERC721Token>) {
+    fun setCollectibles(collectibles: List<ERC721TokenView>) {
         if (collectibles.isEmpty()) return
         this.collectibles.clear()
         this.collectibles.addAll(collectibles)

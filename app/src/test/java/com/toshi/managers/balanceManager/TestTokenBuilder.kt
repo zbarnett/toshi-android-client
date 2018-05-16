@@ -78,7 +78,7 @@ class TestTokenBuilder {
                 value = "10",
                 contractAddress = contractAddress,
                 icon = null,
-                tokens = null,
+                tokenViews = null,
                 type = null,
                 url = null
         )

@@ -18,6 +18,7 @@
 package com.toshi.model.network.token
 
 import com.squareup.moshi.Json
+import com.toshi.model.local.token.ERC721TokenView
 
 data class ERC721TokenWrapper(
         @Json(name = "contract_address")
@@ -27,5 +28,5 @@ data class ERC721TokenWrapper(
         val url: String?,
         val type: Int?,
         val value: String?,
-        val tokens: List<ERC721Token>?
+        val tokenViews: List<ERC721TokenView>?
 )
