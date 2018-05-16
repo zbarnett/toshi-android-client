@@ -33,13 +33,14 @@ import rx.Observable
 import rx.Scheduler
 import rx.Single
 import rx.schedulers.Schedulers
+import rx.subjects.BehaviorSubject
 
 class TokenManager(
-        private val baseApplication: BaseApplication = BaseApplication.get(),
-        private val tokenStore: TokenStore = TokenStore(baseApplication),
+        private val tokenStore: TokenStore = TokenStore(BaseApplication.get()),
         private val networks: Networks = Networks.getInstance(),
         private val ethService: EthereumServiceInterface = EthereumService,
         private val walletObservable: Observable<HDWallet>,
+        private val connectivitySubject: BehaviorSubject<Boolean>,
         private val scheduler: Scheduler = Schedulers.io()
 ) {
     fun getERC20Tokens(): Single<List<ERC20Token>> {
@@ -76,10 +77,12 @@ class TokenManager(
     private fun areTokensFresh(ERC20Tokens: List<ERC20Token>): Boolean {
         return when {
             ERC20Tokens.isEmpty() -> false
-            !baseApplication.isConnected -> true
+            !isConnected() -> true
             else -> !ERC20Tokens[0].needsRefresh()
         }
     }
+
+    private fun isConnected(): Boolean = connectivitySubject.value ?: false
 
     fun getERC20Token(contractAddress: String): Single<ERC20Token> {
         return getWallet()

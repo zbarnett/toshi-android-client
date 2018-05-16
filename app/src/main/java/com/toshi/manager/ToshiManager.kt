@@ -42,6 +42,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 class ToshiManager(
+        private val baseApplication: BaseApplication = BaseApplication.get(),
         private val walletSubject: BehaviorSubject<HDWallet> = BehaviorSubject.create<HDWallet>(),
         val balanceManager: BalanceManager = BalanceManager(walletObservable = walletSubject.asObservable()),
         val recipientManager: RecipientManager = RecipientManager(),
@@ -49,13 +50,15 @@ class ToshiManager(
         val chatManager: ChatManager = ChatManager(userManager = userManager, recipientManager = recipientManager, walletObservable = walletSubject.asObservable()),
         val reputationManager: ReputationManager = ReputationManager(),
         val dappManager: DappManager = DappManager(),
-        val tokenManager: TokenManager = TokenManager(walletObservable = walletSubject.asObservable()),
+        val tokenManager: TokenManager = TokenManager(
+                walletObservable = walletSubject.asObservable(),
+                connectivitySubject = baseApplication.isConnectedSubject
+        ),
         val transactionManager: TransactionManager = TransactionManager(
                 walletObservable = walletSubject.asObservable(),
                 balanceManager = balanceManager,
                 recipientManager = recipientManager
         ),
-        private val baseApplication: BaseApplication = BaseApplication.get(),
         private val walletBuilder: HdWalletBuilder = HdWalletBuilder(),
         private val appPrefs: AppPrefsInterface = AppPrefs,
         private val signalPrefs: SignalPrefsInterface = SignalPrefs,
