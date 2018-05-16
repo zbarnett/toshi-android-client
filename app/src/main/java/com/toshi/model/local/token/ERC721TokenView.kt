@@ -17,14 +17,9 @@
 
 package com.toshi.model.local.token
 
-import com.squareup.moshi.Json
-
 data class ERC721TokenView(
-        @Json(name = "contract_address")
         val contractAddress: String?,
-        @Json(name = "token_id")
         val tokenId: String?,
-        @Json(name = "owner_address")
         val ownerAddress: String?,
         val name: String?,
         val image: String?,

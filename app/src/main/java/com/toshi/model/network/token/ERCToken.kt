@@ -1,7 +1,7 @@
 /*
- * 	Copyright (c) 2017. Toshi Inc
+ * Copyright (c) 2017. Toshi Inc
  *
- * 	This program is free software: you can redistribute it and/or modify
+ *  This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
@@ -17,6 +17,11 @@
 
 package com.toshi.model.network.token
 
-data class ERC721Tokens(
-        val collectibles: List<ERCToken>
+data class ERCToken(
+        val symbol: String?,
+        val name: String?,
+        val balance: String?,
+        val decimals: Int?,
+        val contractAddress: String?,
+        val icon: String?
 )

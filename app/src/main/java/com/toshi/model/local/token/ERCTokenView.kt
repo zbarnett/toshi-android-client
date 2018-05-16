@@ -18,7 +18,6 @@
 package com.toshi.model.local.token
 
 import android.content.Intent
-import com.squareup.moshi.Json
 import com.toshi.model.network.token.ERC20Token
 import com.toshi.view.activity.ViewTokenActivity
 
@@ -27,7 +26,6 @@ data class ERCTokenView(
         val name: String?,
         val balance: String?,
         val decimals: Int?,
-        @Json(name = "contract_address")
         val contractAddress: String?,
         val icon: String?
 ) : Token() {
