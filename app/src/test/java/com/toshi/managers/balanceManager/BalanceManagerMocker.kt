@@ -17,12 +17,14 @@
 
 package com.toshi.managers.balanceManager
 
+import com.toshi.crypto.HDWallet
 import com.toshi.manager.BalanceManager
 import com.toshi.manager.ethRegistration.EthGcmRegistration
 import com.toshi.manager.network.CurrencyInterface
 import com.toshi.manager.network.EthereumServiceInterface
 import com.toshi.managers.baseApplication.BaseApplicationMocker
 import com.toshi.mockWallet
+import com.toshi.mockWalletSubject
 import com.toshi.model.local.network.Network
 import com.toshi.model.local.network.Networks
 import com.toshi.model.network.ExchangeRate
@@ -31,6 +33,7 @@ import com.toshi.util.sharedPrefs.BalancePrefsInterface
 import com.toshi.util.sharedPrefs.EthGcmPrefsInterface
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito
+import rx.Observable
 import rx.Single
 import rx.schedulers.Schedulers
 import java.math.BigDecimal
@@ -47,11 +50,7 @@ class BalanceManagerMocker(
 
     fun mockWithWalletInit(): BalanceManager {
         val balanceManager = mock()
-        val wallet = mockWallet(masterSeed)
-                .existingWallet
-                .toBlocking()
-                .value()
-        balanceManager.init(wallet).await()
+        balanceManager.init().await()
         return balanceManager
     }
 
@@ -63,6 +62,7 @@ class BalanceManagerMocker(
         val gcmPrefs = createGcmPrefsMock()
         val ethGcmRegistration = createEthGcmRegistration(gcmPrefs, ethService)
         val baseApplication = createMockBaseApplication()
+        val walletObservable = mockWalletObservable()
 
         return BalanceManager(
                 ethService = ethService,
@@ -71,6 +71,7 @@ class BalanceManagerMocker(
                 balancePrefs = balancePrefs,
                 ethGcmRegistration = ethGcmRegistration,
                 baseApplication = baseApplication,
+                walletObservable = walletObservable,
                 scheduler = Schedulers.trampoline()
         )
     }
@@ -103,7 +104,7 @@ class BalanceManagerMocker(
 
     private fun createBalancePrefsMock(): BalancePrefsInterface {
         val balancePrefs = Mockito.mock(BalancePrefsInterface::class.java)
-        Mockito.`when`(balancePrefs.readLastKnownBalance())
+        Mockito.`when`(balancePrefs.readLastKnownBalance(0))
                 .thenReturn(lastKnownBalance)
         return balancePrefs
     }
@@ -111,10 +112,12 @@ class BalanceManagerMocker(
     private fun createEthGcmRegistration(gcmPrefs: EthGcmPrefsInterface,
                                          ethApi: EthereumServiceInterface): EthGcmRegistration {
         val networks = createMockedNetworks()
+        val walletObservable = mockWalletObservable()
         return EthGcmRegistration(
                 networks = networks,
                 gcmPrefs = gcmPrefs,
                 ethService = ethApi,
+                walletObservable = walletObservable,
                 scheduler = Schedulers.trampoline()
         )
     }
@@ -134,5 +137,10 @@ class BalanceManagerMocker(
                 .thenReturn(network)
 
         return networks
+    }
+
+    private fun mockWalletObservable(): Observable<HDWallet> {
+        val wallet = mockWallet(masterSeed)
+        return mockWalletSubject(wallet)
     }
 }

@@ -1,7 +1,7 @@
 /*
  * 	Copyright (c) 2017. Toshi Inc
  *
- * 	This program is free software: you can redistribute it and/or modify
+ *  This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
@@ -15,16 +15,17 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.toshi.model.network;
+package com.toshi.util.identicon
 
-import java.util.List;
+import android.graphics.Paint
 
-public class GcmRegistration {
-    private String registration_id;
-    private List<String> addresses;
+class Palette(colorGenerator: () -> Int) {
+    val foregroundColor: Paint = toPaint(colorGenerator)
+    val backgroundColor: Paint = toPaint(colorGenerator)
+    val spotColor: Paint = toPaint(colorGenerator)
 
-    public GcmRegistration(final String gcmRegistrationId, final List<String> addresses) {
-        this.registration_id = gcmRegistrationId;
-        this.addresses = addresses;
+    private fun toPaint(colorGenerator: () -> Int): Paint = Paint().apply {
+        style = Paint.Style.FILL
+        color = colorGenerator()
     }
 }

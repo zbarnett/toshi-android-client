@@ -39,6 +39,7 @@ import com.toshi.util.SingleLiveEvent
 import com.toshi.util.logging.LogUtil
 import com.toshi.view.BaseApplication
 import com.toshi.view.fragment.PaymentConfirmationFragment.Companion.CALLBACK_ID
+import com.toshi.view.fragment.PaymentConfirmationFragment.Companion.CONFIRMATION_TYPE
 import com.toshi.view.fragment.PaymentConfirmationFragment.Companion.CURRENCY_MODE
 import com.toshi.view.fragment.PaymentConfirmationFragment.Companion.DAPP_FAVICON
 import com.toshi.view.fragment.PaymentConfirmationFragment.Companion.DAPP_TITLE
@@ -52,6 +53,11 @@ import com.toshi.view.fragment.PaymentConfirmationFragment.Companion.TOKEN_DECIM
 import com.toshi.view.fragment.PaymentConfirmationFragment.Companion.TOKEN_SYMBOL
 import com.toshi.view.fragment.PaymentConfirmationFragment.Companion.TOSHI_ID
 import com.toshi.view.fragment.PaymentConfirmationFragment.Companion.UNSIGNED_TRANSACTION
+import com.toshi.view.fragment.dialogFragment.PaymentConfirmationType.EXTERNAL
+import com.toshi.view.fragment.dialogFragment.PaymentConfirmationType.TOKEN_PAYMENT
+import com.toshi.view.fragment.dialogFragment.PaymentConfirmationType.TOSHI_PAYMENT
+import com.toshi.view.fragment.dialogFragment.PaymentConfirmationType.TOSHI_PAYMENT_REQUEST
+import com.toshi.view.fragment.dialogFragment.PaymentConfirmationType.WEB
 import rx.Completable
 import rx.Single
 import rx.android.schedulers.AndroidSchedulers
@@ -124,24 +130,76 @@ class PaymentConfirmationViewModel : ViewModel() {
     }
 
     private fun getPaymentTask() {
-        val unsignedW3Transaction = getUnsignedW3Transaction()
-        val callbackId = getCallbackId()
-        val toshiId = getToshiId()
-        val encodedEthAmount = getEncodedEthAmount()
-        val paymentAddress = getPaymentAddress()
-        val tokenAddress = getTokenAddress()
-        val tokenSymbol = getTokenSymbol()
-        val tokenDecimals = getTokenDecimals()
-
-        when {
-            unsignedW3Transaction != null && callbackId != null -> getPaymentTaskWithUnsignedW3Transaction(unsignedW3Transaction, callbackId) // Unsigned transaction
-            toshiId != null -> getPaymentTaskWithToshiId(toshiId, encodedEthAmount) // Toshi transaction
-            tokenAddress != null && paymentAddress != null && tokenSymbol != null && tokenDecimals != null -> { // Token transaction
-                getPaymentTaskWithTokenAddress(tokenAddress, tokenSymbol, tokenDecimals, paymentAddress, encodedEthAmount)
-            }
-            paymentAddress != null -> getPaymentTaskWithPaymentAddress(paymentAddress, encodedEthAmount) // External transaction
-            else -> LogUtil.exception("Unhandled payment unsignedW3Transaction, toshiId and paymentAddress is null")
+        val confirmationType = getConfirmationType()
+        if (confirmationType == null) {
+            LogUtil.exception("Payment confirmation type is null when trying to send a payment")
+            return
         }
+
+        try {
+            findPaymentConfirmationType(confirmationType)
+        } catch (e: IllegalStateException) {
+            LogUtil.exception("Error when trying to find payment confirmation type", e)
+        }
+    }
+
+    private fun findPaymentConfirmationType(confirmationType: Int) {
+        when (confirmationType) {
+            TOSHI_PAYMENT -> handleToshiPayment()
+            TOSHI_PAYMENT_REQUEST -> handleToshiPaymentRequest()
+            EXTERNAL -> handleExternalPayment()
+            WEB -> handleWebPayment()
+            TOKEN_PAYMENT -> handleTokenPayment()
+            else -> LogUtil.exception("Unhandled payment")
+        }
+    }
+
+    @Throws(IllegalStateException::class)
+    private fun handleToshiPayment() {
+        val toshiId = getToshiId()
+                ?: throw IllegalStateException("toshiId is null when trying to send toshi payment")
+        val encodedEthAmount = getEncodedEthAmount()
+        getPaymentTaskWithToshiId(toshiId, encodedEthAmount)
+    }
+
+    @Throws(IllegalStateException::class)
+    private fun handleToshiPaymentRequest() {
+        val toPaymentAddress = getPaymentAddress()
+                ?: throw IllegalStateException("toPaymentAddress is null when trying to send toshi payment request")
+        val encodedEthAmount = getEncodedEthAmount()
+        getPaymentTaskWithPaymentAddress(toPaymentAddress, encodedEthAmount)
+    }
+
+    @Throws(IllegalStateException::class)
+    private fun handleExternalPayment() {
+        val toPaymentAddress = getPaymentAddress()
+                ?: throw IllegalStateException("toPaymentAddress is null when trying to send external payment")
+        val encodedEthAmount = getEncodedEthAmount()
+        getPaymentTaskWithPaymentAddress(toPaymentAddress, encodedEthAmount)
+    }
+
+    @Throws(IllegalStateException::class)
+    private fun handleWebPayment() {
+        val unsignedW3Transaction = getUnsignedW3Transaction()
+                ?: throw IllegalStateException("unsignedW3Transaction is null when trying to send web payment")
+        val callbackId = getCallbackId()
+                ?: throw IllegalStateException("callbackId is null when trying to send web payment")
+        getPaymentTaskWithUnsignedW3Transaction(unsignedW3Transaction, callbackId)
+    }
+
+    @Throws(IllegalStateException::class)
+    private fun handleTokenPayment() {
+        val toPaymentAddress = getPaymentAddress()
+                ?: throw IllegalStateException("toPaymentAddress is null when trying to send token payment")
+        val tokenAddress = getTokenAddress()
+                ?: throw IllegalStateException("tokenAddress is null when trying to send token payment")
+        val tokenSymbol = getTokenSymbol()
+                ?: throw IllegalStateException("tokenSymbol is null when trying to send token payment")
+        val tokenDecimals = getTokenDecimals()
+                ?: throw IllegalStateException("tokenDecimals is null when trying to send token payment")
+        val encodedEthAmount = getEncodedEthAmount()
+
+        getPaymentTaskWithTokenAddress(tokenAddress, tokenSymbol, tokenDecimals, toPaymentAddress, encodedEthAmount)
     }
 
     private fun getToshiId(): String? = bundle?.getString(TOSHI_ID)
@@ -157,6 +215,7 @@ class PaymentConfirmationViewModel : ViewModel() {
     fun getDappTitle(): String? = bundle?.getString(DAPP_TITLE)
     fun getDappFavicon(): Bitmap? = bundle?.getParcelable(DAPP_FAVICON)
     fun isSendingMaxAmount() = bundle?.getBoolean(SEND_MAX_AMOUNT, false) ?: false
+    fun getConfirmationType() = bundle?.getInt(CONFIRMATION_TYPE)
     fun getCurrencyMode(): CurrencyMode {
         val currencyMode = bundle?.getSerializable(CURRENCY_MODE) ?: CurrencyMode.FIAT
         return currencyMode as CurrencyMode
@@ -164,11 +223,11 @@ class PaymentConfirmationViewModel : ViewModel() {
 
     private fun getPaymentTaskWithToshiId(toshiId: String, ethAmount: String) {
         val sub = Single.zip(
-                toshiManager.getWallet(),
+                getLocalPaymentAddress(),
                 recipientManager.getUserFromToshiId(toshiId),
-                { wallet, recipient -> Pair(wallet, recipient) }
+                { localPaymentAddress, recipient -> Pair(localPaymentAddress, recipient) }
         )
-        .flatMap { getPaymentTask(it.first.paymentAddress, it.second.paymentAddress, ethAmount, isSendingMaxAmount()) }
+        .flatMap { getPaymentTask(it.first, it.second.paymentAddress, ethAmount, isSendingMaxAmount()) }
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .doOnSubscribe { isLoading.value = true }
@@ -178,7 +237,7 @@ class PaymentConfirmationViewModel : ViewModel() {
                 { paymentTaskError.value = Unit }
         )
 
-        this.subscriptions.add(sub)
+        subscriptions.add(sub)
     }
 
     private fun getPaymentTaskWithTokenAddress(tokenAddress: String,
@@ -186,8 +245,8 @@ class PaymentConfirmationViewModel : ViewModel() {
                                                tokenDecimals: Int,
                                                toPaymentAddress: String,
                                                ethAmount: String) {
-        val sub = toshiManager.getWallet()
-                .flatMap { getPaymentTask(it.paymentAddress, toPaymentAddress, ethAmount, tokenAddress, tokenSymbol, tokenDecimals) }
+        val sub = getLocalPaymentAddress()
+                .flatMap { fromPaymentAddress -> getPaymentTask(fromPaymentAddress, toPaymentAddress, ethAmount, tokenAddress, tokenSymbol, tokenDecimals) }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { isLoading.value = true }
@@ -196,12 +255,12 @@ class PaymentConfirmationViewModel : ViewModel() {
                         { paymentTask.value = it },
                         { paymentTaskError.value = Unit }
                 )
-        this.subscriptions.add(sub)
+        subscriptions.add(sub)
     }
 
     private fun getPaymentTaskWithPaymentAddress(toPaymentAddress: String, ethAmount: String) {
-        val sub = toshiManager.getWallet()
-                .flatMap { getPaymentTask(it.paymentAddress, toPaymentAddress, ethAmount, isSendingMaxAmount()) }
+        val sub = getLocalPaymentAddress()
+                .flatMap { fromPaymentAddress -> getPaymentTask(fromPaymentAddress, toPaymentAddress, ethAmount, isSendingMaxAmount()) }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { isLoading.value = true }
@@ -211,7 +270,12 @@ class PaymentConfirmationViewModel : ViewModel() {
                         { paymentTaskError.value = Unit }
                 )
 
-        this.subscriptions.add(sub)
+        subscriptions.add(sub)
+    }
+
+    private fun getLocalPaymentAddress(): Single<String> {
+        return toshiManager.getWallet()
+                .flatMap { Single.fromCallable { it.paymentAddress } }
     }
 
     private fun getPaymentTaskWithUnsignedW3Transaction(unsignedW3Transaction: String, callbackId: String) {
@@ -226,7 +290,7 @@ class PaymentConfirmationViewModel : ViewModel() {
                         { paymentTaskError.value = Unit }
                 )
 
-        this.subscriptions.add(sub)
+        subscriptions.add(sub)
     }
 
     private fun getPaymentTask(fromPaymentAddress: String,

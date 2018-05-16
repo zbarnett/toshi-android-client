@@ -61,7 +61,7 @@ class SignInViewModel(
     fun tryCreateWallet(masterSeed: String) {
         if (isLoading.value == true) return
         val sub = HdWalletBuilder()
-                .createFromMasterSeed(masterSeed)
+                .buildFromMasterSeed(masterSeed)
                 .flatMapCompletable { toshiManager.init(it) }
                 .doOnCompleted { AppPrefs.setHasBackedUpPhrase() }
                 .subscribeOn(subscribeScheduler)

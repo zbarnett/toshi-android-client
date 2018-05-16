@@ -395,11 +395,24 @@ class PaymentConfirmationFragment : BottomSheetDialogFragment() {
 
         fun newInstanceToshiPayment(toshiId: String,
                                     value: String,
-                                    memo: String?,
+                                    memo: String? = null,
                                     @PaymentType.Type paymentType: Int): PaymentConfirmationFragment {
             val bundle = Bundle().apply {
-                putInt(CONFIRMATION_TYPE, PaymentConfirmationType.TOSHI)
+                putInt(CONFIRMATION_TYPE, PaymentConfirmationType.TOSHI_PAYMENT)
                 putString(TOSHI_ID, toshiId)
+            }
+            return newInstance(bundle, value, memo, paymentType)
+        }
+
+        fun newInstanceToshiPaymentRequest(toshiId: String,
+                                           toAddress: String,
+                                           value: String,
+                                           memo: String? = null,
+                                           @PaymentType.Type paymentType: Int): PaymentConfirmationFragment {
+            val bundle = Bundle().apply {
+                putInt(CONFIRMATION_TYPE, PaymentConfirmationType.TOSHI_PAYMENT_REQUEST)
+                putString(TOSHI_ID, toshiId)
+                putString(PAYMENT_ADDRESS, toAddress)
             }
             return newInstance(bundle, value, memo, paymentType)
         }
@@ -424,10 +437,10 @@ class PaymentConfirmationFragment : BottomSheetDialogFragment() {
                                          tokenAddress: String,
                                          tokenSymbol: String,
                                          tokenDecimals: Int,
-                                         memo: String?,
+                                         memo: String? = null,
                                          @PaymentType.Type paymentType: Int): PaymentConfirmationFragment {
             val bundle = Bundle().apply {
-                putInt(CONFIRMATION_TYPE, PaymentConfirmationType.EXTERNAL)
+                putInt(CONFIRMATION_TYPE, PaymentConfirmationType.TOKEN_PAYMENT)
                 putString(PAYMENT_ADDRESS, toAddress)
                 putString(TOKEN_ADDRESS, tokenAddress)
                 putString(TOKEN_SYMBOL, tokenSymbol)
@@ -440,7 +453,7 @@ class PaymentConfirmationFragment : BottomSheetDialogFragment() {
                                   paymentAddress: String,
                                   value: String?,
                                   callbackId: String,
-                                  memo: String?,
+                                  memo: String? = null,
                                   url: String?,
                                   title: String?,
                                   favIcon: Bitmap?): PaymentConfirmationFragment {

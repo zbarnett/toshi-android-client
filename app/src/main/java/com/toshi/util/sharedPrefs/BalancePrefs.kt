@@ -30,11 +30,13 @@ class BalancePrefs : BalancePrefsInterface {
 
     private val prefs by lazy { BaseApplication.get().getSharedPreferences(FileNames.BALANCE_PREFS, Context.MODE_PRIVATE) }
 
-    override fun readLastKnownBalance(): String = prefs.getString(LAST_KNOWN_BALANCE, "0x0")
+    override fun readLastKnownBalance(walletIndex: Int): String {
+        return prefs.getString("$LAST_KNOWN_BALANCE$walletIndex", "0x0")
+    }
 
-    override fun writeLastKnownBalance(balance: Balance) {
+    override fun writeLastKnownBalance(walletIndex: Int, balance: Balance) {
         prefs.edit()
-                .putString(LAST_KNOWN_BALANCE, balance.unconfirmedBalanceAsHex)
+                .putString("$LAST_KNOWN_BALANCE$walletIndex", balance.unconfirmedBalanceAsHex)
                 .apply()
     }
 

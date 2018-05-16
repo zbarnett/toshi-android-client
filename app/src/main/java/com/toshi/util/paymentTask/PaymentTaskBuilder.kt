@@ -98,10 +98,10 @@ class PaymentTaskBuilder(
     }
 
     private fun getPaymentInfoAndUser(unsignedTransaction: UnsignedTransaction,
-                                      paymentAddress: String): Single<Pair<PaymentTaskInfo, User>> {
+                                      toPaymentAddress: String): Single<Pair<PaymentTaskInfo, User>> {
         return Single.zip(
                 calculatePaymentInfo(unsignedTransaction),
-                getUserFromPaymentAddress(paymentAddress),
+                getUserFromPaymentAddress(toPaymentAddress),
                 { paymentInfo, user -> Pair(paymentInfo, user) }
         )
     }
@@ -137,9 +137,9 @@ class PaymentTaskBuilder(
         return ERC20TokenPaymentTask(paymentTask, tokenSymbol, tokenValue)
     }
 
-    private fun getUserFromPaymentAddress(paymentAddress: String): Single<User> {
+    private fun getUserFromPaymentAddress(toPaymentAddress: String): Single<User> {
         return recipientManager
-                .getUserFromPaymentAddress(paymentAddress)
+                .getUserFromPaymentAddress(toPaymentAddress)
                 .onErrorReturn { null }
     }
 

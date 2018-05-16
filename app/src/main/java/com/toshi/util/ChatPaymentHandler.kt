@@ -16,20 +16,20 @@ class ChatPaymentHandler(private val activity: AppCompatActivity) {
                                             payment: Payment,
                                             listener: (PaymentTask) -> Unit) {
         val dialog = PaymentConfirmationFragment.newInstanceToshiPayment(
-                receiver.toshiId,
-                payment.value, null,
-                PaymentType.TYPE_SEND
+                toshiId = receiver.toshiId,
+                value = payment.value,
+                paymentType = PaymentType.TYPE_SEND
         )
         dialog.show(this.activity.supportFragmentManager, PaymentConfirmationFragment.TAG)
         dialog.setOnPaymentConfirmationApprovedListener { listener(it) }
     }
 
     fun showPaymentConfirmationDialog(receiver: User,
-                                      amount: String) {
+                                      value: String) {
         val dialog = PaymentConfirmationFragment.newInstanceToshiPayment(
-                receiver.toshiId,
-                amount, null,
-                PaymentType.TYPE_SEND
+                toshiId = receiver.toshiId,
+                value = value,
+                paymentType = PaymentType.TYPE_SEND
         )
         dialog.show(this.activity.supportFragmentManager, PaymentConfirmationFragment.TAG)
     }
@@ -37,10 +37,11 @@ class ChatPaymentHandler(private val activity: AppCompatActivity) {
     fun showPaymentRequestConfirmationDialog(receiver: User,
                                              paymentRequest: PaymentRequest,
                                              listener: (PaymentTask) -> Unit) {
-        val dialog = PaymentConfirmationFragment.newInstanceToshiPayment(
-                receiver.toshiId,
-                paymentRequest.value, null,
-                PaymentType.TYPE_REQUEST
+        val dialog = PaymentConfirmationFragment.newInstanceToshiPaymentRequest(
+                toshiId = receiver.toshiId,
+                toAddress = paymentRequest.destinationAddresss,
+                value = paymentRequest.value,
+                paymentType = PaymentType.TYPE_REQUEST
         )
         dialog.show(this.activity.supportFragmentManager, PaymentConfirmationFragment.TAG)
         dialog.setOnPaymentConfirmationApprovedListener { listener(it) }

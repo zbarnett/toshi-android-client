@@ -61,6 +61,8 @@ import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
+import static com.toshi.util.identicon.IdenticonKt.createIdenticon;
+
 public class ImageUtil {
 
     private static final List<String> supportedImageTypes = Arrays.asList("jpg", "jpeg", "png", "gif", "bmp", "webp");
@@ -145,7 +147,20 @@ public class ImageUtil {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         imageView::setImageBitmap,
-                        throwable -> LogUtil.exception(throwable)
+                        LogUtil::exception
+                );
+    }
+
+    public static void loadIdenticon(final String value, final ImageView imageView) {
+        if (value == null || imageView == null) return;
+
+        Single
+                .fromCallable(() -> createIdenticon(value))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        imageView::setImageBitmap,
+                        LogUtil::exception
                 );
     }
 

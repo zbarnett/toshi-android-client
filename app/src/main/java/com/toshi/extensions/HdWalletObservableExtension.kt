@@ -1,7 +1,7 @@
 /*
- * 	Copyright (c) 2017. Toshi Inc
+ * Copyright (c) 2017. Toshi Inc
  *
- * 	This program is free software: you can redistribute it and/or modify
+ *  This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
@@ -15,16 +15,18 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.toshi.model.network;
+package com.toshi.extensions
 
-import java.util.List;
+import com.toshi.crypto.HDWallet
+import com.toshi.util.logging.LogUtil
+import rx.Observable
+import rx.Single
+import java.util.concurrent.TimeUnit
 
-public class GcmRegistration {
-    private String registration_id;
-    private List<String> addresses;
-
-    public GcmRegistration(final String gcmRegistrationId, final List<String> addresses) {
-        this.registration_id = gcmRegistrationId;
-        this.addresses = addresses;
-    }
+fun Observable<HDWallet>.getTimeoutSingle(): Single<HDWallet> {
+    return filter { it != null }
+            .first()
+            .toSingle()
+            .timeout(30, TimeUnit.SECONDS)
+            .doOnError { LogUtil.exception("Wallet is null", it) }
 }

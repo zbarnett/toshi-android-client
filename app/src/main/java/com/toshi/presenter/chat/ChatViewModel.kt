@@ -22,6 +22,7 @@ import android.arch.lifecycle.ViewModel
 import com.toshi.R
 import com.toshi.extensions.isGroupId
 import com.toshi.manager.messageQueue.AsyncOutgoingMessageQueue
+import com.toshi.manager.model.ExternalPaymentTask
 import com.toshi.manager.model.PaymentTask
 import com.toshi.manager.model.ResendToshiPaymentTask
 import com.toshi.manager.model.ToshiPaymentTask
@@ -236,7 +237,7 @@ class ChatViewModel(private val threadId: String) : ViewModel() {
         val sub = toshiManager
                 .getWallet()
                 .flatMap { generateLocalPrice(value, it.paymentAddress) }
-                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
                 .subscribe(
                         { sendPaymentRequest(it) },
                         { LogUtil.exception(it) }
@@ -319,9 +320,14 @@ class ChatViewModel(private val threadId: String) : ViewModel() {
         transactionManager.updatePaymentRequestState(recipient.user, existingMessage, paymentState)
     }
 
+    // If the receiver of the payment has changed wallet, the id service doesn't know about it
+    // so the PaymentTask will be of type ExternalPaymentTask
     fun sendPayment(paymentTask: PaymentTask) {
-        if (paymentTask is ToshiPaymentTask) transactionManager.sendPayment(paymentTask)
-        else LogUtil.w("Invalid payment task in this context")
+        when (paymentTask) {
+            is ToshiPaymentTask -> transactionManager.sendPayment(paymentTask)
+            is ExternalPaymentTask -> transactionManager.sendExternalPayment(paymentTask)
+            else -> LogUtil.w("Invalid payment task in this context")
+        }
     }
 
     fun resendPayment(sofaMessage: SofaMessage, paymentTask: PaymentTask) {

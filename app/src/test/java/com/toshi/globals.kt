@@ -21,10 +21,13 @@ package com.toshi
 
 import android.content.Context
 import com.toshi.crypto.HDWallet
+import com.toshi.crypto.HdWalletBuilder
 import com.toshi.model.local.network.Network
 import com.toshi.model.local.network.Networks
 import com.toshi.testSharedPrefs.TestWalletPrefs
 import org.mockito.Mockito
+import rx.Observable
+import rx.subjects.BehaviorSubject
 
 const val masterSeed = "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about"
 const val invalidMasterSeed = "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon øre"
@@ -49,7 +52,16 @@ fun mockWallet(masterSeed: String): HDWallet {
     val prefs = TestWalletPrefs()
     prefs.setMasterSeed(masterSeed)
     val context = Mockito.mock(Context::class.java)
-    return HDWallet(prefs, context)
+    return HdWalletBuilder(prefs, context)
+            .getExistingWallet()
+            .toBlocking()
+            .value()
+}
+
+fun mockWalletSubject(wallet: HDWallet?): Observable<HDWallet> {
+    val subject = BehaviorSubject.create<HDWallet>()
+    subject.onNext(wallet)
+    return subject.asObservable()
 }
 
 fun <T> any(): T {

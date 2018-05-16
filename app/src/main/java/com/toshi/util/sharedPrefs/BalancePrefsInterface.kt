@@ -20,7 +20,7 @@ package com.toshi.util.sharedPrefs
 import com.toshi.model.network.Balance
 
 interface BalancePrefsInterface {
-    fun readLastKnownBalance(): String
-    fun writeLastKnownBalance(balance: Balance)
+    fun readLastKnownBalance(walletIndex: Int): String
+    fun writeLastKnownBalance(walletIndex: Int, balance: Balance)
     fun clear()
 }

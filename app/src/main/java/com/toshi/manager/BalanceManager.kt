@@ -19,6 +19,7 @@ package com.toshi.manager
 
 import com.toshi.crypto.HDWallet
 import com.toshi.crypto.util.TypeConverter
+import com.toshi.extensions.getTimeoutSingle
 import com.toshi.manager.ethRegistration.EthGcmRegistration
 import com.toshi.manager.network.CurrencyInterface
 import com.toshi.manager.network.CurrencyService
@@ -44,6 +45,7 @@ import com.toshi.util.sharedPrefs.BalancePrefs
 import com.toshi.util.sharedPrefs.BalancePrefsInterface
 import com.toshi.view.BaseApplication
 import rx.Completable
+import rx.Observable
 import rx.Scheduler
 import rx.Single
 import rx.Subscription
@@ -51,24 +53,24 @@ import rx.schedulers.Schedulers
 import rx.subjects.BehaviorSubject
 import java.math.BigDecimal
 import java.math.RoundingMode
-import java.util.concurrent.TimeUnit
 
 class BalanceManager(
         private val ethService: EthereumServiceInterface = EthereumService,
         private val currencyService: CurrencyInterface = CurrencyService.getApi(),
         private val balancePrefs: BalancePrefsInterface = BalancePrefs(),
         private val appPrefs: AppPrefsInterface = AppPrefs,
-        private val ethGcmRegistration: EthGcmRegistration = EthGcmRegistration(ethService = ethService),
         private val baseApplication: BaseApplication = BaseApplication.get(),
+        private val walletObservable: Observable<HDWallet>,
+        private val ethGcmRegistration: EthGcmRegistration = EthGcmRegistration(
+                ethService = ethService,
+                walletObservable = walletObservable
+        ),
         private val scheduler: Scheduler = Schedulers.io()
 ) {
-    private var wallet: HDWallet? = null
     private var connectivitySub: Subscription? = null
     val balanceObservable: BehaviorSubject<Balance> = BehaviorSubject.create<Balance>()
 
-    fun init(wallet: HDWallet): Completable {
-        this.wallet = wallet
-        ethGcmRegistration.init(wallet)
+    fun init(): Completable {
         initCachedBalance()
         return registerEthGcm()
                 .onErrorComplete()
@@ -76,8 +78,13 @@ class BalanceManager(
     }
 
     private fun initCachedBalance() {
-        val cachedBalance = Balance(readLastKnownBalance())
-        handleNewBalance(cachedBalance)
+        readLastKnownBalance()
+                .map { Balance(it) }
+                .flatMapCompletable { handleNewBalance(it) }
+                .subscribe(
+                        {},
+                        { LogUtil.exception("Error while reading last known balance $it") }
+                )
     }
 
     private fun attachConnectivityObserver() {
@@ -107,16 +114,21 @@ class BalanceManager(
     fun refreshBalance() {
         getBalance()
                 .observeOn(scheduler)
+                .flatMapCompletable { handleNewBalance(it) }
+                .doOnError { updateBalanceWithLastKnownBalance() }
                 .subscribe(
-                        { handleNewBalance(it) },
+                        {},
                         { LogUtil.exception("Error while fetching balance", it) }
                 )
     }
 
-    fun refreshBalanceCompletable(): Completable {
-        return getBalance()
-                .doOnSuccess { handleNewBalance(it) }
-                .toCompletable()
+    private fun updateBalanceWithLastKnownBalance() {
+        readLastKnownBalance()
+                .map { Balance(it) }
+                .subscribe(
+                        { balanceObservable.onNext(it) },
+                        { LogUtil.exception("Error while updating balance with last known balance", it) }
+                )
     }
 
     private fun getBalance(): Single<Balance> {
@@ -157,9 +169,15 @@ class BalanceManager(
                 .subscribeOn(scheduler)
     }
 
-    private fun handleNewBalance(balance: Balance) {
-        writeLastKnownBalance(balance)
-        balanceObservable.onNext(balance)
+    private fun getWallet(): Single<HDWallet> {
+        return walletObservable
+                .getTimeoutSingle()
+                .subscribeOn(scheduler)
+    }
+
+    private fun handleNewBalance(balance: Balance): Completable {
+        return writeLastKnownBalance(balance)
+                .doOnCompleted { balanceObservable.onNext(balance) }
     }
 
     fun generateLocalPrice(payment: Payment): Single<Payment> {
@@ -207,18 +225,6 @@ class BalanceManager(
 
     private fun getLocalCurrency(): Single<String> = Single.fromCallable { appPrefs.getCurrency() }
 
-    fun convertEthToLocalCurrency(ethAmount: BigDecimal): Single<BigDecimal> {
-        return getLocalCurrencyExchangeRate()
-                .flatMap { mapToLocalCurrency(it, ethAmount) }
-    }
-
-    private fun mapToLocalCurrency(exchangeRate: ExchangeRate, ethAmount: BigDecimal): Single<BigDecimal> {
-        return Single.fromCallable {
-            val marketRate = exchangeRate.rate
-            marketRate.multiply(ethAmount)
-        }
-    }
-
     fun convertLocalCurrencyToEth(localAmount: BigDecimal): Single<BigDecimal> {
         return getLocalCurrencyExchangeRate()
                 .flatMap { mapToEth(it, localAmount) }
@@ -230,7 +236,7 @@ class BalanceManager(
             if (localAmount.compareTo(BigDecimal.ZERO) == 0) BigDecimal.ZERO
             val marketRate = exchangeRate.rate
             if (marketRate.compareTo(BigDecimal.ZERO) == 0) BigDecimal.ZERO
-            localAmount.divide(marketRate, BIG_DECIMAL_SCALE, RoundingMode.HALF_DOWN)
+            return@fromCallable localAmount.divide(marketRate, BIG_DECIMAL_SCALE, RoundingMode.HALF_DOWN)
         }
     }
 
@@ -238,9 +244,18 @@ class BalanceManager(
         return EthereumService.getStatusOfTransaction(transactionHash)
     }
 
-    private fun readLastKnownBalance(): String = balancePrefs.readLastKnownBalance()
+    private fun readLastKnownBalance(): Single<String> {
+        return walletObservable.getTimeoutSingle()
+                .subscribeOn(scheduler)
+                .map { balancePrefs.readLastKnownBalance(it.getCurrentWalletIndex()) }
+    }
 
-    private fun writeLastKnownBalance(balance: Balance) = balancePrefs.writeLastKnownBalance(balance)
+    private fun writeLastKnownBalance(balance: Balance): Completable {
+        return walletObservable.getTimeoutSingle()
+                .subscribeOn(scheduler)
+                .doOnSuccess { balancePrefs.writeLastKnownBalance(it.getCurrentWalletIndex(), balance) }
+                .toCompletable()
+    }
 
     fun changeNetwork(network: Network) = ethGcmRegistration.changeNetwork(network)
 
@@ -250,15 +265,6 @@ class BalanceManager(
         clearConnectivitySubscription()
         balancePrefs.clear()
         ethGcmRegistration.clear()
-    }
-
-    private fun getWallet(): Single<HDWallet> {
-        return Single.fromCallable {
-            while (wallet == null) Thread.sleep(100)
-            return@fromCallable wallet ?: throw IllegalStateException("Wallet is null UserManager::getWallet")
-        }
-        .subscribeOn(scheduler)
-        .timeout(20, TimeUnit.SECONDS)
     }
 
     private fun clearConnectivitySubscription() = connectivitySub?.unsubscribe()

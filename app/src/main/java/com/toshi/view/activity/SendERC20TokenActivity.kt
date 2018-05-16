@@ -140,13 +140,12 @@ class SendERC20TokenActivity : AppCompatActivity() {
     private fun showPaymentConfirmation(ERCToken: ERCToken, value: String, toAddress: String) {
         if (ERCToken.contractAddress != null && ERCToken.symbol != null && ERCToken.decimals != null) {
             val dialog = PaymentConfirmationFragment.newInstanceERC20TokenPayment(
-                    toAddress,
-                    value,
-                    ERCToken.contractAddress,
-                    ERCToken.symbol,
-                    ERCToken.decimals,
-                    null,
-                    PaymentType.TYPE_SEND
+                    toAddress = toAddress,
+                    value = value,
+                    tokenAddress = ERCToken.contractAddress,
+                    tokenSymbol = ERCToken.symbol,
+                    tokenDecimals = ERCToken.decimals,
+                    paymentType = PaymentType.TYPE_SEND
             )
             dialog.show(supportFragmentManager, PaymentConfirmationFragment.TAG)
             dialog.setOnPaymentConfirmationFinishedListener { finish() }

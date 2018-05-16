@@ -391,6 +391,7 @@
     <string name="network_name">You are on %s</string>
     <string name="active_network">Active network</string>
     <string name="active_wallet">Active wallet</string>
+    <string name="wallet">Wallet</string>
     <string name="ssl_error">Invalid SSL-certificate</string>
     <string name="return_key">Return</string>
     <string name="contract_address">Contract address</string>

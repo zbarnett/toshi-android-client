@@ -47,6 +47,7 @@ import com.toshi.view.activity.NetworkSwitcherActivity
 import com.toshi.view.activity.ScannerActivity
 import com.toshi.view.activity.SignOutActivity
 import com.toshi.view.activity.ViewProfileActivity
+import com.toshi.view.activity.WalletsActivity
 import com.toshi.view.adapter.MeAdapter
 import com.toshi.view.adapter.listeners.OnItemClickListener
 import com.toshi.viewModel.MeViewModel
@@ -54,6 +55,7 @@ import kotlinx.android.synthetic.main.fragment_me.avatar
 import kotlinx.android.synthetic.main.fragment_me.backupPhrase
 import kotlinx.android.synthetic.main.fragment_me.checkboxBackupPhrase
 import kotlinx.android.synthetic.main.fragment_me.currentNetwork
+import kotlinx.android.synthetic.main.fragment_me.currentWallet
 import kotlinx.android.synthetic.main.fragment_me.myProfileCard
 import kotlinx.android.synthetic.main.fragment_me.name
 import kotlinx.android.synthetic.main.fragment_me.network
@@ -61,6 +63,7 @@ import kotlinx.android.synthetic.main.fragment_me.securityStatus
 import kotlinx.android.synthetic.main.fragment_me.settings
 import kotlinx.android.synthetic.main.fragment_me.username
 import kotlinx.android.synthetic.main.fragment_me.version
+import kotlinx.android.synthetic.main.fragment_me.wallet
 import java.math.BigInteger
 
 class MeFragment : TopLevelFragment() {
@@ -118,6 +121,7 @@ class MeFragment : TopLevelFragment() {
     private fun initClickListeners() {
         myProfileCard.setOnClickListener { startActivity<ViewProfileActivity>() }
         backupPhrase.setOnClickListener { startActivity<BackupPhraseInfoActivity>() }
+        wallet.setOnClickListener { startActivity<WalletsActivity>() }
         network.setOnClickListener { startActivity<NetworkSwitcherActivity>() }
         version.setOnClickListener { handleVersionClicked() }
     }
@@ -153,11 +157,14 @@ class MeFragment : TopLevelFragment() {
         viewModel.user.observe(this, Observer {
             user -> user?.let { updateUi(it) } ?: handleNoUser()
         })
-        viewModel.singelBalance.observe(this, Observer {
+        viewModel.singleBalance.observe(this, Observer {
             balance -> balance?.let { showDialog(it) }
         })
         viewModel.currentNetwork.observe(this, Observer {
             if (it != network) currentNetwork.text = it?.name
+        })
+        viewModel.currentWalletName.observe(this, Observer {
+            if (it != null) currentWallet.text = it
         })
     }
 
