@@ -20,7 +20,7 @@ package com.toshi.viewModel
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import com.toshi.R
-import com.toshi.model.network.ERC721TokenWrapper
+import com.toshi.model.network.token.ERC721TokenWrapper
 import com.toshi.util.SingleLiveEvent
 import com.toshi.view.BaseApplication
 import rx.android.schedulers.AndroidSchedulers

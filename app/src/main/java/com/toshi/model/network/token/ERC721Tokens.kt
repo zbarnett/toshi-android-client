@@ -17,6 +17,8 @@
 
 package com.toshi.model.network.token
 
+import com.toshi.model.local.token.ERCTokenView
+
 data class ERC721Tokens(
-        val collectibles: List<ERCToken>
+        val collectibles: List<ERCTokenView>
 )

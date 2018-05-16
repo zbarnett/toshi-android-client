@@ -20,14 +20,14 @@ package com.toshi.viewModel.ViewModelFactory;
 import android.arch.lifecycle.ViewModelProvider;
 import android.support.annotation.NonNull;
 
-import com.toshi.model.network.token.ERCToken;
+import com.toshi.model.local.token.ERCTokenView;
 import com.toshi.viewModel.SendERC20TokenViewModel;
 
 public class SendERC20TokenViewModelFactory implements ViewModelProvider.Factory {
 
-    private ERCToken token;
+    private ERCTokenView token;
 
-    public SendERC20TokenViewModelFactory(final ERCToken token) {
+    public SendERC20TokenViewModelFactory(final ERCTokenView token) {
         this.token = token;
     }
 

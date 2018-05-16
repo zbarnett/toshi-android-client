@@ -21,7 +21,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.toshi.R
-import com.toshi.model.network.ERC721Token
+import com.toshi.model.network.token.ERC721Token
 import com.toshi.view.adapter.viewholder.CollectibleViewHolder
 
 class CollectibleAdapter(private val collectibleName: String?) : RecyclerView.Adapter<CollectibleViewHolder>() {

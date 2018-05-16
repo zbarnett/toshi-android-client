@@ -22,7 +22,7 @@ import android.view.View
 import android.widget.ImageView
 import com.toshi.R
 import com.toshi.crypto.util.TypeConverter
-import com.toshi.model.network.ERC721Token
+import com.toshi.model.network.token.ERC721Token
 import com.toshi.util.ImageUtil
 import kotlinx.android.synthetic.main.list_item__collectible.view.*
 

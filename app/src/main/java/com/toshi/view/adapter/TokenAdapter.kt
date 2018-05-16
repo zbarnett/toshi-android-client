@@ -21,8 +21,8 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.toshi.R
-import com.toshi.model.network.token.ERCToken
-import com.toshi.model.network.token.Token
+import com.toshi.model.local.token.ERCTokenView
+import com.toshi.model.local.token.Token
 import com.toshi.view.adapter.viewholder.TokenType
 import com.toshi.view.adapter.viewholder.TokensViewHolder
 
@@ -31,7 +31,7 @@ class TokenAdapter(
 ) : BaseCompoundableAdapter<TokensViewHolder, Token>() {
 
     var tokenListener: ((Token) -> Unit)? = null
-    var ERC721Listener: ((ERCToken) -> Unit)? = null
+    var ERC721Listener: ((ERCTokenView) -> Unit)? = null
 
     override fun compoundableBindViewHolder(viewHolder: RecyclerView.ViewHolder, adapterIndex: Int) {
         val typedHolder = viewHolder as TokensViewHolder

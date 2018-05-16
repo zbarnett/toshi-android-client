@@ -40,14 +40,14 @@ data class ERCTokenView(
         private const val CONTRACT_ADDRESS = "contract_address"
         private const val ICON = "icon"
 
-        fun buildIntent(intent: Intent, ERCTokenView: ERCTokenView): Intent {
+        fun buildIntent(intent: Intent, ERCToken: ERCTokenView): Intent {
             return intent.apply {
-                putExtra(SYMBOL, ERCTokenView.symbol)
-                putExtra(NAME, ERCTokenView.name)
-                putExtra(BALANCE, ERCTokenView.balance)
-                putExtra(DECIMALS, ERCTokenView.decimals)
-                putExtra(CONTRACT_ADDRESS, ERCTokenView.contractAddress)
-                putExtra(ICON, ERCTokenView.icon)
+                putExtra(SYMBOL, ERCToken.symbol)
+                putExtra(NAME, ERCToken.name)
+                putExtra(BALANCE, ERCToken.balance)
+                putExtra(DECIMALS, ERCToken.decimals)
+                putExtra(CONTRACT_ADDRESS, ERCToken.contractAddress)
+                putExtra(ICON, ERCToken.icon)
                 putExtra(ViewTokenActivity.TOKEN_TYPE, ViewTokenActivity.ERC20_TOKEN)
             }
         }

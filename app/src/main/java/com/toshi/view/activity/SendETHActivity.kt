@@ -31,7 +31,7 @@ import com.toshi.extensions.isVisible
 import com.toshi.extensions.startActivityForResult
 import com.toshi.extensions.toast
 import com.toshi.model.network.Balance
-import com.toshi.model.network.token.EtherToken
+import com.toshi.model.local.token.EtherToken
 import com.toshi.util.DialogUtil
 import com.toshi.util.PaymentType
 import com.toshi.util.QrCodeHandler

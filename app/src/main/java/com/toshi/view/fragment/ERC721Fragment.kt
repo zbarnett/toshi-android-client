@@ -30,7 +30,7 @@ import com.toshi.extensions.addHorizontalLineDivider
 import com.toshi.extensions.isVisible
 import com.toshi.extensions.startActivity
 import com.toshi.extensions.toast
-import com.toshi.model.network.token.Token
+import com.toshi.model.local.token.Token
 import com.toshi.view.activity.ViewERC721TokensActivity
 import com.toshi.view.activity.ViewERC721TokensActivity.Companion.COLLECTIBLE_NAME
 import com.toshi.view.activity.ViewERC721TokensActivity.Companion.CONTRACT_ADDRESS

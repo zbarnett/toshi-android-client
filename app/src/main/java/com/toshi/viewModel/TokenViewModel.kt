@@ -20,11 +20,12 @@ package com.toshi.viewModel
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import com.toshi.R
+import com.toshi.model.local.token.ERCTokenView
+import com.toshi.model.local.token.EtherToken
+import com.toshi.model.local.token.Token
 import com.toshi.model.network.Balance
+import com.toshi.model.network.token.ERC20Token
 import com.toshi.model.network.token.ERC20Tokens
-import com.toshi.model.network.token.ERCToken
-import com.toshi.model.network.token.EtherToken
-import com.toshi.model.network.token.Token
 import com.toshi.util.EthUtil
 import com.toshi.util.SingleLiveEvent
 import com.toshi.util.logging.LogUtil
@@ -114,24 +115,38 @@ class TokenViewModel : ViewModel() {
         return Single.zip(
                 getERC20Tokens(),
                 createEtherToken(),
-                { tokens, etherToken -> Pair(tokens.tokens, etherToken) }
+                { tokens, etherToken -> Pair(tokens, etherToken) }
         )
         .map { addEtherTokenToTokenList(it.first, it.second) }
     }
 
     private fun fetchERC20TokensAndAddEther(etherToken: EtherToken): Single<List<Token>> {
         return getERC20Tokens()
-                .map { Pair(it.tokens, etherToken) }
+                .map { Pair(it, etherToken) }
                 .map { addEtherTokenToTokenList(it.first, it.second) }
     }
 
-    private fun getERC20Tokens(): Single<ERC20Tokens> {
+    private fun getERC20Tokens(): Single<List<ERCTokenView>> {
         return balanceManager
                 .getERC20Tokens()
-                .onErrorReturn { ERC20Tokens() }
+                .onErrorReturn { ERC20Tokens().tokens }
+                .map { mapERC20Tokens(it) }
     }
 
-    private fun addEtherTokenToTokenList(tokens: List<ERCToken>, etherToken: EtherToken): List<Token> {
+    private fun mapERC20Tokens(ERC20Tokens: List<ERC20Token>): List<ERCTokenView> {
+        return ERC20Tokens.map {
+            ERCTokenView(
+                    symbol = it.symbol,
+                    name = it.name,
+                    balance = it.balance,
+                    decimals = it.decimals,
+                    contractAddress = it.contractAddress,
+                    icon = it.icon
+            )
+        }
+    }
+
+    private fun addEtherTokenToTokenList(tokens: List<ERCTokenView>, etherToken: EtherToken): List<Token> {
         val tokenList = mutableListOf<Token>()
         tokenList.add(etherToken)
         tokenList.addAll(tokens)

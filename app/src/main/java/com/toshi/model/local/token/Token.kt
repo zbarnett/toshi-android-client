@@ -15,17 +15,6 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.toshi.model.network
+package com.toshi.model.local.token
 
-import com.squareup.moshi.Json
-
-data class ERC721TokenWrapper(
-        @Json(name = "contract_address")
-        val contractAddress: String?,
-        val name: String?,
-        val icon: String?,
-        val url: String?,
-        val type: Int?,
-        val value: String?,
-        val tokens: List<ERC721Token>?
-)
+abstract class Token

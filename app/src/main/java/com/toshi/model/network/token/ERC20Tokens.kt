@@ -18,5 +18,5 @@
 package com.toshi.model.network.token
 
 data class ERC20Tokens(
-        val tokens: List<ERCToken> = emptyList()
+        val tokens: List<ERC20Token> = emptyList()
 )

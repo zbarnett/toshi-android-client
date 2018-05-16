@@ -27,11 +27,14 @@ import com.toshi.extensions.addHorizontalLineDivider
 import com.toshi.extensions.getPxSize
 import com.toshi.extensions.isVisible
 import com.toshi.extensions.toast
-import com.toshi.model.network.ERC721TokenWrapper
+import com.toshi.model.network.token.ERC721TokenWrapper
 import com.toshi.view.adapter.CollectibleAdapter
 import com.toshi.viewModel.ViewERC721TokensViewModel
 import com.toshi.viewModel.ViewModelFactory.ViewERC721TokensViewModelFactory
-import kotlinx.android.synthetic.main.activity_erc721_token_activity.*
+import kotlinx.android.synthetic.main.activity_erc721_token_activity.closeButton
+import kotlinx.android.synthetic.main.activity_erc721_token_activity.collectibles
+import kotlinx.android.synthetic.main.activity_erc721_token_activity.toolbarTitle
+import kotlinx.android.synthetic.main.activity_erc721_token_activity.toolbarUrl
 
 class ViewERC721TokensActivity : AppCompatActivity() {
 

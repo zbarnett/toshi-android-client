@@ -20,7 +20,7 @@ package com.toshi.viewModel.ViewModelFactory;
 import android.arch.lifecycle.ViewModelProvider;
 import android.support.annotation.NonNull;
 
-import com.toshi.model.network.token.Token;
+import com.toshi.model.local.token.Token;
 import com.toshi.viewModel.ViewTokenViewModel;
 
 public class ViewTokenViewModelFactory implements ViewModelProvider.Factory {
