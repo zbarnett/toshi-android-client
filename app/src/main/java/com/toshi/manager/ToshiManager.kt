@@ -156,7 +156,7 @@ class ToshiManager(
         val key = wallet.generateDatabaseEncryptionKey()
         Realm.init(baseApplication)
         realmConfig = RealmConfiguration.Builder()
-                .schemaVersion(22)
+                .schemaVersion(23)
                 .migration(DbMigration(wallet))
                 .name(wallet.ownerAddress)
                 .encryptionKey(key)

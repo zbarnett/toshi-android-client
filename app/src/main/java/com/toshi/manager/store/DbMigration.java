@@ -344,6 +344,23 @@ public class DbMigration implements RealmMigration {
             }
             oldVersion++;
         }
+
+        if (oldVersion == 22) {
+            if (schema.get("ERC20Token") == null) {
+                schema.create("ERC20Token")
+                        .addField("primaryKey", String.class, FieldAttribute.PRIMARY_KEY)
+                        .addField("contractAddress", String.class)
+                        .addField("symbol", String.class)
+                        .addField("name", String.class)
+                        .addField("balance", String.class)
+                        .addField("decimals", Integer.class)
+                        .addField("icon", String.class)
+                        .addField("cacheTimestamp", Long.class)
+                        .addField("walletIndex", Integer.class)
+                        .addField("networkId", String.class);
+            }
+            oldVersion++;
+        }
     }
 
     @Override

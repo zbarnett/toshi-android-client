@@ -34,7 +34,7 @@ open class ERC20Token : RealmObject() {
     var balance: String? = null
     var decimals: Int? = null
     var icon: String? = null
-    var cacheTimestamp: Long = System.currentTimeMillis()
+    var cacheTimestamp: Long? = System.currentTimeMillis()
 
     companion object {
         private const val CACHE_TIMEOUT = 1000 * 60 * 5
@@ -44,5 +44,5 @@ open class ERC20Token : RealmObject() {
         primaryKey = "$contractAddress/$walletIndex/$networkId"
     }
 
-    fun needsRefresh(): Boolean = System.currentTimeMillis() - cacheTimestamp > CACHE_TIMEOUT
+    fun needsRefresh(): Boolean = System.currentTimeMillis() - (cacheTimestamp ?: 0) > CACHE_TIMEOUT
 }
