@@ -91,8 +91,10 @@ class PaymentTaskBuilderMocker {
 
     fun mockPaymentTaskBuilder(): PaymentTaskBuilder {
         val unsignedTransaction = mockUnsignedTransaction()
+        val recipientManager = mockRecipientManager()
+        val balanceManager = mockBalanceManager()
         return PaymentTaskBuilder(
-                transactionManager = mockTransactionManager(unsignedTransaction),
+                transactionManager = mockTransactionManager(unsignedTransaction, recipientManager, balanceManager),
                 balanceManager = mockBalanceManager(),
                 recipientManager = mockRecipientManager()
         )
@@ -119,11 +121,15 @@ class PaymentTaskBuilderMocker {
         return unsignedTransaction
     }
 
-    private fun mockTransactionManager(unsignedTransaction: UnsignedTransaction): TransactionManager {
+    private fun mockTransactionManager(unsignedTransaction: UnsignedTransaction,
+                                       recipientManager: RecipientManager,
+                                       balanceManager: BalanceManager): TransactionManager {
         return TransactionManager(
                 ethService = mockEthereumService(unsignedTransaction),
                 walletObservable = mockWalletObservable(),
-                scheduler = Schedulers.trampoline()
+                scheduler = Schedulers.trampoline(),
+                recipientManager = recipientManager,
+                balanceManager = balanceManager
         )
     }
 
