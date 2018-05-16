@@ -15,7 +15,7 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.toshi.manager.store
+package com.toshi.manager.store.token
 
 import com.toshi.model.network.token.ERC20Token
 import com.toshi.view.BaseApplication
@@ -27,15 +27,15 @@ import java.util.concurrent.Executors
 class TokenStore(
         private val baseApplication: BaseApplication,
         private val scheduler: Scheduler = Schedulers.from(Executors.newSingleThreadExecutor())
-) {
+) : TokenStoreInterface {
 
-    fun saveAllTokens(ERCToken: List<ERC20Token>, networkId: String, walletIndex: Int): Single<List<ERC20Token>> {
-        return Single.fromCallable { save(ERCToken, networkId, walletIndex) }
+    override fun saveAllTokens(token: List<ERC20Token>, networkId: String, walletIndex: Int): Single<List<ERC20Token>> {
+        return Single.fromCallable { save(token, networkId, walletIndex) }
                 .subscribeOn(scheduler)
     }
 
-    private fun save(ERCTokens: List<ERC20Token>, networkId: String, walletIndex: Int): List<ERC20Token> {
-        val tokensWithPrimaryKeys = createListWithPrimaryKeys(ERCTokens, networkId, walletIndex)
+    private fun save(tokens: List<ERC20Token>, networkId: String, walletIndex: Int): List<ERC20Token> {
+        val tokensWithPrimaryKeys = createListWithPrimaryKeys(tokens, networkId, walletIndex)
         val realm = baseApplication.realm
         realm.beginTransaction()
         realm.insertOrUpdate(tokensWithPrimaryKeys)
@@ -44,20 +44,7 @@ class TokenStore(
         return tokensWithPrimaryKeys
     }
 
-    private fun createListWithPrimaryKeys(ERCTokens: List<ERC20Token>, networkId: String, walletIndex: Int): List<ERC20Token> {
-        val tokenListWithPrimaryKey: MutableList<ERC20Token?> = mutableListOf()
-        ERCTokens.mapTo(tokenListWithPrimaryKey) { token ->
-            token.contractAddress?.let { contractAddress ->
-                token.networkId = networkId
-                token.walletIndex = walletIndex
-                token.setPrimaryKey(contractAddress = contractAddress, networkId = networkId, walletIndex = walletIndex)
-            } ?: return@mapTo null
-            return@mapTo token
-        }
-        return tokenListWithPrimaryKey.filterNotNull()
-    }
-
-    fun getAllTokens(networkId: String, walletIndex: Int): Single<List<ERC20Token>> {
+    override fun getAllTokens(networkId: String, walletIndex: Int): Single<List<ERC20Token>> {
         return Single.fromCallable { getAll(networkId, walletIndex) }
                 .subscribeOn(scheduler)
     }
