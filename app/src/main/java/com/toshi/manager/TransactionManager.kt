@@ -46,7 +46,6 @@ import com.toshi.model.sofa.payment.Payment
 import com.toshi.util.logging.LogUtil
 import com.toshi.util.paymentTask.PaymentTaskBuilder
 import com.toshi.util.paymentTask.TransactionRequestBuilder
-import com.toshi.view.BaseApplication
 import rx.Observable
 import rx.Scheduler
 import rx.Single
@@ -62,16 +61,16 @@ class TransactionManager(
         private val incomingTransactionManager: IncomingTransactionManager = IncomingTransactionManager(pendingTransactionStore),
         private val outgoingTransactionManager: OutgoingTransactionManager = OutgoingTransactionManager(pendingTransactionStore, transactionSigner),
         private val updateTransactionManager: UpdateTransactionManager = UpdateTransactionManager(pendingTransactionStore),
+        private val balanceManager: BalanceManager,
+        private val recipientManager: RecipientManager,
         private val scheduler: Scheduler = Schedulers.io()
 ) {
-
-    // Todo: Pass BalanceManager and RecipientManager in constructor
     private val paymentTaskBuilder by lazy {
         PaymentTaskBuilder(
-                this,
-                BaseApplication.get().balanceManager,
-                BaseApplication.get().recipientManager,
-                TransactionRequestBuilder()
+                transactionManager = this,
+                balanceManager = balanceManager,
+                recipientManager = recipientManager,
+                transactionBuilder = TransactionRequestBuilder()
         )
     }
     private val subscriptions by lazy { CompositeSubscription() }

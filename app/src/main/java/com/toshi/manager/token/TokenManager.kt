@@ -52,7 +52,7 @@ class TokenManager(
                 tokenStore.getAllTokens(networkId = networkId, walletIndex = walletIndex),
                 getERC20TokensFromNetwork()
         )
-        .first { isTokensFresh(it) }
+        .first { areTokensFresh(it) }
         .toSingle()
     }
 
@@ -73,7 +73,7 @@ class TokenManager(
         return tokenStore.saveAllTokens(ERC20Tokens, networkId, walletIndex)
     }
 
-    private fun isTokensFresh(ERC20Tokens: List<ERC20Token>): Boolean {
+    private fun areTokensFresh(ERC20Tokens: List<ERC20Token>): Boolean {
         return when {
             ERC20Tokens.isEmpty() -> false
             !baseApplication.isConnected -> true
