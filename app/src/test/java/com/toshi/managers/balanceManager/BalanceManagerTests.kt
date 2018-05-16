@@ -72,50 +72,6 @@ class BalanceManagerTests {
     }
 
     @Test
-    fun testGetERC20Tokens() {
-        val erc20Tokens = balanceManager
-                .getERC20Tokens()
-                .toBlocking()
-                .value()
-
-        val expectedTokenList = testTokenBuilder.createERC20TokenList()
-        assertThat(erc20Tokens, `is`(expectedTokenList))
-    }
-
-    @Test
-    fun testGetERC20Token() {
-        val erc20Token = balanceManager
-                .getERC20Token(testTokenBuilder.contractAddress)
-                .toBlocking()
-                .value()
-
-        val expectedERC20Token = testTokenBuilder.createERC20Token()
-        assertThat(erc20Token, `is`(expectedERC20Token))
-    }
-
-    @Test
-    fun testGetERC721Tokens() {
-        val erc721Tokens = balanceManager
-                .getERC721Tokens()
-                .toBlocking()
-                .value()
-
-        val expectedERC721Tokens = testTokenBuilder.createERC721TokenList()
-        assertThat(erc721Tokens, `is`(expectedERC721Tokens))
-    }
-
-    @Test
-    fun testGetERC721Token() {
-        val erc721Token = balanceManager
-                .getERC721Token(testTokenBuilder.contractAddress)
-                .toBlocking()
-                .value()
-
-        val expectedERC721Token = testTokenBuilder.createERC721Token()
-        assertThat(erc721Token, `is`(expectedERC721Token))
-    }
-
-    @Test
     fun testGenerateLocalPrice() {
         val paymentWithLocalBalance = balanceManager
                 .generateLocalPrice(payment)
