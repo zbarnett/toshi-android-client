@@ -60,19 +60,22 @@ class TokenManager(
 
     fun getERC20TokensFromNetwork(): Single<List<ERC20Token>> {
         return getWallet()
-                .flatMap { ethService.get().getTokens(it.paymentAddress) }
-                .map { it.tokens }
-                .flatMap { saveERC20Tokens(it) }
+                .flatMap { fetchAndSaveERC20Tokens(it) }
                 .subscribeOn(scheduler)
     }
 
-    private fun saveERC20Tokens(ERC20Tokens: List<ERC20Token>): Single<List<ERC20Token>> {
-        return getWallet()
-                .flatMap { saveERC20Tokens(ERC20Tokens, it.getCurrentWalletIndex(), networks.currentNetwork.id) }
+    private fun fetchAndSaveERC20Tokens(wallet: HDWallet): Single<List<ERC20Token>> {
+        return ethService.get().getTokens(wallet.paymentAddress)
+                .map { it.tokens }
+                .flatMap { saveERC20Tokens(it, wallet) }
     }
 
-    private fun saveERC20Tokens(ERC20Tokens: List<ERC20Token>, walletIndex: Int, networkId: String): Single<List<ERC20Token>> {
-        return tokenStore.saveAllTokens(ERC20Tokens, networkId, walletIndex)
+    private fun saveERC20Tokens(ERC20Tokens: List<ERC20Token>, wallet: HDWallet): Single<List<ERC20Token>> {
+        return tokenStore.saveAllTokens(
+                tokens = ERC20Tokens,
+                walletIndex = wallet.getCurrentWalletIndex(),
+                networkId = networks.currentNetwork.id
+        )
     }
 
     private fun areTokensFresh(ERC20Tokens: List<ERC20Token>): Boolean {
