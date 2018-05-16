@@ -17,68 +17,66 @@
 
 package com.toshi.managers.balanceManager
 
-import com.toshi.model.local.token.ERC721TokenWrapperView
+import com.toshi.model.network.token.ERC20Token
 import com.toshi.model.network.token.ERC20Tokens
-import com.toshi.model.local.token.ERC721TokensView
-import com.toshi.model.local.token.ERCTokenView
+import com.toshi.model.network.token.ERC721TokenWrapper
+import com.toshi.model.network.token.ERC721Tokens
+import com.toshi.model.network.token.ERCToken
 
 class TestTokenBuilder {
 
-    val contractAddress = "0xd26114cd6EE289AccF82350c8d8487fedB8A0C07"
+    val tokenContractAddress = "0xd26114cd6EE289AccF82350c8d8487fedB8A0C07"
 
-    fun createERC20Token(): ERCTokenView = createERC20TokenList().tokens.first()
+    fun createERC20Token(): ERC20Token = createERC20TokenList().tokens.first()
 
     fun createERC20TokenList(): ERC20Tokens {
         val listOfERC20Tokens = listOf(
-                ERCTokenView(
-                        symbol = "OMG",
-                        name = "OMGCoin",
-                        balance = "1",
-                        decimals = 18,
-                        contractAddress = contractAddress,
-                        icon = null
-                ),
-                ERCTokenView(
-                        symbol = "LOL",
-                        name = "LOLCoin",
-                        balance = "10",
-                        decimals = 18,
-                        contractAddress = contractAddress,
-                        icon = null
-                )
+                ERC20Token().apply {
+                    symbol = "OMG"
+                    name = "OMGCoin"
+                    balance = "1"
+                    decimals = 18
+                    contractAddress = tokenContractAddress
+                },
+                ERC20Token().apply {
+                    symbol = "LOL"
+                    name = "LOLCoin"
+                    balance = "10"
+                    decimals = 18
+                    contractAddress = tokenContractAddress
+                }
         )
         return ERC20Tokens(listOfERC20Tokens)
     }
 
-    fun createERC721TokenList(): ERC721TokensView {
+    fun createERC721TokenList(): ERC721Tokens {
         val listOfERC721Tokens = listOf(
-                ERCTokenView(
+                ERCToken(
                         symbol = null,
                         name = "CryptoKitties",
                         balance = "10",
                         decimals = 0,
-                        contractAddress = contractAddress,
+                        contractAddress = tokenContractAddress,
                         icon = null
                 ),
-                ERCTokenView(
+                ERCToken(
                         symbol = null,
                         name = "CryptoPunks",
                         balance = "11",
                         decimals = 0,
-                        contractAddress = contractAddress,
+                        contractAddress = tokenContractAddress,
                         icon = null
                 )
         )
-        return ERC721TokensView(listOfERC721Tokens)
+        return ERC721Tokens(listOfERC721Tokens)
     }
 
-    fun createERC721Token(): ERC721TokenWrapperView {
-        return ERC721TokenWrapperView(
+    fun createERC721Token(): ERC721TokenWrapper {
+        return ERC721TokenWrapper(
                 name = "CryptoKitties",
                 value = "10",
-                contractAddress = contractAddress,
+                contractAddress = tokenContractAddress,
                 icon = null,
-                tokens = null,
                 type = null,
                 url = null
         )

@@ -41,7 +41,6 @@ class BalanceManagerTests {
     private lateinit var exchangeRate: ExchangeRate
     private lateinit var payment: Payment
     private lateinit var balanceManager: BalanceManager
-    private val testTokenBuilder by lazy { TestTokenBuilder() }
 
     @Before
     fun setup() {
@@ -64,7 +63,6 @@ class BalanceManagerTests {
     private fun mockBalanceManager() {
         val balanceManagerMocker = BalanceManagerMocker(
                 exchangeRate = exchangeRate,
-                testTokenBuilder = testTokenBuilder,
                 lastKnownBalance = balance,
                 localCurrency = localCurrency
         )

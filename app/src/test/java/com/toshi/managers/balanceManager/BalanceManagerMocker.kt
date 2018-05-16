@@ -40,7 +40,6 @@ import java.math.BigDecimal
 
 class BalanceManagerMocker(
         val exchangeRate: ExchangeRate = ExchangeRate("ETH", "USD", BigDecimal(500), 0),
-        val testTokenBuilder: TestTokenBuilder = TestTokenBuilder(),
         val lastKnownBalance: String = "0x0",
         val localCurrency: String = "USD"
 ) {
@@ -77,7 +76,7 @@ class BalanceManagerMocker(
     }
 
     private fun createEthApiMock(): EthereumServiceInterface {
-        return EthereumServiceMocker().mock(testTokenBuilder)
+        return EthereumServiceMocker().mock()
     }
 
     private fun createCurrencyApiMock(): CurrencyInterface {
