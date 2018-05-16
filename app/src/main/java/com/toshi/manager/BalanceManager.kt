@@ -25,15 +25,16 @@ import com.toshi.manager.network.CurrencyInterface
 import com.toshi.manager.network.CurrencyService
 import com.toshi.manager.network.EthereumService
 import com.toshi.manager.network.EthereumServiceInterface
+import com.toshi.manager.store.TokenStore
 import com.toshi.model.local.network.Network
+import com.toshi.model.local.network.Networks
 import com.toshi.model.network.Balance
 import com.toshi.model.network.Currencies
-import com.toshi.model.network.ERC721TokenWrapper
 import com.toshi.model.network.ExchangeRate
 import com.toshi.model.network.token.CustomERCToken
-import com.toshi.model.network.token.ERC20Tokens
+import com.toshi.model.network.token.ERC20Token
+import com.toshi.model.network.token.ERC721TokenWrapper
 import com.toshi.model.network.token.ERC721Tokens
-import com.toshi.model.network.token.ERCToken
 import com.toshi.model.sofa.payment.Payment
 import com.toshi.util.CurrencyUtil
 import com.toshi.util.EthUtil
@@ -65,6 +66,8 @@ class BalanceManager(
                 ethService = ethService,
                 walletObservable = walletObservable
         ),
+        private val tokenStore: TokenStore = TokenStore(baseApplication),
+        private val networks: Networks = Networks.getInstance(),
         private val scheduler: Scheduler = Schedulers.io()
 ) {
     private var connectivitySub: Subscription? = null
@@ -137,13 +140,46 @@ class BalanceManager(
                 .subscribeOn(scheduler)
     }
 
-    fun getERC20Tokens(): Single<ERC20Tokens> {
+    fun getERC20Tokens(): Single<List<ERC20Token>> {
+        return getWallet()
+                .flatMap { getERC20Tokens(it.getCurrentWalletIndex(), networks.currentNetwork.id) }
+    }
+
+    private fun getERC20Tokens(walletIndex: Int, networkId: String): Single<List<ERC20Token>> {
+        return Single.concat(
+                tokenStore.getAllTokens(networkId = networkId, walletIndex = walletIndex),
+                fetchERC20TokensFromNetwork()
+        )
+        .first { isTokensFresh(it) }
+        .toSingle()
+    }
+
+    private fun fetchERC20TokensFromNetwork(): Single<List<ERC20Token>> {
         return getWallet()
                 .flatMap { ethService.get().getTokens(it.paymentAddress) }
+                .map { it.tokens }
+                .flatMap { saveERC20Tokens(it) }
                 .subscribeOn(scheduler)
     }
 
-    fun getERC20Token(contractAddress: String): Single<ERCToken> {
+    private fun saveERC20Tokens(ERC20Tokens: List<ERC20Token>): Single<List<ERC20Token>> {
+        return getWallet()
+                .flatMap { saveERC20Tokens(ERC20Tokens, it.getCurrentWalletIndex(), networks.currentNetwork.id) }
+    }
+
+    private fun saveERC20Tokens(ERC20Tokens: List<ERC20Token>, walletIndex: Int, networkId: String): Single<List<ERC20Token>> {
+        return tokenStore.saveAllTokens(ERC20Tokens, networkId, walletIndex)
+    }
+
+    private fun isTokensFresh(ERC20Tokens: List<ERC20Token>): Boolean {
+        return when {
+            ERC20Tokens.isEmpty() -> false
+            !baseApplication.isConnected -> true
+            else -> !ERC20Tokens[0].needsRefresh()
+        }
+    }
+
+    fun getERC20Token(contractAddress: String): Single<ERC20Token> {
         return getWallet()
                 .flatMap { ethService.get().getToken(it.paymentAddress, contractAddress) }
                 .subscribeOn(scheduler)
