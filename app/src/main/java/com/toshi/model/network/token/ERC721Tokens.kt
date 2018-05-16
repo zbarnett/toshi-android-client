@@ -20,7 +20,7 @@ package com.toshi.model.network.token
 import com.toshi.model.local.token.ERC721TokenInfoView
 
 data class ERC721Tokens(
-        val collectibles: List<ERC721TokenInfo>
+        val collectibles: List<ERC721TokenInfo> = emptyList()
 ) {
     fun mapToViewModel(): List<ERC721TokenInfoView> {
         return collectibles.map { it.mapToViewModel() }

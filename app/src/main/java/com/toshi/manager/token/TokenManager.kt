@@ -28,6 +28,7 @@ import com.toshi.model.network.token.CustomERCToken
 import com.toshi.model.network.token.ERC20Token
 import com.toshi.model.network.token.ERC721TokenWrapper
 import com.toshi.model.network.token.ERC721Tokens
+import com.toshi.util.logging.LogUtil
 import com.toshi.view.BaseApplication
 import rx.Completable
 import rx.Observable
@@ -35,6 +36,7 @@ import rx.Scheduler
 import rx.Single
 import rx.schedulers.Schedulers
 import rx.subjects.BehaviorSubject
+import rx.subjects.PublishSubject
 
 class TokenManager(
         private val tokenStore: TokenStoreInterface = TokenStore(BaseApplication.get()),
@@ -44,6 +46,9 @@ class TokenManager(
         private val connectivitySubject: BehaviorSubject<Boolean>,
         private val scheduler: Scheduler = Schedulers.io()
 ) {
+
+    private val ERC721TokensSubject by lazy { PublishSubject.create<ERC721Tokens>() }
+
     fun getERC20Tokens(): Single<List<ERC20Token>> {
         return getWallet()
                 .flatMap { getERC20Tokens(it.getCurrentWalletIndex(), networks.currentNetwork.id) }
@@ -104,6 +109,21 @@ class TokenManager(
     fun getERC721Tokens(): Single<ERC721Tokens> {
         return getWallet()
                 .flatMap { ethService.get().getCollectibles(it.paymentAddress) }
+                .subscribeOn(scheduler)
+    }
+
+    fun refreshERC721Tokens() {
+        getERC721Tokens()
+                .onErrorReturn { ERC721Tokens() } // If an error happens when refreshing, return empty list of ERC721 tokens
+                .subscribe(
+                        { ERC721TokensSubject.onNext(it) },
+                        { LogUtil.exception("Error while refreshing ERC721 tokens $it") }
+                )
+    }
+
+    fun listenForERC721TokensUpdates(): Observable<ERC721Tokens> {
+        return ERC721TokensSubject
+                .asObservable()
                 .subscribeOn(scheduler)
     }
 

@@ -57,6 +57,7 @@ class TokenViewModel(
     init {
         listenForBalanceUpdates()
         listenForNewIncomingTokenPayments()
+        listenForERC721TokenUpdates()
         firstFetchERC20Tokens()
         firstFetchERC721Tokens()
     }
@@ -94,6 +95,19 @@ class TokenViewModel(
                 .subscribe(
                         { erc20Tokens.value = it },
                         { erc20error.value = R.string.error_fetching_tokens }
+                )
+
+        subscriptions.add(sub)
+    }
+
+    private fun listenForERC721TokenUpdates() {
+        val sub = tokenManager
+                .listenForERC721TokensUpdates()
+                .observeOn(AndroidSchedulers.mainThread())
+                .map { it.mapToViewModel() }
+                .subscribe(
+                        { erc721Tokens.value = it },
+                        { LogUtil.exception("Error while receiving ERC721 tokens update $it") }
                 )
 
         subscriptions.add(sub)

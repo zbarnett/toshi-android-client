@@ -21,6 +21,7 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import com.toshi.R
 import com.toshi.manager.BalanceManager
+import com.toshi.manager.token.TokenManager
 import com.toshi.model.local.network.Network
 import com.toshi.model.local.network.Networks
 import com.toshi.util.SingleLiveEvent
@@ -31,7 +32,9 @@ import rx.android.schedulers.AndroidSchedulers
 import rx.subscriptions.CompositeSubscription
 
 class NetworkSwitcherViewModel(
-        private val balanceManager: BalanceManager = BaseApplication.get().balanceManager,
+        private val baseApplication: BaseApplication = BaseApplication.get(),
+        private val balanceManager: BalanceManager = baseApplication.balanceManager,
+        private val tokenManager: TokenManager = baseApplication.tokenManager,
         private val observerScheduler: Scheduler = AndroidSchedulers.mainThread()
 ) : ViewModel() {
 
@@ -61,7 +64,7 @@ class NetworkSwitcherViewModel(
                 .observeOn(observerScheduler)
                 .doOnSubscribe { isLoading.value = true }
                 .doOnTerminate { isLoading.value = false }
-                .doOnCompleted { balanceManager.refreshBalance() }
+                .doOnCompleted { refreshTokens() }
                 .doOnError { LogUtil.exception(it) }
                 .subscribe(
                         { networkChanged.value = network },
@@ -69,6 +72,11 @@ class NetworkSwitcherViewModel(
                 )
 
         subscriptions.add(sub)
+    }
+
+    private fun refreshTokens() {
+        balanceManager.refreshBalance()
+        tokenManager.refreshERC721Tokens()
     }
 
     fun getNetworksInstance() = Networks.getInstance()
