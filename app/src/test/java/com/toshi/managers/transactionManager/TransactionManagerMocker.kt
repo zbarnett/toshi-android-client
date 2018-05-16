@@ -20,6 +20,8 @@
 package com.toshi.managers.transactionManager
 
 import com.toshi.crypto.HDWallet
+import com.toshi.manager.BalanceManager
+import com.toshi.manager.RecipientManager
 import com.toshi.manager.TransactionManager
 import com.toshi.manager.network.EthereumServiceInterface
 import com.toshi.manager.store.PendingTransactionStore
@@ -27,7 +29,9 @@ import com.toshi.manager.transaction.IncomingTransactionManager
 import com.toshi.manager.transaction.OutgoingTransactionManager
 import com.toshi.manager.transaction.TransactionSigner
 import com.toshi.manager.transaction.UpdateTransactionManager
+import com.toshi.managers.balanceManager.BalanceManagerMocker
 import com.toshi.managers.balanceManager.EthereumServiceMocker
+import com.toshi.managers.recipientManager.RecipientManagerMocker
 import com.toshi.mockWalletSubject
 import org.mockito.Mockito
 import rx.Observable
@@ -58,6 +62,8 @@ class TransactionManagerMocker {
                 incomingTransactionManager = mockIncomingTransactionManager(),
                 outgoingTransactionManager = mockOutgoingTransactionManager(),
                 updateTransactionManager = mockUpdateTransactionManager(),
+                recipientManager = mockRecipientManager(),
+                balanceManager = mockBalanceManager(),
                 scheduler = Schedulers.trampoline()
         )
     }
@@ -77,6 +83,10 @@ class TransactionManagerMocker {
     private fun mockUpdateTransactionManager(): UpdateTransactionManager {
         return Mockito.mock(UpdateTransactionManager::class.java)
     }
+
+    private fun mockRecipientManager(): RecipientManager = RecipientManagerMocker().mock()
+
+    private fun mockBalanceManager(): BalanceManager = BalanceManagerMocker().mock()
 
     private fun mockWalletObservable(wallet: HDWallet?): Observable<HDWallet> = mockWalletSubject(wallet)
 }
