@@ -19,6 +19,8 @@ package com.toshi.viewModel
 
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
+import com.toshi.manager.TransactionManager
+import com.toshi.manager.token.TokenManager
 import com.toshi.model.local.network.Networks
 import com.toshi.model.local.token.ERCTokenView
 import com.toshi.model.local.token.Token
@@ -29,10 +31,13 @@ import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import rx.subscriptions.CompositeSubscription
 
-class ViewTokenViewModel(token: Token) : ViewModel() {
+class ViewTokenViewModel(
+        token: Token,
+        private val baseApplication: BaseApplication = BaseApplication.get(),
+        private val transactionManager: TransactionManager = baseApplication.transactionManager,
+        private val tokenManager: TokenManager = baseApplication.tokenManager
+) : ViewModel() {
 
-    private val transactionManager by lazy { BaseApplication.get().transactionManager }
-    private val balanceManager by lazy { BaseApplication.get().balanceManager }
     private val subscriptions by lazy { CompositeSubscription() }
     val token by lazy { MutableLiveData<Token>() }
 
@@ -57,7 +62,7 @@ class ViewTokenViewModel(token: Token) : ViewModel() {
     }
 
     private fun getERC20Token(contractAddress: String): Single<ERCTokenView> {
-        return balanceManager
+        return tokenManager
                 .getERC20Token(contractAddress)
                 .map { ERCTokenView.map(it) }
     }

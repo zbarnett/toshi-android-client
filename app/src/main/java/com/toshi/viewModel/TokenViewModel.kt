@@ -20,6 +20,9 @@ package com.toshi.viewModel
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import com.toshi.R
+import com.toshi.manager.BalanceManager
+import com.toshi.manager.TransactionManager
+import com.toshi.manager.token.TokenManager
 import com.toshi.model.local.token.ERCTokenView
 import com.toshi.model.local.token.EtherToken
 import com.toshi.model.local.token.Token
@@ -35,10 +38,13 @@ import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import rx.subscriptions.CompositeSubscription
 
-class TokenViewModel : ViewModel() {
+class TokenViewModel(
+        private val baseApplication: BaseApplication = BaseApplication.get(),
+        private val transactionManager: TransactionManager = baseApplication.transactionManager,
+        private val balanceManager: BalanceManager = baseApplication.balanceManager,
+        private val tokenManager: TokenManager = baseApplication.tokenManager
+) : ViewModel() {
 
-    private val transactionManager by lazy { BaseApplication.get().transactionManager }
-    private val balanceManager by lazy { BaseApplication.get().balanceManager }
     private val subscriptions by lazy { CompositeSubscription() }
 
     val erc20Tokens by lazy { MutableLiveData<List<Token>>() }
@@ -107,7 +113,7 @@ class TokenViewModel : ViewModel() {
     }
 
     private fun firstFetchERC721Tokens() {
-        val sub = balanceManager
+        val sub = tokenManager
                 .getERC721Tokens()
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { isERC721Loading.value = true }
@@ -130,7 +136,7 @@ class TokenViewModel : ViewModel() {
     }
 
     private fun getERC20TokensFromNetwork(): Single<List<ERCTokenView>> {
-        return balanceManager
+        return tokenManager
                 .getERC20TokensFromNetwork()
                 .onErrorReturn { ERC20Tokens().tokens }
                 .map { mapERC20Tokens(it) }
@@ -157,7 +163,7 @@ class TokenViewModel : ViewModel() {
     }
 
     private fun getERC20Tokens(): Single<List<ERCTokenView>> {
-        return balanceManager
+        return tokenManager
                 .getERC20Tokens()
                 .onErrorReturn { ERC20Tokens().tokens }
                 .map { mapERC20Tokens(it) }
@@ -197,7 +203,7 @@ class TokenViewModel : ViewModel() {
     }
 
     fun fetchERC721Tokens() {
-        val sub = balanceManager
+        val sub = tokenManager
                 .getERC721Tokens()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

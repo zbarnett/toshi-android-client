@@ -23,6 +23,7 @@ import com.toshi.crypto.HdWalletBuilder
 import com.toshi.extensions.getTimeoutSingle
 import com.toshi.extensions.toast
 import com.toshi.manager.store.DbMigration
+import com.toshi.manager.token.TokenManager
 import com.toshi.util.ImageUtil
 import com.toshi.util.logging.LogUtil
 import com.toshi.util.sharedPrefs.AppPrefs
@@ -49,6 +50,7 @@ class ToshiManager(
         val chatManager: ChatManager = ChatManager(userManager = userManager, recipientManager = recipientManager, walletObservable = walletSubject.asObservable()),
         val reputationManager: ReputationManager = ReputationManager(),
         val dappManager: DappManager = DappManager(),
+        val tokenManager: TokenManager = TokenManager(walletObservable = walletSubject.asObservable()),
         private val baseApplication: BaseApplication = BaseApplication.get(),
         private val walletBuilder: HdWalletBuilder = HdWalletBuilder(),
         private val appPrefs: AppPrefsInterface = AppPrefs,

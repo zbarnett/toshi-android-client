@@ -22,6 +22,8 @@ import android.arch.lifecycle.ViewModel
 import com.toshi.crypto.util.TypeConverter
 import com.toshi.extensions.createSafeBigDecimal
 import com.toshi.extensions.isValidDecimal
+import com.toshi.manager.TransactionManager
+import com.toshi.manager.token.TokenManager
 import com.toshi.model.local.network.Networks
 import com.toshi.model.local.token.ERCTokenView
 import com.toshi.util.EthUtil
@@ -33,10 +35,13 @@ import rx.schedulers.Schedulers
 import rx.subscriptions.CompositeSubscription
 import java.math.BigDecimal
 
-class SendERC20TokenViewModel(val token: ERCTokenView) : ViewModel() {
+class SendERC20TokenViewModel(
+        val token: ERCTokenView,
+        private val baseApplication: BaseApplication = BaseApplication.get(),
+        private val transactionManager: TransactionManager = baseApplication.transactionManager,
+        private val tokenManager: TokenManager = baseApplication.tokenManager
+) : ViewModel() {
 
-    private val transactionManager by lazy { BaseApplication.get().transactionManager }
-    private val balanceManager by lazy { BaseApplication.get().balanceManager }
     private val subscriptions by lazy { CompositeSubscription() }
     val ERCToken by lazy { MutableLiveData<ERCTokenView>() }
     val isSendingMaxAmount by lazy { MutableLiveData<Boolean>() }
@@ -62,7 +67,8 @@ class SendERC20TokenViewModel(val token: ERCTokenView) : ViewModel() {
     }
 
     private fun getERC20Token(contractAddress: String): Single<ERCTokenView> {
-        return balanceManager.getERC20Token(contractAddress)
+        return tokenManager
+                .getERC20Token(contractAddress)
                 .map { ERCTokenView.map(it) }
     }
 

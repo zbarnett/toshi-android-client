@@ -20,16 +20,20 @@ package com.toshi.viewModel
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import com.toshi.R
+import com.toshi.manager.token.TokenManager
 import com.toshi.model.network.token.ERC721TokenWrapper
 import com.toshi.util.SingleLiveEvent
 import com.toshi.view.BaseApplication
 import rx.android.schedulers.AndroidSchedulers
 import rx.subscriptions.CompositeSubscription
 
-class ViewERC721TokensViewModel(contractAddress: String) : ViewModel() {
+class ViewERC721TokensViewModel(
+        contractAddress: String,
+        private val baseApplication: BaseApplication = BaseApplication.get(),
+        private val tokenManager: TokenManager = baseApplication.tokenManager
+) : ViewModel() {
 
     private val subscriptions by lazy { CompositeSubscription() }
-    private val balanceManager by lazy { BaseApplication.get().balanceManager }
 
     val collectible by lazy { MutableLiveData<ERC721TokenWrapper>() }
     val error by lazy { SingleLiveEvent<Int>() }
@@ -39,7 +43,7 @@ class ViewERC721TokensViewModel(contractAddress: String) : ViewModel() {
     }
 
     private fun getERC721Token(contactAddress: String) {
-        val sub = balanceManager
+        val sub = tokenManager
                 .getERC721Token(contactAddress)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

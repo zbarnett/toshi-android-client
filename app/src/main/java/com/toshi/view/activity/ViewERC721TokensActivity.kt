@@ -18,19 +18,18 @@
 package com.toshi.view.activity
 
 import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import com.toshi.R
 import com.toshi.extensions.addHorizontalLineDivider
 import com.toshi.extensions.getPxSize
+import com.toshi.extensions.getViewModel
 import com.toshi.extensions.isVisible
 import com.toshi.extensions.toast
 import com.toshi.model.network.token.ERC721TokenWrapper
 import com.toshi.view.adapter.CollectibleAdapter
 import com.toshi.viewModel.ViewERC721TokensViewModel
-import com.toshi.viewModel.ViewModelFactory.ViewERC721TokensViewModelFactory
 import kotlinx.android.synthetic.main.activity_erc721_token_activity.closeButton
 import kotlinx.android.synthetic.main.activity_erc721_token_activity.collectibles
 import kotlinx.android.synthetic.main.activity_erc721_token_activity.toolbarTitle
@@ -66,10 +65,7 @@ class ViewERC721TokensActivity : AppCompatActivity() {
             finish()
             return
         }
-        viewModel = ViewModelProviders.of(
-                this,
-                ViewERC721TokensViewModelFactory(contactAddress)
-        ).get(ViewERC721TokensViewModel::class.java)
+        viewModel = getViewModel { ViewERC721TokensViewModel(contactAddress) }
     }
 
     private fun initClickListeners() {

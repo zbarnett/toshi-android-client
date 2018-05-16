@@ -18,11 +18,11 @@
 package com.toshi.view.activity
 
 import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.toshi.R
 import com.toshi.crypto.util.TypeConverter
+import com.toshi.extensions.getViewModel
 import com.toshi.extensions.isVisible
 import com.toshi.extensions.startActivity
 import com.toshi.extensions.toast
@@ -32,7 +32,6 @@ import com.toshi.model.local.token.Token
 import com.toshi.util.EthUtil
 import com.toshi.util.ImageUtil
 import com.toshi.view.fragment.dialogFragment.ShareWalletAddressDialog
-import com.toshi.viewModel.ViewModelFactory.ViewTokenViewModelFactory
 import com.toshi.viewModel.ViewTokenViewModel
 import kotlinx.android.synthetic.main.activity_view_erc20.amount
 import kotlinx.android.synthetic.main.activity_view_erc20.avatar
@@ -78,10 +77,7 @@ class ViewTokenActivity : AppCompatActivity() {
     }
 
     private fun initViewModel(token: Token) {
-        viewModel = ViewModelProviders.of(
-                this,
-                ViewTokenViewModelFactory(token)
-        ).get(ViewTokenViewModel::class.java)
+        viewModel = getViewModel { ViewTokenViewModel(token) }
     }
 
     private fun initNetworkView() {

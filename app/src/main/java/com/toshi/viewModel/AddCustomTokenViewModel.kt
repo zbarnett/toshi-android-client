@@ -20,7 +20,7 @@ package com.toshi.viewModel
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import com.toshi.R
-import com.toshi.manager.BalanceManager
+import com.toshi.manager.token.TokenManager
 import com.toshi.model.network.token.CustomERCToken
 import com.toshi.util.SingleLiveEvent
 import com.toshi.view.BaseApplication
@@ -29,7 +29,8 @@ import rx.android.schedulers.AndroidSchedulers
 import rx.subscriptions.CompositeSubscription
 
 class AddCustomTokenViewModel(
-        private val balancemanager: BalanceManager = BaseApplication.get().balanceManager,
+        private val baseApplication: BaseApplication = BaseApplication.get(),
+        private val tokenManager: TokenManager = baseApplication.tokenManager,
         private val observeScheduler: Scheduler = AndroidSchedulers.mainThread()
 
 ) : ViewModel() {
@@ -40,7 +41,7 @@ class AddCustomTokenViewModel(
     val error by lazy { SingleLiveEvent<Int>() }
 
     fun addCustomToken(customERCToken: CustomERCToken) {
-        val sub = balancemanager
+        val sub = tokenManager
                 .addCustomToken(customERCToken)
                 .observeOn(observeScheduler)
                 .doOnSubscribe { isLoading.value = true }

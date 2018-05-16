@@ -19,7 +19,6 @@ package com.toshi.view.activity
 
 import android.app.Activity
 import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
@@ -28,6 +27,7 @@ import android.support.v7.app.AppCompatActivity
 import com.toshi.R
 import com.toshi.crypto.util.TypeConverter
 import com.toshi.crypto.util.isPaymentAddressValid
+import com.toshi.extensions.getViewModel
 import com.toshi.extensions.isVisible
 import com.toshi.extensions.startActivityForResult
 import com.toshi.extensions.toast
@@ -39,7 +39,6 @@ import com.toshi.util.ScannerResultType
 import com.toshi.view.adapter.listeners.TextChangedListener
 import com.toshi.view.fragment.PaymentConfirmationFragment
 import com.toshi.viewModel.SendERC20TokenViewModel
-import com.toshi.viewModel.ViewModelFactory.SendERC20TokenViewModelFactory
 import kotlinx.android.synthetic.main.activity_send_erc20_token.addressError
 import kotlinx.android.synthetic.main.activity_send_erc20_token.amountError
 import kotlinx.android.synthetic.main.activity_send_erc20_token.balance
@@ -83,10 +82,7 @@ class SendERC20TokenActivity : AppCompatActivity() {
             finish()
             return
         }
-        viewModel = ViewModelProviders.of(
-                this,
-                SendERC20TokenViewModelFactory(token)
-        ).get(SendERC20TokenViewModel::class.java)
+        viewModel = getViewModel { SendERC20TokenViewModel(token) }
     }
 
     private fun initNetworkView() {

@@ -35,6 +35,7 @@ import com.toshi.manager.ChatManager;
 import com.toshi.manager.ToshiManager;
 import com.toshi.manager.TransactionManager;
 import com.toshi.manager.UserManager;
+import com.toshi.manager.token.TokenManager;
 import com.toshi.service.NetworkChangeReceiver;
 import com.toshi.util.logging.CrashlyticsTree;
 import com.toshi.util.logging.LogUtil;
@@ -149,6 +150,10 @@ public final class BaseApplication extends MultiDexApplication implements Lifecy
 
     public final ReputationManager getReputationManager() {
         return this.toshiManager.getReputationManager();
+    }
+
+    public final TokenManager getTokenManager() {
+        return this.toshiManager.getTokenManager();
     }
 
     public final DappManager getDappManager() {
