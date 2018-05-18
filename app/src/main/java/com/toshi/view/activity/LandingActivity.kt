@@ -11,6 +11,7 @@ import com.toshi.extensions.isVisible
 import com.toshi.extensions.startActivity
 import com.toshi.extensions.startActivityAndFinish
 import com.toshi.extensions.toast
+import com.toshi.util.Analytics
 import com.toshi.util.TermsDialog
 import com.toshi.viewModel.LandingViewModel
 import kotlinx.android.synthetic.main.activity_landing.createNewAccount
@@ -38,7 +39,10 @@ class LandingActivity : AppCompatActivity() {
     }
 
     private fun initClickListeners() {
-        signIn.setOnClickListener { startActivity<SignInActivity>() }
+        signIn.setOnClickListener {
+            Analytics.trackEvent(Analytics.SIGN_IN_TAPPED)
+            startActivity<SignInActivity>()
+        }
         createNewAccount.setOnClickListener { showsTermDialog() }
     }
 

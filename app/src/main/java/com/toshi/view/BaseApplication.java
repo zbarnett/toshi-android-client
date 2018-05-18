@@ -25,8 +25,10 @@ import android.arch.lifecycle.ProcessLifecycleOwner;
 import android.content.IntentFilter;
 import android.support.multidex.MultiDexApplication;
 
+import com.amplitude.api.Amplitude;
 import com.crashlytics.android.Crashlytics;
 import com.toshi.BuildConfig;
+import com.toshi.R;
 import com.toshi.manager.BalanceManager;
 import com.toshi.manager.DappManager;
 import com.toshi.manager.RecipientManager;
@@ -69,9 +71,15 @@ public final class BaseApplication extends MultiDexApplication implements Lifecy
 
     private void init() {
         initCrashlyticsAndTimber();
+        initAmplitude();
         initLifecycleObserver();
         initToshiManager();
         initConnectivityMonitor();
+    }
+
+    private void initAmplitude() {
+        String amplitudeAPIKey = BuildConfig.DEBUG ? getString(R.string.amplitude_development) : getString(R.string.amplitude_production);
+        Amplitude.getInstance().initialize(this, amplitudeAPIKey).enableForegroundTracking(this);
     }
 
     private void initCrashlyticsAndTimber() {

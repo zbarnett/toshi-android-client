@@ -30,12 +30,7 @@ import com.toshi.extensions.toast
 import com.toshi.util.KeyboardUtil
 import com.toshi.util.sharedPrefs.AppPrefs
 import com.toshi.viewModel.SignInViewModel
-import kotlinx.android.synthetic.main.activity_sign_in.closeButton
-import kotlinx.android.synthetic.main.activity_sign_in.infoView
-import kotlinx.android.synthetic.main.activity_sign_in.keyboard
-import kotlinx.android.synthetic.main.activity_sign_in.loadingSpinner
-import kotlinx.android.synthetic.main.activity_sign_in.passphraseInputView
-import kotlinx.android.synthetic.main.activity_sign_in.signIn
+import kotlinx.android.synthetic.main.activity_sign_in.*
 
 class SignInActivity : AppCompatActivity() {
 

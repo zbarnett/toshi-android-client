@@ -164,7 +164,9 @@ dependencies {
             //Architecture components
             "android.arch.lifecycle:extensions:$archVersion",
             'com.jakewharton.timber:timber:4.7.0',
-            "com.crashlytics.sdk.android:crashlytics:2.9.1"
+            "com.crashlytics.sdk.android:crashlytics:2.9.1",
+            // Event Tracking
+            'com.amplitude:android-sdk:2.14.1'
     )
 
     ktlint "com.github.shyiko:ktlint:0.12.1"
