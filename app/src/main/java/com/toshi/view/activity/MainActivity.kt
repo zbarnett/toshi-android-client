@@ -81,7 +81,6 @@ class MainActivity : AppCompatActivity() {
         } catch (e: NoSuchAlgorithmException) {
             LogUtil.exception("MessageDigest implementation not available", e)
         }
-
     }
 
     private fun initViewModel() {
