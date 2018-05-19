@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initUserTracking() {
-        val user = BaseApplication.get().getUserManager().getCurrentUser().toBlocking().value() ?: return
+        val user = BaseApplication.get().userManager.getCurrentUser().toBlocking().value() ?: return
 
         try {
             Amplitude.getInstance().userId = hash256(user.toshiId)
