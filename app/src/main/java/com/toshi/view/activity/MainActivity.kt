@@ -6,13 +6,17 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import com.amplitude.api.Amplitude
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationAdapter
+import com.crashlytics.android.Crashlytics
 import com.toshi.R
 import com.toshi.extensions.getColorById
 import com.toshi.extensions.isVisible
 import com.toshi.util.SoundManager
+import com.toshi.util.logging.LogUtil
 import com.toshi.util.sharedPrefs.AppPrefs
+import com.toshi.view.BaseApplication
 import com.toshi.view.adapter.NavigationAdapter
 import com.toshi.view.fragment.toplevel.BackableTopLevelFragment
 import com.toshi.view.fragment.toplevel.DappFragment
@@ -21,6 +25,9 @@ import com.toshi.viewModel.MainViewModel
 import kotlinx.android.synthetic.main.activity_main.fragmentContainer
 import kotlinx.android.synthetic.main.activity_main.navBar
 import kotlinx.android.synthetic.main.activity_main.networkStatusView
+import java.security.MessageDigest
+import java.security.NoSuchAlgorithmException
+import kotlin.experimental.and
 
 class MainActivity : AppCompatActivity() {
 
@@ -49,6 +56,32 @@ class MainActivity : AppCompatActivity() {
         handleHasBackedUpPhrase()
         showFirstRunDialog()
         initObservers()
+        initUserTracking()
+    }
+
+    @Throws(NoSuchAlgorithmException::class)
+    private fun hash256(data: String): String {
+        val md = MessageDigest.getInstance("SHA-256")
+        md.update(data.toByteArray())
+        return bytesToHex(md.digest())
+    }
+
+    private fun bytesToHex(bytes: ByteArray): String {
+        val result = StringBuffer()
+        for (byt in bytes) result.append(Integer.toString((byt and 0xff.toByte()) + 0x100, 16).substring(1))
+        return result.toString()
+    }
+
+    private fun initUserTracking() {
+        val user = BaseApplication.get().getUserManager().getCurrentUser().toBlocking().value() ?: return
+
+        try {
+            Amplitude.getInstance().userId = hash256(user.toshiId)
+            Crashlytics.setUserIdentifier(hash256(user.toshiId))
+        } catch (e: NoSuchAlgorithmException) {
+            LogUtil.exception("MessageDigest implementation not available", e)
+        }
+
     }
 
     private fun initViewModel() {
