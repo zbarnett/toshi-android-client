@@ -37,9 +37,7 @@ class TokenStore(
     private fun save(tokens: List<ERC20Token>, networkId: String, walletIndex: Int): List<ERC20Token> {
         val tokensWithPrimaryKeys = createListWithPrimaryKeys(tokens, networkId, walletIndex)
         val realm = baseApplication.realm
-        realm.beginTransaction()
-        realm.insertOrUpdate(tokensWithPrimaryKeys)
-        realm.commitTransaction()
+        realm.executeTransaction { realm.insertOrUpdate(tokensWithPrimaryKeys) }
         realm.close()
         return tokensWithPrimaryKeys
     }
