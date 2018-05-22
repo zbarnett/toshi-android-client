@@ -17,6 +17,7 @@
 
 package com.toshi.model.network.token
 
+import com.squareup.moshi.Json
 import com.toshi.model.local.token.ERC721TokenInfoView
 
 data class ERC721Tokens(
@@ -24,5 +25,24 @@ data class ERC721Tokens(
 ) {
     fun mapToViewModel(): List<ERC721TokenInfoView> {
         return collectibles.map { it.mapToViewModel() }
+    }
+}
+
+class ERC721TokenInfo(
+        val symbol: String?,
+        val name: String?,
+        val balance: String?,
+        @Json(name = "contract_address")
+        val contractAddress: String?,
+        val icon: String?
+) {
+    fun mapToViewModel(): ERC721TokenInfoView {
+        return ERC721TokenInfoView(
+                symbol = this.symbol,
+                name = this.name,
+                balance = this.balance,
+                contractAddress = this.contractAddress,
+                icon = this.icon
+        )
     }
 }
