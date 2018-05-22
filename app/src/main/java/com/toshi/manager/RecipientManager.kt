@@ -16,12 +16,12 @@ import com.toshi.model.network.ServerTime
 import com.toshi.model.network.UserSection
 import com.toshi.model.network.user.UserType
 import com.toshi.util.logging.LogUtil
-import com.toshi.view.BaseApplication
 import rx.Completable
 import rx.Observable
 import rx.Scheduler
 import rx.Single
 import rx.schedulers.Schedulers
+import rx.subjects.BehaviorSubject
 import java.io.IOException
 
 class RecipientManager(
@@ -29,7 +29,7 @@ class RecipientManager(
         private val groupStore: GroupStore = GroupStore(),
         private val userStore: UserStore = UserStore(),
         private val blockedUserStore: BlockedUserStore = BlockedUserStore(),
-        private val baseApplication: BaseApplication = BaseApplication.get(),
+        private val connectivitySubject: BehaviorSubject<Boolean>,
         private val scheduler: Scheduler = Schedulers.io()
 ) {
 
@@ -69,10 +69,12 @@ class RecipientManager(
     private fun isUserFresh(user: User?): Boolean {
         return when {
             user == null -> false
-            !baseApplication.isConnected -> true
+            !isConnected() -> true
             else -> !user.needsRefresh()
         }
     }
+
+    private fun isConnected(): Boolean = connectivitySubject.value ?: false
 
     fun getUserFromPaymentAddress(paymentAddress: String): Single<User> {
         return Single

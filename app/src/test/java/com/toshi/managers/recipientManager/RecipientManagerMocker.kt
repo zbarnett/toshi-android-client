@@ -24,13 +24,13 @@ import com.toshi.manager.network.IdService
 import com.toshi.manager.store.BlockedUserStore
 import com.toshi.manager.store.GroupStore
 import com.toshi.manager.store.UserStore
-import com.toshi.managers.baseApplication.BaseApplicationMocker
 import com.toshi.managers.userManager.IdServiceMocker
 import com.toshi.model.local.User
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito
 import rx.Completable
 import rx.schedulers.Schedulers
+import rx.subjects.BehaviorSubject
 
 class RecipientManagerMocker {
     fun mock(): RecipientManager {
@@ -39,7 +39,7 @@ class RecipientManagerMocker {
                 groupStore = mockGroupStore(),
                 userStore = mockUserStore(),
                 blockedUserStore = mockBlockedUserStore(),
-                baseApplication = mockBaseApplication(),
+                connectivitySubject = mockConnectivitySubject(),
                 scheduler = Schedulers.trampoline()
         )
     }
@@ -63,5 +63,9 @@ class RecipientManagerMocker {
         return Mockito.mock(BlockedUserStore::class.java)
     }
 
-    private fun mockBaseApplication() = BaseApplicationMocker().mock()
+    private fun mockConnectivitySubject(): BehaviorSubject<Boolean> {
+        val subject = BehaviorSubject.create<Boolean>()
+        subject.onNext(true)
+        return subject
+    }
 }
