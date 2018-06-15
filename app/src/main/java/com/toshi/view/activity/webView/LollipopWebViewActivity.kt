@@ -219,6 +219,7 @@ class LollipopWebViewActivity : AppCompatActivity() {
                     onIconReceivedListener = { webViewModel.favicon.value = it }
                 }
         webview.onReloadListener = { load() }
+        swipeToRefresh.setOnChildScrollUpCallback { _, _ -> webview.canScrollUp }
     }
 
     private fun onStartPageLoad() {

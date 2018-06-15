@@ -19,21 +19,49 @@ package com.toshi.view.activity.webView
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.GestureDetector
+import android.view.MotionEvent
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.support.v4.view.GestureDetectorCompat
 
 class ToshiWebView : WebView {
 
     var toshiWebClient: ToshiWebClient? = null
     var onReloadListener: (() -> Unit)? = null
+    var canScrollUp = false
+        private set
+    private val gestureDetector: GestureDetectorCompat
 
-    constructor(context: Context) : super(context)
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
-    constructor(context: Context, attrs: AttributeSet?, defStyle: Int) : super(context, attrs, defStyle)
+    constructor(context: Context) : super(context) {
+        gestureDetector = GestureDetectorCompat(context, ScrollGestureListener());
+    }
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
+        gestureDetector = GestureDetectorCompat(context, ScrollGestureListener());
+    }
+    constructor(context: Context, attrs: AttributeSet?, defStyle: Int) : super(context, attrs, defStyle) {
+        gestureDetector = GestureDetectorCompat(context, ScrollGestureListener());
+    }
 
     override fun setWebViewClient(client: WebViewClient?) {
         super.setWebViewClient(client)
         toshiWebClient = client as? ToshiWebClient
+    }
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        return gestureDetector.onTouchEvent(event) || super.onTouchEvent(event)
+    }
+
+    inner class ScrollGestureListener : GestureDetector.SimpleOnGestureListener() {
+        override fun onScroll(start: MotionEvent?, end: MotionEvent?, distanceX: Float, distanceY: Float): Boolean {
+            if (distanceY > 0) canScrollUp = true
+            return false
+        }
+    }
+
+    override fun onOverScrolled(scrollX: Int, scrollY: Int, clampedX: Boolean, clampedY: Boolean) {
+        if (clampedY && scrollY == 0) canScrollUp = false
+        super.onOverScrolled(scrollX, scrollY, clampedX, clampedY)
     }
 
     override fun reload() = onReloadListener?.invoke() ?: super.reload()
